@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+	<color name="windowBackground">#fafafa</color>
+    
+    <color name="list_selector_background_normal">@android:color/transparent</color>
+    <color name="list_selector_background_pressed">#dcdcdc</color>
+    
+    <color name="divider_horizontal">#d9dbdf</color>
+    
+</resources>

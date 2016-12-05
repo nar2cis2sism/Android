@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AndroidProject</string>
+    
+    <!-- Dialog -->
+    <string name="dialog_upgrade_title">升级</string>
+    <string name="dialog_upgrade_button1">立即升级</string>
+    <string name="dialog_upgrade_button2">稍后升级</string>
+    
+    <!-- Login -->
+    <string name="login_login">登&#160;&#160;&#160;&#160;录</string>
+    <string name="login_register">用户注册</string>
+    <string name="login_find_password">找回密码</string>
+    <string name="login_username_hint">输入电话号码</string>
+    <string name="login_username_validation_empty">请输入手机号</string>
+    <string name="login_username_validation_mobile">请您输入正确的手机号码</string>
+    <string name="login_password_hint">输入密码</string>
+    <string name="login_password_validation_empty">请输入密码</string>
+    <string name="login_password_validation_length">密码长度应为6-16位</string>
+    <string name="login_progress">登录中,请稍候&#8230;</string>
+
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <declare-styleable name="PageIndicator">
+        
+        <!-- 指示器个数 -->
+        <attr name="indicator_count" format="integer" />
+        
+    </declare-styleable>
+    
+</resources>

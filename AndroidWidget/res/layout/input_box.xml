@@ -1,0 +1,33 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp" >
+
+	    <EditText
+	        android:id="@+id/input"
+	        android:layout_width="0px"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:background="@null"
+	        android:drawablePadding="16dp"
+	        android:singleLine="true" />
+
+	    <View
+	        android:id="@+id/placeholder"
+	        android:layout_width="0px"
+	        android:layout_height="0px" />
+        
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#a2a2a2" />
+    
+</merge>

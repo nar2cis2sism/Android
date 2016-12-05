@@ -1,0 +1,11 @@
+<resources>
+
+	<string name="ok">确定</string>
+	
+	<string name="net_is_not_accessible">当前网络不可用，请检查您的网络设置</string>
+	<string name="dialog_error_title">出错了</string>
+	
+	<string name="Loading...">Loading&#8230;</string>
+	<string name="No_data_found">No data found</string>
+
+</resources>

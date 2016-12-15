@@ -2,6 +2,7 @@ package com.project.http.builder;
 
 import static engine.android.framework.net.MyNetManager.getHttpManager;
 
+import com.project.MySession;
 import com.project.action.Actions;
 import com.project.http.json.MyHttpJsonParser;
 
@@ -22,7 +23,7 @@ import protocol.java.json.AppUpgradeInfo;
  * 
  * @author Daimon
  */
-public class Navigation implements HttpBuilder {
+public class NavigationAction implements HttpBuilder {
     
     public final String action = Actions.NAVIGATION;
     
@@ -56,7 +57,7 @@ public class Navigation implements HttpBuilder {
         @Override
         protected Object process(JSONObject data) {
             // Socket服务器地址
-            String socket_server_url = data.optString("socket_server_url");
+            MySession.setSocketAddress(data.optString("socket_server_url"));
             // APP升级信息
             JSONObject upgrade = data.optJSONObject("upgrade");
             if (upgrade != null)

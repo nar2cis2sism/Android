@@ -18,6 +18,17 @@ public class MySession {
         return session.hasAttribute(INITIALIZED);
     }
 
+    /******************************* 初始化 *******************************/
+    private static final String SOCKET_ADDRESS = "SOCKET_ADDRESS";
+
+    public static void setSocketAddress(String address) {
+        session.setAttribute(SOCKET_ADDRESS, address);
+    }
+    
+    public static String getSocketAddress() {
+        return session.getAttribute(SOCKET_ADDRESS, null);
+    }
+
     /******************************* 导航配置 *******************************/
     private static final String NAVIGATION = "NAVIGATION";
     

@@ -17,8 +17,8 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.project.R;
 import com.project.action.Actions;
-import com.project.http.builder.Login;
-import com.project.http.builder.Navigation;
+import com.project.http.builder.LoginAction;
+import com.project.http.builder.NavigationAction;
 import com.project.ui.main.MainActivity;
 import com.project.util.MyValidator;
 
@@ -163,7 +163,7 @@ public class LoginFragment extends BaseFragment implements OnClickListener {
         if (MyConfiguration_APP.APP_TESTING)
         {
             username.input().setText("18311287987");
-            password.input().setText("111111");
+            password.input().setText("yanhao");
         }
     }
 //    
@@ -248,7 +248,7 @@ public class LoginFragment extends BaseFragment implements OnClickListener {
     /******************************* 获取导航 *******************************/
     
     private void sendNavigationAction() {
-        Navigation action = new Navigation();
+        NavigationAction action = new NavigationAction();
         
         getBaseActivity().sendHttpRequest(action);
     }
@@ -256,7 +256,7 @@ public class LoginFragment extends BaseFragment implements OnClickListener {
     /******************************* 用户登录 *******************************/
     
     private void sendLoginAction() {
-        Login action = new Login(username.input().getText().toString(), 
+        LoginAction action = new LoginAction(username.input().getText().toString(), 
                                  password.input().getText().toString());
         
         getBaseActivity().sendHttpRequest(action);

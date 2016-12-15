@@ -2,14 +2,18 @@ package com.project.http.builder;
 
 import static engine.android.framework.net.MyNetManager.getHttpManager;
 
+import com.project.MySession;
 import com.project.action.Actions;
 import com.project.http.json.MyHttpJsonParser;
 
 import engine.android.framework.MyConfiguration.MyConfiguration_HTTP;
+import engine.android.framework.net.MyNetManager;
 import engine.android.framework.net.event.EventCallback;
 import engine.android.framework.net.http.MyHttpManager.HttpBuilder;
 import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
+import engine.android.util.secure.CryptoUtil;
+import engine.android.util.secure.HexUtil;
 
 import org.json.JSONObject;
 
@@ -18,7 +22,7 @@ import org.json.JSONObject;
  * 
  * @author Daimon
  */
-public class Login implements HttpBuilder {
+public class LoginAction implements HttpBuilder {
     
     public final String action = Actions.LOGIN;
     
@@ -29,9 +33,9 @@ public class Login implements HttpBuilder {
     public final String deviceID           // 设备唯一标识
     = "";
     
-    public Login(String username, String password) {
+    public LoginAction(String username, String password) {
         this.username = username;
-        this.password = password;
+        this.password = HexUtil.encode(CryptoUtil.SHA1((password + "000").getBytes()));
     }
 
     @Override
@@ -56,7 +60,14 @@ public class Login implements HttpBuilder {
             long uid = data.optLong("uid");
             String user_info_ver = data.optString("user_info_crc");
             
+            setupSocket(token);
+            
             return super.process(data);
+        }
+        
+        private void setupSocket(String token) {
+            String address = MySession.getSocketAddress();
+            MyNetManager.getSocketManager().setup(address, token);
         }
     }
 }

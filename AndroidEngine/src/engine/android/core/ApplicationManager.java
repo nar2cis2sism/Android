@@ -18,9 +18,14 @@ import android.widget.Toast;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.WeakHashMap;
+
+import engine.android.core.Forelet.FragmentTransaction;
+import engine.android.core.Forelet.Task;
 
 /**
  * 应用程序管理器<p>
@@ -361,4 +366,26 @@ implements UncaughtExceptionHandler {
             }
         }
     }
+}
+
+class SavedInstance {
+    
+    private static final WeakHashMap<Bundle, SavedInstance> savedInstanceMap
+    = new WeakHashMap<Bundle, SavedInstance>();
+    
+    public static void save(Bundle bundle, SavedInstance savedInstance) {
+        savedInstanceMap.put(bundle, savedInstance);
+    }
+    
+    public static SavedInstance restore(Bundle bundle) {
+        return savedInstanceMap.get(bundle);
+    }
+    
+    public Task task;
+    
+    public Object progress;
+    
+    public FragmentTransaction transaction;
+    
+    public final HashMap<String, Object> savedMap = new HashMap<String, Object>();
 }

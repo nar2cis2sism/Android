@@ -11,8 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import engine.android.core.annotation.Injector;
-
 /**
  * Fragment基类<p>
  * 功能：封装一些基础函数
@@ -50,7 +48,7 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        Injector.injectView(this);
+        Injector.inject(this);
     }
 
     @Override

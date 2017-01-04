@@ -5,41 +5,36 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
-import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.NavUtils;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import engine.android.core.Forelet.Task.TaskCallback;
-import engine.android.core.annotation.Injector;
-
 import java.lang.ref.WeakReference;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
+
+import engine.android.core.Forelet.Task.TaskExecutor;
 
 /**
  * 前台展现界面<p>
- * 功能：View注解，对话框管理，异步任务及进度条操作，数据验证，
- * JavaBean与视图绑定，Fragment事务，Activity导航，横竖屏切换
+ * 功能：View注解，对话框管理，异步任务及进度条操作，
+ * 数据验证，Fragment事务，Activity导航，横竖屏切换
  * 
  * @author Daimon
  * @version N
  * @since 6/6/2014
  */
-public class Forelet extends Activity {
+public class Forelet extends Activity implements TaskCallback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,18 +42,20 @@ public class Forelet extends Activity {
 
         if (savedInstanceState != null)
         {
-            mTransaction = restoreFragmentTransactionToken();
-            commit();
-
-            if ((mTask = TaskWrapper.class.cast(restoreTaskToken())) != null)
+            restoreDialogs(savedInstanceState);
+            
+            SavedInstance savedInstance = SavedInstance.restore(savedInstanceState);
+            if (savedInstance == null)
             {
-                onRestoreTaskExecuting(mTask.getTask());
+                return;
             }
+            
+            if ((mTask = savedInstance.task) != null) mTask.setup(this);
+            if ((mProgress = ProgressWrapper.class.cast(savedInstance.progress)) != null)
+                 mProgress.setup(onCreateProgressDialog());
+            mTransaction = savedInstance.transaction;
 
-            if ((mProgress = ProgressWrapper.class.cast(restoreProgressToken())) != null)
-            {
-                mProgress.setup(onCreateProgressDialog());
-            }
+            Injector.restoreState(this, savedInstance.savedMap);
         }
     }
 
@@ -76,58 +73,38 @@ public class Forelet extends Activity {
 
         commitAllowed = false;
         saveDialogs(outState);
-    }
+        
+        SavedInstance savedInstance = new SavedInstance();
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        restoreDialogs(savedInstanceState);
+        savedInstance.task = mTask;
+        savedInstance.progress = mProgress;
+        savedInstance.transaction = mTransaction;
+        Injector.saveState(this, savedInstance.savedMap);
+        
+        SavedInstance.save(outState, savedInstance);
     }
 
     @Override
     protected void onDestroy() {
-        if (isFinishing() && !isChangingConfigurations())
+        if (isChangingConfigurations() || !isFinishing())
         {
-            mTransaction = null;
-            cancelTask();
-
-            hideProgress();
-            mProgress = null;
-
-            onFinish();
+            if (mTask != null) mTask.setup(null);
+            if (mProgress != null) mProgress.setup(null);
         }
         else
         {
-            if (mTransaction != null)
-            {
-                saveFragmentTransactionToken(mTransaction);
-                mTransaction = null;
-            }
-
-            if (mTask != null)
-            {
-                saveTaskToken(mTask);
-
-                mTask.onConfigurationChanged();
-                mTask = null;
-            }
-
-            if (mProgress != null)
-            {
-                if (mProgress.isGoingToShow())
-                {
-                    saveProgressToken(mProgress);
-                }
-
-                mProgress.onConfigurationChanged();
-                mProgress = null;
-            }
+            cancelTask();
+            hideProgress();
+            
+            onFinish();
         }
+        
+        mTask = null;
+        mProgress = null;
+        mTransaction = null;
 
         closeDialogs();
         clearValidation();
-        clearJavaBean();
 
         super.onDestroy();
     }
@@ -156,7 +133,7 @@ public class Forelet extends Activity {
     }
 
     private void injectView() {
-        Injector.injectView(this);
+        Injector.inject(this);
     }
 
     /******************************* 对话框管理 *******************************/
@@ -274,40 +251,33 @@ public class Forelet extends Activity {
         {
             if (dialogState.getBoolean(SAVED_DIALOG_KEY_PREFIX + name))
             {
-                onRestoreDialogShowing(name);
+                Injector.onRestoreDialogShowing(this, name);
             }
         }
     }
 
-    /**
-     * Restore a showing dialog
-     * 
-     * @param name 对话框名称
-     * @see #showDialog(String, Dialog)
-     */
-    protected void onRestoreDialogShowing(String name) {}
-
     /******************************* 任务管理机制 *******************************/
 
     /**
-     * 内置任务（深度定制）
+     * 封装一个简化版的异步任务
      */
     public static class Task extends android.os.AsyncTask<Void, Integer, Object> {
 
         private final TaskExecutor mTaskExecutor;
+        
         private WeakReference<TaskCallback> mTaskCallback;
+        private boolean mHasCallback;
 
         /** 结果是否有效(Activity被销毁后结果无法处理) **/
         private boolean isResultAvailable = true;
         private Object result;
         private boolean hasResult;
-
-        public Task(TaskExecutor taskExecutor, TaskCallback taskCallback) {
+        
+        public Task(TaskExecutor taskExecutor) {
             mTaskExecutor = taskExecutor;
-            setTaskCallback(taskCallback);
         }
 
-        private void setTaskCallback(TaskCallback taskCallback) {
+        void setTaskCallback(TaskCallback taskCallback) {
             if (taskCallback == null)
             {
                 mTaskCallback = null;
@@ -318,15 +288,21 @@ public class Forelet extends Activity {
             }
         }
 
-        /**
-         * 返回任务名称
-         */
-        protected String getTaskName() {
-            return toString();
+        void setup(TaskCallback taskCallback) {
+            if (taskCallback == null)
+            {
+                setResultAvailable(false);
+            }
+            else
+            {
+                if (mHasCallback) setTaskCallback(taskCallback);
+                setResultAvailable(true);
+            }
         }
 
-        void executeTask() {
+        int executeTask() {
             doExecuteTask();
+            return hashCode();
         }
 
         /**
@@ -341,16 +317,8 @@ public class Forelet extends Activity {
             mTaskExecutor.cancel();
             cancel(true);
         }
-
-        /**
-         * Need to call it manually when restored
-         */
-        public final void restart(TaskCallback taskCallback) {
-            setTaskCallback(taskCallback);
-            setResultAvailable(true);
-        }
-
-        void setResultAvailable(boolean isResultAvailable) {
+        
+        private void setResultAvailable(boolean isResultAvailable) {
             if (this.isResultAvailable = isResultAvailable)
             {
                 if (hasResult)
@@ -362,6 +330,7 @@ public class Forelet extends Activity {
             }
             else
             {
+                mHasCallback = mTaskCallback != null;
                 setTaskCallback(null);
             }
         }
@@ -390,7 +359,7 @@ public class Forelet extends Activity {
                 TaskCallback callback = mTaskCallback.get();
                 if (callback != null)
                 {
-                    callback.onFinished(result);
+                    callback.onTaskCallback(hashCode(), result);
                 }
 
                 mTaskCallback = null;
@@ -411,88 +380,33 @@ public class Forelet extends Activity {
              */
             public void cancel();
         }
-
-        public static interface TaskCallback {
-
-            /**
-             * 任务完成回调方法
-             * 
-             * @param 执行结果
-             */
-            public void onFinished(Object result);
-        }
     }
 
-    private static class TaskWrapper extends TimerTask {
-
-        private final Task task;                                // 当前执行任务
-
-        private static final String TIMER_NAME_PREFIX = "Forelet:TimerTask-";
-        private Timer timer;                                    // 任务执行定时器
-
-        public TaskWrapper(Task task) {
-            this.task = task;
-        }
-
-        public void executeTask(long delay) {
-            if (delay > 0)
-            {
-                timer = new Timer(TIMER_NAME_PREFIX + task.getTaskName());
-                timer.schedule(this, delay);
-            }
-            else
-            {
-                task.executeTask();
-            }
-        }
-
-        public void cancelTask() {
-            cancelTimer();
-            task.cancelTask();
-        }
-
-        private void cancelTimer() {
-            if (timer != null)
-            {
-                timer.cancel();
-                timer = null;
-            }
-        }
-
-        public Task getTask() {
-            return task;
-        }
-
-        @Override
-        public void run() {
-            task.executeTask();
-            cancelTimer();
-        }
-
-        public void onConfigurationChanged() {
-            task.setResultAvailable(false);
-        }
-    }
-
-    private TaskWrapper mTask;
+    private Task mTask;
 
     /**
      * 执行任务
      * 
-     * @see #executeTask(Task, long)
+     * @param executor 任务执行器
+     * @param hasCallback 是否需要处理回调，通过{@link #onTaskCallback}接收回调
+     * 
+     * @return taskId 用于任务回调
      */
-    public final void executeTask(Task task) {
-        executeTask(task, 0);
+    public final int executeTask(TaskExecutor executor, boolean hasCallback) {
+        return executeTask(new Task(executor), hasCallback);
     }
 
     /**
      * 执行任务
      * 
      * @param task 内置任务
-     * @param delay 延迟时间
+     * @param hasCallback 是否需要处理回调，通过{@link #onTaskCallback}接收回调
+     * 
+     * @return taskId 用于任务回调
      */
-    public final void executeTask(Task task, long delay) {
-        (mTask = new TaskWrapper(task)).executeTask(delay);
+    public final int executeTask(Task task, boolean hasCallback) {
+        if (hasCallback) task.setTaskCallback(this);
+        return (mTask = task).executeTask();
     }
 
     /**
@@ -502,131 +416,51 @@ public class Forelet extends Activity {
         if (mTask != null)
         {
             mTask.cancelTask();
-            mTask = null;
         }
     }
 
     /**
-     * Provide a mechanism to save unfinished task when configuration changed
+     * 任务完成回调方法
      * 
-     * @param token 需要保存的任务token
+     * @param result 执行结果
      */
-    protected void saveTaskToken(Object token) {}
-
-    /**
-     * Provide a mechanism to restore unfinished task when configuration changed
-     * 
-     * @return 用以恢复的任务token
-     */
-    protected Object restoreTaskToken() { return null; }
-
-    /**
-     * Restore a executing task
-     * 
-     * @param task 任务实例
-     * @see Task#restart(TaskCallback)
-     */
-    protected void onRestoreTaskExecuting(Task task) {}
+    @Override
+    public void onTaskCallback(int taskId, Object result) {}
 
     /******************************* 进度条操作 *******************************/
 
-    /**
-     * 进度条取消操作
-     */
-    protected final class TaskCancelListener implements OnCancelListener {
-
-        private final OnCancelListener onCancelListener;
-
-        public TaskCancelListener(OnCancelListener onCancelListener) {
-            this.onCancelListener = onCancelListener;
-        }
-
-        @Override
-        public void onCancel(DialogInterface dialog) {
-            if (onCancelListener != null)
-            {
-                onCancelListener.onCancel(dialog);
-            }
-
-            cancelTask();
-        }
-    }
-
-    /**
-     * 屏蔽搜索按键
-     */
-    protected final class TaskKeyListener implements OnKeyListener {
-
-        private final OnKeyListener onKeyListener;
-
-        public TaskKeyListener(OnKeyListener onKeyListener) {
-            this.onKeyListener = onKeyListener;
-        }
-
-        @Override
-        public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-            if (onKeyListener != null && onKeyListener.onKey(dialog, keyCode, event))
-            {
-                return true;
-            }
-
-            if (keyCode == KeyEvent.KEYCODE_SEARCH)
-            {
-                return true;
-            }
-
-            return false;
-        }
-    }
-    
-    /**
-     * 子类可自定义进度条样式
-     */
-    protected ProgressDialog onCreateProgressDialog() {
-        ProgressDialog progress = new ProgressDialog(this);
-
-        progress.setCanceledOnTouchOutside(false);
-
-        progress.setOnCancelListener(new TaskCancelListener(null));
-        progress.setOnKeyListener(new TaskKeyListener(null));
-
-        progress.setOwnerActivity(this);
-
-        return progress;
-    }
-    
     /**
      * 通用进度条设置
      */
     public static class ProgressSetting {
         
         private static ProgressSetting defaultSetting;
-
+    
         private int mTitleResourceId;
         private Boolean useTitleResource;
-
+    
         private CharSequence mTitle;
         private CharSequence mMessage;
-
+    
         private boolean mCancelable = true;
-
+    
         public ProgressSetting setTitle(int titleResourceId) {
             mTitleResourceId = titleResourceId;
             useTitleResource = Boolean.TRUE;
             return this;
         }
-
+    
         public ProgressSetting setTitle(CharSequence title) {
             mTitle = title;
             useTitleResource = Boolean.FALSE;
             return this;
         }
-
+    
         public ProgressSetting setMessage(CharSequence message) {
             mMessage = message;
             return this;
         }
-
+    
         public ProgressSetting setCancelable(boolean cancelable) {
             mCancelable = cancelable;
             return this;
@@ -659,7 +493,7 @@ public class Forelet extends Activity {
             
             return defaultSetting;
         }
-
+    
         protected void setup(ProgressDialog progress) {
             if (useTitleResource != null)
             {
@@ -672,15 +506,52 @@ public class Forelet extends Activity {
                     progress.setTitle(mTitle);
                 }
             }
-
+    
             progress.setMessage(mMessage);
             progress.setCancelable(mCancelable);
         }
     }
+    
+    /**
+     * 为了和任务关联自定义一个进度条
+     */
+    private class TaskProgressDialog extends ProgressDialog {
 
+        public TaskProgressDialog(Context context) {
+            super(context);
+        }
+
+        public TaskProgressDialog(Context context, int theme) {
+            super(context, theme);
+        }
+        
+        @Override
+        public boolean onSearchRequested() {
+            // 屏蔽搜索按键
+            return false;
+        }
+        
+        @Override
+        public void cancel() {
+            // 随即取消任务
+            cancelTask();
+            super.cancel();
+        }
+    }
+    
+    /**
+     * 子类可自定义进度条样式
+     */
+    protected ProgressDialog onCreateProgressDialog() {
+        ProgressDialog progress = new TaskProgressDialog(this);
+        progress.setCanceledOnTouchOutside(false);
+        progress.setOwnerActivity(this);
+        return progress;
+    }
+    
     private static class ProgressWrapper extends Handler {
 
-        private ProgressSetting mSetting;                       // 当前对话框设置
+        private ProgressSetting mSetting;
         private WeakReference<ProgressDialog> mProgress;
 
         /** 能否显示进度条(Activity被销毁后无法继续显示) **/
@@ -693,8 +564,15 @@ public class Forelet extends Activity {
         }
 
         public void setup(ProgressDialog progress) {
-            setProgressDialog(progress);
-            setShownAvailable(true);
+            if (progress == null)
+            {
+                setShownAvailable(false);
+            }
+            else
+            {
+                setProgressDialog(progress);
+                setShownAvailable(true);
+            }
         }
 
         private void setProgressDialog(ProgressDialog progress) {
@@ -709,7 +587,6 @@ public class Forelet extends Activity {
         }
 
         public void showProgress(ProgressSetting setting, long delay) {
-            isGoingToShow = true;
             if (delay > 0)
             {
                 sendMessageDelayed(obtainMessage(0, setting), delay);
@@ -726,16 +603,15 @@ public class Forelet extends Activity {
             {
                 showOrHideProgress(true);
             }
+            else
+            {
+                isGoingToShow = true;
+            }
         }
 
         public void hideProgress() {
             removeCallbacksAndMessages(null);
-            isGoingToShow = false;
             showOrHideProgress(false);
-        }
-
-        public boolean isGoingToShow() {
-            return isGoingToShow || isShowing();
         }
 
         private void setShownAvailable(boolean isShownAvailable) {
@@ -748,6 +624,7 @@ public class Forelet extends Activity {
             }
             else
             {
+                isGoingToShow = isShowing();
                 showOrHideProgress(false);
                 setProgressDialog(null);
             }
@@ -756,10 +633,6 @@ public class Forelet extends Activity {
         @Override
         public void handleMessage(Message msg) {
             show((ProgressSetting) msg.obj);
-        }
-
-        public void onConfigurationChanged() {
-            setShownAvailable(false);
         }
 
         private void showOrHideProgress(boolean show) {
@@ -772,7 +645,6 @@ public class Forelet extends Activity {
                     {
                         if (mSetting != null) mSetting.setup(progress);
                         progress.show();
-                        isGoingToShow = false;
                     }
                     else
                     {
@@ -825,28 +697,12 @@ public class Forelet extends Activity {
     /**
      * 隐藏进度条
      */
-
     public final void hideProgress() {
         if (mProgress != null)
         {
             mProgress.hideProgress();
         }
     }
-
-    /**
-     * Provide a mechanism to save showing progress when configuration changed
-     * 
-     * @see #saveTaskToken(Object)
-     */
-    protected void saveProgressToken(Object token) {}
-
-    /**
-     * Provide a mechanism to restore showing progress when configuration
-     * changed
-     * 
-     * @see #restoreTaskToken()
-     */
-    protected Object restoreProgressToken() { return null; }
 
     /******************************* 验证模块 *******************************/
 
@@ -943,105 +799,6 @@ public class Forelet extends Activity {
         }
     }
 
-    /******************************* JavaBean模块 *******************************/
-
-    private static class JavaBeanView<T extends View> {
-
-        private final T view;
-        private final JavaBean<T> bean;
-
-        public JavaBeanView(T view, JavaBean<T> bean) {
-            this.view = view;
-            this.bean = bean;
-        }
-
-        public void fillView() {
-            bean.setValueTo(view);
-        }
-
-        public void fillBean() {
-            bean.getValueFrom(view);
-        }
-    }
-
-    private LinkedList<JavaBeanView<? extends View>> beans;
-
-    /**
-     * 绑定视图对象
-     */
-    public <T extends View> void bindJavaBean(T view, JavaBean<T> bean) {
-        if (beans == null)
-        {
-            beans = new LinkedList<JavaBeanView<? extends View>>();
-        }
-
-        beans.add(new JavaBeanView<T>(view, bean));
-    }
-
-    public void clearJavaBean() {
-        if (beans != null)
-        {
-            beans.clear();
-            beans = null;
-        }
-    }
-
-    /**
-     * 从视图取值填充JavaBean
-     */
-    public void fillBeanFromView() {
-        if (beans != null)
-        {
-            for (JavaBeanView<? extends View> view : beans)
-            {
-                view.fillBean();
-            }
-        }
-    }
-
-    /**
-     * 从JavaBean取值填充视图
-     */
-    public void fillViewFromBean() {
-        if (beans != null)
-        {
-            for (JavaBeanView<? extends View> view : beans)
-            {
-                view.fillView();
-            }
-        }
-    }
-
-    /**
-     * JavaBean接口
-     */
-    public static interface JavaBean<T extends View> {
-
-        public void setValueTo(T view);
-
-        public void getValueFrom(T view);
-    }
-
-    /**
-     * 文本对象视图
-     */
-    public static abstract class TextJavaBean<T extends TextView> implements JavaBean<T> {
-
-        @Override
-        public void setValueTo(T view) {
-            view.setText(get());
-        }
-
-        @Override
-        public void getValueFrom(T view) {
-            set(view.getText().toString());
-        }
-
-        public abstract String get();
-
-        public abstract void set(String s);
-    }
-
     /******************************* Fragment模块 *******************************/
 
     private FragmentTransaction mTransaction;
@@ -1076,22 +833,6 @@ public class Forelet extends Activity {
             mTransaction = null;
         }
     }
-
-    /**
-     * Provide a mechanism to save uncommitted fragment transaction when
-     * configuration changed
-     * 
-     * @see #saveTaskToken(Object)
-     */
-    protected void saveFragmentTransactionToken(FragmentTransaction transaction) {}
-
-    /**
-     * Provide a mechanism to restore uncommitted fragment transaction when
-     * configuration changed
-     * 
-     * @see #restoreTaskToken()
-     */
-    protected FragmentTransaction restoreFragmentTransactionToken() { return null; }
 
     /******************************* ActionBar模块 *******************************/
 
@@ -1129,4 +870,9 @@ public class Forelet extends Activity {
     protected Class<? extends Activity> parentActivity() {
         return null;
     }
+}
+
+interface TaskCallback {
+    
+    public void onTaskCallback(int taskId, Object result);
 }

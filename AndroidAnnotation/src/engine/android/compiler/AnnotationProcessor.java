@@ -17,7 +17,10 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
 import engine.android.compiler.annotation.BindDialogAnnotation;
@@ -31,6 +34,7 @@ public class AnnotationProcessor extends AbstractProcessor implements Annotation
     = new HashMap<String, AnnotatedClass>();
     
     private Filer filer;                        // 文件相关的辅助类
+    private Types typeUtils;                    // 类型相关的辅助类
     private Elements elementUtils;              // 元素相关的辅助类
     private Messager messager;                  // 日志相关的辅助类
     
@@ -39,6 +43,7 @@ public class AnnotationProcessor extends AbstractProcessor implements Annotation
         super.init(processingEnv);
         
         filer = processingEnv.getFiler();
+        typeUtils = processingEnv.getTypeUtils();
         elementUtils = processingEnv.getElementUtils();
         messager = processingEnv.getMessager();
     }
@@ -75,6 +80,7 @@ public class AnnotationProcessor extends AbstractProcessor implements Annotation
         for (AnnotatedClass annotatedClass : annotatedClassMap.values())
         {
             try {
+                processSuperClass(annotatedClass);
                 annotatedClass.generateInjector().writeTo(filer);
             } catch (Throwable e) {
                 new Error(String.format("Failed to generating file for %s cause of '%s'", 
@@ -159,6 +165,42 @@ public class AnnotationProcessor extends AbstractProcessor implements Annotation
             }
 
             getAnnotatedClass(element).addSavedStateField(new SavedStateAnnotation((VariableElement) element));
+        }
+    }
+    
+    private void processSuperClass(AnnotatedClass annotatedClass) {
+        TypeElement classElement = annotatedClass.getClassElement();
+        
+        while (true)
+        {
+            TypeMirror superType = classElement.getSuperclass();
+            if (superType.getKind() == TypeKind.NONE)
+            {
+                break;
+            }
+            
+            String superClassName = superType.toString();
+            if (superClassName.startsWith("android.") || superClassName.startsWith("java."))
+            {
+                break;
+            }
+
+            AnnotatedClass superClass = annotatedClassMap.get(superClassName);
+            if (superClass != null)
+            {
+                annotatedClass.setSuperClassElement(superClass.getClassElement());
+                break;
+            }
+            else
+            {
+                Element superElement = typeUtils.asElement(superType);
+                if (!(superElement instanceof TypeElement))
+                {
+                    break;
+                }
+                
+                classElement = (TypeElement) superElement;
+            }
         }
     }
     

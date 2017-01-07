@@ -1,14 +1,14 @@
 package engine.android.compiler;
 
-import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.TypeVariableName;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -28,8 +28,10 @@ public class AnnotatedClass implements AnnotationConst {
     private final Elements elementUtils;
     private final TypeElement classElement;     // 类元素
     
-    private final LinkedList<InjectViewAnnotation> injectViewFields
-    = new LinkedList<InjectViewAnnotation>();
+    private TypeElement superClassElement;      // 父类元素
+    
+    private final LinkedHashMap<Integer, InjectViewAnnotation> injectViewFields
+    = new LinkedHashMap<Integer, InjectViewAnnotation>();       // viewId对应元素查找表
     
     private final LinkedList<SavedStateAnnotation> savedStateFields
     = new LinkedList<SavedStateAnnotation>();
@@ -45,8 +47,12 @@ public class AnnotatedClass implements AnnotationConst {
         this.classElement = classElement;
     }
     
+    public void setSuperClassElement(TypeElement superClassElement) {
+        this.superClassElement = superClassElement;
+    }
+    
     public void addInjectViewField(InjectViewAnnotation field) {
-        injectViewFields.add(field);
+        injectViewFields.put(field.getViewId(), field);
     }
     
     public void addSavedStateField(SavedStateAnnotation field) {
@@ -61,120 +67,127 @@ public class AnnotatedClass implements AnnotationConst {
         bindDialogMethods.add(method);
     }
     
+    /**
+     * generate file
+     */
     public JavaFile generateInjector() {
-        // public class MainActivity$$Injector implements IInjector<MainActivity>
-        TypeSpec injector = TypeSpec.classBuilder(classElement.getSimpleName() + IInjector.INJECTOR_SUFFIX)
-                .addModifiers(Modifier.PUBLIC)
-                .addSuperinterface(ParameterizedTypeName.get(
-                        ClassName.get(IInjector.class), TypeName.get(classElement.asType())))
-                .addSuperinterface(OnClickListener)
-                .addField(buildTargetField())
-                .addMethod(buildInjectMethod())
-                .addMethod(buildBindViewMethod())
-                .addMethod(buildOnClickMethod())
-                .addMethod(buildBindDialogMethod())
-                .addMethod(buildSaveStateMethod())
-                .build();
-        
-        String packageName = elementUtils.getPackageOf(classElement).getQualifiedName().toString();
-        
-        // generate file
-        return JavaFile.builder(packageName, injector).build();
+        return JavaFile.builder(getPackageName(classElement), buildInjectorClass()).build();
     }
     
-    private FieldSpec buildTargetField() {
-        // private MainActivity target;
-        return FieldSpec.builder(TypeName.get(classElement.asType()), "target", Modifier.PRIVATE).build();
+    private TypeSpec buildInjectorClass() {
+        // public class MainActivity$$Injector<T extends MainActivity>
+        TypeSpec.Builder injector = TypeSpec.classBuilder(getInjectorName(classElement))
+                .addModifiers(Modifier.PUBLIC)
+                .addTypeVariable(TypeVariableName.get("T", getClassTypeName()));
+        if (superClassElement == null)
+        {
+            // implements IInjector<T>
+            injector.addSuperinterface(ParameterizedTypeName.get(
+                    ClassName.get(IInjector.class), 
+                    getVariableTypeName()));
+        }
+        else
+        {
+            // extends BaseActivity$$Injector<T>
+            injector.superclass(ParameterizedTypeName.get(
+                    ClassName.get(getPackageName(superClassElement), getInjectorName(superClassElement)), 
+                    getVariableTypeName()));
+        }
+        
+        injector
+        .addMethod(buildInjectMethod())
+        .addMethod(buildBindDialogMethod())
+        .addMethod(buildSaveStateMethod());
+        
+        if (!onClickMethods.isEmpty()) injector.addMethod(buildOnClickMethod());
+        
+        return injector.build();
     }
     
     private MethodSpec buildInjectMethod() {
-        // public void inject(MainActivity target)
+        // public void inject(final T target, ViewFinder<T> finder)
         MethodSpec.Builder inject = MethodSpec.methodBuilder("inject")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(TypeName.get(classElement.asType()), "target");
+                .addParameter(getVariableTypeName(), "target", Modifier.FINAL)
+                .addParameter(ParameterizedTypeName.get(ClassName.get(ViewFinder.class), getVariableTypeName()), 
+                        "finder");
         
-        // this.target = target;
-        inject.addStatement("this.target = target");
+        if (superClassElement != null)
+        {
+            // super.inject(target, finder);
+            inject.addStatement("super.inject(target, finder)");
+        }
         
-        return inject.build();
-    }
-    
-    private MethodSpec buildBindViewMethod() {
-        // @SuppressWarnings({ "rawtypes", "unchecked" })
-        // public void bindView(ViewFinder<?> finder)
-        MethodSpec.Builder bindView = MethodSpec.methodBuilder("bindView")
-                .addAnnotation(Override.class)
-                .addAnnotation(AnnotationSpec.builder(SuppressWarnings.class)
-                        .addMember("value", "{ \"rawtypes\", \"unchecked\" }")
-                        .build())
-                .addModifiers(Modifier.PUBLIC)
-                .addParameter(ViewFinder.class, "finder");
-        
-        for (InjectViewAnnotation field : injectViewFields)
+        for (InjectViewAnnotation field : injectViewFields.values())
         {
             // target.hello = (TextView) finder.findViewById(target, R.id.hello);
-            bindView.addStatement("target.$N = ($T) finder.findViewById(target, $L)", 
+            inject.addStatement("target.$N = ($T) finder.findViewById(target, $L)", 
                     field.getFieldName(), field.getFieldType(), field.getViewId());
         }
+        
+        if (onClickMethods.isEmpty())
+        {
+            return inject.build();
+        }
+        
+        /*
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity$$Injector.this.onClick(target, v);
+            }
+        };
+        */
+        StringBuilder onClickListener = new StringBuilder()
+                .append("$T onClickListener = new $T() {").append("\n")
+                .append("@Override").append("\n")
+                .append("public void onClick(View v) {").append("\n")
+                .append("$N.this.onClick(target, v);").append("\n")
+                .append("}").append("\n")
+                .append("}");
+        inject.addStatement(onClickListener.toString(), OnClickListener, OnClickListener, getInjectorName(classElement));
         
         for (OnClickAnnotation method : onClickMethods)
         {
             for (int viewId : method.getViewIds())
             {
-                InjectViewAnnotation injectView = InjectViewAnnotation.findByViewId(viewId);
+                InjectViewAnnotation injectView = findByViewId(viewId);
                 if (injectView != null)
                 {
-                    // target.hello.setOnClickListener(this);
-                    bindView.addStatement("target.$N.setOnClickListener(this)", injectView.getFieldName());
+                    // target.hello.setOnClickListener(onClickListener);
+                    inject.addStatement("target.$N.setOnClickListener(onClickListener)", injectView.getFieldName());
                 }
                 else
                 {
-                    // ((View) finder.findViewById(target, R.id.hello)).setOnClickListener(this);
-                    bindView.addStatement("((View) finder.findViewById(target, $L)).setOnClickListener(this)", 
+                    // ((View) finder.findViewById(target, R.id.hello)).setOnClickListener(onClickListener);
+                    inject.addStatement("((View) finder.findViewById(target, $L)).setOnClickListener(onClickListener)", 
                             viewId);
                 }
             }
         }
         
-        return bindView.build();
-    }
-    
-    private MethodSpec buildOnClickMethod() {
-        // public void onClick(View v)
-        MethodSpec.Builder onClick = MethodSpec.methodBuilder("onClick")
-                .addAnnotation(Override.class)
-                .addModifiers(Modifier.PUBLIC)
-                .addParameter(View, "v");
-        
-        // switch (v.getId())
-        onClick.beginControlFlow("switch (v.getId())");
-        
-        for (OnClickAnnotation method : onClickMethods)
-        {
-            StringBuilder caseSb = new StringBuilder();
-            for (int viewId : method.getViewIds())
-            {
-                // case R.id.hello:
-                caseSb.append("case ").append(viewId).append(":\n");
-            }
-            
-            // target.hello();
-            // break;
-            onClick.addStatement(caseSb + "target.$N();\nbreak", method.getMethodName());
-        }
-        
-        onClick.endControlFlow();
-        
-        return onClick.build();
+        return inject.build();
     }
     
     private MethodSpec buildBindDialogMethod() {
-        // public void onRestoreDialogShowing(String name)
+        // public void onRestoreDialogShowing(T target, String name)
         MethodSpec.Builder onRestoreDialogShowing = MethodSpec.methodBuilder("onRestoreDialogShowing")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
+                .addParameter(getVariableTypeName(), "target")
                 .addParameter(String.class, "name");
+        
+        if (superClassElement != null)
+        {
+            // super.onRestoreDialogShowing(target, name);
+            onRestoreDialogShowing.addStatement("super.onRestoreDialogShowing(target, name)");
+        }
+        
+        if (bindDialogMethods.isEmpty())
+        {
+            return onRestoreDialogShowing.build();
+        }
         
         boolean first = true;
         for (BindDialogAnnotation method : bindDialogMethods)
@@ -193,20 +206,31 @@ public class AnnotatedClass implements AnnotationConst {
             // target.showHelloDialog();
             onRestoreDialogShowing.addStatement("target.$N()", method.getMethodName());
         }
-        
-        if (!first)
-            onRestoreDialogShowing.endControlFlow();
+
+        onRestoreDialogShowing.endControlFlow();
         
         return onRestoreDialogShowing.build();
     }
     
     private MethodSpec buildSaveStateMethod() {
-        // public stash(boolean saveOrRestore, Map<String, Object> savedMap)
+        // public stash(T target, boolean saveOrRestore, Map<String, Object> savedMap)
         MethodSpec.Builder stash = MethodSpec.methodBuilder("stash")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
+                .addParameter(getVariableTypeName(), "target")
                 .addParameter(boolean.class, "saveOrRestore")
                 .addParameter(ParameterizedTypeName.get(Map.class, String.class, Object.class), "savedMap");
+        
+        if (superClassElement != null)
+        {
+            // super.stash(target, saveOrRestore, savedMap);
+            stash.addStatement("super.stash(target, saveOrRestore, savedMap)");
+        }
+        
+        if (savedStateFields.isEmpty())
+        {
+            return stash.build();
+        }
         
         // if (saveOrRestore)
         stash.beginControlFlow("if (saveOrRestore)");
@@ -232,11 +256,68 @@ public class AnnotatedClass implements AnnotationConst {
         return stash.build();
     }
     
+    private MethodSpec buildOnClickMethod() {
+        // void onClick(T target, View v)
+        MethodSpec.Builder onClick = MethodSpec.methodBuilder("onClick")
+                .addParameter(getVariableTypeName(), "target")
+                .addParameter(View, "v");
+        
+        // switch (v.getId())
+        onClick.beginControlFlow("switch (v.getId())");
+        
+        for (OnClickAnnotation method : onClickMethods)
+        {
+            StringBuilder caseSb = new StringBuilder();
+            for (int viewId : method.getViewIds())
+            {
+                // case R.id.hello:
+                caseSb.append("case ").append(viewId).append(":\n");
+            }
+            
+            // target.hello();
+            // break;
+            onClick.addStatement(caseSb + "target.$N();\nbreak", method.getMethodName());
+        }
+        
+        onClick.endControlFlow();
+        
+        return onClick.build();
+    }
+
     public TypeElement getClassElement() {
         return classElement;
     }
     
     public String getFullClassName() {
         return classElement.getQualifiedName().toString();
+    }
+    
+    private TypeName getClassTypeName() {
+        return TypeName.get(classElement.asType());
+    }
+    
+    /**
+     * 获取类元素的包名
+     */
+    private String getPackageName(TypeElement classElement) {
+        return elementUtils.getPackageOf(classElement).getQualifiedName().toString();
+    }
+    
+    /**
+     * 获取注入类的名称
+     */
+    private String getInjectorName(TypeElement classElement) {
+        return classElement.getSimpleName() + IInjector.INJECTOR_SUFFIX;
+    }
+    
+    /**
+     * 获取泛型名
+     */
+    private TypeVariableName getVariableTypeName() {
+        return TypeVariableName.get("T");
+    }
+    
+    private InjectViewAnnotation findByViewId(int viewId) {
+        return injectViewFields.get(viewId);
     }
 }

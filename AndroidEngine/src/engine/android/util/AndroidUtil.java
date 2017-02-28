@@ -33,11 +33,14 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import engine.android.util.file.FileManager;
+import engine.android.util.file.FileUtils;
 import engine.android.util.io.IOUtil;
 import engine.android.util.manager.SDCardManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.security.cert.Certificate;
@@ -370,6 +373,24 @@ public final class AndroidUtil {
         }
 
         return list;
+    }
+    
+    /**
+     * 导出应用程序安装包
+     * 
+     * @param destDir 导出目录
+     */
+    public static boolean exportApp(Context context, File destDir) throws Exception {
+        String apk = context.getPackageCodePath();
+        String fileName = FileManager.getFileName(apk);
+        File destFile = new File(destDir, fileName);
+        
+        FileInputStream fis = new FileInputStream(apk);
+        try {
+            return FileUtils.copyToFile(fis, destFile);
+        } finally {
+            fis.close();
+        }
     }
 
     /**

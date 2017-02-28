@@ -8,6 +8,7 @@ import engine.android.util.file.FileManager;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -241,7 +242,7 @@ public final class Util {
     public static String toString(Object obj) {
         if (obj == null)
         {
-            return "null";
+            return "Null";
         }
 
         try {
@@ -250,8 +251,13 @@ public final class Util {
             {
                 for (Field field : c.getDeclaredFields())
                 {
+                    if (Modifier.isStatic(field.getModifiers()))
+                    {
+                        continue;
+                    }
+                    
                     field.setAccessible(true);
-                    sb.append("\n").append(field.getName()).append(":").append(field.get(obj));
+                    sb.append(",").append(field.getName()).append("=").append(field.get(obj));
                 }
             }
 

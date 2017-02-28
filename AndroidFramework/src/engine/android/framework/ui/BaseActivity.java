@@ -1,16 +1,18 @@
 package engine.android.framework.ui;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 
-import engine.android.framework.R;
-import engine.android.widget.TitleBar;
-
 import java.util.LinkedList;
+
+import engine.android.framework.R;
+import engine.android.framework.ui.extra.SinglePaneActivity;
+import engine.android.widget.TitleBar;
 
 public class BaseActivity extends NetworkActivity {
     
@@ -125,5 +127,12 @@ public class BaseActivity extends NetworkActivity {
     
     protected final void goBack() {
         super.onBackPressed();
+    }
+    
+    /**
+     * Provide a convenient way to start fragment wrapped in {@link SinglePaneActivity}.
+     */
+    public void startFragment(Class<? extends Fragment> fragmentCls) {
+        startActivity(SinglePaneActivity.buildIntent(this, fragmentCls, null));
     }
 }

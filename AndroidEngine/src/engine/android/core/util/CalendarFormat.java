@@ -267,21 +267,6 @@ public final class CalendarFormat {
     }
 
     private static String format(Date date, String pattern) {
-        StringBuilder sb = new StringBuilder(pattern + PATTERN_INVALID);
-        int index = 0;
-        while ((index = sb.indexOf("%", index)) >= 0)
-        {
-            if (sb.charAt(index + 1) != 't')
-            {
-                sb.deleteCharAt(index);
-            }
-            else
-            {
-                index++;
-            }
-        }
-
-        pattern = sb.toString().trim();
         if (pattern.contains("%t"))
         {
             int size = 0;

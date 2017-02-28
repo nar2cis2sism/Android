@@ -261,6 +261,15 @@ public final class FileManager {
             return file.length();
         }
     }
+    
+    /**
+     * 获取文件名称
+     * 
+     * @param path 文件所在路径
+     */
+    public static String getFileName(String path) {
+        return path.substring(path.lastIndexOf(File.separator) + 1, path.length());
+    }
 
     /**
      * 根据文件名搜索文件

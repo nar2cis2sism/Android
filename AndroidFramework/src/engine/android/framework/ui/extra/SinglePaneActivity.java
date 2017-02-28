@@ -61,7 +61,7 @@ public class SinglePaneActivity extends BaseActivity {
      * @param fragmentCls Fragment类名
      * @param args Fragment参数
      */
-    public static final Intent buildIntent(Context context, Class<?> fragmentCls, 
+    public static final Intent buildIntent(Context context, Class<? extends Fragment> fragmentCls, 
             Bundle args) {
         Intent intent = new Intent(context, SinglePaneActivity.class)
         .putExtra(EXTRA_FRAGMENT_CLASS_NAME, fragmentCls.getName());

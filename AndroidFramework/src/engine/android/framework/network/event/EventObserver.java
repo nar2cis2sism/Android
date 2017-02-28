@@ -1,10 +1,10 @@
-package engine.android.framework.net.event;
+package engine.android.framework.network.event;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import engine.android.util.Singleton;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 网络事件监听
@@ -13,7 +13,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class EventObserver {
     
-    private static final Singleton<EventObserver> instance = new Singleton<EventObserver>() {
+    private static final Singleton<EventObserver> instance
+    = new Singleton<EventObserver>() {
         
         @Override
         protected EventObserver create() {
@@ -28,15 +29,15 @@ public class EventObserver {
     /******************************* 华丽丽的分割线 *******************************/
     
     private final HashMap<String, CopyOnWriteArrayList<EventHandler>> observersByAction;
-    private final HashMap<EventHandler, ArrayList<String>> actionsByObserver;
+    private final HashMap<EventHandler, LinkedList<String>> actionsByObserver;
     
     /**
      * Creates a new EventObserver instance; each instance is a separate scope in which events are delivered. 
-     * To use a central bus, consider {@link #getDefault()}.
+     * To use a central observer, consider {@link #getDefault()}.
      */
     public EventObserver() {
         observersByAction = new HashMap<String, CopyOnWriteArrayList<EventHandler>>();
-        actionsByObserver = new HashMap<EventHandler, ArrayList<String>>();
+        actionsByObserver = new HashMap<EventHandler, LinkedList<String>>();
     }
     
     /**
@@ -54,10 +55,10 @@ public class EventObserver {
         
         observers.add(subscriber);
         
-        ArrayList<String> actions = actionsByObserver.get(subscriber);
+        LinkedList<String> actions = actionsByObserver.get(subscriber);
         if (actions == null)
         {
-            actions = new ArrayList<String>();
+            actions = new LinkedList<String>();
             actionsByObserver.put(subscriber, actions);
         }
         
@@ -68,7 +69,7 @@ public class EventObserver {
      * Unregisters the given subscriber from all events.
      */
     public void unregister(EventHandler subscriber) {
-        ArrayList<String> actions = actionsByObserver.remove(subscriber);
+        LinkedList<String> actions = actionsByObserver.remove(subscriber);
         if (actions == null)
         {
             return;

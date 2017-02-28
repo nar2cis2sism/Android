@@ -57,6 +57,7 @@ public class SinglePaneActivity extends BaseActivity {
 
     /**
      * 通过此方法构造出Intent才能启动
+     * 
      * @param fragmentCls Fragment类名
      * @param args Fragment参数
      */

@@ -2,9 +2,10 @@ package engine.android.framework.ui;
 
 import android.app.Activity;
 
-import engine.android.framework.net.event.Event;
-import engine.android.framework.net.event.EventHandler;
-import engine.android.framework.net.event.EventObserver;
+import engine.android.framework.network.event.Event;
+import engine.android.framework.network.event.EventCallback;
+import engine.android.framework.network.event.EventHandler;
+import engine.android.framework.network.event.EventObserver;
 import engine.android.widget.TitleBar;
 
 public abstract class BaseFragment extends engine.android.core.BaseFragment implements EventHandler {
@@ -53,7 +54,7 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
 
     @Override
     public void handleEvent(final Event event) {
-        getBaseActivity().runOnUiThread(new Runnable() {
+        getView().post(new Runnable() {
             
             @Override
             public void run() {
@@ -62,14 +63,23 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
         });
     }
     
-    protected void onReceive(String action, int status, Object param) {
-        if (getBaseActivity().isReceiveSuccess(status, param))
+    private void onReceive(String action, int status, Object param) {
+        if (status == EventCallback.SUCCESS)
         {
             onReceiveSuccess(action, param);
+        }
+        else
+        {
+            onReceiveFailure(action, status, param);
         }
     }
     
     protected void onReceiveSuccess(String action, Object param) {}
+    
+    protected void onReceiveFailure(String action, int status, Object param) {
+        baseActivity.hideProgress();
+        baseActivity.showErrorDialog(param);
+    }
     
     @Override
     public void onDestroy() {

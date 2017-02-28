@@ -4,34 +4,37 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.widget.Toast;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import engine.android.core.Forelet;
-import engine.android.framework.MyConfiguration.MyConfiguration_NET;
 import engine.android.framework.R;
-import engine.android.framework.net.MyNetManager;
-import engine.android.framework.net.event.Event;
-import engine.android.framework.net.event.EventCallback;
-import engine.android.framework.net.event.EventHandler;
-import engine.android.framework.net.event.EventObserver;
-import engine.android.framework.net.http.MyHttpManager.HttpBuilder;
+import engine.android.framework.app.App;
+import engine.android.framework.app.AppConfig;
+import engine.android.framework.network.event.Event;
+import engine.android.framework.network.event.EventCallback;
+import engine.android.framework.network.event.EventHandler;
+import engine.android.framework.network.event.EventObserver;
+import engine.android.framework.network.http.HttpManager.HttpBuilder;
 import engine.android.http.HttpConnector;
 import engine.android.util.Util;
-
-import java.util.concurrent.Executor;
 
 /**
  * 网络事件封装
  * 
  * @author Daimon
  */
-public class BaseNetActivity extends Forelet implements EventHandler {
+class NetworkActivity extends Forelet implements EventHandler {
+    
+    private static final AppConfig CONFIG = App.getConfig();
     
     /**
      * 检查网络状态
      * 
      * @param showTip 网络不可用时是否提示用户
      */
-    public boolean checkNetStatus(boolean showTip) {
-        if (MyConfiguration_NET.NET_OFF)
+    public boolean checkNetworkStatus(boolean showTip) {
+        if (CONFIG.isOffline())
         {
             return true;
         }
@@ -43,27 +46,23 @@ public class BaseNetActivity extends Forelet implements EventHandler {
         
         if (showTip)
         {
-            Toast.makeText(this, R.string.net_is_not_accessible, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.connection_status_disconnected, Toast.LENGTH_SHORT).show();
         }
         
         return false;
     }
     
     public void sendHttpRequest(HttpBuilder builder) {
-        executeTask(new HttpTask(builder));
-    }
-    
-    public void sendHttpRequest(HttpBuilder builder, long delay) {
-        executeTask(new HttpTask(builder), delay);
+        executeTask(new HttpTask(builder), false);
     }
 
     private static class HttpTask extends Task {
         
         private static final Executor exec
-        = MyNetManager.getHttpManager().getThreadPool();
+        = CONFIG.getHttpThreadPool();
 
         public HttpTask(HttpBuilder builder) {
-            super(new HttpTaskExecutor(builder), null);
+            super(new HttpTaskExecutor(builder));
         }
 
         @Override
@@ -75,7 +74,7 @@ public class BaseNetActivity extends Forelet implements EventHandler {
             
             private final HttpBuilder builder;
             
-            private volatile boolean isCancelled;
+            private final AtomicBoolean isCancelled = new AtomicBoolean();
             
             private HttpConnector conn;
             
@@ -85,13 +84,15 @@ public class BaseNetActivity extends Forelet implements EventHandler {
 
             @Override
             public Object doExecute() {
-                synchronized (builder) {
-                    if (isCancelled)
-                    {
-                        return null;
-                    }
-                    
-                    conn = builder.buildHttpConnector();
+                if (isCancelled.get())
+                {
+                    return null;
+                }
+                
+                conn = builder.buildHttpConnector();
+                if (isCancelled.get())
+                {
+                    return null;
                 }
                 
                 try {
@@ -103,15 +104,9 @@ public class BaseNetActivity extends Forelet implements EventHandler {
 
             @Override
             public void cancel() {
-                synchronized (builder) {
-                    if (conn != null)
-                    {
-                        conn.cancel();
-                    }
-                    else
-                    {
-                        isCancelled = true;
-                    }
+                if (isCancelled.compareAndSet(false, true) && conn != null)
+                {
+                    conn.cancel();
                 }
             }
         }
@@ -135,18 +130,33 @@ public class BaseNetActivity extends Forelet implements EventHandler {
     }
 
     @Override
-    public void handleEvent(Event event) {
-        onReceive(event.action, event.status, event.param);
+    public void handleEvent(final Event event) {
+        runOnUiThread(new Runnable() {
+            
+            @Override
+            public void run() {
+                onReceive(event.action, event.status, event.param);
+            }
+        });
     }
     
-    protected void onReceive(String action, int status, Object param) {
-        if (isReceiveSuccess(status, param))
+    private void onReceive(String action, int status, Object param) {
+        if (status == EventCallback.SUCCESS)
         {
             onReceiveSuccess(action, param);
+        }
+        else
+        {
+            onReceiveFailure(action, status, param);
         }
     }
     
     protected void onReceiveSuccess(String action, Object param) {}
+    
+    protected void onReceiveFailure(String action, int status, Object param) {
+        hideProgress();
+        showErrorDialog(param);
+    }
     
     @Override
     protected void onDestroy() {
@@ -156,20 +166,6 @@ public class BaseNetActivity extends Forelet implements EventHandler {
         }
         
         super.onDestroy();
-    }
-    
-    /**
-     * 供子类调用（已做错误处理）
-     */
-    protected boolean isReceiveSuccess(int status, Object param) {
-        if (status == EventCallback.SUCCESS)
-        {
-            return true;
-        }
-        
-        hideProgress();
-        showErrorDialog(param);
-        return false;
     }
 
     protected void showErrorDialog(Object error) {

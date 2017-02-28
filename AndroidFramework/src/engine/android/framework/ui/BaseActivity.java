@@ -12,7 +12,7 @@ import engine.android.widget.TitleBar;
 
 import java.util.LinkedList;
 
-public class BaseActivity extends BaseNetActivity {
+public class BaseActivity extends NetworkActivity {
     
     private LinearLayout root;
     

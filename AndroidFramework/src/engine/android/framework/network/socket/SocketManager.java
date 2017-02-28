@@ -1,18 +1,26 @@
-package engine.android.framework.net.socket;
+package engine.android.framework.network.socket;
 
 import static engine.android.core.util.LogFactory.LOG.log;
 
 import android.content.Context;
 import android.util.SparseArray;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import engine.android.core.ApplicationManager;
-import engine.android.core.util.LogFactory.LogUtil;
-import engine.android.framework.MyConfiguration.MyConfiguration_NET;
-import engine.android.framework.MyConfiguration.MyConfiguration_SOCKET;
-import engine.android.framework.net.MyNetManager;
-import engine.android.framework.net.event.Event;
-import engine.android.framework.net.event.EventCallback;
-import engine.android.framework.net.event.EventObserver;
+import engine.android.framework.app.AppConfig;
+import engine.android.framework.app.AppGlobal;
+import engine.android.framework.network.ConnectionInterceptor;
+import engine.android.framework.network.event.Event;
+import engine.android.framework.network.event.EventCallback;
+import engine.android.framework.network.event.EventObserver;
 import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.socket.SocketConnectionListener;
@@ -20,7 +28,6 @@ import engine.android.socket.SocketConnector;
 import engine.android.socket.SocketConnector.SocketData;
 import engine.android.socket.SocketConnector.SocketReceiver;
 import engine.android.socket.util.CRCUtility;
-import engine.android.util.MyThreadFactory;
 import engine.android.util.Util;
 import engine.android.util.file.FileManager;
 import engine.android.util.manager.SDCardManager;
@@ -30,36 +37,16 @@ import protocol.java.ProtocolWrapper;
 import protocol.java.ProtocolWrapper.ProtocolEntity;
 import protocol.java.ProtocolWrapper.ProtocolEntity.ProtocolData;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.net.SocketException;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
- * 统一由{@link MyNetManager}管理，无需自己构造实例
+ * Socket连接管理器<p>
  * 
  * @author Daimon
  */
-public class MySocketManager implements 
-MyConfiguration_NET,
-MyConfiguration_SOCKET, 
-SocketConnectionListener, 
-SocketReceiver, 
-EventCallback {
-    
-    private static final int MAX_SOCKET_CONNECTION
-    = Math.max(3, Runtime.getRuntime().availableProcessors() - 1);
-    
+public class SocketManager implements SocketConnectionListener, SocketReceiver, EventCallback {
+
     private final Context context;
-    
-    private final ThreadPoolExecutor socketThreadPool;
+
+    private final AppConfig config;
     
     private SocketConnector socket;
     
@@ -68,25 +55,13 @@ EventCallback {
     private final SparseArray<SocketResponse> pendingDatas
     = new SparseArray<SocketResponse>();
     
-    public MySocketManager(Context context) {
-        this.context = context.getApplicationContext();
-        
-        socketThreadPool = new ThreadPoolExecutor(
-                MAX_SOCKET_CONNECTION, 
-                MAX_SOCKET_CONNECTION,
-                60L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(), 
-                new MyThreadFactory("Socket请求"));
-        socketThreadPool.allowCoreThreadTimeOut(true);
-    }
-    
-    public ThreadPoolExecutor getThreadPool() {
-        return socketThreadPool;
+    public SocketManager(Context context) {
+        config = AppGlobal.getConfig(this.context = context.getApplicationContext());
     }
 
     public void setup(String address, String token) {
         String host = HttpConnector.getHost(address);
-        int port = 8080;
+        int port = 80;
         
         int index = host.indexOf(":");
         if (index > -1)
@@ -104,7 +79,7 @@ EventCallback {
             socket.close();
         }
         
-        socket = new SocketConnector(host, port, SOCKET_TIMEOUT, true) {
+        socket = new SocketConnector(host, port, config.getSocketTimeout(), true) {
             
             @Override
             protected void handshake(InputStream in, OutputStream out) throws IOException {
@@ -146,16 +121,27 @@ EventCallback {
         socket.setProxy(context);
         socket.setListener(this);
         socket.setReceiver(this);
-//        if (NET_OFF)
-//        {
-//            socket.setServlet(new MySocketServletImpl());
-//        }
+        if (config.isOffline())
+        {
+            socket.setServlet(config.getSocketServlet());
+        }
         
         socket.connect();
     }
     
     public boolean isSocketConnected() {
         return isSocketConnected;
+    }
+
+    @Override
+    public Object parseData(InputStream in) throws IOException {
+        ProtocolEntity entity = ProtocolWrapper.parse(in);
+        if (entity == null)
+        {
+            throw new IOException("read bytes is -1.");
+        }
+        
+        return entity;
     }
 
     @Override
@@ -178,7 +164,7 @@ EventCallback {
         ProtocolEntity entity = (ProtocolEntity) data;
         log("收到socket信令包", entity);
         
-        socketThreadPool.execute(new SocketParser(entity));
+        config.getSocketThreadPool().execute(new SocketParser(entity));
     }
 
     @Override
@@ -193,17 +179,6 @@ EventCallback {
         log("Socket连接已断开");
     }
 
-    @Override
-    public Object parseData(InputStream in) throws IOException {
-        ProtocolEntity entity = ProtocolWrapper.parse(in);
-        if (entity == null)
-        {
-            throw new IOException("read bytes is -1.");
-        }
-        
-        return entity;
-    }
-    
     private class SocketParser implements Runnable {
         
         private final ProtocolEntity entity;
@@ -224,13 +199,13 @@ EventCallback {
         }
     }
 
-    public void receive(int cmd, int msgId, ProtocolData data) {
-        if (NET_LOG_PROTOCOL)
+    private void receive(int cmd, int msgId, ProtocolData data) {
+        if (config.isLogProtocol())
         {
-            log(data.getClass().getSimpleName() + GsonUtil.toJson(data));
+            log(data.getClass().getSimpleName(), "服务器返回--" + GsonUtil.toJson(data));
         }
         
-        if (ApplicationManager.isDebuggable() && !NET_OFF)
+        if (ApplicationManager.isDebuggable() && !config.isOffline())
         {
             exportProtocolToFile(data);
         }
@@ -314,8 +289,20 @@ EventCallback {
         boolean response(ProtocolData data, EventCallback callback);
     }
     
-    public void sendSocketRequest(SocketRequest request, 
-            SocketResponse response) {
+    @Override
+    public void call(String action, int status, Object param) {
+        log(action + "|" + status + "|" + param);
+        
+        ConnectionInterceptor interceptor = config.getSocketInterceptor();
+        if (interceptor != null && interceptor.intercept(action, status, param))
+        {
+            return;
+        }
+    
+        EventObserver.getDefault().post(new Event(action, status, param));
+    }
+
+    public void sendSocketRequest(SocketRequest request, SocketResponse response) {
         int msgId = request.getMsgId();
         if (pendingDatas.indexOfKey(msgId) < 0)
         {
@@ -333,22 +320,11 @@ EventCallback {
             socket.cancel(request);
         }
     }
-    
-    @Override
-    public void call(String action, int status, Object param) {
-        log(action + "|" + status + "|" + param);
-        EventObserver.getDefault().post(new Event(action, status, param));
-        
-//        if (!interceptor.intercept(action, status, param))
-//        {
-//            EventBus.getDefault().post(new Event(action, status, param));
-//        }
-    }
 
     public SocketRequest buildSocketRequest(ProtocolData data) {
-        if (NET_LOG_PROTOCOL)
+        if (config.isLogProtocol())
         {
-            log(LogUtil.getCallerStackFrame(), GsonUtil.toJson(data));
+            log(data.getClass().getSimpleName(), "发送请求--" + GsonUtil.toJson(data));
         }
         
         return new SocketRequest(data);
@@ -356,7 +332,7 @@ EventCallback {
     
     public void sendSocketRequestAsync(final SocketRequest request, 
             final SocketResponse response) {
-        socketThreadPool.execute(new Runnable() {
+        config.getSocketThreadPool().execute(new Runnable() {
             
             @Override
             public void run() {

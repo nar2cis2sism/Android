@@ -1,4 +1,4 @@
-package engine.android.framework;
+package engine.android.framework.app;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -14,7 +14,7 @@ import engine.android.core.ApplicationManager;
  * 
  * @author Daimon
  */
-public class MyContext {
+public class AppContext {
 
     private static final Context context
     = ApplicationManager.getApplicationManager();

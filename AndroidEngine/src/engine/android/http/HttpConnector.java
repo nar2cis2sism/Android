@@ -53,8 +53,6 @@ public class HttpConnector {
 
     private int timeout;                                           // 超时时间（毫秒）
 
-    private String remark;                                         // 备注（用于日志查询）
-
     private long time;                                             // 时间（用于调试）
 
     private final AtomicBoolean isConnected = new AtomicBoolean(); // 网络是否连接完成
@@ -192,14 +190,6 @@ public class HttpConnector {
         return this;
     }
 
-    /**
-     * 设置备注提示（输出信息到日志）
-     */
-    public HttpConnector setRemark(String remark) {
-        this.remark = remark;
-        return this;
-    }
-
     public Object getTag() {
         return tag;
     }
@@ -234,9 +224,8 @@ public class HttpConnector {
             HttpResponse response = doConnect(r);
             if (!isCancelled())
             {
-                if (remark != null)
-                    log(String.format("服务器[%s]响应时间--%dms", 
-                            conn.getURL(), System.currentTimeMillis() - time));
+                log(String.format("服务器[%s]响应时间--%dms", 
+                        conn.getURL(), System.currentTimeMillis() - time));
                 
                 if (listener != null)
                 {
@@ -248,8 +237,7 @@ public class HttpConnector {
         } catch (Exception e) {
             if (!isCancelled())
             {
-                if (remark != null)
-                    log(new Exception("网络异常", e));
+                log(e);
                 
                 if (listener != null)
                 {
@@ -274,14 +262,12 @@ public class HttpConnector {
         
         lock.lock();
         try {
-            if (remark != null)
-                log("联网请求：" + request.getUrl());
+            log("联网请求：" + request.getUrl());
             
             URL href = new URL(url);
             if (proxy != null)
             {
-                if (remark != null)
-                    log("使用代理网关：" + proxy);
+                log("使用代理网关：" + proxy);
                 conn = (HttpURLConnection) href.openConnection(proxy);
             }
             else
@@ -348,7 +334,7 @@ public class HttpConnector {
         {
             close();
 
-            if (!isConnected.get() && remark != null)
+            if (!isConnected.get())
                 log("取消网络连接：" + request.getUrl());
         }
     }
@@ -384,7 +370,7 @@ public class HttpConnector {
      * 日志输出
      */
     private void log(Object message) {
-        LOG.log(remark, message);
+        LOG.log(name, message);
     }
 
     /**

@@ -13,12 +13,11 @@ import android.widget.CursorAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import engine.android.core.BaseFragment;
+import java.util.Collection;
+
 import engine.android.core.extra.JavaBeanAdapter;
 import engine.android.core.extra.JavaBeanLoader;
 import engine.android.framework.R;
-
-import java.util.Collection;
 
 public class BaseListFragment extends BaseFragment {
     
@@ -53,8 +52,8 @@ public class BaseListFragment extends BaseFragment {
      */
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
         ensureList();
+        super.onViewCreated(view, savedInstanceState);
     }
 
     /**
@@ -275,10 +274,13 @@ public class BaseListFragment extends BaseFragment {
 
     protected void notifyDataSetInvalidated() {}
     
-    private abstract class ListDataLoader<D> extends DataLoader<D> {
+    private abstract class ListDataLoader<D, A extends ListAdapter> extends DataLoader<D> {
         
-        public ListDataLoader(ListAdapter adapter, Loader<D> loader) {
+        protected final A adapter;
+        
+        public ListDataLoader(A adapter, Loader<D> loader) {
             super(loader);
+            this.adapter = adapter;
         }
 
         @Override
@@ -310,13 +312,10 @@ public class BaseListFragment extends BaseFragment {
         protected abstract void clearData();
     }
     
-    public class DataSetLoader<D> extends ListDataLoader<Collection<D>> {
+    public class DataSetLoader<D> extends ListDataLoader<Collection<D>, JavaBeanAdapter<D>> {
         
-        private final JavaBeanAdapter<D> adapter;
-
         public DataSetLoader(JavaBeanAdapter<D> adapter, JavaBeanLoader<D> loader) {
             super(adapter, loader);
-            this.adapter = adapter;
         }
 
         @Override
@@ -330,13 +329,10 @@ public class BaseListFragment extends BaseFragment {
         }
     }
     
-    public class CursorDataLoader extends ListDataLoader<Cursor> {
-        
-        private final CursorAdapter adapter;
+    public class CursorDataLoader extends ListDataLoader<Cursor, CursorAdapter> {
         
         public CursorDataLoader(CursorAdapter adapter, Loader<Cursor> loader) {
             super(adapter, loader);
-            this.adapter = adapter;
         }
 
         @Override

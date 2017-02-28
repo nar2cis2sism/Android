@@ -199,6 +199,37 @@ public abstract class BaseFragment extends Fragment {
         }
     }
     
+    /**
+     * 数据加载器
+     */
+    public abstract class DataLoader<D> implements LoaderCallbacks<D> {
+    
+        private final int LOADER_ID = hashCode();
+        
+        private final Loader<D> loader;
+        
+        public DataLoader(Loader<D> loader) {
+            this.loader = loader;
+        }
+    
+        @Override
+        public Loader<D> onCreateLoader(int id, Bundle args) {
+            return loader;
+        }
+        
+        void init() {
+            getLoaderManager().initLoader(LOADER_ID, null, this);
+        }
+        
+        void destroy() {
+            getLoaderManager().destroyLoader(LOADER_ID);
+        }
+    
+        void loadData() {
+            loader.onContentChanged();
+        }
+    }
+
     private DataLoader<?> loader;
     
     /**
@@ -212,42 +243,10 @@ public abstract class BaseFragment extends Fragment {
      * 刷新数据（通知数据加载器更新数据）
      */
     public void refresh() {
-        if (loader != null)
+        if (isAdded() && loader != null)
+        {
+            // Tell the loader about the change.
             loader.loadData();
-    }
-    
-    /**
-     * 数据加载器
-     */
-    public abstract class DataLoader<D> implements LoaderCallbacks<D> {
-
-        private final int LOADER_ID = hashCode();
-        
-        private final Loader<D> loader;
-        
-        public DataLoader(Loader<D> loader) {
-            this.loader = loader;
-        }
-
-        @Override
-        public Loader<D> onCreateLoader(int id, Bundle args) {
-            return loader;
-        }
-        
-        void init() {
-            getLoaderManager().initLoader(LOADER_ID, null, this);
-        }
-        
-        void destroy() {
-            getLoaderManager().destroyLoader(LOADER_ID);
-        }
-
-        void loadData() {
-            if (isAdded())
-            {
-                // Tell the loader about the change.
-                loader.onContentChanged();
-            }
         }
     }
 }

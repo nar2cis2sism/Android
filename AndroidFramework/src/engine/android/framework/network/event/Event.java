@@ -1,4 +1,4 @@
-package engine.android.framework.net.event;
+package engine.android.framework.network.event;
 
 /**
  * 网络事件传输

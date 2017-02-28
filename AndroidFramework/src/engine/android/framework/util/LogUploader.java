@@ -3,17 +3,15 @@ package engine.android.framework.util;
 import android.content.Context;
 import android.util.Log;
 
-import engine.android.core.util.CalendarFormat;
-import engine.android.core.util.LogFactory;
-import engine.android.framework.MyConfiguration.MyConfiguration_SHARED_PREFERENCES;
-import engine.android.framework.MyContext;
-import engine.android.framework.storage.MyDAOManager;
-import engine.android.util.ReflectObject;
-import engine.android.util.file.FileManager;
-import engine.android.util.manager.SDCardManager;
-
 import java.io.File;
 import java.util.Calendar;
+
+import engine.android.core.util.CalendarFormat;
+import engine.android.core.util.LogFactory;
+import engine.android.framework.app.App;
+import engine.android.framework.app.AppContext;
+import engine.android.util.file.FileManager;
+import engine.android.util.manager.SDCardManager;
 
 /**
  * 日志上传工具（上传到SD卡）
@@ -33,7 +31,7 @@ public class LogUploader {
      */
     public static void uploadLog() {
         LogFactory.flush();
-        new LogUploader(MyContext.getContext()).uploadLog(LogFactory.getLogDir());
+        new LogUploader(AppContext.getContext()).uploadLog(LogFactory.getLogDir());
     }
 
     public void uploadLog(File logDir) {
@@ -71,22 +69,22 @@ public class LogUploader {
     }
 
     private boolean uploadDatabase(File desDir) {
-        return MyDAOManager.getDAO().export(desDir);
+        return App.getDAOTemplate().export(desDir);
     }
 
     /**
      * /data/data/package/shared_prefs/name.xml
      */
     private boolean uploadSharedPreferences(File desDir) {
-        try {
-            ReflectObject context_ref = new ReflectObject(context);
-            File srcFile = (File) context_ref.invoke(
-                    context_ref.getMethod("getSharedPrefsFile", String.class),
-                    MyConfiguration_SHARED_PREFERENCES.SHARED_PREFERENCES_NAME);
-            return FileManager.copyTo(desDir, srcFile);
-        } catch (Exception e) {
-            Log.w("uploadSharedPreferences", "", e);
-        }
+//        try {
+//            ReflectObject context_ref = new ReflectObject(context);
+//            File srcFile = (File) context_ref.invoke(
+//                    context_ref.getMethod("getSharedPrefsFile", String.class),
+//                    MyConfiguration_SHARED_PREFERENCES.SHARED_PREFERENCES_NAME);
+//            return FileManager.copyTo(desDir, srcFile);
+//        } catch (Exception e) {
+//            Log.w("uploadSharedPreferences", "", e);
+//        }
 
         return false;
     }

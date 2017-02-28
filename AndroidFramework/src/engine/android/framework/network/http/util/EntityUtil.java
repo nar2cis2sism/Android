@@ -1,4 +1,6 @@
-package engine.android.framework.net.http.util;
+package engine.android.framework.network.http.util;
+
+import android.text.TextUtils;
 
 import engine.android.util.secure.Blowfish;
 
@@ -6,7 +8,7 @@ public class EntityUtil {
     
     private static final boolean encrypt = true;
     
-    private static Blowfish encryptor;
+    private static final Blowfish encryptor;
     
     static
     {
@@ -18,6 +20,9 @@ public class EntityUtil {
     }
     
     public static String toString(byte[] data) {
+        if (data == null)
+            return "";
+        
         if (encryptor != null)
             data = encryptor.decrypt(data);
         
@@ -25,6 +30,9 @@ public class EntityUtil {
     }
     
     public static byte[] toByteArray(String entity) {
+        if (TextUtils.isEmpty(entity))
+            return new byte[0];
+        
         byte[] data = entity.getBytes();
         if (encryptor != null)
             data = encryptor.encrypt(data);

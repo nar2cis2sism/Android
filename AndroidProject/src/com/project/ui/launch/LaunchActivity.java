@@ -1,5 +1,6 @@
 package com.project.ui.launch;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,12 +12,12 @@ import com.project.MySession;
 import com.project.R;
 import com.project.storage.MySharedPreferences;
 import com.project.ui.login.LoginFragment;
+import com.project.ui.main.MainActivity;
 
 import engine.android.core.extra.SplashScreen;
 import engine.android.core.extra.SplashScreen.SplashCallback;
 import engine.android.core.extra.SplashScreen.SplashLoading;
 import engine.android.framework.ui.BaseActivity;
-import engine.android.framework.ui.extra.SinglePaneActivity;
 
 /**
  * 启动界面
@@ -64,26 +65,23 @@ public class LaunchActivity extends BaseActivity implements SplashCallback, Spla
     public void onSplashFinished() {
         if (MySharedPreferences.getInstance().isGuideShown())
         {
-//            if (false)
-//            {
-//                // 有缓存
-//                startActivity(new Intent(this, MainActivity.class));
-//            }
-//            else
+            if (false)
             {
-                startActivity(SinglePaneActivity.buildIntent(
-                        this, LoginFragment.class, null));
+                // 有缓存
+                startActivity(new Intent(this, MainActivity.class));
+            }
+            else
+            {
+                startFragment(LoginFragment.class);
             }
         }
         else
         {
             // 显示引导页
-            startActivity(SinglePaneActivity.buildIntent(
-                    this, GuideFragment.class, null));
+            startFragment(GuideFragment.class);
         }
         
         finish();
-    
     }
 
     @Override

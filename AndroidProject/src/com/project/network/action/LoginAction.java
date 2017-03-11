@@ -1,21 +1,23 @@
-package com.project.http.builder;
+package com.project.network.action;
 
-import static engine.android.framework.net.MyNetManager.getHttpManager;
+import static engine.android.framework.app.App.getHttpManager;
 
-import com.project.MySession;
-import com.project.action.Actions;
-import com.project.http.json.MyHttpJsonParser;
-
-import engine.android.framework.MyConfiguration.MyConfiguration_HTTP;
-import engine.android.framework.net.MyNetManager;
-import engine.android.framework.net.event.EventCallback;
-import engine.android.framework.net.http.MyHttpManager.HttpBuilder;
-import engine.android.framework.util.GsonUtil;
-import engine.android.http.HttpConnector;
-import engine.android.util.secure.CryptoUtil;
-import engine.android.util.secure.HexUtil;
+import com.project.app.MyApp;
+import com.project.app.MySession;
+import com.project.network.Actions;
+import com.project.network.NetworkConfig;
+import com.project.network.http.HttpJsonParser;
 
 import org.json.JSONObject;
+
+import engine.android.framework.app.AppContext;
+import engine.android.framework.network.event.EventCallback;
+import engine.android.framework.network.http.HttpManager.HttpBuilder;
+import engine.android.framework.util.GsonUtil;
+import engine.android.http.HttpConnector;
+import engine.android.util.manager.MyTelephonyDevice;
+import engine.android.util.secure.CryptoUtil;
+import engine.android.util.secure.HexUtil;
 
 /**
  * 登录
@@ -30,25 +32,24 @@ public class LoginAction implements HttpBuilder {
     
     public final String password;          // 密码
     
-    public final String deviceID           // 设备唯一标识
-    = "";
+    public final String deviceID;          // 设备唯一标识
     
     public LoginAction(String username, String password) {
         this.username = username;
         this.password = HexUtil.encode(CryptoUtil.SHA1((password + "000").getBytes()));
+        deviceID = new MyTelephonyDevice(AppContext.getContext()).getDeviceId();
     }
 
     @Override
     public HttpConnector buildHttpConnector() {
         return getHttpManager().buildHttpConnector(
-                MyConfiguration_HTTP.HTTP_URL, 
+                NetworkConfig.HTTP_URL, 
                 action, 
                 GsonUtil.toJson(this), 
-                new Parser(action, getHttpManager()))
-                .setRemark("用户登录");
+                new Parser(action, getHttpManager()));
     }
     
-    private class Parser extends MyHttpJsonParser {
+    private class Parser extends HttpJsonParser {
 
         public Parser(String action, EventCallback callback) {
             super(action, callback);
@@ -60,14 +61,10 @@ public class LoginAction implements HttpBuilder {
             long uid = data.optLong("uid");
             String user_info_ver = data.optString("user_info_crc");
             
-            setupSocket(token);
+            // 启动socket连接
+            MyApp.getSocketManager().setup(MySession.getSocketAddress(), token);
             
             return super.process(data);
-        }
-        
-        private void setupSocket(String token) {
-            String address = MySession.getSocketAddress();
-            MyNetManager.getSocketManager().setup(address, token);
         }
     }
 }

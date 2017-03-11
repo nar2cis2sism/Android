@@ -1,4 +1,4 @@
-package com.project.bean;
+package com.project.app.bean;
 
 import org.json.JSONObject;
 

@@ -7,10 +7,10 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 
-import com.project.MyInitial;
-import com.project.MySession;
 import com.project.R;
-import com.project.storage.MySharedPreferences;
+import com.project.app.MyInitial;
+import com.project.app.MySession;
+import com.project.app.storage.MySharedPreferences;
 import com.project.ui.login.LoginFragment;
 import com.project.ui.main.MainActivity;
 
@@ -86,16 +86,12 @@ public class LaunchActivity extends BaseActivity implements SplashCallback, Spla
 
     @Override
     public void loadInBackground() {
-        MyInitial.init(this);
+        MyInitial.init();
     }
     
     @Override
     public void onBackPressed() {
-        if (splash != null)
-        {
-            splash.cancel();
-        }
-        
+        if (splash != null) splash.cancel();
         super.onBackPressed();
     }
 }

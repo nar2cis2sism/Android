@@ -4,17 +4,23 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewParent;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import engine.android.util.manager.MyKeyboardManager;
+import engine.android.util.manager.MyKeyboardManager.KeyboardListener;
 
 /**
  * UI工具库
@@ -147,7 +153,7 @@ public final class UIUtil {
     }
 
     /**
-     * 替换控件
+     * 替换控件（控件ID将会保持）
      */
     public static boolean replace(View src, View des, LayoutParams params) {
         final ViewParent viewParent = src.getParent();
@@ -204,5 +210,54 @@ public final class UIUtil {
         final InputMethodManager imm = (InputMethodManager) view.getContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+    
+    public static void adjustResize(ScrollView scrollView, View anchor) {
+        new AdjustResize(scrollView, anchor).adjustResize();
+    }
+    
+    private static class AdjustResize implements KeyboardListener, Runnable, OnClickListener {
+        
+        private final ScrollView scrollView;
+        private final View anchor;
+        
+        private int scrollY;
+        
+        public AdjustResize(ScrollView scrollView, View anchor) {
+            this.scrollView = scrollView;
+            this.anchor = anchor;
+        }
+        
+        public void adjustResize() {
+            ((Activity) scrollView.getContext()).getWindow()
+            .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            new MyKeyboardManager(scrollView).setKeyboardListener(this);
+            scrollView.getChildAt(0).setOnClickListener(this);
+        }
+
+        @Override
+        public void keyboardChanged(boolean isKeyboardShown) {
+            if (isKeyboardShown)
+            {
+                scrollView.post(this);
+            }
+        }
+
+        @Override
+        public void run() {
+            if (scrollY == 0)
+            {
+                int[] location = new int[2];
+                anchor.getLocationOnScreen(location);
+                scrollY = location[1];
+            }
+            
+            scrollView.scrollTo(0, scrollY);
+        }
+
+        @Override
+        public void onClick(View v) {
+            hideSoftInput(v);
+        }
     }
 }

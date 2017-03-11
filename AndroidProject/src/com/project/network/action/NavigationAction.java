@@ -1,21 +1,20 @@
-package com.project.http.builder;
+package com.project.network.action;
 
-import static engine.android.framework.net.MyNetManager.getHttpManager;
+import static engine.android.framework.app.App.getHttpManager;
 
-import com.project.MySession;
-import com.project.action.Actions;
-import com.project.http.json.MyHttpJsonParser;
-
-import engine.android.framework.MyConfiguration.MyConfiguration_HTTP;
-import engine.android.framework.MyContext;
-import engine.android.framework.net.event.EventCallback;
-import engine.android.framework.net.http.MyHttpManager.HttpBuilder;
-import engine.android.framework.util.GsonUtil;
-import engine.android.http.HttpConnector;
-import engine.android.util.AndroidUtil;
+import com.project.app.MySession;
+import com.project.network.Actions;
+import com.project.network.NetworkConfig;
+import com.project.network.http.HttpJsonParser;
 
 import org.json.JSONObject;
 
+import engine.android.framework.app.AppContext;
+import engine.android.framework.network.event.EventCallback;
+import engine.android.framework.network.http.HttpManager.HttpBuilder;
+import engine.android.framework.util.GsonUtil;
+import engine.android.http.HttpConnector;
+import engine.android.util.AndroidUtil;
 import protocol.java.json.AppUpgradeInfo;
 
 /**
@@ -36,19 +35,18 @@ public class NavigationAction implements HttpBuilder {
     public final int device = 2;           // 客户端类型
     
     public final String version            // 客户端版本号
-    = AndroidUtil.getVersionName(MyContext.getContext());
+    = AndroidUtil.getVersionName(AppContext.getContext());
 
     @Override
     public HttpConnector buildHttpConnector() {
         return getHttpManager().buildHttpConnector(
-                MyConfiguration_HTTP.HTTP_URL, 
+                NetworkConfig.HTTP_URL, 
                 action, 
                 GsonUtil.toJson(this), 
-                new Parser(action, getHttpManager()))
-                .setRemark("获取导航");
+                new Parser(action, getHttpManager()));
     }
     
-    private class Parser extends MyHttpJsonParser {
+    private class Parser extends HttpJsonParser {
 
         public Parser(String action, EventCallback callback) {
             super(action, callback);

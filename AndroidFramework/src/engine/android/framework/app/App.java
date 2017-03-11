@@ -20,13 +20,11 @@ public class App extends ApplicationManager {
     
     private static AppGlobal app;
     
-    public App() {
-        (app = AppGlobal.get(this)).setConfig(initAppConfig());
-    }
-    
     @Override
     public void onCreate() {
         super.onCreate();
+        
+        (app = AppGlobal.get(this)).setConfig(initAppConfig());
 
         setupStrictMode();
         traceActivityStack(isDebuggable());

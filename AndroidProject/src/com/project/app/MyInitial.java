@@ -1,13 +1,11 @@
-package com.project;
-
-import android.content.Context;
+package com.project.app;
 
 public class MyInitial {
 
     /**
      * Run in background thread.
      */
-    public static void init(Context context) {
+    public static void init() {
         initDatabase();
 
         MySession.initialize();

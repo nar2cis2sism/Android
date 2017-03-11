@@ -54,6 +54,7 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
 
     @Override
     public void handleEvent(final Event event) {
+        if (getView() == null) return;
         getView().post(new Runnable() {
             
             @Override

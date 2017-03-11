@@ -2,7 +2,6 @@ package com.project.ui.main;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -72,11 +71,7 @@ public class MainActivity extends BaseActivity {
         }
         else
         {
-            Intent intent = getIntent();
-            if (intent != null)
-            {
-                tag = intent.getStringExtra(EXTRA_TAB_TAG);
-            }
+            tag = getIntent().getStringExtra(EXTRA_TAB_TAG);
         }
         
         if (tag == null)

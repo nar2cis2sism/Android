@@ -158,6 +158,16 @@ class NetworkActivity extends Forelet implements EventHandler {
         showErrorDialog(param);
     }
     
+    protected void showErrorDialog(Object error) {
+        Dialog dialog = new AlertDialog.Builder(this)
+        .setTitle(R.string.dialog_error_title)
+        .setMessage(Util.getString(error, null))
+        .setPositiveButton(R.string.ok, null)
+        .create();
+    
+        showDialog("dialog_error", dialog);
+    }
+
     @Override
     protected void onDestroy() {
         if (isReceiveEventEnabled)
@@ -166,15 +176,5 @@ class NetworkActivity extends Forelet implements EventHandler {
         }
         
         super.onDestroy();
-    }
-
-    protected void showErrorDialog(Object error) {
-        Dialog dialog = new AlertDialog.Builder(this)
-        .setTitle(R.string.dialog_error_title)
-        .setMessage(Util.getString(error, null))
-        .setPositiveButton(R.string.ok, null)
-        .create();
-
-        showDialog("dialog_error", dialog);
     }
 }

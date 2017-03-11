@@ -3,16 +3,16 @@ package com.project.ui.launch;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.project.R;
+import com.project.app.storage.MySharedPreferences;
 import com.project.ui.login.LoginFragment;
 
 import engine.android.core.annotation.InjectView;
+import engine.android.core.annotation.OnClick;
 import engine.android.framework.ui.BaseFragment;
-import engine.android.framework.ui.extra.SinglePaneActivity;
 import engine.android.widget.FlingLayout;
 import engine.android.widget.FlingLayout.OnViewChangeListener;
 import engine.android.widget.PageIndicator;
@@ -22,19 +22,19 @@ import engine.android.widget.PageIndicator;
  * 
  * @author Daimon
  */
-public class GuideFragment extends BaseFragment implements OnViewChangeListener, OnClickListener {
+public class GuideFragment extends BaseFragment implements OnViewChangeListener {
     
     @InjectView(R.id.fling_layout)
-    FlingLayout fling_layout;
+    FlingLayout fling_layout;               // 引导页
     
     @InjectView(R.id.experience)
-    ImageView experience;
+    ImageView experience;                   // 立即体验按钮
     
     @InjectView(R.id.skip)
-    ImageView skip;
+    ImageView skip;                         // 右上角的跳过按钮
 
     @InjectView(R.id.page_indicator)
-    PageIndicator page_indicator;
+    PageIndicator page_indicator;           // 底部的页面指示
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
@@ -47,8 +47,6 @@ public class GuideFragment extends BaseFragment implements OnViewChangeListener,
         super.onViewCreated(view, savedInstanceState);
         
         fling_layout.setOnViewChangeListener(this);
-        experience.setOnClickListener(this);
-        skip.setOnClickListener(this);
         page_indicator.check(0);
     }
 
@@ -56,24 +54,12 @@ public class GuideFragment extends BaseFragment implements OnViewChangeListener,
     public void OnViewChanged(int childIndex) {
         page_indicator.check(childIndex);
     }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.experience:
-                // 立即体验
-            case R.id.skip:
-                // 跳过
-                finishGuide();
-                break;
-        }
-    }
     
+    @OnClick({R.id.experience, R.id.skip})
     private void finishGuide() {
-//        MySharedPreferences.getInstance().finishGuide();
+        MySharedPreferences.getInstance().finishGuide();
         
-        startActivity(SinglePaneActivity.buildIntent(
-                getContext(), LoginFragment.class, null));
+        getBaseActivity().startFragment(LoginFragment.class);
         finish();
     }
 }

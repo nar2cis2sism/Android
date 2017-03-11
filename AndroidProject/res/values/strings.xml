@@ -5,8 +5,7 @@
     
     <!-- Dialog -->
     <string name="dialog_upgrade_title">升级</string>
-    <string name="dialog_upgrade_button1">立即升级</string>
-    <string name="dialog_upgrade_button2">稍后升级</string>
+    <string name="dialog_upgrade_now">立即升级</string>
     
     <!-- Login -->
     <string name="login_login">登&#160;&#160;&#160;&#160;录</string>

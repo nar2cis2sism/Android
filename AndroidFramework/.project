@@ -30,11 +30,4 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>src_protocol</name>
-			<type>2</type>
-			<location>D:/Work/Java/workspace/Github/Java/JavaProtocol/src</location>
-		</link>
-	</linkedResources>
 </projectDescription>

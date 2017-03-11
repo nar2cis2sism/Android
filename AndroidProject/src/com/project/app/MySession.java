@@ -1,7 +1,8 @@
-package com.project;
+package com.project.app;
 
 import engine.android.core.ApplicationManager;
 import engine.android.core.Session;
+import protocol.java.json.AppUpgradeInfo;
 
 public class MySession {
 
@@ -18,7 +19,7 @@ public class MySession {
         return session.hasAttribute(INITIALIZED);
     }
 
-    /******************************* 初始化 *******************************/
+    /******************************* socket服务器地址 *******************************/
     private static final String SOCKET_ADDRESS = "SOCKET_ADDRESS";
 
     public static void setSocketAddress(String address) {
@@ -38,5 +39,16 @@ public class MySession {
     
     public static boolean hasNavigation() {
         return session.hasAttribute(NAVIGATION);
+    }
+
+    /******************************* 升级提示 *******************************/
+    private static final String APP_UPGRADE_INFO = "APP_UPGRADE_INFO";
+    
+    public static void setUpgradeInfo(AppUpgradeInfo info) {
+        session.setAttribute(APP_UPGRADE_INFO, info);
+    }
+    
+    public static AppUpgradeInfo getUpgradeInfo() {
+        return session.getAttribute(APP_UPGRADE_INFO, null);
     }
 }

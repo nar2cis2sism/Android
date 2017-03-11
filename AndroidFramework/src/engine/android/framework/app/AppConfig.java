@@ -91,15 +91,17 @@ public class AppConfig {
         /**
          * 单机模式
          */
-        public void setOffline(boolean offline) {
+        public NetworkConfig setOffline(boolean offline) {
             this.offline = offline;
+            return this;
         }
         
         /**
          * 日志记录网络协议
          */
-        public void setProtocolLog(boolean enable) {
+        public NetworkConfig setProtocolLog(boolean enable) {
             logProtocol = enable;
+            return this;
         }
     }
     
@@ -108,13 +110,11 @@ public class AppConfig {
         private static final int MAX_CONNECTION
         = Math.max(3, Runtime.getRuntime().availableProcessors() - 1);
         
-        private static final int TIME_OUT = 10000; // (10s)
-        
         ThreadPoolExecutor threadPool;
         
         ConnectionInterceptor interceptor;
         
-        int timeout = TIME_OUT;
+        int timeout;
         
         public static ThreadPoolExecutor getDefaultThreadPool(String threadPoolName) {
             ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
@@ -185,22 +185,25 @@ public class AppConfig {
         /**
          * 设置数据库名称
          */
-        public void setName(String name) {
+        public DatabaseConfig setName(String name) {
             this.name = name;
+            return this;
         }
         
         /**
          * 设置数据库版本
          */
-        public void setVersion(int version) {
+        public DatabaseConfig setVersion(int version) {
             this.version = version;
+            return this;
         }
         
         /**
          * 设置数据库更新监听器
          */
-        public void setListener(DBUpdateListener listener) {
+        public DatabaseConfig setListener(DBUpdateListener listener) {
             this.listener = listener;
+            return this;
         }
     }
     

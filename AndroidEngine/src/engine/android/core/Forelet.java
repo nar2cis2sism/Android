@@ -105,6 +105,7 @@ public class Forelet extends Activity implements TaskCallback {
 
         closeDialogs();
         clearValidation();
+        handler.removeCallbacksAndMessages(null);
 
         super.onDestroy();
     }
@@ -185,7 +186,7 @@ public class Forelet extends Activity implements TaskCallback {
         {
             for (Dialog dialog : mDialogs.values())
             {
-                dialog.dismiss();
+                if (dialog.isShowing()) dialog.dismiss();
             }
             
             mDialogs.clear();
@@ -869,6 +870,14 @@ public class Forelet extends Activity implements TaskCallback {
 
     protected Class<? extends Activity> parentActivity() {
         return null;
+    }
+
+    /******************************* Handler模块 *******************************/
+    
+    private final Handler handler = new Handler();
+    
+    public final Handler getHandler() {
+        return handler;
     }
 }
 

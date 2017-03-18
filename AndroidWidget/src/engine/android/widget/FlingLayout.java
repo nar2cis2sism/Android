@@ -3,55 +3,50 @@ package engine.android.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.VelocityTracker;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Scroller;
+import android.view.ViewConfiguration;
+
+import engine.android.widget.base.CustomViewGroup;
 
 /**
  * 滑动布局
  * 
  * @author Daimon
- * @version 4.0
- * @since 5/7/2014
+ * @version N
+ * @since 6/6/2014
  */
-public class FlingLayout extends ViewGroup {
+public class FlingLayout extends CustomViewGroup {
 
     private static final int SNAP_VELOCITY = 600;
 
-    private VelocityTracker velocityTracker;
-
-    private Scroller scroller;
+    private int touchSlop;
 
     private int itemCount;
 
     private int currentItem = 0;
 
-    private int lastMotionX;
-
-    private OnViewChangeListener onViewChangeListener;
+    private OnViewChangeListener listener;
 
     public FlingLayout(Context context) {
         super(context);
-        init(context);
     }
 
     public FlingLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
     }
 
     public FlingLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(context);
     }
-
-    private void init(Context context) {
-        scroller = new Scroller(context);
+    
+    @Override
+    protected void init(Context context) {
+        super.init(context);
+        touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
 
     public void setOnViewChangeListener(OnViewChangeListener onViewChangeListener) {
-        this.onViewChangeListener = onViewChangeListener;
+        listener = onViewChangeListener;
     }
 
     public int getItemCount() {
@@ -59,7 +54,7 @@ public class FlingLayout extends ViewGroup {
     }
 
     public View getItem(int index) {
-        if (index < 0 || index > itemCount - 1)
+        if (index < 0 || index >= itemCount)
         {
             return null;
         }
@@ -67,160 +62,99 @@ public class FlingLayout extends ViewGroup {
         int visibleIndex = 0;
         for (int i = 0, childCount = getChildCount(); i < childCount; i++)
         {
-            View childView = getChildAt(i);
-            if (childView.getVisibility() != GONE)
+            View child = getChildAt(i);
+            if (child.getVisibility() != GONE && visibleIndex++ == index)
             {
-                if (visibleIndex++ == index)
-                {
-                    return childView;
-                }
+                return child;
             }
         }
 
         return null;
     }
 
-    public void setCurrentItem(int currentItem) {
-        if (this.currentItem != currentItem)
+    public void setCurrentItem(int item) {
+        item = getValidItem(item);
+        if (currentItem != item)
         {
-            scrollTo((this.currentItem = currentItem) * getWidth(), 0);
+            scrollTo((currentItem = item) * getWidth(), 0);
             invalidate();
         }
     }
-
+    
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        // Calculate our view width
+        int width = right - left;
 
+        itemCount = 0;
+        int childLeft = getPaddingLeft();
+        int childTop = getPaddingTop();
         for (int i = 0, childCount = getChildCount(); i < childCount; i++)
         {
-            getChildAt(i).measure(widthMeasureSpec, heightMeasureSpec);
-        }
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right,
-            int bottom) {
-        if (changed)
-        {
-            // Calculate our view width
-            int width = right - left;
-
-            itemCount = 0;
-            int childLeft = left;
-            for (int i = 0, childCount = getChildCount(); i < childCount; i++)
+            View child = getChildAt(i);
+            if (child.getVisibility() != GONE)
             {
-                View childView = getChildAt(i);
-                if (childView.getVisibility() != GONE)
-                {
-                    itemCount++;
-                    childView.layout(
-                            childLeft,
-                            top,
-                            childLeft + childView.getMeasuredWidth(),
-                            childView.getMeasuredHeight());
-                    childLeft += width;
-                }
-            }
-
-            scrollTo(currentItem * width, 0);
-        }
-    }
-
-    private void snapToDestination() {
-        int width = getWidth();
-        int destination = (getScrollX() + width / 2) / width;
-        snapToItem(destination);
-    }
-
-    private void snapToItem(int item) {
-        // get the valid item
-        item = Math.max(0, Math.min(item, itemCount - 1));
-        if (getScrollX() != (item * getWidth()))
-        {
-            int delta = item * getWidth() - getScrollX();
-            scroller.startScroll(getScrollX(), 0, delta, 0, Math.abs(delta) * 2);
-            invalidate();
-
-            if (item != currentItem)
-            {
-                currentItem = item;
-                if (onViewChangeListener != null)
-                {
-                    onViewChangeListener.OnViewChanged(currentItem);
-                }
+                itemCount++;
+                child.layout(
+                        childLeft,
+                        childTop,
+                        childLeft + child.getMeasuredWidth(),
+                        childTop + child.getMeasuredHeight());
+                childLeft += width;
             }
         }
-    }
 
+        if (changed) scrollTo(currentItem * width, 0);
+    }
+    
     @Override
-    public void computeScroll() {
-        if (scroller.computeScrollOffset())
-        {
-            scrollTo(scroller.getCurrX(), scroller.getCurrY());
-            invalidate();
-        }
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        return delegate.onInterceptTouchEvent(ev);
     }
-
+    
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (velocityTracker == null)
-        {
-            velocityTracker = VelocityTracker.obtain();
-        }
-
-        velocityTracker.addMovement(event);
-
-        int x = (int) event.getX();
-
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                if (!scroller.isFinished())
-                {
-                    scroller.abortAnimation();
-                }
-
-                lastMotionX = x;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                move(lastMotionX - x);
-                lastMotionX = x;
-                break;
-            case MotionEvent.ACTION_UP:
-                velocityTracker.computeCurrentVelocity(1000);
-                float velocityX = velocityTracker.getXVelocity();
-                if (velocityX > SNAP_VELOCITY && currentItem > 0)
-                {
-                    // Fling enough to move left
-                    snapToItem(currentItem - 1);
-                }
-                else if (velocityX < -SNAP_VELOCITY && currentItem < itemCount - 1)
-                {
-                    // Fling enough to move right
-                    snapToItem(currentItem + 1);
-                }
-                else
-                {
-                    snapToDestination();
-                }
-
-                releaseVelocityTracker();
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                releaseVelocityTracker();
-                break;
-        }
-
-        return true;
+        return delegate.onTouchEvent(event);
     }
+    
+    private final TouchEventDelegate delegate = new TouchEventDelegate() {
+        
+        public boolean interceptActionDown(MotionEvent event, int x, int y) {
+            return abortScroll();
+        };
+        
+        public boolean interceptActionMove(MotionEvent event, int x, int y) {
+            return Math.abs(lastMotionX - x) > touchSlop;
+        };
 
-    private void releaseVelocityTracker() {
-        if (velocityTracker != null)
-        {
-            velocityTracker.recycle();
-            velocityTracker = null;
+        @Override
+        public boolean handleActionDown(MotionEvent event, int x, int y) {
+            return true;
         }
-    }
+
+        @Override
+        public void handleActionMove(MotionEvent event, int x, int y) {
+            move(lastMotionX - x);
+        }
+
+        @Override
+        public void handleActionUp(MotionEvent event, float velocityX, float velocityY) {
+            if (velocityX > SNAP_VELOCITY && currentItem > 0)
+            {
+                // Fling enough to move left
+                snapToItem(currentItem - 1);
+            }
+            else if (velocityX < -SNAP_VELOCITY && currentItem < itemCount - 1)
+            {
+                // Fling enough to move right
+                snapToItem(currentItem + 1);
+            }
+            else
+            {
+                snapToDestination();
+            }
+        }
+    };
 
     private void move(int deltaX) {
         int scrollX = Math.min(Math.max(getScrollX() + deltaX, 0), (itemCount - 1) * getWidth());
@@ -228,6 +162,33 @@ public class FlingLayout extends ViewGroup {
         {
             scrollTo(scrollX, getScrollY());
         }
+    }
+    
+    /**
+     * Get the valid item in case out of range.
+     */
+    private int getValidItem(int item) {
+        return Math.max(0, Math.min(item, itemCount - 1));
+    }
+
+    private void snapToDestination() {
+        int width = getWidth();
+        snapToItem((getScrollX() + width / 2) / width);
+    }
+
+    private void snapToItem(int item) {
+        item = getValidItem(item);
+        if (getScrollX() != (item * getWidth()))
+        {
+            int delta = item * getWidth() - getScrollX();
+            smoothScroll(delta, 0, Math.abs(delta) * 2);
+
+            if (currentItem != item) notifyOnViewChanged(currentItem = item);
+        }
+    }
+    
+    private void notifyOnViewChanged(int item) {
+        if (listener != null) listener.OnViewChanged(item);
     }
 
     public static interface OnViewChangeListener {

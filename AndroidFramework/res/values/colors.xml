@@ -3,6 +3,9 @@
     
 	<color name="windowBackground">#fafafa</color>
     
+    <color name="textColorPrimary">#323232</color>
+    <color name="textColorSecondary">#909090</color>
+    
     <color name="list_selector_background_normal">@android:color/transparent</color>
     <color name="list_selector_background_pressed">#dcdcdc</color>
     

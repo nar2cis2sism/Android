@@ -37,8 +37,6 @@
         android:id="@+id/content"
         android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_toRightOf="@id/navigation_up"
-        android:layout_toLeftOf="@id/actions" />
+        android:layout_height="match_parent" />
 
 </engine.android.widget.TitleBar>

@@ -1,0 +1,13 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <RadioButton
+        style="@style/choose_button_item"
+        android:id="@+id/button_positive"
+        android:background="@drawable/choose_button_positive" />
+
+    <RadioButton
+        style="@style/choose_button_item"
+        android:id="@+id/button_negative"
+        android:background="@drawable/choose_button_negative" />
+
+</merge>

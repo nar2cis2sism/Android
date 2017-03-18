@@ -224,8 +224,7 @@ public class HttpConnector {
             HttpResponse response = doConnect(r);
             if (!isCancelled())
             {
-                log(String.format("服务器[%s]响应时间--%dms", 
-                        conn.getURL(), System.currentTimeMillis() - time));
+                log(String.format("服务器响应时间--%dms", System.currentTimeMillis() - time));
                 
                 if (listener != null)
                 {

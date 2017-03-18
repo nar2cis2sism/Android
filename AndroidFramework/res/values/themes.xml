@@ -17,8 +17,8 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
         <item name="android:windowBackground">@color/windowBackground</item>
-        <item name="android:textColorPrimary">#323232</item>
-        <item name="android:textColorSecondary">#909090</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         
         <item name="android:listViewStyle">@style/Widget.ListView</item>

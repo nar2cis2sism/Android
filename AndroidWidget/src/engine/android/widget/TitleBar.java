@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -77,7 +76,7 @@ public class TitleBar extends RelativeLayout {
         return this;
     }
     
-    public TitleBar setCustomView(View view, ViewGroup.LayoutParams layoutParams) {
+    public TitleBar setCustomView(View view, FrameLayout.LayoutParams layoutParams) {
         view.setLayoutParams(layoutParams);
         return setCustomView(view);
     }
@@ -98,10 +97,7 @@ public class TitleBar extends RelativeLayout {
     public TitleBar addAction(int iconId, OnClickListener listener) {
         ImageView iv = new ImageView(getContext());
         iv.setImageResource(iconId);
-        if (listener != null)
-        {
-            iv.setOnClickListener(listener);
-        }
+        if (listener != null) iv.setOnClickListener(listener);
         
         return addAction(iv);
     }

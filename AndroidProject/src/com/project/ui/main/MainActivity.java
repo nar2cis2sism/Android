@@ -12,6 +12,7 @@ import android.widget.TabHost.TabContentFactory;
 import android.widget.TabHost.TabSpec;
 
 import com.project.R;
+import com.project.ui.module.friend.FriendListFragment;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseActivity;
@@ -89,7 +90,7 @@ public class MainActivity extends BaseActivity {
         // 消息
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_MESSAGE)
                 .setIndicator(new TabView(this, R.drawable.tab_message))
-                .setContent(emptyContent), BaseListFragment.class, null));
+                .setContent(emptyContent), FriendListFragment.class, null));
         // 好友
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_FRIEND)
                 .setIndicator(new TabView(this, R.drawable.tab_friend))

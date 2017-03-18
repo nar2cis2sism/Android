@@ -5,9 +5,8 @@ import com.project.app.MyConfiguration.MyConfiguration_NETWORK;
 import com.project.app.MyConfiguration.MyConfiguration_SOCKET;
 import com.project.app.storage.DAOManager;
 import com.project.network.http.HttpInterceptor;
-import com.project.network.http.HttpServlet;
+import com.project.network.http.servlet.HttpServlet;
 import com.project.network.socket.SocketInterceptor;
-import com.project.network.socket.SocketServlet;
 
 import engine.android.framework.app.App;
 
@@ -35,7 +34,7 @@ MyConfiguration_SOCKET {
         }
         
         private void configHttp(HttpConfig config) {
-//            config.setServlet(new HttpServlet());
+            config.setServlet(new HttpServlet());
             config.setInterceptor(new HttpInterceptor());
             config.setTimeout(HTTP_TIMEOUT);
         }

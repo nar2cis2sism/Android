@@ -61,8 +61,11 @@ public class LoginAction implements HttpBuilder {
             long uid = data.optLong("uid");
             String user_info_ver = data.optString("user_info_crc");
             
+            MySession.setToken(token);
             // 启动socket连接
             MyApp.getSocketManager().setup(MySession.getSocketAddress(), token);
+            // 查询好友列表
+            MyApp.getHttpManager().sendHttpRequestAsync(new QueryFriendList());
             
             return super.process(data);
         }

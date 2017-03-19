@@ -12,6 +12,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CursorAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.Collection;
 
@@ -36,8 +37,7 @@ public class BaseListFragment extends BaseFragment {
     private View mProgressContainer;
     private View mListContainer;
     
-    CharSequence mEmptyText;
-    boolean mListShown;
+    private boolean mListShown;
     
     public BaseListFragment() {}
 
@@ -54,7 +54,11 @@ public class BaseListFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ensureList();
         super.onViewCreated(view, savedInstanceState);
+        
+        setupListView(mList);
     }
+
+    protected void setupListView(ListView listView) {}
 
     /**
      * Detach from list view.
@@ -109,6 +113,19 @@ public class BaseListFragment extends BaseFragment {
     public ListView getListView() {
         ensureList();
         return mList;
+    }
+
+    /**
+     * The default content for a ListFragment has a TextView that can
+     * be shown when the list is empty.  If you would like to have it
+     * shown, call this method to supply the text it should use.
+     */
+    public void setEmptyText(CharSequence text) {
+        ensureList();
+        if (mEmptyView instanceof TextView)
+        {
+            ((TextView) mEmptyView).setText(text);
+        }
     }
     
     /**

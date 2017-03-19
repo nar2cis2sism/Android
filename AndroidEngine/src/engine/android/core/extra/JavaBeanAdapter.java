@@ -12,6 +12,8 @@ import android.view.animation.AlphaAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +24,7 @@ import java.util.List;
 
 /**
  * @author Daimon
+ * 
  * @version N
  * @since 6/6/2014
  * @see ArrayAdapter
@@ -136,6 +139,10 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter {
 
         if (mNotifyOnChange) notifyDataSetChanged();
     }
+    
+    public List<T> getItems() {
+        return mObjects;
+    }
 
     public void sort(Comparator<? super T> comparator) {
         synchronized (mLock) {
@@ -224,7 +231,7 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter {
         return mInflater.inflate(mResource, parent, false);
     }
 
-    protected abstract void bindView(int position, ViewHolder holder, T object);
+    protected abstract void bindView(int position, ViewHolder holder, T item);
 
     /**
      * 配合{@link CursorLoader}使用
@@ -283,6 +290,14 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter {
         public void removeView(int viewId) {
             views.remove(viewId);
         }
+        
+        public void setTextView(int viewId, CharSequence text) {
+            ((TextView) retrieveView(viewId)).setText(text);
+        }
+        
+        public void setImageView(int viewId, int resId) {
+            ((ImageView) retrieveView(viewId)).setImageResource(resId);
+        }
 
         public void setAlpha(int viewId, float alpha) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
@@ -296,6 +311,10 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter {
                 anim.setFillAfter(true);
                 retrieveView(viewId).startAnimation(anim);
             }
+        }
+        
+        public void setVisible(int viewId, boolean shown) {
+            retrieveView(viewId).setVisibility(shown ? View.VISIBLE : View.GONE);
         }
 
         public void setVisibility(int viewId, int visibility) {

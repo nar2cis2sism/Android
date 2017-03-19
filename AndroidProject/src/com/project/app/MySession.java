@@ -51,4 +51,15 @@ public class MySession {
     public static AppUpgradeInfo getUpgradeInfo() {
         return session.getAttribute(APP_UPGRADE_INFO, null);
     }
+
+    /******************************* 用户登录凭证 *******************************/
+    private static final String TOKEN = "TOKEN";
+    
+    public static void setToken(String token) {
+        session.setAttribute(TOKEN, token);
+    }
+    
+    public static String getToken() {
+        return session.getAttribute(TOKEN, null);
+    }
 }

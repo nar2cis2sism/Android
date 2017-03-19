@@ -356,7 +356,7 @@ public final class Blowfish {
      * 解密函数
      */
     public byte[] decrypt(byte[] bs) {
-        int length = (bs[0] & 0xff * 256) + bs[1] & 0xff;
+        int length = ((bs[0] & 0xff) << 8) + (bs[1] & 0xff);
         int blocks = (length / BLOCK_SIZE) + (length % BLOCK_SIZE == 0 ? 0 : 1);
         byte[] input = new byte[blocks * BLOCK_SIZE];
         byte[] output = new byte[length];

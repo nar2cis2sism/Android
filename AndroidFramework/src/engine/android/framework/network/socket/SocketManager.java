@@ -74,11 +74,7 @@ public class SocketManager implements SocketConnectionListener, SocketReceiver, 
     }
     
     public void setup(String host, int port, final String token) {
-        if (socket != null)
-        {
-            socket.close();
-        }
-        
+        if (socket != null) socket.close();
         socket = new SocketConnector(host, port, config.getSocketTimeout(), true) {
             
             @Override
@@ -121,11 +117,7 @@ public class SocketManager implements SocketConnectionListener, SocketReceiver, 
         socket.setProxy(context);
         socket.setListener(this);
         socket.setReceiver(this);
-        if (config.isOffline())
-        {
-            socket.setServlet(config.getSocketServlet());
-        }
-        
+        if (config.isOffline()) socket.setServlet(config.getSocketServlet());
         socket.connect();
     }
     

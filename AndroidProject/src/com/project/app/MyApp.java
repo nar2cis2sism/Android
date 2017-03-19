@@ -7,6 +7,7 @@ import com.project.app.storage.DAOManager;
 import com.project.network.http.HttpInterceptor;
 import com.project.network.http.servlet.HttpServlet;
 import com.project.network.socket.SocketInterceptor;
+import com.project.network.socket.SocketServlet;
 
 import engine.android.framework.app.App;
 
@@ -40,7 +41,7 @@ MyConfiguration_SOCKET {
         }
         
         private void configSocket(SocketConfig config) {
-//            config.setServlet(new SocketServlet());
+            config.setServlet(new SocketServlet());
             config.setInterceptor(new SocketInterceptor());
             config.setTimeout(SOCKET_TIMEOUT);
         }

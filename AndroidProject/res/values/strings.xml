@@ -23,6 +23,10 @@
     <string name="login_progress">登录中,请稍候&#8230;</string>
     
     <!-- Friend -->
-    <string name="by_group">分组</string>
+    <string name="friend_by_group">分组</string>
+    <string name="friend_group">群</string>
+    <string name="friend_discuss">讨论组</string>
+    <string name="friend_public">公众好友</string>
+    <string name="friend_recommend">好友推荐</string>
 
 </resources>

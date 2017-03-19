@@ -14,5 +14,5 @@ public interface Actions {
     public static final String LOGIN = "login";
 
     /** 查询好友列表 **/
-    public static final String FRIEND_LIST = "friend_list";
+    public static final String QUERY_FRIEND_LIST = "query_friend_list";
 }

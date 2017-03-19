@@ -14,15 +14,13 @@ public abstract class Singleton<T> {
     protected abstract T create();
 
     public final T get() {
-        if (mInstance != null)
+        if (mInstance == null)
         {
-            return mInstance;
-        }
-
-        synchronized (this) {
-            if (mInstance == null)
-            {
-                mInstance = create();
+            synchronized (this) {
+                if (mInstance == null)
+                {
+                    mInstance = create();
+                }
             }
         }
 

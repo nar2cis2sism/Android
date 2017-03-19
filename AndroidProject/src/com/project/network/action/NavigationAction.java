@@ -61,7 +61,7 @@ public class NavigationAction implements HttpBuilder {
             if (upgrade != null)
             {
                 // 需要升级
-                return GsonUtil.fromJson(upgrade.toString(), AppUpgradeInfo.class);
+                return GsonUtil.parseJson(upgrade.toString(), AppUpgradeInfo.class);
             }
             
             return super.process(data);

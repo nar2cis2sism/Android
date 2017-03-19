@@ -1,6 +1,9 @@
 package engine.android.framework.util;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.List;
 
 public class GsonUtil {
     
@@ -10,7 +13,11 @@ public class GsonUtil {
         return gson.toJson(src);
     }
     
-    public static <T> T fromJson(String json, Class<T> type) {
+    public static <T> T parseJson(String json, Class<T> type) {
         return gson.fromJson(json, type);
+    }
+    
+    public static <T> List<T> parseList(String json, Class<T> type) {
+        return gson.fromJson(json, new TypeToken<List<T>>() {}.getType());
     }
 }

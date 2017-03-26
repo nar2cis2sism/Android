@@ -14,10 +14,10 @@ public final class ProviderContract {
     /**
      * 排序字段
      */
-    public interface SortColumns {
+    protected interface SortColumns {
 
         /**
-         * 拼音（大写）
+         * 汉字全拼（小写）
          * <P>Type: TEXT</P>
          */
         public static final String PINYIN = "pinyin";

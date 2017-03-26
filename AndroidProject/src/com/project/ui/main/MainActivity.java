@@ -104,6 +104,7 @@ public class MainActivity extends BaseActivity {
                 .setIndicator(new TabView(this, R.drawable.tab_more))
                 .setContent(emptyContent), BaseListFragment.class, null));
         
+        pager.setOffscreenPageLimit(adapter.getCount() - 1);
         pager.setAdapter(adapter);
         
         pager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {

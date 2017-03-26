@@ -44,8 +44,11 @@ public class Friend {
     
     /************************* 排序字段 *************************/
 
+    public static final int SORT_ENGLISH    = 0;
+    public static final int SORT_OTHER      = 1;
+
     @DAOProperty(column = FriendColumns.PINYIN)
-    public String pinyin;                       // 拼音（大写）
+    public String pinyin;                       // 汉字全拼（小写）
 
     @DAOProperty(column = FriendColumns.SORT_ORDER)
     public String sortOrder;                    // 分类排序
@@ -63,7 +66,7 @@ public class Friend {
         avatarUrl = info.avatar_url;
         version = info.friend_info_ver;
         displayName = getDisplayName();
-        pinyin = PinyinHelper.getInstance().getPinyins(displayName, "").toUpperCase();
+        pinyin = PinyinHelper.getInstance().getPinyins(displayName, "").toLowerCase();
         sortOrder = sort(pinyin);
     }
     
@@ -98,14 +101,12 @@ public class Friend {
         String firstLetter = pinyin.substring(0, 1);
         if (MyValidator.validate(firstLetter, MyValidator.ENGLISH))
         {
-            pinyin = "0" + pinyin;
+            return SORT_ENGLISH + pinyin;
         }
         else
         {
             // 首字母为英文外其他字符排在后面
-            pinyin = "1" + pinyin;
+            return SORT_OTHER + pinyin;
         }
-        
-        return pinyin;
     }
 }

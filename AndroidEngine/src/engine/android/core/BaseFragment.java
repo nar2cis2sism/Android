@@ -30,7 +30,7 @@ public abstract class BaseFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public BaseFragment() {}
+    public BaseFragment() { setRetainInstance(true); }
 
     @Override
     public void onAttach(Activity activity) {
@@ -76,32 +76,22 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public final Context getContext() {
-        if (getActivity() != null)
-        {
-            return getActivity();
-        }
-
+        if (getActivity() != null) return getActivity();
         return ApplicationManager.getApplicationManager();
     }
 
     public final Callbacks getCallbacks() {
         return mCallbacks;
     }
-    
-    @Override
-    public void onStop() {
-        if (loader != null && getActivity().isFinishing() && !getActivity().isChangingConfigurations())
-        {
-            loader.destroy();
-        }
-        
-        super.onStop();
-    }
 
     @Override
     public void onDestroy() {
         listener = null;
-        loader = null;
+        if (dataSource != null)
+        {
+            dataSource.destroy();
+            dataSource = null;
+        }
 
         super.onDestroy();
     }
@@ -161,7 +151,7 @@ public abstract class BaseFragment extends Fragment {
 
     /******************* 自定义数据监听器（与Fragment进行交互） *******************/
 
-    public static interface Listener {
+    public interface Listener {
 
         /**
          * 数据更新
@@ -198,17 +188,16 @@ public abstract class BaseFragment extends Fragment {
             listener.update(data);
         }
     }
+
+    /******************* 数据源（封装数据加载机制） *******************/
     
-    /**
-     * 数据加载器
-     */
-    public abstract class DataLoader<D> implements LoaderCallbacks<D> {
+    public abstract class DataSource<D> implements LoaderCallbacks<D> {
     
         private final int LOADER_ID = hashCode();
         
         private final Loader<D> loader;
         
-        public DataLoader(Loader<D> loader) {
+        public DataSource(Loader<D> loader) {
             this.loader = loader;
         }
     
@@ -226,27 +215,27 @@ public abstract class BaseFragment extends Fragment {
         }
     
         void loadData() {
+            // Tell the loader about the change.
             loader.onContentChanged();
         }
     }
 
-    private DataLoader<?> loader;
+    private DataSource<?> dataSource;
     
     /**
-     * 设置数据加载器（同时启动数据加载）
+     * 设置数据源（同时启动数据加载）
      */
-    public void setDataLoader(DataLoader<?> loader) {
-        (this.loader = loader).init();
+    public void setDataSource(DataSource<?> dataSource) {
+        (this.dataSource = dataSource).init();
     }
     
     /**
-     * 刷新数据（通知数据加载器更新数据）
+     * 刷新数据（通知数据源更新数据）
      */
     public void refresh() {
-        if (isAdded() && loader != null)
+        if (dataSource != null && isAdded())
         {
-            // Tell the loader about the change.
-            loader.loadData();
+            dataSource.loadData();
         }
     }
 }

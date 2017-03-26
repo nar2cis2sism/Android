@@ -91,12 +91,8 @@ implements UncaughtExceptionHandler {
      * 获取应用程序管理器
      */
     public static final ApplicationManager getApplicationManager() {
-        if (instance == null)
-        {
-            throw new RuntimeException("ApplicationManager.init() is not called.");
-        }
-    
-        return instance;
+        if (instance != null) return instance;
+        throw new RuntimeException("ApplicationManager.init() is not called.");
     }
 
     /**

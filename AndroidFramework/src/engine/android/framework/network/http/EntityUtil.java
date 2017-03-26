@@ -1,4 +1,4 @@
-package engine.android.framework.network.http.util;
+package engine.android.framework.network.http;
 
 import android.text.TextUtils;
 
@@ -20,23 +20,16 @@ public class EntityUtil {
     }
     
     public static String toString(byte[] data) {
-        if (data == null)
-            return "";
-        
-        if (encryptor != null)
-            data = encryptor.decrypt(data);
-        
+        if (data == null) return "";
+        if (encryptor != null) data = encryptor.decrypt(data);
         return new String(data);
     }
     
     public static byte[] toByteArray(String entity) {
-        if (TextUtils.isEmpty(entity))
-            return new byte[0];
+        if (TextUtils.isEmpty(entity)) return new byte[0];
         
         byte[] data = entity.getBytes();
-        if (encryptor != null)
-            data = encryptor.encrypt(data);
-        
+        if (encryptor != null) data = encryptor.encrypt(data);
         return data;
     }
 }

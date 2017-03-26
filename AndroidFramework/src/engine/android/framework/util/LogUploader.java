@@ -69,7 +69,8 @@ public class LogUploader {
     }
 
     private boolean uploadDatabase(File desDir) {
-        return App.getDAOTemplate().export(desDir);
+//        return App.getDAOTemplate().export(desDir);
+        return true;
     }
 
     /**

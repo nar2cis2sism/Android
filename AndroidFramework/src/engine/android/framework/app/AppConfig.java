@@ -4,7 +4,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import engine.android.dao.DAOTemplate.DBUpdateListener;
 import engine.android.framework.network.ConnectionInterceptor;
 import engine.android.http.HttpProxy.HttpServlet;
 import engine.android.socket.SocketProxy.SocketServlet;
@@ -20,7 +19,6 @@ public class AppConfig {
     private NetworkConfig network;
     private HttpConfig http;
     private SocketConfig socket;
-    private DatabaseConfig db;
     
     public boolean isOffline() {
         return configNetwork().offline;
@@ -72,14 +70,6 @@ public class AppConfig {
     
     public SocketServlet getSocketServlet() {
         return configSocket().servlet;
-    }
-    
-    public String getDatabaseName() {
-        return configDatabase().name;
-    }
-    
-    public int getDatabaseVersion() {
-        return configDatabase().version;
     }
     
     public static class NetworkConfig {
@@ -174,39 +164,6 @@ public class AppConfig {
         }
     }
     
-    public static class DatabaseConfig {
-        
-        String name = "project.db";
-        
-        int version;
-        
-        DBUpdateListener listener;
-        
-        /**
-         * 设置数据库名称
-         */
-        public DatabaseConfig setName(String name) {
-            this.name = name;
-            return this;
-        }
-        
-        /**
-         * 设置数据库版本
-         */
-        public DatabaseConfig setVersion(int version) {
-            this.version = version;
-            return this;
-        }
-        
-        /**
-         * 设置数据库更新监听器
-         */
-        public DatabaseConfig setListener(DBUpdateListener listener) {
-            this.listener = listener;
-            return this;
-        }
-    }
-    
     /**
      * 配置网络连接
      */
@@ -241,17 +198,5 @@ public class AppConfig {
         }
         
         return socket;
-    }
-    
-    /**
-     * 配置数据库
-     */
-    public DatabaseConfig configDatabase() {
-        if (db == null)
-        {
-            db = new DatabaseConfig();
-        }
-        
-        return db;
     }
 }

@@ -5,7 +5,6 @@ import android.os.StrictMode;
 import engine.android.core.ApplicationManager;
 import engine.android.core.util.LogFactory;
 import engine.android.core.util.LogFactory.LOG;
-import engine.android.dao.DAOTemplate;
 import engine.android.framework.network.http.HttpManager;
 import engine.android.framework.network.socket.SocketManager;
 import engine.android.framework.util.LogUploader;
@@ -76,9 +75,5 @@ public class App extends ApplicationManager {
     
     public static SocketManager getSocketManager() {
         return app.getSocketManager();
-    }
-    
-    public static DAOTemplate getDAOTemplate() {
-        return app.getDAOTemplate();
     }
 }

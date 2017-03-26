@@ -23,7 +23,6 @@ import engine.android.framework.network.ConnectionInterceptor;
 import engine.android.framework.network.event.Event;
 import engine.android.framework.network.event.EventCallback;
 import engine.android.framework.network.event.EventObserver;
-import engine.android.framework.network.http.util.EntityUtil;
 import engine.android.http.HttpConnector;
 import engine.android.http.HttpConnector.HttpConnectionListener;
 import engine.android.http.HttpProxy;

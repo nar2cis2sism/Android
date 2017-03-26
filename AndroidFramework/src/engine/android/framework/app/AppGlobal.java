@@ -4,7 +4,6 @@ import android.content.Context;
 
 import java.util.HashMap;
 
-import engine.android.dao.DAOTemplate;
 import engine.android.framework.network.http.HttpManager;
 import engine.android.framework.network.socket.SocketManager;
 
@@ -42,55 +41,26 @@ public class AppGlobal {
     }
     
     public AppConfig getConfig() {
-        if (config == null)
-        {
-            config = new AppConfig();
-        }
-        
+        if (config == null) config = new AppConfig();
         return config;
     }
     
     public void setConfig(AppConfig config) {
-        if (this.config != null)
-        {
-            throw new RuntimeException("Config is exist.");
-        }
-        
-        this.config = config;
+        if (this.config == null) this.config = config;
+        throw new RuntimeException("Config is exist.");
     }
     
     private HttpManager http;
     
     private SocketManager socket;
     
-    private DAOTemplate dao;
-    
     public HttpManager getHttpManager() {
-        if (http == null)
-        {
-            http = new HttpManager(context);
-        }
-        
+        if (http == null) http = new HttpManager(context);
         return http;
     }
     
     public SocketManager getSocketManager() {
-        if (socket == null)
-        {
-            socket = new SocketManager(context);
-        }
-        
+        if (socket == null) socket = new SocketManager(context);
         return socket;
-    }
-    
-    public DAOTemplate getDAOTemplate() {
-        if (dao == null)
-        {
-            AppConfig config = getConfig();
-            dao = new DAOTemplate(context, 
-                    config.getDatabaseName(), config.getDatabaseVersion(), config.configDatabase().listener);
-        }
-        
-        return dao;
     }
 }

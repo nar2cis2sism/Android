@@ -84,14 +84,14 @@ public abstract class JavaBeanLoader<D> extends AsyncTaskLoader<Collection<D>> {
             deliverResult(mData);
         }
 
-        // Start watching for changes in the app data.
+        // Start watching for changes in the data.
         if (dataChangeObserver != null)
         {
             dataChangeObserver.registerObserver(getContext());
         }
 
         if (takeContentChanged()
-        || mData == null
+        ||  mData == null
         // Has something interesting in the configuration changed since
         // we last built the data?
         || (config != null && config.applyConfig(getContext().getResources())))
@@ -116,7 +116,7 @@ public abstract class JavaBeanLoader<D> extends AsyncTaskLoader<Collection<D>> {
      */
     @Override
     public void onCanceled(Collection<D> data) {
-        releaseResources(data);
+        if (data != null) releaseResources(data);
     }
 
     /**
@@ -125,8 +125,6 @@ public abstract class JavaBeanLoader<D> extends AsyncTaskLoader<Collection<D>> {
 
     @Override
     protected void onReset() {
-        super.onReset();
-
         // Ensure the loader is stopped
         onStopLoading();
 
@@ -155,31 +153,29 @@ public abstract class JavaBeanLoader<D> extends AsyncTaskLoader<Collection<D>> {
      * Helper for determining if the configuration has changed in an interesting
      * way so we need to rebuild the data.
      */
-    public static interface ConfigChange {
+    public interface ConfigChange {
 
-        public boolean applyConfig(Resources res);
+        boolean applyConfig(Resources res);
     }
 
     /**
      * Helper class to look for interesting changes to the data so that the
      * loader can be updated.
      */
-    public static abstract class DataChangeObserver extends BroadcastReceiver {
-
-        private final JavaBeanLoader<?> loader;
-
-        public DataChangeObserver(JavaBeanLoader<?> loader) {
-            this.loader = loader;
-        }
+    public abstract class DataChangeObserver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            // Tell the loader about the change.
-            loader.onContentChanged();
+            refresh();
         }
 
         public abstract void registerObserver(Context context);
 
         public abstract void unregisterObserver(Context context);
+        
+        protected void refresh() {
+            // Tell the loader about the change.
+            onContentChanged();
+        }
     }
 }

@@ -73,6 +73,9 @@ public class BaseListFragment extends BaseFragment {
         
         mListShown = false;
         mEmptyView = mProgressContainer = mListContainer = null;
+        // System will cache the adapter and setup in the initial of ListView,
+        // thus we can not set the header or footer view after that.
+        mAdapter = null;
         super.onDestroyView();
     }
 
@@ -166,7 +169,7 @@ public class BaseListFragment extends BaseFragment {
      */
     private void setListShown(boolean shown, boolean animate) {
         ensureList();
-        if (mProgressContainer == null || mListShown == shown)
+        if (mListShown == shown || mListContainer == null || mProgressContainer == null)
         {
             return;
         }
@@ -304,16 +307,26 @@ public class BaseListFragment extends BaseFragment {
         public void onLoadFinished(Loader<D> loader, D data) {
             // Set the new data in the adapter.
             setNewData(data);
-            notifyDataSetChanged();
-
             // The list should now be shown.
-            if (isResumed())
+            show();
+            notifyDataSetChanged();
+        }
+        
+        private void show() {
+            if (mAdapter == null)
             {
-                setListShown(true);
+                setListAdapter(adapter);
             }
             else
             {
-                setListShownNoAnimation(true);
+                if (isResumed())
+                {
+                    setListShown(true);
+                }
+                else
+                {
+                    setListShownNoAnimation(true);
+                }
             }
         }
 

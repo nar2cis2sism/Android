@@ -17,8 +17,8 @@ import java.lang.annotation.Target;
 public @interface DAOPrimaryKey {
 
     /** 数据库表主键名称 */
-    public String column() default "";
+    String column() default "";
 
     /** 数据必须为Integer类型才能自动增长 */
-    public boolean autoincrement() default false;
+    boolean autoincrement() default false;
 }

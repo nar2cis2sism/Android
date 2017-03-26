@@ -17,16 +17,6 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Pair;
 
-import engine.android.core.ApplicationManager;
-import engine.android.core.util.LogFactory;
-import engine.android.core.util.LogFactory.LogUtil;
-import engine.android.dao.DAOTemplate.DAOClause.DAOParam;
-import engine.android.dao.annotation.DAOPrimaryKey;
-import engine.android.dao.annotation.DAOProperty;
-import engine.android.dao.annotation.DAOTable;
-import engine.android.dao.util.Page;
-import engine.android.util.file.FileManager;
-
 import java.io.File;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -39,9 +29,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicReference;
+
+import engine.android.core.ApplicationManager;
+import engine.android.core.util.LogFactory;
+import engine.android.core.util.LogFactory.LogUtil;
+import engine.android.dao.annotation.DAOPrimaryKey;
+import engine.android.dao.annotation.DAOProperty;
+import engine.android.dao.annotation.DAOTable;
+import engine.android.dao.util.Page;
+import engine.android.util.file.FileManager;
 
 /**
  * 操作数据库的模板，尽量面向对象，以简化DAO层<br>
@@ -56,32 +56,33 @@ import java.util.concurrent.atomic.AtomicReference;
  * 
  * @see http://www.w3cschool.cc/sqlite
  */
-public final class DAOTemplate {
+public class DAOTemplate {
 
     /**
      * 数据库更新监听器
      */
-    public static interface DBUpdateListener {
+    public interface DBUpdateListener {
 
-        public void onCreate(DAOTemplate dao);
+        void onCreate(DAOTemplate dao);
 
-        public void onUpdate(DAOTemplate dao, int oldVersion, int newVersion);
+        void onUpdate(DAOTemplate dao, int oldVersion, int newVersion);
     }
 
     /**
      * 数据库事务处理
      */
-    public static interface DAOTransaction {
+    public interface DAOTransaction {
 
         /**
          * 事务执行（抛出异常或返回false表示事务处理失败）
          */
-        public boolean execute(DAOTemplate dao) throws Exception;
+        boolean execute(DAOTemplate dao) throws Exception;
     }
 
     private final Context context;
 
-    private final AtomicReference<SQLiteDatabase> db = new AtomicReference<SQLiteDatabase>();
+    private final AtomicReference<SQLiteDatabase> db
+    = new AtomicReference<SQLiteDatabase>();
 
     private boolean printLog = true;
 
@@ -99,7 +100,7 @@ public final class DAOTemplate {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            log("创建数据库");
+            log("", "创建数据库");
             if (listener != null)
             {
                 DAOTemplate.this.db.set(db);
@@ -110,7 +111,7 @@ public final class DAOTemplate {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            log(String.format("数据库版本由%d更新为%d", oldVersion, newVersion));
+            log("", String.format("数据库版本由%d更新为%d", oldVersion, newVersion));
             if (listener != null)
             {
                 DAOTemplate.this.db.set(db);
@@ -121,7 +122,7 @@ public final class DAOTemplate {
 
         @Override
         public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            log(String.format("数据库版本由%d更新为%d", oldVersion, newVersion));
+            log("", String.format("数据库版本由%d更新为%d", oldVersion, newVersion));
             if (listener != null)
             {
                 DAOTemplate.this.db.set(db);
@@ -134,18 +135,18 @@ public final class DAOTemplate {
     /**
      * 数据库表监听器
      */
-    public static interface DAOListener {
+    public interface DAOListener {
 
         /** Daimon:标志位 **/
-        public static final int ALL     = ~0;
+        int ALL     = ~0;
 
-        public static final int INSERT  = 1 << 0;
+        int INSERT  = 1 << 0;
 
-        public static final int DELETE  = 1 << 1;
+        int DELETE  = 1 << 1;
 
-        public static final int UPDATE  = 1 << 2;
+        int UPDATE  = 1 << 2;
 
-        public void onChange();
+        void onChange();
     }
 
     /**
@@ -172,11 +173,7 @@ public final class DAOTemplate {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-            {
-                return true;
-            }
-            
+            if (this == o) return true;
             if (o instanceof DAOObserver)
             {
                 DAOObserver observer = (DAOObserver) o;
@@ -199,8 +196,6 @@ public final class DAOTemplate {
     = new CopyOnWriteArraySet<DAOObserver>();
 
     /**
-     * 别忘了关数据库
-     * 
      * @param name 数据库名称
      * @param version 数据库版本
      * @param listener 数据库更新监听器
@@ -222,7 +217,7 @@ public final class DAOTemplate {
      * 删除自身数据库
      */
     public void deleteSelf() {
-        log("删除数据库:" + dao.getDatabaseName());
+        log(LogUtil.getCallerStackFrame(), "删除数据库:" + dao.getDatabaseName());
         context.deleteDatabase(dao.getDatabaseName());
     }
 
@@ -232,6 +227,25 @@ public final class DAOTemplate {
     public boolean export(File dir) {
         return FileManager.copyTo(dir, context.getDatabasePath(dao.getDatabaseName()));
     }
+
+    /**
+     * 默认打印数据库执行语句，如有性能问题可以关闭
+     */
+    public void disablePrintLog(boolean disable) {
+        printLog = !disable;
+    }
+
+    public SQLiteDatabase getDataBase() {
+        SQLiteDatabase db = this.db.get();
+        if (db == null)
+        {
+            return dao.getWritableDatabase();
+        }
+    
+        return db;
+    }
+
+    /******************************* 华丽丽的分割线 *******************************/
 
     /**
      * @param createIfNotExist If true, create an empty set if it's not existed.
@@ -259,22 +273,21 @@ public final class DAOTemplate {
 
     public void unregisterListener(Class<?> c, DAOListener listener) {
         CopyOnWriteArraySet<DAOObserver> observers = getObservers(Table.getTable(c), false);
-        if (observers != null && !observers.isEmpty())
+        if (observers == null || observers.isEmpty()) return;
+        
+        if (listener == null)
         {
-            if (listener == null)
-            {
-                observers.clear();
-                return;
-            }
+            observers.clear();
+            return;
+        }
 
-            Iterator<DAOObserver> iter = observers.iterator();
-            while (iter.hasNext())
+        Iterator<DAOObserver> iter = observers.iterator();
+        while (iter.hasNext())
+        {
+            DAOObserver observer = iter.next();
+            if (observer.listener == listener)
             {
-                DAOObserver observer = iter.next();
-                if (observer.listener == listener)
-                {
-                    observers.remove(observer);
-                }
+                observers.remove(observer);
             }
         }
     }
@@ -327,15 +340,11 @@ public final class DAOTemplate {
     private void dispatchChange(boolean success) {
         if (success)
         {
-            if (!pendingListeners.isEmpty())
-            {
-                Iterator<DAOObserver> iter = pendingListeners.iterator();
-                pendingListeners.clear();
-                while (iter.hasNext())
-                {
-                    iter.next().notifyChange();
-                }
-            }
+            if (pendingListeners.isEmpty()) return;
+            
+            Iterator<DAOObserver> iter = pendingListeners.iterator();
+            pendingListeners.clear();
+            while (iter.hasNext()) iter.next().notifyChange();
         }
         else
         {
@@ -343,11 +352,11 @@ public final class DAOTemplate {
         }
     }
 
-    /**
-     * 默认打印数据库执行语句，如有性能问题可以关闭
-     */
-    public void disablePrintLog(boolean disable) {
-        printLog = !disable;
+    /******************************* 华丽丽的分割线 *******************************/
+    
+    Cursor rawQuery(String sql, String[] selectionArgs) {
+        if (printLog) LOG_SQL(sql, selectionArgs);
+        return getDataBase().rawQuery(sql, selectionArgs);
     }
 
     /**
@@ -359,9 +368,7 @@ public final class DAOTemplate {
      */
     public Cursor queryCursor(String sql, String[] selectionArgs) {
         try {
-            if (printLog)
-                LOG_SQL(sql, selectionArgs);
-            return getDataBase().rawQuery(sql, selectionArgs);
+            return rawQuery(sql, selectionArgs);
         } catch (Exception e) {
             processException(e);
         }
@@ -379,8 +386,7 @@ public final class DAOTemplate {
      */
     public long queryCount(String sql, String[] selectionArgs) {
         try {
-            if (printLog)
-                LOG_SQL(sql, selectionArgs);
+            if (printLog) LOG_SQL(sql, selectionArgs);
             return DatabaseUtils.longForQuery(getDataBase(), sql, selectionArgs);
         } catch (Exception e) {
             processException(e);
@@ -395,18 +401,13 @@ public final class DAOTemplate {
      * @param sql 遵循数据库语法规则，用;隔开
      */
     public void execute(String sql) {
-        if (TextUtils.isEmpty(sql))
-        {
-            return;
-        }
-
+        if (TextUtils.isEmpty(sql)) return;
         SQLiteDatabase db = getDataBase();
         try {
             String[] strs = sql.split(";");
             for (String s : strs)
             {
-                if (printLog)
-                    LOG_SQL(s);
+                if (printLog) LOG_SQL(s);
                 db.execSQL(s);
             }
         } catch (Exception e) {
@@ -418,15 +419,10 @@ public final class DAOTemplate {
      * 执行一条SQL语句
      */
     public void execute(String sql, Object[] bindArgs) {
-        if (TextUtils.isEmpty(sql))
-        {
-            return;
-        }
-
+        if (TextUtils.isEmpty(sql)) return;
         SQLiteDatabase db = getDataBase();
         try {
-            if (printLog)
-                LOG_SQL(sql, bindArgs);
+            if (printLog) LOG_SQL(sql, bindArgs);
             if (bindArgs == null)
             {
                 db.execSQL(sql);
@@ -448,8 +444,7 @@ public final class DAOTemplate {
 
         SQLiteDatabase db = getDataBase();
         db.beginTransaction();
-        if (printLog)
-            LOG_SQL("事务开始");
+        if (printLog) log(LogUtil.getCallerStackFrame(), "事务开始");
         try {
             if (transaction.execute(this))
             {
@@ -462,22 +457,11 @@ public final class DAOTemplate {
             LOG_DAOException(new DAOException(e));
         } finally {
             db.endTransaction();
-            if (printLog)
-                LOG_SQL("事务结束:success=" + success);
+            if (printLog) log(LogUtil.getCallerStackFrame(), "事务结束:success=" + success);
             dispatchChange(success);
         }
 
         return success;
-    }
-
-    public SQLiteDatabase getDataBase() {
-        SQLiteDatabase db = this.db.get();
-        if (db == null)
-        {
-            return dao.getWritableDatabase();
-        }
-
-        return db;
     }
 
     /**
@@ -485,12 +469,12 @@ public final class DAOTemplate {
      * 
      * @param c JavaBean类
      * @param indexName 索引名称
-     * @param clause 在指定列上创建索引
+     * @param fields 在指定列上创建索引
      */
-    public void createIndex(Class<?> c, String indexName, DAOClause clause) {
+    public void createIndex(Class<?> c, String indexName, String... fields) {
         checkNull(indexName);
 
-        if (clause == null)
+        if (fields == null || fields.length == 0)
         {
             throw new DAOException("请指定需要添加索引的字段", new NullPointerException());
         }
@@ -498,13 +482,13 @@ public final class DAOTemplate {
         Table table = Table.getTable(c);
 
         StringBuilder sql = new StringBuilder()
-                .append("CREATE INDEX ")
-                .append(indexName)
-                .append(" ON ")
-                .append(table.getTableName())
-                .append(" (");
-
-        clause.appendTo(table, sql);
+        .append("CREATE INDEX ")
+        .append(indexName)
+        .append(" ON ")
+        .append(table.getTableName())
+        .append(" (");
+        
+        DAOClause.create(fields).appendTo(table, sql);
 
         sql.append(")");
 
@@ -520,24 +504,6 @@ public final class DAOTemplate {
         checkNull(indexName);
 
         execute("DROP INDEX " + indexName);
-    }
-
-    /**
-     * 创建视图
-     * 
-     * @param viewName 视图名称
-     */
-    public <T> void createView(String viewName, DAOQueryBuilder<T> builder) {
-        checkNull(viewName);
-        checkNull(builder);
-
-        StringBuilder sql = new StringBuilder()
-                .append("CREATE VIEW ")
-                .append(viewName)
-                .append(" AS ");
-
-        builder.build(0);
-        execute(sql.append(builder.sql).toString(), builder.selectionArgs.toArray());
     }
 
     /**
@@ -575,34 +541,34 @@ public final class DAOTemplate {
         if (deleteOldTable)
         {
             sql.append("DROP TABLE IF EXISTS ")
-                    .append(table.getTableName())
-                    .append(";");
+            .append(table.getTableName())
+            .append(";");
         }
 
         sql.append("CREATE TABLE IF NOT EXISTS ")
-                .append(table.getTableName())
-                .append("\n(\n");
+        .append(table.getTableName())
+        .append("\n(\n");
 
         if (primaryKey != null)
         {
             sql.append("    ")
-                    .append(primaryKey.getColumn())
-                    .append(" ")
-                    .append(primaryKey.isAsInteger() ?
-                            "INTEGER" : primaryKey.getDataType().getSimpleName())
-                    .append(" PRIMARY KEY")
-                    .append(primaryKey.isAutoincrement() ?
-                            " AUTOINCREMENT" : "")
-                    .append(",\n");
+            .append(primaryKey.getColumn())
+            .append(" ")
+            .append(primaryKey.isAsInteger() ?
+                    "INTEGER" : primaryKey.getDataType().getSimpleName())
+            .append(" PRIMARY KEY")
+            .append(primaryKey.isAutoincrement() ?
+                    " AUTOINCREMENT" : "")
+            .append(",\n");
         }
 
         for (Property property : properties)
         {
             sql.append("    ")
-                    .append(property.getColumn())
-                    .append(" ")
-                    .append(property.getDataType().getSimpleName())
-                    .append(",\n");
+            .append(property.getColumn())
+            .append(" ")
+            .append(property.getDataType().getSimpleName())
+            .append(",\n");
         }
 
         sql.deleteCharAt(sql.length() - 2).append(")");
@@ -624,10 +590,10 @@ public final class DAOTemplate {
      */
     public void renameTable(String oldName, String newName) {
         StringBuilder sql = new StringBuilder()
-                .append("ALTER TABLE ")
-                .append(oldName)
-                .append(" RENAME TO ")
-                .append(newName);
+        .append("ALTER TABLE ")
+        .append(oldName)
+        .append(" RENAME TO ")
+        .append(newName);
 
         execute(sql.toString());
     }
@@ -639,37 +605,35 @@ public final class DAOTemplate {
      */
     public void updateTable(Class<?> c) {
         Table table = Table.getTable(c);
-
-        Cursor cursor = null;
+        
         try {
-            cursor = queryCursor("SELECT * FROM " + table.getTableName() + " LIMIT 0", null);
+            Cursor cursor = rawQuery("SELECT * FROM " + table.getTableName() + " LIMIT 0", null);
             if (cursor != null)
             {
-                StringBuilder sql = new StringBuilder();
-                for (Property property : table.getPropertiesWithPrimaryKey())
-                {
-                    int index = cursor.getColumnIndex(property.getColumn());
-                    if (index == -1)
+                try {
+                    StringBuilder sql = new StringBuilder(50);
+                    for (Property property : table.getPropertiesWithPrimaryKey())
                     {
-                        sql.append("ALTER TABLE ")
+                        int index = cursor.getColumnIndex(property.getColumn());
+                        if (index == -1)
+                        {
+                            sql .append("ALTER TABLE ")
                                 .append(table.getTableName())
                                 .append(" ADD COLUMN ")
                                 .append(property.getColumn())
                                 .append(" ")
                                 .append(property.getDataType().getSimpleName())
                                 .append(";");
+                        }
                     }
-                }
 
-                execute(sql.toString());
+                    execute(sql.toString());
+                } finally {
+                    cursor.close();
+                }
             }
         } catch (Exception e) {
             processException(e);
-        } finally {
-            if (cursor != null)
-            {
-                cursor.close();
-            }
         }
     }
 
@@ -705,14 +669,13 @@ public final class DAOTemplate {
         Table table = Table.getTable(c);
 
         StringBuilder sql = new StringBuilder()
-                .append("DELETE FROM ")
-                .append(table.getTableName());
+        .append("DELETE FROM ")
+        .append(table.getTableName());
 
         PrimaryKey primaryKey = table.getPrimaryKey();
         if (primaryKey.isAutoincrement())
         {
-            sql
-                .append(";UPDATE sqlite_sequence SET seq=0 WHERE name='")
+            sql .append(";UPDATE sqlite_sequence SET seq=0 WHERE name='")
                 .append(table.getTableName())
                 .append("'")
                 .append(";VACUUM");
@@ -735,14 +698,14 @@ public final class DAOTemplate {
      */
     public boolean isTableExist(Class<?> c) {
         return queryCount("SELECT count(*) FROM sqlite_master WHERE type='table' AND name=?",
-                new String[] { Table.getTable(c).getTableName() }) > 0;
+                new String[]{ Table.getTable(c).getTableName() }) > 0;
     }
 
     /**
      * 保存单条数据
      * 
      * @param obj JavaBean对象，映射到数据库的一张表
-     * @return 是否有数据保存
+     * @return 是否保存成功
      */
     public <T> boolean save(T obj) {
         checkNull(obj);
@@ -751,9 +714,9 @@ public final class DAOTemplate {
 
         try {
             StringBuilder sql = new StringBuilder()
-                    .append("INSERT INTO ")
-                    .append(table.getTableName())
-                    .append("(");
+            .append("INSERT INTO ")
+            .append(table.getTableName())
+            .append("(");
 
             int i = 0;
 
@@ -761,13 +724,13 @@ public final class DAOTemplate {
 
             for (Property property : properties)
             {
-                sql.append(i++ > 0 ? "," : "");
-                sql.append(property.getColumn());
+                sql .append(i++ > 0 ? "," : "")
+                    .append(property.getColumn());
             }
             
-            sql.append(")").append(" VALUES (");
+            sql.append(") VALUES (");
 
-            List<Object> bindArgs = new ArrayList<Object>(properties.size());
+            ArrayList<Object> bindArgs = new ArrayList<Object>(properties.size());
 
             i = 0;
 
@@ -799,19 +762,15 @@ public final class DAOTemplate {
      */
     public <T> boolean save(T... obj) {
         checkNull(obj);
-
-        if (obj.length == 0)
-        {
-            return false;
-        }
+        if (obj.length == 0) return false;
 
         Table table = Table.getTable(obj.getClass().getComponentType());
 
         try {
             StringBuilder sql = new StringBuilder(50 + 10 * obj.length)
-                    .append("INSERT INTO ")
-                    .append(table.getTableName())
-                    .append("(");
+            .append("INSERT INTO ")
+            .append(table.getTableName())
+            .append("(");
 
             StringBuilder values = new StringBuilder(" VALUES ");
 
@@ -821,11 +780,11 @@ public final class DAOTemplate {
 
             for (Property property : properties)
             {
-                sql.append(i++ > 0 ? "," : "");
-                sql.append(property.getColumn());
+                sql .append(i++ > 0 ? "," : "")
+                    .append(property.getColumn());
             }
 
-            List<Object> bindArgs = new ArrayList<Object>(properties.size() * obj.length);
+            ArrayList<Object> bindArgs = new ArrayList<Object>(properties.size() * obj.length);
 
             for (Object o : obj)
             {
@@ -855,8 +814,7 @@ public final class DAOTemplate {
     }
 
     private long executeInsert(String sql, Object[] bindArgs) {
-        if (printLog)
-            LOG_SQL(sql, bindArgs);
+        if (printLog) LOG_SQL(sql, bindArgs);
         SQLiteStatement statement = getDataBase().compileStatement(sql);
         try {
             if (bindArgs != null && bindArgs.length > 0)
@@ -874,22 +832,79 @@ public final class DAOTemplate {
     }
 
     /**
-     * 删除数据
-     * 
-     * @return 是否有数据被删除
+     * 更新或删除数据
      */
-    public <T> boolean remove(DAOSQLBuilder<T> builder) {
-        checkNull(builder);
+    public <T> DAOEditBuilder<T> edit(Class<T> c) {
+        return new DAOEditBuilder<T>(c);
+    }
 
+    /**
+     * 根据主键删除某条数据
+     *
+     * @param obj JavaBean对象，映射到数据库的一张表
+     * @return 是否删除成功
+     */
+    public <T> boolean remove(T obj) {
+        checkNull(obj);
+
+        @SuppressWarnings("unchecked")
+        DAOEditBuilder<T> builder = new DAOEditBuilder<T>((Class<T>) obj.getClass());
+
+        try {
+            PrimaryKey primaryKey = builder.table.getPrimaryKey();
+            if (primaryKey != null)
+            {
+                return builder.where(DAOExpression
+                    .create(primaryKey.getColumn())
+                    .equal(primaryKey.getValue(obj)))
+                .delete();
+            }
+        } catch (Exception e) {
+            processException(e);
+        }
+
+        return false;
+    }
+
+    /**
+     * 根据主键更新某一条数据
+     *
+     * @param obj JavaBean对象，映射到数据库的一张表
+     * @param fields 需要修改的字段，不设置则修改所有字段
+     * @return 是否更新成功
+     */
+    public <T> boolean update(T obj, String... fields) {
+        checkNull(obj);
+
+        @SuppressWarnings("unchecked")
+        DAOEditBuilder<T> builder = new DAOEditBuilder<T>((Class<T>) obj.getClass());
+
+        try {
+            PrimaryKey primaryKey = builder.table.getPrimaryKey();
+            if (primaryKey != null)
+            {
+                return builder.where(DAOExpression
+                    .create(primaryKey.getColumn())
+                    .equal(primaryKey.getValue(obj)))
+                .update(obj, fields);
+            }
+        } catch (Exception e) {
+            processException(e);
+        }
+
+        return false;
+    }
+
+    <T> boolean remove(DAOSQLBuilder<T> builder) {
         Table table = builder.table;
 
         try {
             StringBuilder sql = new StringBuilder()
-                    .append("DELETE FROM ")
-                    .append(table.getTableName());
+            .append("DELETE FROM ")
+            .append(table.getTableName());
 
-            List<Object> bindArgs = new LinkedList<Object>();
-            builder.appendWhereClause(sql, bindArgs);
+            LinkedList<Object> bindArgs = new LinkedList<Object>();
+            builder.appendWhere(sql, bindArgs);
 
             if (executeUpdateDelete(sql.toString(), bindArgs.toArray()) > 0)
             {
@@ -903,26 +918,18 @@ public final class DAOTemplate {
         return false;
     }
 
-    /**
-     * 修改数据
-     * 
-     * @param bean JavaBean对象，映射到数据库的一张表
-     * @param fields 需要修改的字段，不设置则修改所有字段
-     * @return 是否有数据更改
-     */
-    public <T> boolean edit(DAOSQLBuilder<T> builder, T bean, String... fields) {
-        checkNull(builder);
+    <T> boolean edit(DAOSQLBuilder<T> builder, T bean, String... fields) {
         checkNull(bean);
 
         Table table = builder.table;
 
         try {
             StringBuilder sql = new StringBuilder()
-                    .append("UPDATE ")
-                    .append(table.getTableName())
-                    .append(" SET ");
+            .append("UPDATE ")
+            .append(table.getTableName())
+            .append(" SET ");
 
-            List<Object> bindArgs;
+            ArrayList<Object> bindArgs;
 
             int i = 0;
 
@@ -934,9 +941,9 @@ public final class DAOTemplate {
 
                 for (Property property : properties)
                 {
-                    sql.append(i++ > 0 ? "," : "");
-                    sql.append(property.getColumn());
-                    sql.append("=?");
+                    sql .append(i++ > 0 ? "," : "")
+                        .append(property.getColumn())
+                        .append("=?");
                     bindArgs.add(property.getValue(bean));
                 }
             }
@@ -949,15 +956,15 @@ public final class DAOTemplate {
                     Property property = table.getProperty(field);
                     if (property != null)
                     {
-                        sql.append(i++ > 0 ? "," : "");
-                        sql.append(property.getColumn());
-                        sql.append("=?");
+                        sql .append(i++ > 0 ? "," : "")
+                            .append(property.getColumn())
+                            .append("=?");
                         bindArgs.add(property.getValue(bean));
                     }
                 }
             }
 
-            builder.appendWhereClause(sql, bindArgs);
+            builder.appendWhere(sql, bindArgs);
 
             if (executeUpdateDelete(sql.toString(), bindArgs.toArray()) > 0)
             {
@@ -972,8 +979,7 @@ public final class DAOTemplate {
     }
 
     private int executeUpdateDelete(String sql, Object[] bindArgs) {
-        if (printLog)
-            LOG_SQL(sql, bindArgs);
+        if (printLog) LOG_SQL(sql, bindArgs);
         SQLiteStatement statement = getDataBase().compileStatement(sql);
         try {
             if (bindArgs != null && bindArgs.length > 0)
@@ -992,104 +998,30 @@ public final class DAOTemplate {
 
     /**
      * 查询数据
-     * 
-     * @param returnType 返回数据类型
-     * @return (Cursor)结果集游标<br>
-     *         (Long)符合条件数据的数量<br>
-     *         (T)数据表里第一条满足条件的数据，如没有则返回Null<br>
-     *         (T[])封装好的对象数组
      */
-    public <T, D> D find(DAOQueryBuilder<T> builder, Class<D> returnType) {
-        checkNull(builder);
-
-        Table table = builder.table;
-
-        Cursor cursor = null;
-        try {
-            if (returnType == Cursor.class)
-            {
-                builder.build(0);
-                List<String> selectionArgs = builder.selectionArgs;
-                return returnType.cast(queryCursor(builder.sql,
-                        selectionArgs.toArray(new String[selectionArgs.size()])));
-            }
-            else if (returnType == Long.class)
-            {
-                builder.build(DAOQueryBuilder.CONSTRAINT_COUNT);
-                List<String> selectionArgs = builder.selectionArgs;
-                return returnType.cast(queryCount(builder.sql,
-                        selectionArgs.toArray(new String[selectionArgs.size()])));
-            }
-            else if (returnType == builder.c)
-            {
-                builder.build(DAOQueryBuilder.CONSTRAINT_LIMIT);
-                List<String> selectionArgs = builder.selectionArgs;
-                cursor = queryCursor(builder.sql,
-                        selectionArgs.toArray(new String[selectionArgs.size()]));
-
-                if (cursor != null && cursor.moveToFirst())
-                {
-                    return extractFromCursor(cursor, table, returnType);
-                }
-            }
-            else if (returnType.isArray())
-            {
-                Class<?> arrayType = returnType.getComponentType();
-                if (arrayType == builder.c)
-                {
-                    builder.build(0);
-                    List<String> selectionArgs = builder.selectionArgs;
-                    cursor = queryCursor(builder.sql,
-                            selectionArgs.toArray(new String[selectionArgs.size()]));
-
-                    if (cursor != null)
-                    {
-                        Class<T> c = builder.c;
-                        @SuppressWarnings("unchecked")
-                        T[] array = (T[]) Array.newInstance(c, cursor.getCount());
-                        int index = 0;
-
-                        while (cursor.moveToNext())
-                        {
-                            array[index++] = extractFromCursor(cursor, table, c);
-                        }
-
-                        return returnType.cast(array);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            processException(e);
-        } finally {
-            if (cursor != null)
-            {
-                cursor.close();
-            }
-        }
-
-        return null;
+    public <T> DAOQueryBuilder<T> find(Class<T> c) {
+        return new DAOQueryBuilder<T>(c);
     }
 
     static void checkNull(Object obj) {
-        if (obj == null)
+        if (obj != null) return;
+        
+        String message;
+        StackTraceElement stack = LogUtil.getCallerStackFrame();
+        if (stack != null)
         {
-            String message;
-            StackTraceElement stack = LogUtil.getCallerStackFrame();
-            if (stack != null)
-            {
-                message = String.format("Argument passed to %s[%d] cannot be null",
-                        stack.getMethodName(), stack.getLineNumber());
-            }
-            else
-            {
-                message = "Argument cannot be null";
-            }
-
-            throw new DAOException("你故意的吧！", new NullPointerException(message));
+            message = String.format("Argument passed to %s[%d] cannot be null",
+                    stack.getMethodName(), stack.getLineNumber());
         }
+        else
+        {
+            message = "Argument cannot be null";
+        }
+
+        throw new DAOException("你故意的吧！", new NullPointerException(message));
     }
 
-    private void processException(Exception t) {
+    void processException(Exception t) {
         DAOException e = new DAOException(t);
         if (getDataBase().inTransaction())
         {
@@ -1108,31 +1040,24 @@ public final class DAOTemplate {
         } catch (Exception e) {
             LOG_DAOException(new DAOException(e));
         }
-
+        
         return null;
     }
 
     private static <T> T extractFromCursor(Cursor cursor, Table table, Class<T> c)
             throws Exception {
         T o = c.newInstance();
-        int columnCount = cursor.getColumnCount();
-        if (columnCount > 0)
+        for (int i = 0, count = cursor.getColumnCount(); i < count; i++)
         {
-            for (int columnIndex = 0; columnIndex < columnCount; columnIndex++)
+            String columnName = cursor.getColumnName(i);
+            Property property = table.getPropertyByColumn(columnName);
+            if (property != null)
             {
-                String columnName = cursor.getColumnName(columnIndex);
-                Property property = table.getPropertyByColumn(columnName);
-                if (property != null)
-                {
-                    Object value = getCursorValue(cursor, columnIndex, property.getDataType());
-                    if (value != null)
-                    {
-                        property.setValue(o, value);
-                    }
-                }
+                Object value = getCursorValue(cursor, i, property.getDataType());
+                if (value != null) property.setValue(o, value);
             }
         }
-
+    
         return o;
     }
 
@@ -1145,7 +1070,6 @@ public final class DAOTemplate {
      * @param index the 1-based index to bind at
      * @param value the value to bind
      */
-
     private static void bindObjectToProgram(SQLiteProgram prog, int index, Object value) {
         if (value == null)
         {
@@ -1170,10 +1094,7 @@ public final class DAOTemplate {
     }
 
     private static Object getCursorValue(Cursor cursor, int columnIndex, Class<?> type) {
-        if (cursor.isNull(columnIndex))
-        {
-            return null;
-        }
+        if (cursor.isNull(columnIndex)) return null;
 
         Object value = null;
         if (type == byte[].class)
@@ -1247,602 +1168,23 @@ public final class DAOTemplate {
         }
     }
 
-    /**
-     * This is a convenience utility that helps build SQL语句
-     */
-    public static class DAOSQLBuilder<T> {
-
-        final Class<T> c;
-
-        final Table table;
-
-        DAOExpression whereClause;
-
-        DAOSQLBuilder(Class<T> c) {
-            table = Table.getTable(this.c = c);
-        }
-
-        public static <T> DAOSQLBuilder<T> create(Class<T> c) {
-            return new DAOSQLBuilder<T>(c);
-        }
-
-        public DAOSQLBuilder<T> setWhereClause(DAOExpression whereClause) {
-            this.whereClause = whereClause;
-            return this;
-        }
-
-        void appendWhereClause(StringBuilder sql, List<Object> args) {
-            if (whereClause != null)
-            {
-                whereClause.appendTo(table, sql.append(" WHERE "), args);
-            }
-        }
-
-        static void appendExpression(StringBuilder sql, List<Object> args,
-                Table table, DAOExpression expression) {
-            if (expression != null)
-            {
-                expression.appendTo(table, sql, args);
-            }
-        }
-
-        /**
-         * SQL表达式
-         */
-        public static class DAOExpression {
-
-            PropertyCondition condition;
-
-            boolean isCombineExpression;
-
-            DAOExpression() {}
-
-            public static DAOCondition create(String fieldOrColumn) {
-                return create(new DAOParam(fieldOrColumn));
-            }
-
-            public static DAOCondition create(DAOParam param) {
-                DAOExpression expression = new DAOExpression();
-                PropertyCondition condition = new PropertyCondition(expression, param);
-                return expression.condition = condition;
-            }
-
-            public DAOExpression and(DAOExpression expression) {
-                return join(expression, " AND ");
-            }
-
-            public DAOExpression or(DAOExpression expression) {
-                return join(expression, " OR ");
-            }
-
-            DAOExpression join(DAOExpression expression, String op) {
-                return new DAOCombineExpression(this).join(expression, op);
-            }
-
-            void appendTo(Table table, StringBuilder expression, List<Object> whereArgs) {
-                if (condition != null)
-                {
-                    condition.appendTo(table, expression, whereArgs);
-                }
-            }
-
-            /**
-             * 条件判断，一般用于where子句
-             */
-            public static interface DAOCondition {
-
-                public DAOCondition not();
-
-                public DAOExpression equal(Object value);
-
-                public DAOExpression like(String value);
-
-                public DAOExpression between(Object value1, Object value2);
-
-                public DAOExpression in(Object... values);
-
-                public DAOExpression greaterThan(Object value);
-
-                public DAOExpression lessThan(Object value);
-
-                public DAOExpression isNull();
-            }
-
-            private static class PropertyCondition implements DAOCondition {
-
-                private final DAOExpression expression;
-
-                private final DAOParam param;
-
-                private String op;
-
-                private Object[] values;
-
-                private boolean notIsCalled;
-
-                public PropertyCondition(DAOExpression expression, DAOParam param) {
-                    this.expression = expression;
-                    this.param = param;
-                }
-
-                private void setup(String op, Object... values) {
-                    this.op = op;
-                    this.values = values;
-                }
-
-                @Override
-                public DAOCondition not() {
-                    notIsCalled = true;
-                    return this;
-                }
-
-                @Override
-                public DAOExpression equal(Object value) {
-                    setup(notIsCalled ? "<>?" : "=?", value);
-                    return expression;
-                }
-
-                @Override
-                public DAOExpression like(String value) {
-                    setup((notIsCalled ? " NOT" : "") + " LIKE ?", value);
-                    return expression;
-                }
-
-                @Override
-                public DAOExpression between(Object value1, Object value2) {
-                    setup((notIsCalled ? " NOT" : "") + " BETWEEN ? AND ?", value1, value2);
-                    return expression;
-                }
-
-                @Override
-                public DAOExpression in(Object... values) {
-                    StringBuilder sb = new StringBuilder(" IN (");
-
-                    for (int i = 0; i < values.length;)
-                    {
-                        sb.append(i++ > 0 ? ",?" : "?");
-                    }
-
-                    setup((notIsCalled ? " NOT" : "") + sb.append(")"), values);
-                    return expression;
-                }
-
-                @Override
-                public DAOExpression greaterThan(Object value) {
-                    setup(notIsCalled ? "<=?" : ">?", value);
-                    return expression;
-                }
-
-                @Override
-                public DAOExpression lessThan(Object value) {
-                    setup(notIsCalled ? ">=?" : "<?", value);
-                    return expression;
-                }
-
-                @Override
-                public DAOExpression isNull() {
-                    setup(notIsCalled ? " IS NOT NULL" : " IS NULL");
-                    return expression;
-                }
-
-                void appendTo(Table table, StringBuilder expression, List<Object> whereArgs) {
-                    expression.append(param.getParam(table)).append(op);
-                    if (values != null)
-                    {
-                        for (Object value : values)
-                        {
-                            whereArgs.add(value);
-                        }
-                    }
-                }
-            }
-        }
-
-        /**
-         * 组合表达式，连接多个子句
-         */
-        private static class DAOCombineExpression extends DAOExpression {
-
-            private final List<Pair<DAOExpression, String>> children;
-
-            public DAOCombineExpression(DAOExpression expression) {
-                isCombineExpression = true;
-                children = new LinkedList<Pair<DAOExpression, String>>();
-                condition = expression.condition;
-            }
-
-            DAOExpression join(DAOExpression expression, String op) {
-                children.add(new Pair<DAOExpression, String>(expression, op));
-                return this;
-            }
-
-            void appendTo(Table table, StringBuilder expression, List<Object> whereArgs) {
-                super.appendTo(table, expression, whereArgs);
-
-                for (Pair<DAOExpression, String> child : children)
-                {
-                    expression.append(child.second);
-
-                    DAOExpression clause = child.first;
-                    if (clause.isCombineExpression)
-                        expression.append("(");
-                    clause.appendTo(table, expression, whereArgs);
-                    if (clause.isCombineExpression)
-                        expression.append(")");
-                }
-            }
-        }
-    }
-
-    /**
-     * This is a convenience utility that helps build 数据库查询语句
-     */
-    public static class DAOQueryBuilder<T> extends DAOSQLBuilder<T> {
-
-        DAOClause selectionClause;
-
-        boolean isDistinct;                         // 消除重复的记录
-
-        DAOClause groupClause;                      // 按条件进行分组
-
-        DAOExpression havingClause;                 // 分组上设置条件
-
-        DAOClause orderClause;                      // 按指定顺序显示
-
-        boolean orderDesc;                          // 按降序进行排列
-
-        Page page;                                  // 分页工具
-
-        DAOQueryBuilder(Class<T> c) {
-            super(c);
-        }
-
-        public static <T> DAOQueryBuilder<T> create(Class<T> c) {
-            return new DAOQueryBuilder<T>(c);
-        }
-
-        public DAOQueryBuilder<T> setSelectionClause(DAOClause selectionClause) {
-            this.selectionClause = selectionClause;
-            return this;
-        }
-
-        public DAOQueryBuilder<T> setDistinct(boolean isDistinct) {
-            this.isDistinct = isDistinct;
-            return this;
-        }
-
-        @Override
-        public DAOQueryBuilder<T> setWhereClause(DAOExpression whereClause) {
-            super.setWhereClause(whereClause);
-            return this;
-        }
-
-        public DAOQueryBuilder<T> setGroupClause(DAOClause groupClause) {
-            this.groupClause = groupClause;
-            return this;
-        }
-
-        public DAOQueryBuilder<T> setHavingClause(DAOExpression havingClause) {
-            this.havingClause = havingClause;
-            return this;
-        }
-
-        public DAOQueryBuilder<T> setOrderClause(DAOClause orderClause) {
-            this.orderClause = orderClause;
-            return this;
-        }
-
-        public DAOQueryBuilder<T> setOrderClause(DAOClause orderClause, boolean desc) {
-            orderDesc = desc;
-            return setOrderClause(orderClause);
-        }
-
-        /**
-         * 使用分页技术
-         * 
-         * @return 需设置分页参数
-         */
-        public Page usePage() {
-            if (page == null)
-            {
-                page = new Page(10);
-            }
-
-            return page;
-        }
-
-        /**
-         * 停止使用分页技术
-         */
-        public void stopPage() {
-            page = null;
-        }
-
-        /** Can not be Null. */
-        String sql;
-
-        /** Can not be Null. */
-        List<String> selectionArgs;
-
-        static final int CONSTRAINT_COUNT = 1;
-
-        static final int CONSTRAINT_LIMIT = 2;
-
-        void build(int constraint) {
-            StringBuilder sql = new StringBuilder(120);
-            List<Object> args = new LinkedList<Object>();
-
-            appendSelectionClause(sql, constraint);
-            appendWhereClause(sql, args);
-            appendGroupClause(sql);
-            appendHavingClause(sql, args);
-            appendOrderClause(sql);
-
-            if (constraint == CONSTRAINT_LIMIT)
-            {
-                sql.append(" LIMIT 1");
-            }
-            else if (page != null)
-            {
-                sql
-                .append(" LIMIT ")
-                .append(page.getPageSize())
-                .append(",")
-                .append(page.getBeginRecord());
-            }
-
-            this.sql = sql.toString();
-            selectionArgs = convertArgs(args);
-        }
-
-        void appendSelectionClause(StringBuilder sql, int constraint) {
-            sql.append("SELECT ");
-
-            if (constraint == CONSTRAINT_COUNT)
-            {
-                sql.append("COUNT(*)");
-            }
-            else
-            {
-                if (isDistinct)
-                {
-                    sql.append("DISTINCT ");
-                }
-
-                if (selectionClause == null)
-                {
-                    sql.append("*");
-                }
-                else
-                {
-                    selectionClause.appendTo(table, sql);
-                }
-            }
-
-            sql.append(" FROM ").append(table.getTableName());
-        }
-
-        void appendGroupClause(StringBuilder sql) {
-            appendClause(sql, table, " GROUP BY ", groupClause);
-        }
-
-        void appendHavingClause(StringBuilder sql, List<Object> args) {
-            if (havingClause != null)
-            {
-                havingClause.appendTo(table, sql.append(" HAVING "), args);
-            }
-        }
-
-        void appendOrderClause(StringBuilder sql) {
-            appendClause(sql, table, " ORDER BY ", orderClause);
-            if (orderDesc)
-            {
-                sql.append(" DESC");
-            }
-        }
-
-        static void appendClause(StringBuilder sql, Table table,
-                String name, DAOClause clause) {
-            if (clause != null)
-            {
-                clause.appendTo(table, sql.append(name));
-            }
-        }
-
-        static List<String> convertArgs(Collection<Object> args) {
-            if (args == null)
-            {
-                return null;
-            }
-
-            List<String> list = new ArrayList<String>(args.size());
-            for (Object arg : args)
-            {
-                list.add(String.valueOf(arg));
-            }
-
-            return list;
-        }
-    }
-
-    /**
-     * 数据库操作语句，可用来指定查询列
-     */
-    public static class DAOClause {
-
-        private final List<DAOParam> params;
-
-        private DAOClause() {
-            params = new LinkedList<DAOParam>();
-        }
-
-        public static DAOClause create(DAOParam param) {
-            return new DAOClause().add(param);
-        }
-
-        public DAOClause add(DAOParam param) {
-            params.add(param);
-            return this;
-        }
-
-        String[] build(Table table) {
-            String[] clause = new String[params.size()];
-            for (int i = 0, len = clause.length; i < len; i++)
-            {
-                clause[i] = params.get(i).getParam(table);
-            }
-
-            return clause;
-        }
-
-        void appendTo(Table table, StringBuilder sql) {
-            boolean firstTime = true;
-            for (DAOParam param : params)
-            {
-                if (firstTime)
-                {
-                    firstTime = false;
-                }
-                else
-                {
-                    sql.append(",");
-                }
-
-                sql.append(param.getParam(table));
-            }
-        }
-
-        /**
-         * 数据库操作的最小单元（对应数据库表的列）<br>
-         * 不可重复使用
-         */
-        public static final class DAOParam {
-
-            private static final String FORMAT_TOKEN = "%s";
-
-            private final String fieldName;         // 默认识别为域名
-
-            private List<String> format;            // 执行一些函数操作
-
-            private String param;
-
-            /**
-             * @param fieldOrColumn 可以识别映射bean的域，也可以直接操作表的列
-             */
-
-            public DAOParam(String fieldOrColumn) {
-                fieldName = fieldOrColumn;
-            }
-
-            private DAOParam addFormat(String s) {
-                if (format == null)
-                {
-                    format = new LinkedList<String>();
-                }
-
-                format.add(s);
-                return this;
-            }
-
-            public DAOParam count() {
-                return addFormat("count");
-            }
-
-            public DAOParam max() {
-                return addFormat("max");
-            }
-
-            public DAOParam min() {
-                return addFormat("min");
-            }
-
-            public DAOParam avg() {
-                return addFormat("avg");
-            }
-
-            public DAOParam sum() {
-                return addFormat("sum");
-            }
-
-            public DAOParam abs() {
-                return addFormat("abs");
-            }
-
-            public DAOParam upper() {
-                return addFormat("upper");
-            }
-
-            public DAOParam lower() {
-                return addFormat("lower");
-            }
-
-            public DAOParam length() {
-                return addFormat("length");
-            }
-
-            String getParam(Table table) {
-                if (param == null)
-                {
-                    String column = fieldName;
-                    Property property = table.getPropertyByField(column);
-                    if (property != null)
-                    {
-                        column = property.getColumn();
-                    }
-
-                    param = format(initFormat(), column);
-                }
-
-                return param;
-            }
-
-            private String initFormat() {
-                if (format == null)
-                {
-                    return null;
-                }
-
-                StringBuilder sb = new StringBuilder(FORMAT_TOKEN);
-                for (String s : format)
-                {
-                    sb.insert(0, s + "(").append(")");
-                }
-
-                return sb.toString();
-            }
-
-            private static String format(String format, String arg) {
-                if (TextUtils.isEmpty(format))
-                {
-                    return arg;
-                }
-
-                return format.replaceFirst(FORMAT_TOKEN, arg);
-            }
-        }
-    }
+    /******************************* 华丽丽的分割线 *******************************/
 
     private static class Property {
 
-        private final String fieldName;               // 对应JavaBean的域
+        private final Field field;                    // 对应JavaBean的域
+
+        private final String fieldName;               // JavaBean变量名称
 
         private final String column;                  // 对应DataBase的列
 
-        private final Class<?> dataType;              // 数据类型
-
         public Property(Field field, DAOProperty property) {
-            this(field.getName(), property.column(), field.getType());
+            this(field, property.column());
         }
 
-        public Property(String fieldName, String column, Class<?> dataType) {
-            if (TextUtils.isEmpty(column))
-            {
-                column = fieldName;
-            }
-
-            this.fieldName = fieldName;
-            this.column = column;
-            this.dataType = dataType;
+        public Property(Field field, String column) {
+            fieldName = (this.field = field).getName();
+            this.column = TextUtils.isEmpty(column) ? fieldName : column;
         }
 
         public String getFieldName() {
@@ -1853,51 +1195,21 @@ public final class DAOTemplate {
             return column;
         }
 
+        /**
+         * 获取数据类型
+         */
         public Class<?> getDataType() {
-            return dataType;
+            return field.getType();
         }
 
         public Object getValue(Object obj) throws Exception {
-            Field field = getField(obj.getClass(), fieldName);
-            if (field == null)
-            {
-                throw new NoSuchFieldException();
-            }
-
             field.setAccessible(true);
             return field.get(obj);
         }
 
         public void setValue(Object obj, Object value) throws Exception {
-            Field field = getField(obj.getClass(), fieldName);
-            if (field == null)
-            {
-                throw new NoSuchFieldException();
-            }
-
             field.setAccessible(true);
             field.set(obj, value);
-        }
-
-        /**
-         * 利用反射获取类的变量
-         * 
-         * @param fieldName 变量名称
-         */
-        private static Field getField(Class<?> c, String fieldName) {
-            Field field = null;
-            for (; c != Object.class; c = c.getSuperclass())
-            {
-                try {
-                    field = c.getDeclaredField(fieldName);
-                    break;
-                } catch (Exception e) {
-                    // 这里甚么都不要做！
-                    // 如果这里的异常打印或者往外抛，就不会往下执行，最后就不会进入到父类中了
-                }
-            }
-
-            return field;
         }
     }
 
@@ -1908,12 +1220,12 @@ public final class DAOTemplate {
         private final boolean isAutoincrement;
 
         public PrimaryKey(Field field, DAOPrimaryKey primaryKey) {
-            super(field.getName(), primaryKey.column(), field.getType());
+            super(field, primaryKey.column());
             Class<?> dataType = getDataType();
             asInteger = dataType == Integer.class || dataType == int.class
-                    || dataType == Long.class || dataType == long.class
-                    || dataType == Short.class || dataType == short.class
-                    || dataType == Byte.class || dataType == byte.class;
+                     || dataType == Long.class || dataType == long.class
+                     || dataType == Short.class || dataType == short.class
+                     || dataType == Byte.class || dataType == byte.class;
             isAutoincrement = primaryKey.autoincrement() && asInteger;
         }
 
@@ -1929,17 +1241,17 @@ public final class DAOTemplate {
     private static class Table {
 
         private static final ConcurrentHashMap<String, Table> tables =
-                new ConcurrentHashMap<String, Table>();// 类名为索引
+                new ConcurrentHashMap<String, Table>(); // 类名为索引
 
         private final String tableName;
 
         private PrimaryKey primaryKey;
 
         private final HashMap<String, Property> propertiesByField =
-                new HashMap<String, Property>();// 域名为索引
+                new HashMap<String, Property>(); // 域名为索引
 
         private final HashMap<String, Property> propertiesByColumn =
-                new HashMap<String, Property>();// 列名为索引
+                new HashMap<String, Property>(); // 列名为索引
 
         public Table(Class<?> c) {
             tableName = getTableName(c);
@@ -2009,8 +1321,11 @@ public final class DAOTemplate {
             Collection<Property> properties = propertiesByField.values();
             if (primaryKey != null)
             {
-                properties = new ArrayList<Property>(properties);
-                properties.add(primaryKey);
+                ArrayList<Property> list = new ArrayList<Property>(properties.size() + 1);
+                list.add(primaryKey);
+                list.addAll(properties);
+                
+                properties = list;
             }
 
             return Collections.unmodifiableCollection(properties);
@@ -2020,8 +1335,11 @@ public final class DAOTemplate {
             Collection<Property> properties = propertiesByField.values();
             if (primaryKey != null && !primaryKey.isAutoincrement())
             {
-                properties = new ArrayList<Property>(properties);
-                properties.add(primaryKey);
+                ArrayList<Property> list = new ArrayList<Property>(properties.size() + 1);
+                list.add(primaryKey);
+                list.addAll(properties);
+                
+                properties = list;
             }
 
             return Collections.unmodifiableCollection(properties);
@@ -2047,8 +1365,8 @@ public final class DAOTemplate {
 
         public Property getProperty(String name) {
             if (primaryKey != null
-                    && (primaryKey.getFieldName().equals(name)
-                    || primaryKey.getColumn().equals(name)))
+            && (primaryKey.getFieldName().equals(name)
+            ||  primaryKey.getColumn().equals(name)))
             {
                 return primaryKey;
             }
@@ -2060,6 +1378,686 @@ public final class DAOTemplate {
             }
 
             return property;
+        }
+    }
+
+    /******************************* 华丽丽的分割线 *******************************/
+
+    /**
+     * 数据库操作的最小单元（对应数据库表的列）<br>
+     * 封装一些函数操作
+     */
+    public static final class DAOParam {
+
+        private final String fieldName;         // 默认识别为域名
+
+        private LinkedList<String> format;      // 执行一些函数操作
+
+        private String param;                   // 缓存参数
+
+        /**
+         * @param fieldOrColumn 可以识别映射bean的域，也可以直接操作表的列
+         */
+        public DAOParam(String fieldOrColumn) {
+            fieldName = fieldOrColumn;
+        }
+
+        private DAOParam addFormat(String s) {
+            if (format == null) format = new LinkedList<String>();
+            format.add(s);
+            return this;
+        }
+
+        public DAOParam count() {
+            return addFormat("count");
+        }
+
+        public DAOParam max() {
+            return addFormat("max");
+        }
+
+        public DAOParam min() {
+            return addFormat("min");
+        }
+
+        public DAOParam avg() {
+            return addFormat("avg");
+        }
+
+        public DAOParam sum() {
+            return addFormat("sum");
+        }
+
+        public DAOParam abs() {
+            return addFormat("abs");
+        }
+
+        public DAOParam upper() {
+            return addFormat("upper");
+        }
+
+        public DAOParam lower() {
+            return addFormat("lower");
+        }
+
+        public DAOParam length() {
+            return addFormat("length");
+        }
+
+        String getParam(Table table) {
+            if (param == null)
+            {
+                String column = fieldName;
+                Property property = table.getPropertyByField(column);
+                if (property != null)
+                {
+                    column = property.getColumn();
+                }
+
+                param = format(column);
+            }
+
+            return param;
+        }
+
+        private String format(String column) {
+            if (format == null) return column;
+
+            StringBuilder sb = new StringBuilder(column);
+            for (String s : format)
+            {
+                sb.insert(0, s + "(").append(")");
+            }
+
+            return sb.toString();
+        }
+    }
+
+    /**
+     * 数据库操作语句，可用来指定查询列
+     */
+    private static class DAOClause {
+
+        private final LinkedList<DAOParam> params
+                = new LinkedList<DAOParam>();
+        
+        private DAOClause() {}
+
+        public void add(DAOParam param) {
+            params.add(param);
+        }
+
+        public static DAOClause create(String... params) {
+            if (params == null || params.length == 0) return null;
+
+            DAOClause clause = new DAOClause();
+            for (String param : params)
+            {
+                clause.add(new DAOParam(param));
+            }
+
+            return clause;
+        }
+
+        public static DAOClause create(Object... params) {
+            if (params == null || params.length == 0) return null;
+
+            DAOClause clause = new DAOClause();
+            for (Object param : params)
+            {
+                if (param instanceof String)
+                {
+                    clause.add(new DAOParam((String) param));
+                }
+                else if (param instanceof DAOParam)
+                {
+                    clause.add((DAOParam) param);
+                }
+                else
+                {
+                    throw new DAOException("parameters only allow String or DAOParam",
+                            new IllegalArgumentException());
+                }
+            }
+
+            return clause;
+        }
+
+        String[] build(Table table) {
+            String[] clause = new String[params.size()];
+            for (int i = 0, len = clause.length; i < len; i++)
+            {
+                clause[i] = params.get(i).getParam(table);
+            }
+
+            return clause;
+        }
+
+        void appendTo(Table table, StringBuilder sql) {
+            boolean firstTime = true;
+            for (DAOParam param : params)
+            {
+                if (firstTime)
+                {
+                    firstTime = false;
+                }
+                else
+                {
+                    sql.append(",");
+                }
+
+                sql.append(param.getParam(table));
+            }
+        }
+    }
+
+    /**
+     * SQL表达式
+     */
+    public static class DAOExpression {
+
+        PropertyCondition condition;
+
+        boolean isCombineExpression;
+
+        private DAOExpression() {}
+
+        public static DAOCondition create(String fieldOrColumn) {
+            return create(new DAOParam(fieldOrColumn));
+        }
+
+        public static DAOCondition create(DAOParam param) {
+            DAOExpression expression = new DAOExpression();
+            return expression.condition = new PropertyCondition(expression, param);
+        }
+
+        public DAOCondition and(String fieldOrColumn) {
+            return and(new DAOParam(fieldOrColumn));
+        }
+
+        public DAOCondition and(DAOParam param) {
+            DAOExpression expression = new DAOExpression();
+            return expression.condition = new PropertyCondition(join(expression, " AND "), param);
+        }
+
+        public DAOCondition or(String fieldOrColumn) {
+            return or(new DAOParam(fieldOrColumn));
+        }
+
+        public DAOCondition or(DAOParam param) {
+            DAOExpression expression = new DAOExpression();
+            return expression.condition = new PropertyCondition(join(expression, " OR "), param);
+        }
+
+        DAOExpression join(DAOExpression expression, String op) {
+            return new DAOCombineExpression(this).join(expression, op);
+        }
+
+        void appendTo(Table table, StringBuilder sql, List<Object> whereArgs) {
+            condition.appendTo(table, sql, whereArgs);
+        }
+
+        /**
+         * 组合表达式，连接多个子句
+         */
+        private static class DAOCombineExpression extends DAOExpression {
+
+            private final LinkedList<Pair<DAOExpression, String>> children;
+
+            public DAOCombineExpression(DAOExpression expression) {
+                isCombineExpression = true;
+                children = new LinkedList<Pair<DAOExpression, String>>();
+                condition = expression.condition;
+            }
+
+            DAOExpression join(DAOExpression expression, String op) {
+                children.add(new Pair<DAOExpression, String>(expression, op));
+                return this;
+            }
+
+            void appendTo(Table table, StringBuilder sql, List<Object> whereArgs) {
+                super.appendTo(table, sql, whereArgs);
+
+                for (Pair<DAOExpression, String> child : children)
+                {
+                    sql.append(child.second);
+
+                    DAOExpression expression = child.first;
+                    if (expression.isCombineExpression) sql.append("(");
+                    expression.appendTo(table, sql, whereArgs);
+                    if (expression.isCombineExpression) sql.append(")");
+                }
+            }
+        }
+
+        /**
+         * 条件判断，一般用于where子句
+         */
+        public interface DAOCondition {
+
+            DAOCondition not();
+
+            DAOExpression equal(Object value);
+
+            DAOExpression like(String value);
+
+            DAOExpression between(Object value1, Object value2);
+
+            DAOExpression in(Object... values);
+
+            DAOExpression greaterThan(Object value);
+
+            DAOExpression lessThan(Object value);
+
+            DAOExpression isNull();
+        }
+
+        private static class PropertyCondition implements DAOCondition {
+
+            private final DAOExpression expression;
+
+            private final DAOParam param;
+
+            private String op;
+
+            private Object[] values;
+
+            private boolean notIsCalled;
+
+            public PropertyCondition(DAOExpression expression, DAOParam param) {
+                this.expression = expression;
+                this.param = param;
+            }
+
+            private DAOExpression setup(String op, Object... values) {
+                this.op = op;
+                this.values = values;
+                return expression;
+            }
+
+            @Override
+            public DAOCondition not() {
+                notIsCalled = true;
+                return this;
+            }
+
+            @Override
+            public DAOExpression equal(Object value) {
+                return setup(notIsCalled ? "<>?" : "=?", value);
+            }
+
+            @Override
+            public DAOExpression like(String value) {
+                return setup((notIsCalled ? " NOT" : "") + " LIKE ?", value);
+            }
+
+            @Override
+            public DAOExpression between(Object value1, Object value2) {
+                return setup((notIsCalled ? " NOT" : "") + " BETWEEN ? AND ?", value1, value2);
+            }
+
+            @Override
+            public DAOExpression in(Object... values) {
+                StringBuilder sb = new StringBuilder(" IN (");
+                for (int i = 0; i < values.length; i++)
+                {
+                    sb.append(i > 0 ? ",?" : "?");
+                }
+
+                return setup((notIsCalled ? " NOT" : "") + sb.append(")"), values);
+            }
+
+            @Override
+            public DAOExpression greaterThan(Object value) {
+                return setup(notIsCalled ? "<=?" : ">?", value);
+            }
+
+            @Override
+            public DAOExpression lessThan(Object value) {
+                return setup(notIsCalled ? ">=?" : "<?", value);
+            }
+
+            @Override
+            public DAOExpression isNull() {
+                return setup(notIsCalled ? " IS NOT NULL" : " IS NULL");
+            }
+
+            void appendTo(Table table, StringBuilder sql, List<Object> whereArgs) {
+                sql.append(param.getParam(table)).append(op);
+                if (values != null)
+                {
+                    for (Object value : values)
+                    {
+                        whereArgs.add(value);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * This is a convenient utility that helps build SQL语句
+     */
+    private static class DAOSQLBuilder<T> {
+
+        final Class<T> c;
+
+        final Table table;
+
+        DAOExpression where;
+
+        DAOSQLBuilder(Class<T> c) {
+            table = Table.getTable(this.c = c);
+        }
+
+        public DAOSQLBuilder<T> where(DAOExpression expression) {
+            where = expression;
+            return this;
+        }
+
+        void appendWhere(StringBuilder sql, List<Object> args) {
+            if (where != null) where.appendTo(table, sql.append(" WHERE "), args);
+        }
+        
+        static String[] convertArgs(List<Object> args) {
+            String[] strs = new String[args.size()];
+            ListIterator<Object> iter = args.listIterator();
+            int index = 0;
+            while (iter.hasNext())
+            {
+                strs[index++] = String.valueOf(iter.next());
+            }
+            
+            return strs;
+        }
+    }
+
+    public class DAOEditBuilder<T> extends DAOSQLBuilder<T> {
+
+        DAOEditBuilder(Class<T> c) {
+            super(c);
+        }
+
+        @Override
+        public DAOEditBuilder<T> where(DAOExpression expression) {
+            super.where(expression);
+            return this;
+        }
+
+        /**
+         * 删除数据
+         *
+         * @return 是否有数据被删除
+         */
+        public boolean delete() {
+            return remove(this);
+        }
+
+        /**
+         * 修改数据
+         *
+         * @param bean JavaBean对象，映射到数据库的一张表
+         * @param fields 需要修改的字段，不设置则修改所有字段
+         * @return 是否有数据更改
+         */
+        public boolean update(T bean, String... fields) {
+            return edit(this, bean, fields);
+        }
+    }
+
+    /**
+     * This is a convenient utility that helps build 数据库查询语句
+     */
+    public class DAOQueryBuilder<T> extends DAOSQLBuilder<T> {
+
+        private DAOClause selection;                // 查询指定列
+
+        private boolean isDistinct;                 // 消除重复的记录
+
+        private DAOClause group;                    // 按条件进行分组
+
+        private DAOExpression having;               // 分组上设置条件
+
+        private DAOClause order;                    // 按指定顺序显示
+
+        private boolean orderDesc;                  // 按降序进行排列
+
+        private Page page;                          // 分页工具
+
+        DAOQueryBuilder(Class<T> c) {
+            super(c);
+        }
+
+        public DAOQueryBuilder<T> select(Object... params) {
+            selection = DAOClause.create(params);
+            return this;
+        }
+
+        public DAOQueryBuilder<T> distinct() {
+            isDistinct = true;
+            return this;
+        }
+
+        @Override
+        public DAOQueryBuilder<T> where(DAOExpression expression) {
+            super.where(expression);
+            return this;
+        }
+
+        public DAOQueryBuilder<T> groupBy(Object... params) {
+            group = DAOClause.create(params);
+            return this;
+        }
+
+        public DAOSQLBuilder<T> having(DAOExpression expression) {
+            having = expression;
+            return this;
+        }
+
+        public DAOQueryBuilder<T> orderBy(Object... params) {
+            orderDesc = false;
+            order = DAOClause.create(params);
+            return this;
+        }
+
+        public DAOQueryBuilder<T> orderDesc(Object... params) {
+            orderDesc = true;
+            order = DAOClause.create(params);
+            return this;
+        }
+
+        /**
+         * 使用分页技术
+         *
+         * @return 需设置分页参数
+         */
+        public Page usePage() {
+            if (page == null) page = new Page(10);
+            return page;
+        }
+
+        /**
+         * 停止使用分页技术
+         */
+        public void stopPage() {
+            page = null;
+        }
+
+        private static final int CONSTRAINT_COUNT = 1;
+
+        private static final int CONSTRAINT_LIMIT = 2;
+
+        private final StringBuilder sql = new StringBuilder(120);
+
+        private final LinkedList<Object> args = new LinkedList<Object>();
+
+        private void build(int constraint) {
+            StringBuilder sql = this.sql;
+            LinkedList<Object> args = this.args;
+
+            appendSelection(sql, constraint);
+            appendWhere(sql, args);
+            appendGroup(sql);
+            appendHaving(sql, args);
+            appendOrder(sql);
+
+            if (constraint == CONSTRAINT_LIMIT)
+            {
+                sql.append(" LIMIT 1");
+            }
+            else if (page != null)
+            {
+                sql
+                .append(" LIMIT ")
+                .append(page.getPageSize())
+                .append(",")
+                .append(page.getBeginRecord());
+            }
+        }
+
+        private void appendSelection(StringBuilder sql, int constraint) {
+            sql.append("SELECT ");
+
+            if (constraint == CONSTRAINT_COUNT)
+            {
+                sql.append("COUNT(*)");
+            }
+            else
+            {
+                if (isDistinct)
+                {
+                    sql.append("DISTINCT ");
+                }
+
+                if (selection == null)
+                {
+                    sql.append("*");
+                }
+                else
+                {
+                    selection.appendTo(table, sql);
+                }
+            }
+
+            sql.append(" FROM ").append(table.getTableName());
+        }
+
+        private void appendGroup(StringBuilder sql) {
+            if (group != null) group.appendTo(table, sql.append(" GROUP BY "));
+        }
+
+        private void appendHaving(StringBuilder sql, List<Object> args) {
+            if (having != null) having.appendTo(table, sql.append(" HAVING "), args);
+        }
+
+        private void appendOrder(StringBuilder sql) {
+            if (order != null)
+            {
+                order.appendTo(table, sql.append(" ORDER BY "));
+                if (orderDesc) sql.append(" DESC");
+            }
+        }
+
+        private String getSql() {
+            String s = sql.toString();
+            sql.setLength(0);
+            return s;
+        }
+
+        private String[] getArgs() {
+            if (args.isEmpty()) return null;
+            String[] strs = convertArgs(args);
+            args.clear();
+            return strs;
+        }
+
+        /**
+         * 获取符合条件数据的数量
+         */
+        public long getCount() {
+            build(CONSTRAINT_COUNT);
+            return queryCount(getSql(), getArgs());
+        }
+
+        /**
+         * 返回结果集游标
+         */
+        public Cursor getCursor() {
+            build(0);
+            return queryCursor(getSql(), getArgs());
+        }
+
+        /**
+         * 获取数据表里第一条满足条件的数据，如没有则返回Null
+         */
+        public T get() {
+            build(CONSTRAINT_LIMIT);
+            try {
+                Cursor cursor = rawQuery(getSql(), getArgs());
+                if (cursor != null)
+                {
+                    try {
+                        if (cursor.moveToFirst())
+                        {
+                            return extractFromCursor(cursor, table, c);
+                        }
+                    } finally {
+                        cursor.close();
+                    }
+                }
+            } catch (Exception e) {
+                processException(e);
+            }
+
+            return null;
+        }
+
+        /**
+         * 获取满足条件的所有数据
+         */
+        public T[] getAll() {
+            build(0);
+            try {
+                Cursor cursor = rawQuery(getSql(), getArgs());
+                if (cursor != null)
+                {
+                    try {
+                        @SuppressWarnings("unchecked")
+                        T[] array = (T[]) Array.newInstance(c, cursor.getCount());
+                        int index = 0;
+
+                        while (cursor.moveToNext())
+                        {
+                            array[index++] = extractFromCursor(cursor, table, c);
+                        }
+
+                        return array;
+                    } finally {
+                        cursor.close();
+                    }
+                }
+            } catch (Exception e) {
+                processException(e);
+            }
+
+            return null;
+        }
+
+        /**
+         * 创建视图
+         *
+         * @param viewName 视图名称
+         */
+        public void createView(String viewName) {
+            checkNull(viewName);
+
+            StringBuilder sql = new StringBuilder()
+            .append("CREATE VIEW ")
+            .append(viewName)
+            .append(" AS ");
+
+            build(0);
+            execute(sql.append(getSql()).toString(), getArgs());
         }
     }
 
@@ -2078,12 +2076,13 @@ public final class DAOTemplate {
     private static void LOG_SQL(String sql, Object[] bindArgs) {
         if (bindArgs != null)
         {
+            StringBuilder sb = new StringBuilder(sql);
             int i = 0, index = 0;
 
             while ((index = sql.indexOf("?", index)) >= 0)
             {
                 String arg = String.valueOf(bindArgs[i++]);
-                sql = sql.substring(0, index) + arg + sql.substring(++index);
+                sb.replace(index, index + 1, arg);
                 index += arg.length();
             }
         }
@@ -2110,7 +2109,18 @@ public final class DAOTemplate {
 
     /******************************* 华丽丽的分割线 *******************************/
 
-    public static final class ProviderTemplate {
+    public static class ProviderTemplate {
+
+        /**
+         * Provider批处理
+         */
+        public interface ProviderBatch {
+
+            /**
+             * 批处理执行（抛出异常或返回false表示批处理失败）
+             */
+            boolean applyBatch(ProviderTemplate pao) throws Exception;
+        }
 
         private final Context context;
 
@@ -2133,35 +2143,27 @@ public final class DAOTemplate {
         }
 
         /**
-         * Provider批处理
-         */
-        public static interface ProviderBatch {
-
-            public void applyBatch(ProviderTemplate pao);
-        }
-
-        /**
          * 执行批处理操作
-         * 
+         *
          * @see ContentResolver#applyBatch(String, ArrayList)
          */
         public boolean executeBatch(String authority, ProviderBatch batch) {
             boolean success = false;
 
-            if (printLog)
-                log(LogUtil.getCallerStackFrame(), "批处理任务开始");
+            if (printLog) log(LogUtil.getCallerStackFrame(), "批处理任务开始");
             try {
                 inTransaction = true;
                 batch.applyBatch(this);
                 context.getContentResolver().applyBatch(authority, operations);
                 success = true;
+            } catch (ProviderException e) {
+                LOG_ProviderException(e);
             } catch (Exception e) {
-                processException(e);
+                LOG_ProviderException(new ProviderException(e));
             } finally {
                 inTransaction = false;
                 operations.clear();
-                if (printLog)
-                    log("批处理任务结束:success=" + success);
+                if (printLog) log(LogUtil.getCallerStackFrame(), "批处理任务结束:success=" + success);
             }
 
             return success;
@@ -2171,15 +2173,12 @@ public final class DAOTemplate {
          * 执行批处理操作时添加一条指令
          */
         public void addBatch(ContentProviderOperation operation) {
-            if (inTransaction)
-            {
-                operations.add(operation);
-            }
+            if (inTransaction) operations.add(operation);
         }
 
         /**
          * 保存数据（允许同时保存多条数据，但必须是同一类型）
-         * 
+         *
          * @param obj JavaBean对象，映射到数据库的一张表
          * @return 是否有数据保存
          * @see ContentResolver#insert(Uri, android.content.ContentValues)
@@ -2187,11 +2186,7 @@ public final class DAOTemplate {
          */
         public <T> boolean save(Uri url, T... obj) {
             checkNull(obj);
-
-            if (obj.length == 0)
-            {
-                return false;
-            }
+            if (obj.length == 0) return false;
 
             try {
                 if (obj.length == 1)
@@ -2203,11 +2198,11 @@ public final class DAOTemplate {
                         Table table = Table.getTable(obj.getClass().getComponentType());
 
                         StringBuilder sql = new StringBuilder()
-                                .append("INSERT INTO ")
-                                .append(table.getTableName())
-                                .append("[")
-                                .append(values)
-                                .append("]");
+                        .append("INSERT INTO ")
+                        .append(table.getTableName())
+                        .append("[")
+                        .append(values)
+                        .append("]");
 
                         log("insert:" + url, sql.toString());
                     }
@@ -2215,9 +2210,9 @@ public final class DAOTemplate {
                     if (inTransaction)
                     {
                         return operations.add(ContentProviderOperation
-                                .newInsert(url)
-                                .withValues(values)
-                                .build());
+                        .newInsert(url)
+                        .withValues(values)
+                        .build());
                     }
                     else
                     {
@@ -2233,11 +2228,11 @@ public final class DAOTemplate {
                         Table table = Table.getTable(obj.getClass().getComponentType());
 
                         StringBuilder sql = new StringBuilder()
-                                .append("INSERT INTO ")
-                                .append(table.getTableName())
-                                .append("[")
-                                .append(TextUtils.join(",", valuesArray))
-                                .append("]");
+                        .append("INSERT INTO ")
+                        .append(table.getTableName())
+                        .append("[")
+                        .append(TextUtils.join(",\n", valuesArray))
+                        .append("]");
 
                         log("bulkInsert:" + url, sql.toString());
                     }
@@ -2247,9 +2242,9 @@ public final class DAOTemplate {
                         for (ContentValues values : valuesArray)
                         {
                             operations.add(ContentProviderOperation
-                                    .newInsert(url)
-                                    .withValues(values)
-                                    .build());
+                            .newInsert(url)
+                            .withValues(values)
+                            .build());
                         }
 
                         return true;
@@ -2267,35 +2262,31 @@ public final class DAOTemplate {
         }
 
         /**
-         * 删除数据
-         * 
-         * @return 是否有数据被删除
-         * @see ContentResolver#delete(Uri, String, String[])
+         * 更新或删除数据
          */
-        public <T> boolean remove(Uri url, ProviderSQLBuilder<T> builder) {
-            checkNull(builder);
+        public <T> ProviderEditBuilder<T> edit(Class<T> c, Uri url) {
+            return new ProviderEditBuilder<T>(c, url);
+        }
 
+        <T> boolean remove(Uri url, DAOSQLBuilder<T> builder) {
             String selection = null;
             String[] selectionArgs = null;
-
-            if (builder != null)
+            if (builder.where != null)
             {
                 StringBuilder where = new StringBuilder();
-                List<Object> args = new LinkedList<Object>();
-
-                builder.appendWhereClause(where, args);
-
+                LinkedList<Object> args = new LinkedList<Object>();
+                builder.appendWhere(where, args);
+                
                 selection = where.toString();
-                List<String> list = DAOQueryBuilder.convertArgs(args);
-                selectionArgs = list.toArray(new String[list.size()]);
+                selectionArgs = DAOSQLBuilder.convertArgs(args);
             }
 
             if (printLog)
             {
                 StringBuilder sql = new StringBuilder()
-                        .append("DELETE FROM ")
-                        .append(builder.table.getTableName())
-                        .append(SQL_WHERE_LOG(selection, selectionArgs));
+                .append("DELETE FROM ")
+                .append(builder.table.getTableName())
+                .append(SQL_WHERE_LOG(selection, selectionArgs));
 
                 log("delete:" + url, sql.toString());
             }
@@ -2304,9 +2295,9 @@ public final class DAOTemplate {
                 if (inTransaction)
                 {
                     return operations.add(ContentProviderOperation
-                            .newDelete(url)
-                            .withSelection(selection, selectionArgs)
-                            .build());
+                    .newDelete(url)
+                    .withSelection(selection, selectionArgs)
+                    .build());
                 }
                 else
                 {
@@ -2319,45 +2310,31 @@ public final class DAOTemplate {
             return false;
         }
 
-        /**
-         * 修改数据
-         * 
-         * @param bean JavaBean对象，映射到数据库的一张表
-         * @param fields 需要修改的字段，不设置则修改所有字段
-         * @return 是否有数据更改
-         * @see ContentResolver#update(Uri, ContentValues, String, String[])
-         */
-        public <T> boolean edit(Uri uri, ProviderSQLBuilder<T> builder,
-                T bean, String... fields) {
-            checkNull(builder);
+        <T> boolean edit(Uri uri, DAOSQLBuilder<T> builder, T bean, String... fields) {
             checkNull(bean);
-
+            
             String selection = null;
             String[] selectionArgs = null;
-
-            if (builder != null)
+            if (builder.where != null)
             {
                 StringBuilder where = new StringBuilder();
-                List<Object> args = new LinkedList<Object>();
-
-                builder.appendWhereClause(where, args);
-
+                LinkedList<Object> args = new LinkedList<Object>();
+                builder.appendWhere(where, args);
+                
                 selection = where.toString();
-                List<String> list = DAOQueryBuilder.convertArgs(args);
-                selectionArgs = list.toArray(new String[list.size()]);
+                selectionArgs = DAOSQLBuilder.convertArgs(args);
             }
 
             try {
                 ContentValues values = ProviderUtil.convert(bean, fields);
-
                 if (printLog)
                 {
                     StringBuilder sql = new StringBuilder()
-                            .append("UPDATE ")
-                            .append(builder.table.getTableName())
-                            .append(" SET ")
-                            .append("[").append(values).append("]")
-                            .append(SQL_WHERE_LOG(selection, selectionArgs));
+                    .append("UPDATE ")
+                    .append(builder.table.getTableName())
+                    .append(" SET ")
+                    .append("[").append(values).append("]")
+                    .append(SQL_WHERE_LOG(selection, selectionArgs));
 
                     log("update:" + uri, sql.toString());
                 }
@@ -2365,15 +2342,14 @@ public final class DAOTemplate {
                 if (inTransaction)
                 {
                     return operations.add(ContentProviderOperation
-                            .newUpdate(uri)
-                            .withValues(values)
-                            .withSelection(selection, selectionArgs)
-                            .build());
+                    .newUpdate(uri)
+                    .withValues(values)
+                    .withSelection(selection, selectionArgs)
+                    .build());
                 }
                 else
                 {
-                    return context.getContentResolver().update(uri,
-                            values, selection, selectionArgs) > 0;
+                    return context.getContentResolver().update(uri, values, selection, selectionArgs) > 0;
                 }
             } catch (Exception e) {
                 processException(e);
@@ -2384,50 +2360,308 @@ public final class DAOTemplate {
 
         /**
          * 查询数据
-         * 
-         * @param returnType 返回数据类型
-         * @return (Cursor)结果集游标<br>
-         *         (Long)符合条件数据的数量<br>
-         *         (T)数据表里第一条满足条件的数据，如没有则返回Null<br>
-         *         (T[])封装好的对象数组
          * @see {@link ContentResolver#query(Uri, String[], String, String[], String)}
          */
-        public <T, D> D find(Uri uri, ProviderQueryBuilder<T> builder, Class<D> returnType) {
-            checkNull(builder);
+        public <T> ProviderQueryBuilder<T> find(Class<T> c, Uri url) {
+            return new ProviderQueryBuilder<T>(c, url);
+        }
 
-            Table table = builder.table;
+        Cursor query(Uri uri, Table table, String[] projection, String selection, String[] selectionArgs) {
+            if (printLog)
+            {
+                StringBuilder sql = new StringBuilder("SELECT ");
+                if (projection == null)
+                {
+                    sql.append("*");
+                }
+                else
+                {
+                    sql.append(TextUtils.join(",", projection));
+                }
 
-            Cursor cursor = null;
-            try {
-                if (returnType == Cursor.class)
+                sql .append(" FROM ")
+                    .append(table.getTableName())
+                    .append(SQL_WHERE_LOG(selection, selectionArgs));
+
+                log("query:" + uri, sql.toString());
+            }
+
+            return context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+        }
+
+        void processException(Exception t) {
+            ProviderException e = new ProviderException(t);
+            if (inTransaction)
+            {
+                throw e;
+            }
+
+            LOG_ProviderException(e);
+        }
+
+        private static void LOG_ProviderException(ProviderException e) {
+            log("Provider操作异常", e);
+        }
+        
+        private static class ProviderSQLBuilder<T> extends DAOSQLBuilder<T> {
+
+            final Uri uri;
+
+            ProviderSQLBuilder(Class<T> c, Uri uri) {
+                super(c);
+                this.uri = uri;
+            }
+        }
+
+        public class ProviderEditBuilder<T> extends ProviderSQLBuilder<T> {
+
+            ProviderEditBuilder(Class<T> c, Uri uri) {
+                super(c, uri);
+            }
+
+            @Override
+            public ProviderEditBuilder<T> where(DAOExpression expression) {
+                super.where(expression);
+                return this;
+            }
+
+            /**
+             * 删除数据
+             *
+             * @return 是否有数据被删除
+             * @see ContentResolver#delete(Uri, String, String[])
+             */
+            public boolean delete() {
+                return remove(uri, this);
+            }
+
+            /**
+             * 修改数据
+             *
+             * @param bean JavaBean对象，映射到数据库的一张表
+             * @param fields 需要修改的字段，不设置则修改所有字段
+             * @return 是否有数据更改
+             * @see ContentResolver#update(Uri, ContentValues, String, String[])
+             */
+            public boolean update(T bean, String... fields) {
+                return edit(uri, this, bean, fields);
+            }
+        }
+
+        /**
+         * This is a convenient utility that helps build 数据库查询语句
+         */
+        public class ProviderQueryBuilder<T> extends ProviderSQLBuilder<T> {
+            
+            private DAOClause selection;                // 查询指定列
+
+            private DAOClause group;                    // 按条件进行分组
+
+            private DAOExpression having;               // 分组上设置条件
+
+            private DAOClause order;                    // 按指定顺序显示
+
+            private boolean orderDesc;                  // 按降序进行排列
+
+            private Page page;                          // 分页工具
+
+            ProviderQueryBuilder(Class<T> c, Uri uri) {
+                super(c, uri);
+            }
+
+            public ProviderQueryBuilder<T> select(Object... params) {
+                selection = DAOClause.create(params);
+                return this;
+            }
+
+            @Override
+            public ProviderQueryBuilder<T> where(DAOExpression expression) {
+                super.where(expression);
+                return this;
+            }
+
+            public ProviderQueryBuilder<T> groupBy(Object... params) {
+                group = DAOClause.create(params);
+                return this;
+            }
+
+            public ProviderQueryBuilder<T> having(DAOExpression expression) {
+                having = expression;
+                return this;
+            }
+
+            public ProviderQueryBuilder<T> orderBy(Object... params) {
+                orderDesc = false;
+                order = DAOClause.create(params);
+                return this;
+            }
+
+            public ProviderQueryBuilder<T> orderDesc(Object... params) {
+                orderDesc = true;
+                order = DAOClause.create(params);
+                return this;
+            }
+
+            /**
+             * 使用分页技术
+             *
+             * @return 需设置分页参数
+             */
+            public Page usePage() {
+                if (page == null) page = new Page(10);
+                return page;
+            }
+
+            /**
+             * 停止使用分页技术
+             */
+            public void stopPage() {
+                page = null;
+            }
+
+            private static final int CONSTRAINT_COUNT = 1;
+
+            private static final int CONSTRAINT_LIMIT = 2;
+            
+            private String[] projection;
+
+            private final StringBuilder sql = new StringBuilder(120);
+
+            private final LinkedList<Object> args = new LinkedList<Object>();
+
+            private void build(int constraint) {
+                StringBuilder sql = this.sql;
+                LinkedList<Object> args = this.args;
+
+                appendSelection(constraint);
+                appendWhere(sql, args);
+                appendGroup(sql);
+                appendHaving(sql, args);
+                appendOrder(sql);
+
+                if (constraint == CONSTRAINT_LIMIT)
                 {
-                    return returnType.cast(query(uri, builder, 0));
+                    sql.append(" LIMIT 1");
                 }
-                else if (returnType == Long.class)
+                else if (page != null)
                 {
-                    cursor = query(uri, builder, ProviderQueryBuilder.CONSTRAINT_COUNT);
-                    if (cursor != null && cursor.moveToFirst())
-                    {
-                        return returnType.cast(cursor.getLong(0));
-                    }
+                    sql
+                    .append(" LIMIT ")
+                    .append(page.getPageSize())
+                    .append(",")
+                    .append(page.getBeginRecord());
                 }
-                else if (returnType == builder.c)
+            }
+
+            private void appendSelection(int constraint) {
+                if (constraint == CONSTRAINT_COUNT)
                 {
-                    cursor = query(uri, builder, ProviderQueryBuilder.CONSTRAINT_LIMIT);
-                    if (cursor != null && cursor.moveToFirst())
-                    {
-                        return extractFromCursor(cursor, table, returnType);
-                    }
+                    projection = new String[] { "COUNT(*)" };
                 }
-                else if (returnType.isArray())
+                else if (selection != null)
                 {
-                    Class<?> arrayType = returnType.getComponentType();
-                    if (arrayType == builder.c)
-                    {
-                        cursor = query(uri, builder, 0);
-                        if (cursor != null)
+                    projection = selection.build(table);
+                }
+            }
+            
+            @Override
+            void appendWhere(StringBuilder sql, List<Object> args) {
+                if (where != null) where.appendTo(table, sql, args);
+            }
+
+            private void appendGroup(StringBuilder sql) {
+                if (group != null) group.appendTo(table, sql.append(" GROUP BY "));
+            }
+
+            private void appendHaving(StringBuilder sql, List<Object> args) {
+                if (having != null) having.appendTo(table, sql.append(" HAVING "), args);
+            }
+
+            private void appendOrder(StringBuilder sql) {
+                if (order != null)
+                {
+                    order.appendTo(table, sql.append(" ORDER BY "));
+                    if (orderDesc) sql.append(" DESC");
+                }
+            }
+
+            private String getSql() {
+                String s = sql.toString();
+                sql.setLength(0);
+                return s;
+            }
+
+            private String[] getArgs() {
+                if (args.isEmpty()) return null;
+                String[] strs = convertArgs(args);
+                args.clear();
+                return strs;
+            }
+
+            /**
+             * 获取符合条件数据的数量
+             */
+            public long getCount() {
+                build(CONSTRAINT_COUNT);
+                Cursor cursor = queryCursor();
+                if (cursor != null)
+                {
+                    try {
+                        if (cursor.moveToFirst())
                         {
-                            Class<T> c = builder.c;
+                            return cursor.getLong(0);
+                        }
+                    } finally {
+                        cursor.close();
+                    }
+                }
+                
+                return -1;
+            }
+
+            /**
+             * 返回结果集游标
+             */
+            public Cursor getCursor() {
+                build(0);
+                return queryCursor();
+            }
+
+            /**
+             * 获取数据表里第一条满足条件的数据，如没有则返回Null
+             */
+            public T get() {
+                build(CONSTRAINT_LIMIT);
+                try {
+                    Cursor cursor = queryCursor();
+                    if (cursor != null)
+                    {
+                        try {
+                            if (cursor.moveToFirst())
+                            {
+                                return extractFromCursor(cursor, table, c);
+                            }
+                        } finally {
+                            cursor.close();
+                        }
+                    }
+                } catch (Exception e) {
+                    processException(e);
+                }
+
+                return null;
+            }
+
+            /**
+             * 获取满足条件的所有数据
+             */
+            public T[] getAll() {
+                build(0);
+                try {
+                    Cursor cursor = queryCursor();
+                    if (cursor != null)
+                    {
+                        try {
                             @SuppressWarnings("unchecked")
                             T[] array = (T[]) Array.newInstance(c, cursor.getCount());
                             int index = 0;
@@ -2437,205 +2671,43 @@ public final class DAOTemplate {
                                 array[index++] = extractFromCursor(cursor, table, c);
                             }
 
-                            return returnType.cast(array);
+                            return array;
+                        } finally {
+                            cursor.close();
                         }
                     }
-                }
-            } catch (Exception e) {
-                processException(e);
-            } finally {
-                if (cursor != null)
-                {
-                    cursor.close();
-                }
-            }
-
-            return null;
-        }
-
-        private Cursor query(Uri uri, ProviderQueryBuilder<?> builder, int constraint) {
-            builder.build(constraint);
-            List<String> selectionArgs = builder.selectionArgs;
-
-            if (printLog)
-            {
-                StringBuilder sql = new StringBuilder("SELECT ");
-                if (builder.projection == null)
-                {
-                    sql.append("*");
-                }
-                else
-                {
-                    sql.append(TextUtils.join(",", builder.projection));
+                } catch (Exception e) {
+                    processException(e);
                 }
 
-                sql
-                .append(" FROM ")
-                .append(builder.table.getTableName())
-                .append(SQL_WHERE_LOG(builder.sql, selectionArgs.toArray()));
-
-                log("query:" + uri, sql.toString());
+                return null;
             }
-
-            return context.getContentResolver().query(uri, builder.projection, builder.sql,
-                    selectionArgs.toArray(new String[selectionArgs.size()]), null);
-        }
-
-        private void processException(Exception t) {
-            if (t instanceof ProviderException)
-            {
-                LOG_ProviderException((ProviderException) t);
-            }
-            else
-            {
-                LOG_ProviderException(new ProviderException(t));
-            }
-        }
-
-        private static void LOG_ProviderException(ProviderException e) {
-            log("Provider操作异常", e);
-        }
-
-        /**
-         * This is a convenience utility that helps build SQL语句
-         */
-        public static class ProviderSQLBuilder<T> extends DAOSQLBuilder<T> {
-
-            ProviderSQLBuilder(Class<T> c) {
-                super(c);
-            }
-
-            public static <T> ProviderSQLBuilder<T> create(Class<T> c) {
-                return new ProviderSQLBuilder<T>(c);
-            }
-
-            public ProviderSQLBuilder<T> setWhereClause(DAOExpression whereClause) {
-                super.setWhereClause(whereClause);
-                return this;
-            }
-
-            @Override
-            void appendWhereClause(StringBuilder sql, List<Object> args) {
-                appendExpression(sql, args, table, whereClause);
-            }
-        }
-
-        /**
-         * This is a convenience utility that helps build 数据库查询语句
-         */
-        public static class ProviderQueryBuilder<T> extends DAOQueryBuilder<T> {
-
-            String[] projection;
-
-            ProviderQueryBuilder(Class<T> c) {
-                super(c);
-            }
-
-            public static <T> ProviderQueryBuilder<T> create(Class<T> c) {
-                return new ProviderQueryBuilder<T>(c);
-            }
-
-            public ProviderQueryBuilder<T> setSelectionClause(DAOClause selectionClause) {
-                super.setSelectionClause(selectionClause);
-                return this;
-            }
-
-            public ProviderQueryBuilder<T> setDistinct(boolean isDistinct) {
-                super.setDistinct(isDistinct);
-                return this;
-            }
-
-            @Override
-            public ProviderQueryBuilder<T> setWhereClause(DAOExpression whereClause) {
-                super.setWhereClause(whereClause);
-                return this;
-            }
-
-            public ProviderQueryBuilder<T> setGroupClause(DAOClause groupClause) {
-                super.setGroupClause(groupClause);
-                return this;
-            }
-
-            public ProviderQueryBuilder<T> setHavingClause(DAOExpression havingClause) {
-                super.setHavingClause(havingClause);
-                return this;
-            }
-
-            public ProviderQueryBuilder<T> setOrderClause(DAOClause orderClause) {
-                super.setOrderClause(orderClause);
-                return this;
-            }
-
-            public ProviderQueryBuilder<T> setOrderClause(DAOClause orderClause, boolean desc) {
-                super.setOrderClause(orderClause, desc);
-                return this;
-            }
-
-            @Override
-            void appendSelectionClause(StringBuilder sql, int constraint) {
-                if (constraint == CONSTRAINT_COUNT)
-                {
-                    projection = new String[] { "COUNT(*)" };
-                }
-                else if (selectionClause != null)
-                {
-                    projection = selectionClause.build(table);
-                }
-            }
-
-            @Override
-            void appendWhereClause(StringBuilder sql, List<Object> args) {
-                appendExpression(sql, args, table, whereClause);
+            
+            private Cursor queryCursor() {
+                return query(uri, table, projection, getSql(), getArgs());
             }
         }
 
         public static final class ProviderUtil {
 
-            public static <T> ContentValues convert(T obj, String... fields) {
-                if (obj == null)
-                {
-                    return null;
-                }
-
-                Table table = Table.getTable(obj.getClass());
-
-                try {
-                    return bindObjectToContentValues(table, obj, fields);
-                } catch (Exception e) {
-                    throw new ProviderException(e);
-                }
+            public static <T> ContentValues convert(T obj, String... fields) throws Exception {
+                if (obj == null) return null;
+                return bindObjectToContentValues(Table.getTable(obj.getClass()), obj, fields);
             }
 
-            public static <T> ContentValues[] convert(T[] obj, String... fields) {
-                if (obj == null)
-                {
-                    return null;
-                }
-
-                if (obj.length == 0)
-                {
-                    return new ContentValues[0];
-                }
-
-                if (obj.length == 1)
-                {
-                    return new ContentValues[] { convert(obj[0], fields) };
-                }
+            public static <T> ContentValues[] convert(T[] obj, String... fields) throws Exception {
+                if (obj == null) return null;
+                if (obj.length == 0) return new ContentValues[0];
+                if (obj.length == 1) return new ContentValues[] { convert(obj[0], fields) };
 
                 Table table = Table.getTable(obj.getClass().getComponentType());
-
-                try {
-                    ContentValues[] cvs = new ContentValues[obj.length];
-
-                    for (int i = 0; i < cvs.length; i++)
-                    {
-                        cvs[i] = bindObjectToContentValues(table, obj[i], fields);
-                    }
-
-                    return cvs;
-                } catch (Exception e) {
-                    throw new ProviderException(e);
+                ContentValues[] cvs = new ContentValues[obj.length];
+                for (int i = 0; i < cvs.length; i++)
+                {
+                    cvs[i] = bindObjectToContentValues(table, obj[i], fields);
                 }
+
+                return cvs;
             }
 
             private static ContentValues bindObjectToContentValues(Table table, Object obj,
@@ -2662,8 +2734,7 @@ public final class DAOTemplate {
                         Property property = table.getProperty(field);
                         if (property != null)
                         {
-                            bindContentKeyValue(cv,
-                                    property.getColumn(), property.getValue(obj));
+                            bindContentKeyValue(cv, property.getColumn(), property.getValue(obj));
                         }
                     }
                 }
@@ -2671,8 +2742,7 @@ public final class DAOTemplate {
                 return cv;
             }
 
-            private static void bindContentKeyValue(ContentValues cv,
-                    String key, Object value) {
+            private static void bindContentKeyValue(ContentValues cv, String key, Object value) {
                 if (value == null)
                 {
                     cv.putNull(key);
@@ -2727,23 +2797,23 @@ public final class DAOTemplate {
 
         static
         {
-            LogFactory.addLogFile(ProviderTemplate.class, DAOTemplate.class);
+            if (!ApplicationManager.isDebuggable())
+            {
+                LogFactory.addLogFile(ProviderTemplate.class, DAOTemplate.class);
+            }
         }
 
         private static String SQL_WHERE_LOG(String sql, Object[] bindArgs) {
-            if (TextUtils.isEmpty(sql))
-            {
-                return "";
-            }
-
+            if (TextUtils.isEmpty(sql)) return "";
             if (bindArgs != null)
             {
+                StringBuilder sb = new StringBuilder(sql);
                 int i = 0, index = 0;
 
                 while ((index = sql.indexOf("?", index)) >= 0)
                 {
                     String arg = String.valueOf(bindArgs[i++]);
-                    sql = sql.substring(0, index) + arg + sql.substring(++index);
+                    sb.replace(index, index + 1, arg);
                     index += arg.length();
                 }
             }

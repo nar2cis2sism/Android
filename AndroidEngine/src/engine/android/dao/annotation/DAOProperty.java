@@ -17,5 +17,5 @@ import java.lang.annotation.Target;
 public @interface DAOProperty {
 
     /** 数据库表字段名称 */
-    public String column() default "";
+    String column() default "";
 }

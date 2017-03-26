@@ -14,7 +14,7 @@ import engine.android.dao.DAOTemplate;
  * querying cursors, building on {@link AsyncTaskLoader} to perform the cursor
  * query on a background thread so that it does not block the application's UI.
  * 
- * <p>It's the convenience utility for {@link DAOTemplate}.
+ * <p>It's the convenient utility for {@link DAOTemplate}.
  * 
  * @author Daimon
  * @version N

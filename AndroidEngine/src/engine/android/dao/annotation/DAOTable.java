@@ -17,5 +17,5 @@ import java.lang.annotation.Target;
 public @interface DAOTable {
 
     /** 数据库表名 */
-    public String name() default "";
+    String name() default "";
 }

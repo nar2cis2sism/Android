@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.project.R;
-import com.project.app.storage.MySharedPreferences;
+import com.project.storage.MySharedPreferences;
 import com.project.ui.login.LoginFragment;
 
 import engine.android.core.annotation.InjectView;

@@ -2,11 +2,11 @@ package com.project.network.http;
 
 import com.project.app.bean.ErrorInfo;
 
-import org.json.JSONObject;
-
-import engine.android.framework.network.event.EventCallback;
-import engine.android.framework.network.http.util.EntityUtil;
+import engine.android.framework.network.event.EventObserver.EventCallback;
+import engine.android.framework.network.http.EntityUtil;
 import engine.android.http.HttpResponse;
+
+import org.json.JSONObject;
 
 public class HttpJsonParser extends engine.android.http.util.json.HttpJsonParser {
     

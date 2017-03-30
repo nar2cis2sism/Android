@@ -1,8 +1,8 @@
-package com.project.app.storage.db;
+package com.project.storage.db;
 
 import android.text.TextUtils;
 
-import com.project.app.storage.provider.ProviderContract.FriendColumns;
+import com.project.storage.provider.ProviderContract.FriendColumns;
 import com.project.util.MyValidator;
 
 import net.sourceforge.pinyin4j.lite.PinyinHelper;
@@ -18,7 +18,7 @@ import protocol.java.json.FriendInfo;
  * 
  * @author Daimon
  */
-@DAOTable(name = com.project.app.storage.provider.ProviderContract.Friend.TABLE)
+@DAOTable(name = com.project.storage.provider.ProviderContract.Friend.TABLE)
 public class Friend {
 
     @DAOPrimaryKey(column = FriendColumns.USER_ID)

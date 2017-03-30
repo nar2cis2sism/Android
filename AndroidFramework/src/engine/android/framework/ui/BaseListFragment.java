@@ -1,5 +1,6 @@
 package engine.android.framework.ui;
 
+import android.app.ListFragment;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -20,6 +21,11 @@ import engine.android.core.extra.JavaBeanAdapter;
 import engine.android.core.extra.JavaBeanLoader;
 import engine.android.framework.R;
 
+/**
+ * 封装一个列表视图，copy from{@link ListFragment}，仔细比对会有少许改动
+ * 
+ * @author Daimon
+ */
 public class BaseListFragment extends BaseFragment {
     
     private final Runnable mRequestFocus = new Runnable() {
@@ -290,15 +296,21 @@ public class BaseListFragment extends BaseFragment {
         mList.post(mRequestFocus);
     }
 
+    /**
+     * This is called when the load of data is finished.
+     */
     protected void notifyDataSetChanged() {}
 
+    /**
+     * This is called when the loader of data source is destroyed.
+     */
     protected void notifyDataSetInvalidated() {}
     
-    private abstract class ListDataLoader<D, A extends ListAdapter> extends DataLoader<D> {
+    private abstract class ListDataSource<D, A extends ListAdapter> extends DataSource<D> {
         
         protected final A adapter;
         
-        public ListDataLoader(A adapter, Loader<D> loader) {
+        public ListDataSource(A adapter, Loader<D> loader) {
             super(loader);
             this.adapter = adapter;
         }
@@ -342,9 +354,12 @@ public class BaseListFragment extends BaseFragment {
         protected abstract void clearData();
     }
     
-    public class DataSetLoader<D> extends ListDataLoader<Collection<D>, JavaBeanAdapter<D>> {
+    /**
+     * A list data source of collection
+     */
+    public class DataSetSource<D> extends ListDataSource<Collection<D>, JavaBeanAdapter<D>> {
         
-        public DataSetLoader(JavaBeanAdapter<D> adapter, JavaBeanLoader<D> loader) {
+        public DataSetSource(JavaBeanAdapter<D> adapter, JavaBeanLoader<D> loader) {
             super(adapter, loader);
         }
 
@@ -359,9 +374,12 @@ public class BaseListFragment extends BaseFragment {
         }
     }
     
-    public class CursorDataLoader extends ListDataLoader<Cursor, CursorAdapter> {
+    /**
+     * A list data source of cursor
+     */
+    public class CursorDataSource extends ListDataSource<Cursor, CursorAdapter> {
         
-        public CursorDataLoader(CursorAdapter adapter, Loader<Cursor> loader) {
+        public CursorDataSource(CursorAdapter adapter, Loader<Cursor> loader) {
             super(adapter, loader);
         }
 

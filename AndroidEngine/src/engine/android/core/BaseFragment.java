@@ -24,7 +24,7 @@ public abstract class BaseFragment extends Fragment {
 
     // 自定义回调接口（与Activity进行交互）
     private Callbacks mCallbacks;
-    public static interface Callbacks {}
+    public interface Callbacks {}
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -164,6 +164,7 @@ public abstract class BaseFragment extends Fragment {
 
     /**
      * 设置数据监听器
+     * 
      * @param data 初始数据
      * @param listener 数据监听器
      */

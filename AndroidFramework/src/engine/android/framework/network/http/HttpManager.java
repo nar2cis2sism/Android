@@ -8,21 +8,14 @@ import android.net.NetworkInfo;
 import android.net.Proxy;
 import android.text.TextUtils;
 
-import java.io.File;
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy.Type;
-import java.net.SocketTimeoutException;
-import java.util.concurrent.Callable;
-
 import engine.android.core.ApplicationManager;
 import engine.android.framework.R;
 import engine.android.framework.app.AppConfig;
 import engine.android.framework.app.AppGlobal;
 import engine.android.framework.network.ConnectionInterceptor;
 import engine.android.framework.network.event.Event;
-import engine.android.framework.network.event.EventCallback;
 import engine.android.framework.network.event.EventObserver;
+import engine.android.framework.network.event.EventObserver.EventCallback;
 import engine.android.http.HttpConnector;
 import engine.android.http.HttpConnector.HttpConnectionListener;
 import engine.android.http.HttpProxy;
@@ -31,6 +24,13 @@ import engine.android.http.HttpResponse;
 import engine.android.http.util.HttpParser;
 import engine.android.util.file.FileManager;
 import engine.android.util.manager.SDCardManager;
+
+import java.io.File;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy.Type;
+import java.net.SocketTimeoutException;
+import java.util.concurrent.Callable;
 
 /**
  * Http连接管理器<p>

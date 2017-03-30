@@ -5,22 +5,13 @@ import static engine.android.core.util.LogFactory.LOG.log;
 import android.content.Context;
 import android.util.SparseArray;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.net.SocketException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import engine.android.core.ApplicationManager;
 import engine.android.framework.app.AppConfig;
 import engine.android.framework.app.AppGlobal;
 import engine.android.framework.network.ConnectionInterceptor;
 import engine.android.framework.network.event.Event;
-import engine.android.framework.network.event.EventCallback;
 import engine.android.framework.network.event.EventObserver;
+import engine.android.framework.network.event.EventObserver.EventCallback;
 import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.socket.SocketConnectionListener;
@@ -36,6 +27,15 @@ import engine.android.util.secure.Obfuscate;
 import protocol.java.ProtocolWrapper;
 import protocol.java.ProtocolWrapper.ProtocolEntity;
 import protocol.java.ProtocolWrapper.ProtocolEntity.ProtocolData;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Socket连接管理器<p>

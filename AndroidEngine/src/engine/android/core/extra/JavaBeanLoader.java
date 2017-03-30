@@ -173,7 +173,7 @@ public abstract class JavaBeanLoader<D> extends AsyncTaskLoader<Collection<D>> {
 
         public abstract void unregisterObserver(Context context);
         
-        protected void refresh() {
+        protected final void refresh() {
             // Tell the loader about the change.
             onContentChanged();
         }

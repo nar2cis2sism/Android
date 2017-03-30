@@ -12,7 +12,7 @@ import android.widget.TabHost.TabContentFactory;
 import android.widget.TabHost.TabSpec;
 
 import com.project.R;
-import com.project.ui.module.friend.FriendListFragment;
+import com.project.ui.module.friend.list.FriendListFragment;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseActivity;

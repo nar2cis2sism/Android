@@ -126,7 +126,7 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter {
     public void update(Collection<? extends T> collection) {
         synchronized (mLock) {
             mObjects.clear();
-            mObjects.addAll(collection);
+            if (collection != null) mObjects.addAll(collection);
         }
 
         if (mNotifyOnChange) notifyDataSetChanged();

@@ -1,4 +1,4 @@
-package com.project.ui.module.friend;
+package com.project.ui.module.friend.list;
 
 import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
@@ -9,9 +9,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.project.R;
+import com.project.app.bean.FriendListItem;
 
 import engine.android.framework.ui.BaseListFragment;
 import engine.android.util.AndroidUtil;
@@ -26,6 +26,16 @@ import engine.android.widget.TitleBar;
  * @author Daimon
  */
 public class FriendListFragment extends BaseListFragment {
+    
+    FriendListPresenter presenter;
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        presenter = addPresenter(FriendListPresenter.class);
+        setDataSource(new DataSetSource<FriendListItem>(presenter.adapter, presenter.loader));
+    }
     
     @Override
     protected void setupTitleBar(TitleBar titleBar) {
@@ -118,12 +128,5 @@ public class FriendListFragment extends BaseListFragment {
 //        headerView.findViewById(R.id.friend_recommend).setOnClickListener(this);
 //        
 //        return headerView;
-    }
-    
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        
-        setListAdapter(new FriendListAdapter(getContext()));
     }
 }

@@ -1,4 +1,4 @@
-package engine.android.framework.ui;
+package engine.android.framework.ui.util;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public final class PresentManager {
     
-    private Map<Class<? extends BasePresenter<?>>, BasePresenter<?>> map;
+    private LinkedHashMap<Class<? extends BasePresenter<?>>, BasePresenter<?>> map;
     
     public <P extends BasePresenter<C>, C> P addPresenter(Class<P> presenterCls) {
         return addPresenter(presenterCls, null);
@@ -57,12 +57,7 @@ public final class PresentManager {
 
         private Callbacks mCallbacks;
 
-        /**
-         * Must keep empty constructor for the instantiation.
-         */
-        public BasePresenter() {}
-
-        public Callbacks getCallbacks() {
+        public final Callbacks getCallbacks() {
             return mCallbacks;
         }
         

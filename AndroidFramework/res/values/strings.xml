@@ -4,7 +4,6 @@
 	<string name="cancel">取消</string>
 	
 	<string name="Loading...">Loading&#8230;</string>
-	<string name="No_data_found">No data found</string>
 	
 	<string name="connection_status_fail">出现未知错误，请联系客服人员！</string>
 	<string name="connection_status_error">网络异常，请稍后重试！</string>

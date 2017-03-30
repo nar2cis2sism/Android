@@ -120,6 +120,7 @@ public final class Injector {
     
     /**
      * 注入口
+     * 
      * @param target 注入对象
      * @param source 控件查找对象
      */
@@ -342,6 +343,6 @@ class ReflectionInjector extends NoInjector {
     }
     
     static void throwInjectException(Exception e) {
-        throw new RuntimeException("inject error", e);
+        throw new RuntimeException("Inject error", e);
     }
 }

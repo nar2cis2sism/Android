@@ -17,8 +17,16 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Pair;
 
+import engine.android.core.ApplicationManager;
+import engine.android.core.util.LogFactory;
+import engine.android.core.util.LogFactory.LogUtil;
+import engine.android.dao.annotation.DAOPrimaryKey;
+import engine.android.dao.annotation.DAOProperty;
+import engine.android.dao.annotation.DAOTable;
+import engine.android.dao.util.Page;
+import engine.android.util.file.FileManager;
+
 import java.io.File;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.sql.Date;
 import java.sql.Time;
@@ -33,15 +41,6 @@ import java.util.ListIterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicReference;
-
-import engine.android.core.ApplicationManager;
-import engine.android.core.util.LogFactory;
-import engine.android.core.util.LogFactory.LogUtil;
-import engine.android.dao.annotation.DAOPrimaryKey;
-import engine.android.dao.annotation.DAOProperty;
-import engine.android.dao.annotation.DAOTable;
-import engine.android.dao.util.Page;
-import engine.android.util.file.FileManager;
 
 /**
  * 操作数据库的模板，尽量面向对象，以简化DAO层<br>
@@ -2011,27 +2010,24 @@ public class DAOTemplate {
 
             return null;
         }
-
+        
         /**
-         * 获取满足条件的所有数据
+         * 获取满足条件的数据集合
          */
-        public T[] getAll() {
+        public Collection<T> getAll() {
             build(0);
             try {
                 Cursor cursor = rawQuery(getSql(), getArgs());
                 if (cursor != null)
                 {
                     try {
-                        @SuppressWarnings("unchecked")
-                        T[] array = (T[]) Array.newInstance(c, cursor.getCount());
-                        int index = 0;
-
+                        List<T> list = new ArrayList<T>(cursor.getCount());
                         while (cursor.moveToNext())
                         {
-                            array[index++] = extractFromCursor(cursor, table, c);
+                            list.add(extractFromCursor(cursor, table, c));
                         }
 
-                        return array;
+                        return list;
                     } finally {
                         cursor.close();
                     }
@@ -2651,27 +2647,24 @@ public class DAOTemplate {
 
                 return null;
             }
-
+            
             /**
-             * 获取满足条件的所有数据
+             * 获取满足条件的数据集合
              */
-            public T[] getAll() {
+            public Collection<T> getAll() {
                 build(0);
                 try {
                     Cursor cursor = queryCursor();
                     if (cursor != null)
                     {
                         try {
-                            @SuppressWarnings("unchecked")
-                            T[] array = (T[]) Array.newInstance(c, cursor.getCount());
-                            int index = 0;
-
+                            List<T> list = new ArrayList<T>(cursor.getCount());
                             while (cursor.moveToNext())
                             {
-                                array[index++] = extractFromCursor(cursor, table, c);
+                                list.add(extractFromCursor(cursor, table, c));
                             }
 
-                            return array;
+                            return list;
                         } finally {
                             cursor.close();
                         }

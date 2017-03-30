@@ -90,13 +90,15 @@ public class Forelet extends Activity implements TaskCallback {
         {
             if (mTask != null) mTask.setup(null);
             if (mProgress != null) mProgress.setup(null);
+            
+            onFinish(false);
         }
         else
         {
             cancelTask();
             hideProgress();
             
-            onFinish();
+            onFinish(true);
         }
         
         mTask = null;
@@ -111,9 +113,9 @@ public class Forelet extends Activity implements TaskCallback {
     }
 
     /**
-     * 手动关闭Activity时调用
+     * @param realFinish True表示手动关闭Activity,Flase表示被系统杀掉
      */
-    protected void onFinish() {}
+    protected void onFinish(boolean realFinish) {}
 
     @Override
     public void setContentView(int layoutResID) {
@@ -303,7 +305,7 @@ public class Forelet extends Activity implements TaskCallback {
 
         int executeTask() {
             doExecuteTask();
-            return hashCode();
+            return getId();
         }
 
         /**
@@ -360,26 +362,30 @@ public class Forelet extends Activity implements TaskCallback {
                 TaskCallback callback = mTaskCallback.get();
                 if (callback != null)
                 {
-                    callback.onTaskCallback(hashCode(), result);
+                    callback.onTaskCallback(getId(), result);
                 }
 
                 mTaskCallback = null;
             }
         }
+        
+        private int getId() {
+            return hashCode();
+        }
 
-        public static interface TaskExecutor {
+        public interface TaskExecutor {
 
             /**
              * 任务执行方法
              * 
              * @return 执行结果
              */
-            public Object doExecute();
+            Object doExecute();
 
             /**
              * 任务取消
              */
-            public void cancel();
+            void cancel();
         }
     }
 
@@ -400,7 +406,7 @@ public class Forelet extends Activity implements TaskCallback {
     /**
      * 执行任务
      * 
-     * @param task 内置任务
+     * @param task 并发执行多个回调任务会损坏之前的任务回调
      * @param hasCallback 是否需要处理回调，通过{@link #onTaskCallback}接收回调
      * 
      * @return taskId 用于任务回调
@@ -408,6 +414,13 @@ public class Forelet extends Activity implements TaskCallback {
     public final int executeTask(Task task, boolean hasCallback) {
         if (hasCallback) task.setTaskCallback(this);
         return (mTask = task).executeTask();
+    }
+    
+    /**
+     * 取消特定任务
+     */
+    public final void cancelTask(Task task) {
+        if (task != null) task.cancelTask();
     }
 
     /**
@@ -417,6 +430,7 @@ public class Forelet extends Activity implements TaskCallback {
         if (mTask != null)
         {
             mTask.cancelTask();
+            mTask = null;
         }
     }
 
@@ -520,10 +534,6 @@ public class Forelet extends Activity implements TaskCallback {
 
         public TaskProgressDialog(Context context) {
             super(context);
-        }
-
-        public TaskProgressDialog(Context context, int theme) {
-            super(context, theme);
         }
         
         @Override
@@ -767,9 +777,9 @@ public class Forelet extends Activity implements TaskCallback {
     /**
      * 验证接口
      */
-    public static interface Validation<T extends View> {
+    public interface Validation<T extends View> {
 
-        public boolean isValid(T view);
+        boolean isValid(T view);
     }
 
     /**
@@ -806,9 +816,9 @@ public class Forelet extends Activity implements TaskCallback {
 
     private boolean commitAllowed = true;
 
-    public static interface FragmentTransaction {
+    public interface FragmentTransaction {
 
-        public void commit(FragmentManager fragmentManager);
+        void commit(FragmentManager fragmentManager);
     }
 
     public final void commitFragmentTransaction(FragmentTransaction transaction) {
@@ -865,7 +875,8 @@ public class Forelet extends Activity implements TaskCallback {
     }
 
     protected void navigateUpTo(Class<? extends Activity> cls) {
-        NavUtils.navigateUpTo(this, new Intent(this, cls).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
+        NavUtils.navigateUpTo(this, new Intent(this, cls)
+        .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
     }
 
     protected Class<? extends Activity> parentActivity() {

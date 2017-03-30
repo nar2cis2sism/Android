@@ -46,8 +46,12 @@ public class AppGlobal {
     }
     
     public void setConfig(AppConfig config) {
-        if (this.config == null) this.config = config;
-        throw new RuntimeException("Config is exist.");
+        if (this.config != null)
+        {
+            throw new RuntimeException("Config is exist.");
+        }
+        
+        this.config = config;
     }
     
     private HttpManager http;

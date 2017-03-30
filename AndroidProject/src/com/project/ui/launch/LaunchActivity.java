@@ -10,7 +10,7 @@ import android.view.ViewGroup.LayoutParams;
 import com.project.R;
 import com.project.app.MyInitial;
 import com.project.app.MySession;
-import com.project.app.storage.MySharedPreferences;
+import com.project.storage.MySharedPreferences;
 import com.project.ui.login.LoginFragment;
 import com.project.ui.main.MainActivity;
 

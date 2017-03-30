@@ -3,7 +3,6 @@ package com.project.app;
 import com.project.app.MyConfiguration.MyConfiguration_HTTP;
 import com.project.app.MyConfiguration.MyConfiguration_NETWORK;
 import com.project.app.MyConfiguration.MyConfiguration_SOCKET;
-import com.project.app.storage.DAOManager;
 import com.project.network.http.HttpInterceptor;
 import com.project.network.http.servlet.HttpServlet;
 import com.project.network.socket.SocketInterceptor;
@@ -27,7 +26,6 @@ MyConfiguration_SOCKET {
             configNetwork(configNetwork());
             configHttp(configHttp());
             configSocket(configSocket());
-            configDatabase(configDatabase());
         }
         
         private void configNetwork(NetworkConfig config) {
@@ -44,10 +42,6 @@ MyConfiguration_SOCKET {
             config.setServlet(new SocketServlet());
             config.setInterceptor(new SocketInterceptor());
             config.setTimeout(SOCKET_TIMEOUT);
-        }
-        
-        private void configDatabase(DatabaseConfig config) {
-            config.setName(DAOManager.DB_NAME).setVersion(DAOManager.DB_VERSION).setListener(new DAOManager());
         }
     }
 }

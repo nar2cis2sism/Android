@@ -7,14 +7,15 @@ import com.project.network.Actions;
 import com.project.network.NetworkConfig;
 import com.project.network.http.HttpJsonParser;
 
-import org.json.JSONObject;
-
 import engine.android.framework.app.AppContext;
-import engine.android.framework.network.event.EventCallback;
+import engine.android.framework.network.event.EventObserver.EventCallback;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
 import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.util.AndroidUtil;
+
+import org.json.JSONObject;
+
 import protocol.java.json.AppUpgradeInfo;
 
 /**

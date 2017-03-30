@@ -33,8 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="@string/No_data_found" />
+                android:textAppearance="?android:attr/textAppearanceLarge" />
     </FrameLayout>
         
 </FrameLayout>

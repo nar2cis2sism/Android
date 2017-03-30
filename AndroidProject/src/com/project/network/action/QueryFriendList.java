@@ -2,21 +2,26 @@ package com.project.network.action;
 
 import static engine.android.framework.app.App.getHttpManager;
 
+import com.google.gson.reflect.TypeToken;
 import com.project.app.MySession;
-import com.project.app.storage.db.Friend;
 import com.project.network.Actions;
 import com.project.network.NetworkConfig;
 import com.project.network.http.HttpJsonParser;
+import com.project.storage.MyDAOManager;
+import com.project.storage.db.Friend;
 
-import org.json.JSONObject;
-
-import java.util.List;
-
-import engine.android.framework.network.event.EventCallback;
+import engine.android.dao.DAOTemplate;
+import engine.android.dao.DAOTemplate.DAOTransaction;
+import engine.android.framework.network.event.EventObserver.EventCallback;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
 import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
+
+import org.json.JSONObject;
+
 import protocol.java.json.FriendInfo;
+
+import java.util.List;
 
 /**
  * 查询好友列表
@@ -49,6 +54,11 @@ public class QueryFriendList implements HttpBuilder {
         
         private static final int TYPE_TOTAL         = 0;    // 全量更新
         private static final int TYPE_INCREMENT     = 1;    // 增量更新
+        
+        private long timestamp;
+        private int sync_type;
+        private int sync_status;
+        private List<FriendInfo> friendList;
 
         public Parser(String action, EventCallback callback) {
             super(action, callback);
@@ -56,34 +66,39 @@ public class QueryFriendList implements HttpBuilder {
         
         @Override
         protected Object process(JSONObject data) {
-            long timestamp = data.optLong("timestamp");
-            int sync_type = data.optInt("sync_type");
-            int sync_status = data.optInt("sync_status");
-            List<FriendInfo> friendList = GsonUtil.parseList(data.optString("list"), FriendInfo.class);
+            timestamp = data.optLong("timestamp");
+            sync_type = data.optInt("sync_type");
+            sync_status = data.optInt("sync_status");
+            friendList = GsonUtil.parseJson(data.optString("list"), 
+                    new TypeToken<List<FriendInfo>>() {}.getType());
             
+            MyDAOManager.getDAO().execute(new DAOTransaction() {
+                
+                @Override
+                public boolean execute(DAOTemplate dao) throws Exception {
+                    return processDB(dao);
+                }
+            });
+            
+            return super.process(data);
+        }
+        
+        private boolean processDB(DAOTemplate dao) {
             if (sync_type == TYPE_TOTAL)
             {
                 // 清空数据
-//                MyApp.getDAOTemplate().resetTable(c);
+                dao.resetTable(Friend.class);
             }
             
             if (friendList != null)
             {
                 for (FriendInfo info : friendList)
                 {
-                    Friend friend = new Friend(info);
+                    dao.save(new Friend(info));
                 }
             }
             
-            
-//            String token = data.optString("token");
-//            long uid = data.optLong("uid");
-//            String user_info_ver = data.optString("user_info_crc");
-//            
-//            // 启动socket连接
-//            MyApp.getSocketManager().setup(MySession.getSocketAddress(), token);
-            
-            return super.process(data);
+            return true;
         }
     }
 }

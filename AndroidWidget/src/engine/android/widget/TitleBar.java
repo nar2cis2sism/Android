@@ -123,13 +123,17 @@ public class TitleBar extends RelativeLayout {
      * 恢复默认状态
      */
     public TitleBar reset() {
-        navigation_up.setImageResource(R.drawable.navigation_up);
-        setDisplayUpEnabled(false);
-        setTitle(null);
-        setDisplayShowTitleEnabled(true);
-        setDisplayShowCustomEnabled(false);
-        actions.removeAllViews();
-        hide();
+        if (isShowing())
+        {
+            navigation_up.setImageResource(R.drawable.navigation_up);
+            setDisplayUpEnabled(false);
+            setTitle(null);
+            setDisplayShowTitleEnabled(true);
+            setDisplayShowCustomEnabled(false);
+            actions.removeAllViews();
+            hide();
+        }
+        
         return this;
     }
     

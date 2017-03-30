@@ -1,7 +1,9 @@
-package com.project.app.storage.provider;
+package com.project.storage.provider;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
+
+import static com.project.storage.provider.MyContentProvider.registerTable;
 
 public final class ProviderContract {
     
@@ -10,6 +12,11 @@ public final class ProviderContract {
     
     /** A content:// style uri to the authority for the provider */
     private static final Uri AUTHORITY_URI = Uri.parse("content://" + AUTHORITY);
+    
+    static void init() {
+        // 对外暴露的表需要在这里注册
+        registerTable(Friend.TABLE);
+    }
     
     /**
      * 排序字段

@@ -20,9 +20,9 @@ public final class ViewSize {
         this.height = height;
     }
     
-    public static interface ViewSizeObserver {
+    public interface ViewSizeObserver {
         
-        public void onSizeChanged(View view, ViewSize size);
+        void onSizeChanged(View view, ViewSize size);
     }
     
     public static abstract class ViewWidthAdjuster implements ViewSizeObserver {

@@ -1,13 +1,14 @@
 package engine.android.framework.app;
 
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import engine.android.framework.network.ConnectionInterceptor;
 import engine.android.http.HttpProxy.HttpServlet;
 import engine.android.socket.SocketProxy.SocketServlet;
 import engine.android.util.MyThreadFactory;
+
+import java.io.File;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 配置应用程序公用的功能组件
@@ -19,6 +20,7 @@ public class AppConfig {
     private NetworkConfig network;
     private HttpConfig http;
     private SocketConfig socket;
+    private ImageConfig image;
     
     public boolean isOffline() {
         return configNetwork().offline;
@@ -70,6 +72,16 @@ public class AppConfig {
     
     public SocketServlet getSocketServlet() {
         return configSocket().servlet;
+    }
+    
+    public File getImageDir() {
+        File imageDir = configImage().imageDir;
+        if (imageDir == null)
+        {
+            imageDir = configImage().imageDir = AppContext.getContext().getDir("image", 0);
+        }
+        
+        return imageDir;
     }
     
     public static class NetworkConfig {
@@ -164,15 +176,25 @@ public class AppConfig {
         }
     }
     
+    public static class ImageConfig {
+        
+        File imageDir;
+        
+        /**
+         * 设置图片存储目录
+         */
+        public ImageConfig setImageDir(File imageDir) {
+            this.imageDir = imageDir;
+            return this;
+        }
+    }
+    
+    
     /**
      * 配置网络连接
      */
     public NetworkConfig configNetwork() {
-        if (network == null)
-        {
-            network = new NetworkConfig();
-        }
-        
+        if (network == null) network = new NetworkConfig();
         return network;
     }
     
@@ -180,11 +202,7 @@ public class AppConfig {
      * 配置Http连接
      */
     public HttpConfig configHttp() {
-        if (http == null)
-        {
-            http = new HttpConfig();
-        }
-        
+        if (http == null) http = new HttpConfig();
         return http;
     }
     
@@ -192,11 +210,15 @@ public class AppConfig {
      * 配置Socket连接
      */
     public SocketConfig configSocket() {
-        if (socket == null)
-        {
-            socket = new SocketConfig();
-        }
-        
+        if (socket == null) socket = new SocketConfig();
         return socket;
+    }
+    
+    /**
+     * 配置图片管理
+     */
+    public ImageConfig configImage() {
+        if (image == null) image = new ImageConfig();
+        return image;
     }
 }

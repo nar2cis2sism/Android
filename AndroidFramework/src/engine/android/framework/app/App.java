@@ -7,6 +7,7 @@ import engine.android.core.util.LogFactory;
 import engine.android.core.util.LogFactory.LOG;
 import engine.android.framework.network.http.HttpManager;
 import engine.android.framework.network.socket.SocketManager;
+import engine.android.framework.ui.util.ImageManager;
 import engine.android.framework.util.LogUploader;
 import engine.android.util.AndroidUtil;
 
@@ -75,5 +76,9 @@ public class App extends ApplicationManager {
     
     public static SocketManager getSocketManager() {
         return app.getSocketManager();
+    }
+    
+    public static ImageManager getImageManager() {
+        return app.getImageManager();
     }
 }

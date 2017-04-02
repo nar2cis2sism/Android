@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 
+import engine.android.core.util.LogFactory.LOG;
 import engine.android.util.file.FileManager;
 import engine.android.util.file.FileUtils;
 import engine.android.util.secure.CryptoUtil;
@@ -126,7 +127,7 @@ public class ImageStorage {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.log(e);
         }
 
         return false;

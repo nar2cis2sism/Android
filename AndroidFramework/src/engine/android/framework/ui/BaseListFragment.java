@@ -44,8 +44,6 @@ public class BaseListFragment extends BaseFragment {
     private View mListContainer;
     
     private boolean mListShown;
-    
-    public BaseListFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
@@ -294,6 +292,30 @@ public class BaseListFragment extends BaseFragment {
         }
         
         mList.post(mRequestFocus);
+    }
+
+    /**
+     * 内嵌布局替换ListView<br>
+     * 一般在{@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}里面调用
+     */
+    protected static final void replaceListView(View root, int layoutId) {
+        View listView = root.findViewById(android.R.id.list);
+        ViewGroup listContainer = (ViewGroup) listView.getParent();
+        listContainer.removeView(listView);
+
+        LayoutInflater.from(root.getContext()).inflate(layoutId, listContainer);
+    }
+
+    /**
+     * 内嵌布局注入到ListContainer中，与上面不同的是需要自定义EmptyView<br>
+     * 一般在{@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}里面调用
+     */
+    protected static final void injectListContainer(View root, int layoutId) {
+        View listView = root.findViewById(android.R.id.list);
+        ViewGroup listContainer = (ViewGroup) listView.getParent();
+        listContainer.removeAllViews();
+
+        LayoutInflater.from(root.getContext()).inflate(layoutId, listContainer);
     }
 
     /**

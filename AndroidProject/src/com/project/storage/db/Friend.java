@@ -5,12 +5,13 @@ import android.text.TextUtils;
 import com.project.storage.provider.ProviderContract.FriendColumns;
 import com.project.util.MyValidator;
 
-import net.sourceforge.pinyin4j.lite.PinyinHelper;
-
 import engine.android.dao.DAOTemplate;
 import engine.android.dao.annotation.DAOPrimaryKey;
 import engine.android.dao.annotation.DAOProperty;
 import engine.android.dao.annotation.DAOTable;
+
+import net.sourceforge.pinyin4j.lite.PinyinHelper;
+
 import protocol.java.json.FriendInfo;
 
 /**
@@ -95,18 +96,27 @@ public class Friend {
     }
     
     /**
-     * 根据拼音排序
+     * 根据拼音获取排序分类
+     * 
+     * @return {@link #SORT_ENGLISH}, {@link #SORT_OTHER}
      */
-    private static String sort(String pinyin) {
+    public static int getSortCategory(String pinyin) {
         String firstLetter = pinyin.substring(0, 1);
         if (MyValidator.validate(firstLetter, MyValidator.ENGLISH))
         {
-            return SORT_ENGLISH + pinyin;
+            return SORT_ENGLISH;
         }
         else
         {
             // 首字母为英文外其他字符排在后面
-            return SORT_OTHER + pinyin;
+            return SORT_OTHER;
         }
+    }
+    
+    /**
+     * 根据拼音排序
+     */
+    private static String sort(String pinyin) {
+        return getSortCategory(pinyin) + pinyin;
     }
 }

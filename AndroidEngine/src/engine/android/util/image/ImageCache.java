@@ -92,10 +92,7 @@ public final class ImageCache<Identifier> {
     }
 
     public void put(Identifier key, Bitmap value) {
-        if (value != null)
-        {
-            imageHardCache.put(key, value);
-        }
+        if (value != null) imageHardCache.put(key, value);
     }
 
     public Bitmap get(Identifier key) {
@@ -122,7 +119,8 @@ public final class ImageCache<Identifier> {
     public void clear() {
         imageHardCache.evictAll();
         imageSoftCache.clear();
-        while (queue.poll() != null) {
+        while (queue.poll() != null)
+        {
             // Do nothing.
         }
 
@@ -143,8 +141,8 @@ public final class ImageCache<Identifier> {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder()
-                .append("hard cache:").append(imageHardCache.snapshot())
-                .append("soft cache:").append(imageSoftCache);
+        .append("hard cache:").append(imageHardCache.snapshot())
+        .append("soft cache:").append(imageSoftCache);
         return sb.toString();
     }
 }

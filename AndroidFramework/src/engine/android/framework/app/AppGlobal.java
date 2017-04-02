@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import engine.android.framework.network.http.HttpManager;
 import engine.android.framework.network.socket.SocketManager;
+import engine.android.framework.ui.util.ImageManager;
 
 /**
  * 提供应用程序公用的功能组件
@@ -58,6 +59,8 @@ public class AppGlobal {
     
     private SocketManager socket;
     
+    private ImageManager image;
+    
     public HttpManager getHttpManager() {
         if (http == null) http = new HttpManager(context);
         return http;
@@ -66,5 +69,10 @@ public class AppGlobal {
     public SocketManager getSocketManager() {
         if (socket == null) socket = new SocketManager(context);
         return socket;
+    }
+    
+    public ImageManager getImageManager() {
+        if (image == null) image = new ImageManager(context);
+        return image;
     }
 }

@@ -157,7 +157,16 @@ public class FlingLayout extends CustomViewGroup {
     };
 
     private void move(int deltaX) {
-        int scrollX = Math.min(Math.max(getScrollX() + deltaX, 0), (itemCount - 1) * getWidth());
+        int scrollX = getScrollX() + deltaX;
+        if (deltaX > 0)
+        {
+            scrollX = Math.min(scrollX, (itemCount - 1) * getWidth());
+        }
+        else if (deltaX < 0)
+        {
+            scrollX = Math.max(scrollX, 0);
+        }
+        
         if (scrollX != getScrollX())
         {
             scrollTo(scrollX, getScrollY());
@@ -178,11 +187,10 @@ public class FlingLayout extends CustomViewGroup {
 
     private void snapToItem(int item) {
         item = getValidItem(item);
-        if (getScrollX() != (item * getWidth()))
+        int delta = item * getWidth() - getScrollX();
+        if (delta != 0)
         {
-            int delta = item * getWidth() - getScrollX();
             smoothScroll(delta, 0, Math.abs(delta) * 2);
-
             if (currentItem != item) notifyOnViewChanged(currentItem = item);
         }
     }
@@ -191,8 +199,8 @@ public class FlingLayout extends CustomViewGroup {
         if (listener != null) listener.OnViewChanged(item);
     }
 
-    public static interface OnViewChangeListener {
+    public interface OnViewChangeListener {
 
-        public void OnViewChanged(int childIndex);
+        void OnViewChanged(int childIndex);
     }
 }

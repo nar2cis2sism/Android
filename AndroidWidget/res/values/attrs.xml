@@ -8,4 +8,18 @@
         
     </declare-styleable>
     
+    <declare-styleable name="FirstLetterBar">
+        
+        <!-- A drawable to use as the background. -->
+        <attr name="background" format="reference|color" />
+        <!-- Size of the Letter. -->
+        <attr name="textSize" format="dimension" />
+        <!-- Letter color. -->
+        <attr name="textColor" format="reference|color" />
+        <!-- Color of the letter selection highlight. -->
+        <attr name="textColorHighlight" format="reference|color" />
+        
+    </declare-styleable>
+    <attr name="FirstLetterBar" format="reference" />
+    
 </resources>

@@ -8,7 +8,6 @@ import engine.android.util.MyThreadFactory;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -24,7 +23,8 @@ import java.util.concurrent.TimeUnit;
  */
 public final class AsyncImageLoader {
 
-    private static final int MAX_REQUEST_NUM = Runtime.getRuntime().availableProcessors() - 1;
+    private static final int MAX_REQUEST_NUM
+    = Math.max(3, Runtime.getRuntime().availableProcessors() - 1);
 
     private final ThreadPoolExecutor requestPool;                   // 图片下载线程池
 
@@ -32,7 +32,7 @@ public final class AsyncImageLoader {
 
     final ConcurrentHashMap<Object, ImageRequest> lockMap;          // 图片锁库(防止重复加载)
 
-    final Map<Object, Set<ImageCallback>> callbackMap;              // 回调查询表
+    final HashMap<Object, Set<ImageCallback>> callbackMap;          // 回调查询表
 
     final ImageHandler handler;                                     // 图片回调处理器
 
@@ -44,7 +44,9 @@ public final class AsyncImageLoader {
      * @param maxRequestNum 最大请求数
      */
     public AsyncImageLoader(int maxRequestNum) {
-        requestPool = new ThreadPoolExecutor(maxRequestNum, maxRequestNum,
+        requestPool = new ThreadPoolExecutor(
+                maxRequestNum, 
+                maxRequestNum,
                 60L, TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>(),
                 new MyThreadFactory("图片下载"));
@@ -258,7 +260,7 @@ public final class AsyncImageLoader {
     /**
      * 图片下载回调接口
      */
-    public static interface ImageCallback {
+    public interface ImageCallback {
 
         /**
          * 图片下载回调方法
@@ -266,13 +268,13 @@ public final class AsyncImageLoader {
          * @param url 图片下载地址
          * @param image 下载的图片
          */
-        public void imageLoaded(Object url, Bitmap image);
+        void imageLoaded(Object url, Bitmap image);
     }
 
     /**
      * 图片下载实现
      */
-    public static interface ImageDownloader {
+    public interface ImageDownloader {
 
         /**
          * 图片下载方法
@@ -280,6 +282,6 @@ public final class AsyncImageLoader {
          * @param url 图片下载地址
          * @return 下载的图片
          */
-        public Bitmap imageLoading(Object url);
+        Bitmap imageLoading(Object url);
     }
 }

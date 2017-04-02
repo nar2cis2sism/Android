@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
@@ -67,6 +68,13 @@ public class FriendListFragment extends BaseListFragment {
         button.setLayoutParams(params);
         
         return button;
+    }
+    
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View root = super.onCreateView(inflater, container, savedInstanceState);
+        replaceListView(root, R.layout.friend_list_view);
+        return root;
     }
     
     @Override

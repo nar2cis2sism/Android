@@ -328,6 +328,14 @@ public class BaseListFragment extends BaseFragment {
      */
     protected void notifyDataSetInvalidated() {}
     
+    public <D> void setDataSource(JavaBeanAdapter<D> adapter, JavaBeanLoader<D> loader) {
+        super.setDataSource(new DataSetSource<D>(adapter, loader));
+    }
+    
+    public void setDataSource(CursorAdapter adapter, Loader<Cursor> loader) {
+        super.setDataSource(new CursorDataSource(adapter, loader));
+    }
+    
     private abstract class ListDataSource<D, A extends ListAdapter> extends DataSource<D> {
         
         protected final A adapter;

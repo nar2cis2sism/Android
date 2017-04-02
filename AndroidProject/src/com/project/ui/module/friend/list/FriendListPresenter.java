@@ -2,34 +2,66 @@ package com.project.ui.module.friend.list;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.view.View;
-import android.widget.TextView;
 
 import com.project.R;
 import com.project.app.bean.FriendListItem;
 import com.project.storage.MyDAOManager;
 import com.project.storage.db.Friend;
+import com.project.storage.provider.ProviderContract.FriendColumns;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 import engine.android.core.extra.JavaBeanAdapter;
 import engine.android.dao.util.JavaBeanLoader;
 import engine.android.framework.ui.BaseFragment.Presenter;
+import engine.android.framework.ui.widget.AvatarImageView;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import static com.project.app.bean.FriendListItem.CATEGORY;
 
 public class FriendListPresenter extends Presenter {
     
     FriendListLoader loader;
     FriendListAdapter adapter;
     
+    private final HashMap<String, Integer> letterMap
+    = new HashMap<String, Integer>(CATEGORY.length);
+    
     @Override
     public void onCreate(Context context) {
         loader = new FriendListLoader(context);
         adapter = new FriendListAdapter(context);
+        getCallbacks().setDataSource(adapter, loader);
+    }
+    
+    @Override
+    public FriendListFragment getCallbacks() {
+        return (FriendListFragment) super.getCallbacks();
+    }
+    
+    public void updateLetterMap() {
+        letterMap.clear();
+        letterMap.put(CATEGORY[0], -1);
+        
+        List<FriendListItem> list = adapter.getItems();
+        for (int i = 0, size = list.size(); i < size; i++)
+        {
+            String category = list.get(i).category;
+            if (!letterMap.containsKey(category))
+            {
+                letterMap.put(category, i);
+            }
+        }
+    }
+    
+    public Integer getPositionByLetter(String letter) {
+        return letterMap.get(letter);
     }
 }
 
-class FriendListLoader extends JavaBeanLoader<FriendListItem> {
+class FriendListLoader extends JavaBeanLoader<FriendListItem> implements FriendColumns {
 
     public FriendListLoader(Context context) {
         super(context, MyDAOManager.getDAO());
@@ -38,7 +70,7 @@ class FriendListLoader extends JavaBeanLoader<FriendListItem> {
 
     @Override
     public Collection<FriendListItem> loadInBackground() {
-        Collection<Friend> friends = dao.find(Friend.class).getAll();
+        Collection<Friend> friends = dao.find(Friend.class).orderBy(SORT_ORDER).getAll();
         if (friends != null)
         {
             ArrayList<FriendListItem> list = new ArrayList<FriendListItem>(friends.size());
@@ -70,20 +102,18 @@ class FriendListAdapter extends JavaBeanAdapter<FriendListItem> {
             previous_category = getItem(position - 1).category;
         }
 
-        TextView categoryTextView = holder.getView(R.id.category);
         if (TextUtils.equals(category, previous_category))
         {
-            categoryTextView.setVisibility(View.GONE);
+            holder.setVisible(R.id.category, false);
         }
         else
         {
-            categoryTextView.setVisibility(View.VISIBLE);
-            categoryTextView.setText(category);
+            holder.setVisible(R.id.category, true);
+            holder.setTextView(R.id.category_text, category);
         }
 
         // 好友头像
-        //        AvatarImageView.display(holder, R.id.icon, item.avatarUrl, R.drawable.default_avatar);
-        holder.setImageView(R.id.icon, R.drawable.ic_launcher);
+        AvatarImageView.display(holder, R.id.icon, item.avatarUrl);
         // 名称
         holder.setTextView(R.id.title, item.friend.displayName);
         // 签名

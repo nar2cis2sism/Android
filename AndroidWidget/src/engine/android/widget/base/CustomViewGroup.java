@@ -98,7 +98,7 @@ public class CustomViewGroup extends ViewGroup {
 
         public boolean onInterceptTouchEvent(MotionEvent event) {
             int action = event.getAction();
-            if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL)
+            if (action == MotionEvent.ACTION_CANCEL)
             {
                 releaseVelocityTracker();
                 return false;
@@ -130,8 +130,9 @@ public class CustomViewGroup extends ViewGroup {
             int action = event.getAction();
             if (action == MotionEvent.ACTION_CANCEL)
             {
+                handleActionCancel(event);
                 releaseVelocityTracker();
-                return false;
+                return true;
             }
 
             obtainVelocityTracker().addMovement(event);
@@ -154,15 +155,15 @@ public class CustomViewGroup extends ViewGroup {
                     break;
             }
             
-            return false;
+            return true;
         }
         
-        protected VelocityTracker obtainVelocityTracker() {
+        private VelocityTracker obtainVelocityTracker() {
             if (velocityTracker == null) velocityTracker = VelocityTracker.obtain();
             return velocityTracker;
         }
 
-        protected void releaseVelocityTracker() {
+        private void releaseVelocityTracker() {
             if (velocityTracker != null)
             {
                 velocityTracker.recycle();
@@ -180,9 +181,11 @@ public class CustomViewGroup extends ViewGroup {
 
         public abstract boolean handleActionDown(MotionEvent event, int x, int y);
 
-        public abstract void handleActionMove(MotionEvent event, int x, int y);
+        public void handleActionMove(MotionEvent event, int x, int y) {}
 
-        public abstract void handleActionUp(MotionEvent event, float velocityX, float velocityY);
+        public void handleActionUp(MotionEvent event, float velocityX, float velocityY) {}
+
+        public void handleActionCancel(MotionEvent event) {}
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {

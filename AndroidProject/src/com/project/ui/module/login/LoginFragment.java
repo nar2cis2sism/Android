@@ -1,4 +1,4 @@
-package com.project.ui.login;
+package com.project.ui.module.login;
 
 import static com.project.network.Actions.LOGIN;
 import static com.project.network.Actions.NAVIGATION;
@@ -23,7 +23,7 @@ import com.project.app.MyApp;
 import com.project.app.MySession;
 import com.project.network.action.LoginAction;
 import com.project.network.action.NavigationAction;
-import com.project.ui.main.MainActivity;
+import com.project.ui.module.main.MainActivity;
 import com.project.util.MyValidator;
 
 import engine.android.core.Forelet.ProgressSetting;

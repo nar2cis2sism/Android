@@ -1,4 +1,4 @@
-package com.project.ui.launch;
+package com.project.ui.module.launch;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,8 +11,8 @@ import com.project.R;
 import com.project.app.MyInitial;
 import com.project.app.MySession;
 import com.project.storage.MySharedPreferences;
-import com.project.ui.login.LoginFragment;
-import com.project.ui.main.MainActivity;
+import com.project.ui.module.login.LoginFragment;
+import com.project.ui.module.main.MainActivity;
 
 import engine.android.core.extra.SplashScreen;
 import engine.android.core.extra.SplashScreen.SplashCallback;

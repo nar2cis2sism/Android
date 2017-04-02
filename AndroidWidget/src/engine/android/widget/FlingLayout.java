@@ -154,6 +154,10 @@ public class FlingLayout extends CustomViewGroup {
                 snapToDestination();
             }
         }
+        
+        public void handleActionCancel(MotionEvent event) {
+            snapToDestination();
+        };
     };
 
     private void move(int deltaX) {

@@ -1,4 +1,4 @@
-package com.project.ui.launch;
+package com.project.ui.module.launch;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 import com.project.R;
 import com.project.storage.MySharedPreferences;
-import com.project.ui.login.LoginFragment;
+import com.project.ui.module.login.LoginFragment;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.core.annotation.OnClick;

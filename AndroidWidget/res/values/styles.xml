@@ -19,9 +19,9 @@
         <item name="android:textColor">@color/choose_button</item>
     </style>
 
-    <style name="FirstLetterBar">
+    <style name="LetterBar">
         <item name="background">#40222222</item>
-        <item name="textSize">13sp</item>
+        <item name="textSize">13dp</item>
         <item name="textColor">#666666</item>
         <item name="textColorHighlight">#3399ff</item>
     </style>

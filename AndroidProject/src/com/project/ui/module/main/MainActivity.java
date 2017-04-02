@@ -1,4 +1,4 @@
-package com.project.ui.main;
+package com.project.ui.module.main;
 
 import android.app.Activity;
 import android.content.Context;
@@ -104,6 +104,7 @@ public class MainActivity extends BaseActivity {
                 .setIndicator(new TabView(this, R.drawable.tab_more))
                 .setContent(emptyContent), BaseListFragment.class, null));
         
+        pager.setSlidable(false);
         pager.setOffscreenPageLimit(adapter.getCount() - 1);
         pager.setAdapter(adapter);
         

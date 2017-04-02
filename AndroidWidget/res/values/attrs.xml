@@ -8,7 +8,7 @@
         
     </declare-styleable>
     
-    <declare-styleable name="FirstLetterBar">
+    <declare-styleable name="LetterBar">
         
         <!-- A drawable to use as the background. -->
         <attr name="background" format="reference|color" />
@@ -20,6 +20,6 @@
         <attr name="textColorHighlight" format="reference|color" />
         
     </declare-styleable>
-    <attr name="FirstLetterBar" format="reference" />
+    <attr name="LetterBar" format="reference" />
     
 </resources>

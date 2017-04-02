@@ -31,7 +31,7 @@
         android:theme="@style/AppTheme.NoTitleBar" >
         
         <activity
-            android:name="com.project.ui.launch.LaunchActivity"
+            android:name="com.project.ui.module.launch.LaunchActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoTitleBar.Fullscreen" >
             
@@ -47,7 +47,7 @@
             android:screenOrientation="portrait" />
         
         <activity
-            android:name="com.project.ui.main.MainActivity"
+            android:name="com.project.ui.module.main.MainActivity"
             android:screenOrientation="portrait" />
         
     </application>

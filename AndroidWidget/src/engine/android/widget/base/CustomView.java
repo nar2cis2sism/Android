@@ -41,7 +41,7 @@ public class CustomView extends View {
     /**
      * @see {@link #getDefaultSize(int, int)}
      */
-    private int getDesiredSize(int size, int measureSpec) {
+    public static int getDesiredSize(int size, int measureSpec) {
         int result = size;
         int specMode = MeasureSpec.getMode(measureSpec);
         int specSize = MeasureSpec.getSize(measureSpec);
@@ -64,6 +64,13 @@ public class CustomView extends View {
         protected int lastMotionY;
 
         public boolean onTouchEvent(MotionEvent event) {
+            int action = event.getAction();
+            if (action == MotionEvent.ACTION_CANCEL)
+            {
+                handleActionCancel(event);
+                return true;
+            }
+
             int x = (int) event.getX();
             int y = (int) event.getY();
             
@@ -80,14 +87,16 @@ public class CustomView extends View {
                     break;
             }
             
-            return false;
+            return true;
         }
 
         public abstract boolean handleActionDown(MotionEvent event, int x, int y);
 
-        public abstract void handleActionMove(MotionEvent event, int x, int y);
+        public void handleActionMove(MotionEvent event, int x, int y) {}
 
-        public abstract void handleActionUp(MotionEvent event, int x, int y);
+        public void handleActionUp(MotionEvent event, int x, int y) {}
+
+        public void handleActionCancel(MotionEvent event) {}
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {

@@ -2,6 +2,8 @@ package com.project.app.bean;
 
 import com.project.storage.db.Friend;
 
+import engine.android.framework.ui.util.ImageManager.ImageUrl;
+
 public class FriendListItem {
 
     public static final String[] CATEGORY = {"搜", "A", "B", "C", "D", "E", "F", "G", "H", 
@@ -11,13 +13,12 @@ public class FriendListItem {
     public final Friend friend;
 
     public final String category;               // 分类
-//    public final AvatarUrl avatarUrl;       // 头像
+    public final ImageUrl avatarUrl;            // 头像地址
 
     public FriendListItem(Friend friend) {
         this.friend = friend;
         category = getCategory();
-//        avatarUrl = new AvatarUrl(AvatarUrl.TYPE_FRIEND, friend.uri,
-//                String.valueOf(friend.portraitCrc));
+        avatarUrl = new ImageUrl(0, friend.avatarUrl, friend.version);
     }
 
     private String getCategory() {

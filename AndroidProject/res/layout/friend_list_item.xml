@@ -5,7 +5,7 @@
     
     <include 
         android:id="@+id/category"
-        layout="@layout/base_list_category" />
+        layout="@layout/friend_list_category" />
     
     <include 
         layout="@layout/base_list_item_2" />

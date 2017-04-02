@@ -56,7 +56,7 @@ public final class PresentManager {
 
         private Callbacks mCallbacks;
 
-        public final Callbacks getCallbacks() {
+        public Callbacks getCallbacks() {
             return mCallbacks;
         }
         

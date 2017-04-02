@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ListView;
@@ -14,10 +14,15 @@ import android.widget.ListView;
 import com.project.R;
 import com.project.app.bean.FriendListItem;
 
+import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseListFragment;
 import engine.android.util.AndroidUtil;
+import engine.android.util.ViewSize;
+import engine.android.util.ViewSize.ViewSizeObserver;
 import engine.android.widget.ActionContainer;
 import engine.android.widget.ChooseButton;
+import engine.android.widget.LetterBar;
+import engine.android.widget.LetterBar.OnLetterChangedListener;
 import engine.android.widget.SearchBox;
 import engine.android.widget.TitleBar;
 
@@ -26,7 +31,10 @@ import engine.android.widget.TitleBar;
  * 
  * @author Daimon
  */
-public class FriendListFragment extends BaseListFragment {
+public class FriendListFragment extends BaseListFragment implements OnLetterChangedListener {
+    
+    @InjectView(R.id.letter_bar)
+    LetterBar letter_bar;
     
     FriendListPresenter presenter;
     
@@ -35,7 +43,6 @@ public class FriendListFragment extends BaseListFragment {
         super.onCreate(savedInstanceState);
         
         presenter = addPresenter(FriendListPresenter.class);
-        setDataSource(new DataSetSource<FriendListItem>(presenter.adapter, presenter.loader));
     }
     
     @Override
@@ -102,6 +109,13 @@ public class FriendListFragment extends BaseListFragment {
         // 好友推荐
         action_container.addAction(R.drawable.friend_recommend, R.string.friend_recommend);
         
+        ViewSize.observeViewSize(header, new ViewSizeObserver() {
+            
+            @Override
+            public void onSizeChanged(View view, ViewSize size) {
+                letter_bar.getLayoutParams().height = getView().getHeight() - size.height;
+            }
+        });
         return header;
         
         
@@ -136,5 +150,39 @@ public class FriendListFragment extends BaseListFragment {
 //        headerView.findViewById(R.id.friend_recommend).setOnClickListener(this);
 //        
 //        return headerView;
+    }
+    
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        
+        setupLetterBar(letter_bar);
+    }
+    
+    private void setupLetterBar(LetterBar letter_bar) {
+        letter_bar.setLetters(FriendListItem.CATEGORY);
+        letter_bar.replaceLetter(0, getResources().getDrawable(R.drawable.letter_bar_search));
+        letter_bar.setOnLetterChangedListener(this);
+    }
+
+    @Override
+    public void onLetterChanged(String letter) {
+        Integer position = presenter.getPositionByLetter(letter);
+        if (position == null) return;
+        if (position < 0)
+        {
+            position = 0;
+        }
+        else
+        {
+            position += getListView().getHeaderViewsCount();
+        }
+        
+        getListView().setSelection(position);
+    }
+    
+    @Override
+    protected void notifyDataSetChanged() {
+        presenter.updateLetterMap();
     }
 }

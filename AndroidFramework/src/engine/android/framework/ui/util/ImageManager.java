@@ -40,6 +40,8 @@ public class ImageManager {
             LogFactory.addLogFile(ImageManager.class, "image.txt");
         }
     }
+    
+    private final AppConfig config;
 
     private final AsyncImageLoader loader;
     
@@ -49,7 +51,7 @@ public class ImageManager {
     
     final ImageStorage storage;
     
-    private final AppConfig config;
+    private final Transformer transformer;
 
     private boolean printLog = true;
     
@@ -59,6 +61,7 @@ public class ImageManager {
         downloader = new MyImageDownloader(context);
         displayViewMap = new WeakHashMap<View, ImageUrl>();
         storage = new ImageStorage(config.getImageDir());
+        transformer = config.getTransformer();
     }
     
     /**
@@ -161,15 +164,16 @@ public class ImageManager {
                         HttpResponse resp = conn.connect();
                         byte[] bs = resp.getContent();
                         image = BitmapFactory.decodeByteArray(bs, 0, bs.length);
-                        if (image != null)
+                        if (printLog)
                         {
-                            if (printLog)
-                                log("图片下载-" + fileKey, image.getWidth() + "*" + image.getHeight());
-
-                            if (storage.put(fileKey, bs))
-                            {
-                                sp.edit().putString(getCrcKey(fileKey), crc).commit();
-                            }
+                            log("图片下载-" + fileKey, image == null ?
+                                "无图片" : image.getWidth() + "*" + image.getHeight());
+                        }
+                        
+                        if (transformer != null) image = transformer.transform(image);
+                        if (image != null && storage.put(fileKey, bs))
+                        {
+                            sp.edit().putString(getCrcKey(fileKey), crc).commit();
                         }
                     } catch (Exception e) {
                         if (printLog) log("图片下载-" + fileKey, e);
@@ -287,5 +291,10 @@ public class ImageManager {
             .append("]");
             return sb.toString();
         }
+    }
+    
+    public interface Transformer {
+        
+        Bitmap transform(Bitmap image);
     }
 }

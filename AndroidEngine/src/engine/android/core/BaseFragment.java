@@ -62,6 +62,8 @@ public abstract class BaseFragment extends Fragment {
         {
             setupActionBar(actionBar);
         }
+        
+        if (dataSource != null) dataSource.restart();
     }
 
     protected void setupActionBar(ActionBar actionBar) {}
@@ -183,7 +185,7 @@ public abstract class BaseFragment extends Fragment {
     /**
      * 通知数据更新
      */
-    protected void notifyDataChanged(Object data) {
+    protected final void notifyDataChanged(Object data) {
         if (listener != null)
         {
             listener.update(data);
@@ -207,8 +209,8 @@ public abstract class BaseFragment extends Fragment {
             return loader;
         }
         
-        void init() {
-            getLoaderManager().initLoader(LOADER_ID, null, this);
+        void restart() {
+            getLoaderManager().restartLoader(LOADER_ID, null, this);
         }
         
         void destroy() {
@@ -224,10 +226,11 @@ public abstract class BaseFragment extends Fragment {
     private DataSource<?> dataSource;
     
     /**
-     * 设置数据源（同时启动数据加载）
+     * 设置数据源<br>
+     * Call it before {@link #onActivityCreated(Bundle)}
      */
     public void setDataSource(DataSource<?> dataSource) {
-        (this.dataSource = dataSource).init();
+        this.dataSource = dataSource;
     }
     
     /**

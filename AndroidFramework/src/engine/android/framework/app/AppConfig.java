@@ -1,6 +1,7 @@
 package engine.android.framework.app;
 
 import engine.android.framework.network.ConnectionInterceptor;
+import engine.android.framework.ui.util.ImageManager.Transformer;
 import engine.android.http.HttpProxy.HttpServlet;
 import engine.android.socket.SocketProxy.SocketServlet;
 import engine.android.util.MyThreadFactory;
@@ -82,6 +83,10 @@ public class AppConfig {
         }
         
         return imageDir;
+    }
+    
+    public Transformer getTransformer() {
+        return configImage().transformer;
     }
     
     public static class NetworkConfig {
@@ -180,12 +185,21 @@ public class AppConfig {
         
         File imageDir;
         
+        Transformer transformer;
+        
         /**
          * 设置图片存储目录
          */
         public ImageConfig setImageDir(File imageDir) {
             this.imageDir = imageDir;
             return this;
+        }
+        
+        /**
+         * 设置图片转换器
+         */
+        public void setTransformer(Transformer transformer) {
+            this.transformer = transformer;
         }
     }
     

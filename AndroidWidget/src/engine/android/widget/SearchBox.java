@@ -87,7 +87,7 @@ public class SearchBox extends LinearLayout implements OnClickListener {
         });
     }
     
-    public static interface SearchProvider {
+    public interface SearchProvider {
         
         void search(CharSequence constraint);
     }

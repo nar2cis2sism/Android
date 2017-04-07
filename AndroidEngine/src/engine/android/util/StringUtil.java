@@ -3,6 +3,8 @@ package engine.android.util;
 import android.text.TextUtils;
 
 import java.io.UnsupportedEncodingException;
+import java.text.Collator;
+import java.util.Comparator;
 
 /**
  * 字符串及其编码工具
@@ -178,5 +180,20 @@ public final class StringUtil {
         // return String.format(format, arg);
         // 事实证明以下方式运行更快(10:1)
         return format.replaceFirst("%s", arg);
+    }
+    
+    /**
+     * Alphabetical comparison of object.
+     */
+    public static abstract class AlphaComparator<T> implements Comparator<T> {
+        
+        private final Collator collator = Collator.getInstance();
+
+        @Override
+        public int compare(T lhs, T rhs) {
+            return collator.compare(toString(lhs), toString(rhs));
+        }
+        
+        public abstract String toString(T obj);
     }
 }

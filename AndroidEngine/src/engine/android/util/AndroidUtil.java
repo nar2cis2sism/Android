@@ -32,15 +32,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import engine.android.util.file.FileManager;
-import engine.android.util.file.FileUtils;
-import engine.android.util.io.IOUtil;
-import engine.android.util.manager.SDCardManager;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.security.cert.Certificate;
@@ -48,6 +42,11 @@ import java.security.cert.CertificateFactory;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.Callable;
+
+import engine.android.util.file.FileManager;
+import engine.android.util.file.FileUtils;
+import engine.android.util.io.IOUtil;
+import engine.android.util.manager.SDCardManager;
 
 /**
  * Android系统工具类
@@ -357,9 +356,10 @@ public final class AndroidUtil {
         List<PackageInfo> list = context.getPackageManager().getInstalledPackages(
                 PackageManager.GET_UNINSTALLED_PACKAGES
               | PackageManager.GET_DISABLED_COMPONENTS);
-        PackageInfo pi = null;
-        for (ListIterator<PackageInfo> iter = list.listIterator(); iter.hasNext(); pi = iter.next())
+        ListIterator<PackageInfo> iter = list.listIterator();
+        while (iter.hasNext())
         {
+            PackageInfo pi = iter.next();
             if ((pi.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0
             ||  (pi.applicationInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0)
             {

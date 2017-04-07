@@ -12,6 +12,7 @@ import android.widget.TabHost.TabContentFactory;
 import android.widget.TabHost.TabSpec;
 
 import com.project.R;
+import com.project.ui.module.beside.AppListFragment;
 import com.project.ui.module.friend.list.FriendListFragment;
 
 import engine.android.core.annotation.InjectView;
@@ -33,7 +34,7 @@ public class MainActivity extends BaseActivity {
     
     public static final String EXTRA_TAB_MESSAGE    = "message";         // 消息
     public static final String EXTRA_TAB_FRIEND     = "friend";          // 好友
-    public static final String EXTRA_TAB_CONTACTS   = "contacts";        // 通讯录
+    public static final String EXTRA_TAB_BESIDE     = "beside";          // 身边
     public static final String EXTRA_TAB_MORE       = "more";            // 更多
     
     private static final String DEFAULT_TAB_TAG     = EXTRA_TAB_MESSAGE; // 默认显示标签
@@ -95,10 +96,10 @@ public class MainActivity extends BaseActivity {
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_FRIEND)
                 .setIndicator(new TabView(this, R.drawable.tab_friend))
                 .setContent(emptyContent), BaseListFragment.class, null));
-        // 通讯录
-        tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_CONTACTS)
-                .setIndicator(new TabView(this, R.drawable.tab_contacts))
-                .setContent(emptyContent), BaseListFragment.class, null));
+        // 身边
+        tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_BESIDE)
+                .setIndicator(new TabView(this, R.drawable.tab_beside))
+                .setContent(emptyContent), AppListFragment.class, null));
         // 更多
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_MORE)
                 .setIndicator(new TabView(this, R.drawable.tab_more))

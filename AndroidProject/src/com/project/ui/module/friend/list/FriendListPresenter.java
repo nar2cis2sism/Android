@@ -43,6 +43,7 @@ public class FriendListPresenter extends Presenter {
     
     public void updateLetterMap() {
         letterMap.clear();
+        // 搜索
         letterMap.put(CATEGORY[0], -1);
         
         List<FriendListItem> list = adapter.getItems();

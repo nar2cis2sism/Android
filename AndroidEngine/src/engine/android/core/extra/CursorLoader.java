@@ -23,7 +23,6 @@ import java.util.Arrays;
  * @version N
  * @since 1/5/2014
  */
-
 public class CursorLoader extends AsyncTaskLoader<Cursor> {
 
     private final SQLiteDatabase db;

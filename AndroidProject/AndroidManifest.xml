@@ -21,6 +21,8 @@
 	
 	<!-- 读取手机状态权限 -->
 	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<!-- 杀掉后台进程权限 -->
+	<uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
 
     <application
         android:debuggable="true"
@@ -49,6 +51,10 @@
         <activity
             android:name="com.project.ui.module.main.MainActivity"
             android:screenOrientation="portrait" />
+        
+        <service 
+            android:name="com.project.ui.module.beside.AppListService"
+            android:exported="false" />
         
     </application>
 

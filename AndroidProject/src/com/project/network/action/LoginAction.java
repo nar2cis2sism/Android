@@ -63,7 +63,7 @@ public class LoginAction implements HttpBuilder {
             
             MySession.setToken(token);
             // 启动socket连接
-            MyApp.getSocketManager().setup(MySession.getSocketAddress(), token);
+//            MyApp.getSocketManager().setup(MySession.getSocketAddress(), token);
             // 查询好友列表
             MyApp.getHttpManager().sendHttpRequestAsync(new QueryFriendList());
             

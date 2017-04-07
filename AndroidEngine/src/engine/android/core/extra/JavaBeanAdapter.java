@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,8 @@ import android.view.animation.AlphaAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CursorAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,7 +32,7 @@ import java.util.List;
  * @since 6/6/2014
  * @see ArrayAdapter
  */
-public abstract class JavaBeanAdapter<T> extends BaseAdapter {
+public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterable {
 
     private List<T> mObjects;
 
@@ -40,6 +43,10 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter {
     private boolean mNotifyOnChange = true;
 
     private Context mContext;
+    
+    private JavaBeanFilter mFilter;
+    
+    private FilterMatcher<T> mMatcher;
 
     private LayoutInflater mInflater;
 
@@ -232,6 +239,82 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter {
     }
 
     protected abstract void bindView(int position, ViewHolder holder, T item);
+    
+    @Override
+    public Filter getFilter() {
+        if (mFilter == null) mFilter = new JavaBeanFilter();
+        return mFilter;
+    }
+    
+    public void setFilterMatcher(FilterMatcher<T> matcher) {
+        mMatcher = matcher;
+    }
+    
+    public interface FilterMatcher<T> {
+        
+        boolean match(T item, CharSequence constraint);
+    }
+    
+    private class JavaBeanFilter extends Filter {
+
+        // A copy of the original mObjects array, initialized from and then used instead as soon as
+        // the mFilter ArrayFilter is used. mObjects will then only contain the filtered values.
+        private ArrayList<T> mOriginalValues;
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            if (mOriginalValues == null)
+            {
+                synchronized (mLock) {
+                    mOriginalValues = new ArrayList<T>(mObjects);
+                }
+            }
+            
+            ArrayList<T> list;
+            if (TextUtils.isEmpty(constraint))
+            {
+                list = mOriginalValues;
+                mOriginalValues = null;
+            }
+            else
+            {
+                list = new ArrayList<T>(mOriginalValues.size());
+                for (T value : mOriginalValues)
+                {
+                    if (mMatcher.match(value, constraint))
+                    {
+                        list.add(value);
+                    }
+                }
+                
+                list.trimToSize();
+            }
+            
+            return generateResult(list);
+        }
+        
+        private FilterResults generateResult(List<T> result) {
+            FilterResults results = new FilterResults();
+            results.values = result;
+            results.count = result.size();
+            
+            return results;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            mObjects = (List<T>) results.values;
+            if (results.count > 0)
+            {
+                notifyDataSetChanged();
+            }
+            else
+            {
+                notifyDataSetInvalidated();
+            }
+        }
+    }
 
     /**
      * 配合{@link CursorLoader}使用

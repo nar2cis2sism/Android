@@ -153,6 +153,11 @@ public class FriendListFragment extends BaseListFragment implements OnLetterChan
     }
     
     @Override
+    protected void notifyDataSetChanged() {
+        presenter.updateLetterMap();
+    }
+    
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
@@ -179,10 +184,5 @@ public class FriendListFragment extends BaseListFragment implements OnLetterChan
         }
         
         getListView().setSelection(position);
-    }
-    
-    @Override
-    protected void notifyDataSetChanged() {
-        presenter.updateLetterMap();
     }
 }

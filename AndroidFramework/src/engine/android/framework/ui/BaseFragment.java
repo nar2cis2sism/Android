@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 import engine.android.framework.network.event.Event;
 import engine.android.framework.network.event.EventObserver;
 import engine.android.framework.network.event.EventObserver.EventCallback;
@@ -12,9 +15,6 @@ import engine.android.framework.network.event.EventObserver.EventHandler;
 import engine.android.framework.ui.util.PresentManager;
 import engine.android.framework.ui.util.PresentManager.BasePresenter;
 import engine.android.widget.TitleBar;
-
-import java.util.Collection;
-import java.util.LinkedList;
 
 public abstract class BaseFragment extends engine.android.core.BaseFragment implements EventHandler {
     
@@ -78,22 +78,22 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
     /**
      * Must keep empty constructor of presenterCls for the instantiation.
      */
-    public <P extends Presenter> P addPresenter(Class<P> presenterCls) {
+    public <P extends Presenter<C>, C extends BaseFragment> P addPresenter(Class<P> presenterCls) {
         if (presenterManager == null) presenterManager = new PresentManager();
-        P p = presenterManager.addPresenter(presenterCls, this);
-        p.onCreate(getContext());
+        P p = presenterManager.addPresenter(presenterCls);
+        p.setCallbacks(this).onCreate(getContext());
         addIsCalled = true;
         return p;
     }
     
-    public <P extends Presenter> void addPresenter(P p) {
+    public <P extends Presenter<C>, C extends BaseFragment> void addPresenter(P p) {
         if (presenterManager == null) presenterManager = new PresentManager();
-        presenterManager.addPresenter(p, this);
-        p.onCreate(getContext());
+        presenterManager.addPresenter(p);
+        p.setCallbacks(this).onCreate(getContext());
         addIsCalled = true;
     }
     
-    public <P extends Presenter> P getPresenter(Class<P> presenterCls) {
+    public <P extends Presenter<C>, C extends BaseFragment> P getPresenter(Class<P> presenterCls) {
         if (presenterManager == null) return null;
         return presenterManager.getPresenter(presenterCls);
     }
@@ -108,24 +108,32 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
         return presenters;
     }
     
-    public static abstract class Presenter extends BasePresenter<BaseFragment> {
+    public static abstract class Presenter<C extends BaseFragment> extends BasePresenter<C> {
         
-        public void onCreate(Context context) {}
+        protected void onCreate(Context context) {}
         
-        public void onActivityCreated(Bundle savedInstanceState) {}
+        protected void onActivityCreated(Bundle savedInstanceState) {}
         
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {}
+        protected void onActivityResult(int requestCode, int resultCode, Intent data) {}
         
-        public void onStart() {}
+        protected void onStart() {}
         
-        public void onSaveInstanceState(Bundle outState) {}
+        protected void onSaveInstanceState(Bundle outState) {}
         
-        public void onStop() {}
+        protected void onStop() {}
         
-        public void onDestroy() {}
+        protected void onDestroy() {}
+        
+        @SuppressWarnings("unchecked")
+        @Override
+        protected final Presenter<C> setCallbacks(BaseFragment callbacks) {
+            super.setCallbacks((C) callbacks);
+            return this;
+        }
     }
-    
-    private static class Presenters extends Presenter {
+
+    @SuppressWarnings("rawtypes")
+    private static class Presenters {
         
         private LinkedList<Presenter> presenters;
         
@@ -148,37 +156,31 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
             }
         }
         
-        @Override
         public void onActivityCreated(Bundle savedInstanceState) {
             if (presenters == null) return;
             for (Presenter p : presenters) p.onActivityCreated(savedInstanceState);
         }
         
-        @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             if (presenters == null) return;
             for (Presenter p : presenters) p.onActivityResult(requestCode, resultCode, data);
         }
         
-        @Override
         public void onStart() {
             if (presenters == null) return;
             for (Presenter p : presenters) p.onStart();
         }
         
-        @Override
         public void onSaveInstanceState(Bundle outState) {
             if (presenters == null) return;
             for (Presenter p : presenters) p.onSaveInstanceState(outState);
         }
         
-        @Override
         public void onStop() {
             if (presenters == null) return;
             for (Presenter p : presenters) p.onStop();
         }
         
-        @Override
         public void onDestroy() {
             if (presenters == null) return;
             for (Presenter p : presenters) p.onDestroy();

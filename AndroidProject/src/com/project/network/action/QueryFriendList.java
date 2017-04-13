@@ -88,6 +88,7 @@ public class QueryFriendList implements HttpBuilder {
             {
                 // 清空数据
                 dao.resetTable(Friend.class);
+                dao.notifyChange(Friend.class);
             }
             
             if (friendList != null)

@@ -102,6 +102,18 @@ public class TitleBar extends RelativeLayout {
         return addAction(iv);
     }
     
+    public TitleBar addAction(CharSequence text) {
+        return addAction(text, null);
+    }
+    
+    public TitleBar addAction(CharSequence text, OnClickListener listener) {
+        TextView tv = new TextView(getContext());
+        tv.setText(text);
+        if (listener != null) tv.setOnClickListener(listener);
+        
+        return addAction(tv);
+    }
+    
     public TitleBar addAction(View action) {
         actions.addView(action);
         return this;

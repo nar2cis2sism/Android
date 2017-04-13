@@ -43,7 +43,10 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
     private boolean mNotifyOnChange = true;
 
     private Context mContext;
-    
+
+    // A copy of the original mObjects array, initialized from and then used instead as soon as
+    // the mFilter ArrayFilter is used. mObjects will then only contain the filtered values.
+    private ArrayList<T> mOriginalValues;
     private JavaBeanFilter mFilter;
     
     private FilterMatcher<T> mMatcher;
@@ -64,6 +67,12 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
 
     public void add(T object) {
         synchronized (mLock) {
+            if (mOriginalValues != null)
+            {
+                mOriginalValues.add(object);
+                return;
+            }
+            
             mObjects.add(object);
         }
 
@@ -72,6 +81,12 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
 
     public void addAll(Collection<? extends T> collection) {
         synchronized (mLock) {
+            if (mOriginalValues != null)
+            {
+                mOriginalValues.addAll(collection);
+                return;
+            }
+
             mObjects.addAll(collection);
         }
 
@@ -80,6 +95,12 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
 
     public void addAll(T... items) {
         synchronized (mLock) {
+            if (mOriginalValues != null)
+            {
+                Collections.addAll(mOriginalValues, items);
+                return;
+            }
+
             Collections.addAll(mObjects, items);
         }
 
@@ -88,6 +109,12 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
 
     public void insert(T object, int index) {
         synchronized (mLock) {
+            if (mOriginalValues != null)
+            {
+                mOriginalValues.add(index, object);
+                return;
+            }
+            
             mObjects.add(index, object);
         }
 
@@ -96,6 +123,12 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
 
     public void set(T object, int index) {
         synchronized (mLock) {
+            if (mOriginalValues != null)
+            {
+                mOriginalValues.set(index, object);
+                return;
+            }
+            
             mObjects.set(index, object);
         }
 
@@ -104,6 +137,12 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
 
     public void set(T oldObject, T newObject) {
         synchronized (mLock) {
+            if (mOriginalValues != null)
+            {
+                mOriginalValues.set(mOriginalValues.indexOf(oldObject), newObject);
+                return;
+            }
+            
             mObjects.set(mObjects.indexOf(oldObject), newObject);
         }
 
@@ -112,6 +151,12 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
 
     public void remove(T object) {
         synchronized (mLock) {
+            if (mOriginalValues != null)
+            {
+                mOriginalValues.remove(object);
+                return;
+            }
+            
             mObjects.remove(object);
         }
 
@@ -120,6 +165,12 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
 
     public void remove(int index) {
         synchronized (mLock) {
+            if (mOriginalValues != null)
+            {
+                mOriginalValues.remove(index);
+                return;
+            }
+            
             mObjects.remove(index);
         }
 
@@ -127,11 +178,23 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
     }
 
     public boolean contains(T object) {
+        if (mOriginalValues != null)
+        {
+            return mOriginalValues.contains(object);
+        }
+        
         return mObjects.contains(object);
     }
 
     public void update(Collection<? extends T> collection) {
         synchronized (mLock) {
+            if (mOriginalValues != null)
+            {
+                mOriginalValues.clear();
+                if (collection != null) mOriginalValues.addAll(collection);
+                return;
+            }
+            
             mObjects.clear();
             if (collection != null) mObjects.addAll(collection);
         }
@@ -141,6 +204,12 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
 
     public void clear() {
         synchronized (mLock) {
+            if (mOriginalValues != null)
+            {
+                mOriginalValues.clear();
+                return;
+            }
+            
             mObjects.clear();
         }
 
@@ -148,11 +217,22 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
     }
     
     public List<T> getItems() {
+        if (mOriginalValues != null)
+        {
+            return mOriginalValues;
+        }
+        
         return mObjects;
     }
 
     public void sort(Comparator<? super T> comparator) {
         synchronized (mLock) {
+            if (mOriginalValues != null)
+            {
+                Collections.sort(mOriginalValues, comparator);
+                return;
+            }
+            
             Collections.sort(mObjects, comparator);
         }
 
@@ -257,10 +337,6 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
     
     private class JavaBeanFilter extends Filter {
 
-        // A copy of the original mObjects array, initialized from and then used instead as soon as
-        // the mFilter ArrayFilter is used. mObjects will then only contain the filtered values.
-        private ArrayList<T> mOriginalValues;
-
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             if (mOriginalValues == null)
@@ -305,14 +381,7 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             mObjects = (List<T>) results.values;
-            if (results.count > 0)
-            {
-                notifyDataSetChanged();
-            }
-            else
-            {
-                notifyDataSetInvalidated();
-            }
+            notifyDataSetChanged();
         }
     }
 

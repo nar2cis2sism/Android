@@ -56,11 +56,11 @@ public final class PresentManager {
 
         private Callbacks mCallbacks;
 
-        public Callbacks getCallbacks() {
+        public final Callbacks getCallbacks() {
             return mCallbacks;
         }
         
-        BasePresenter<Callbacks> setCallbacks(Callbacks callbacks) {
+        protected BasePresenter<Callbacks> setCallbacks(Callbacks callbacks) {
             mCallbacks = callbacks;
             return this;
         }

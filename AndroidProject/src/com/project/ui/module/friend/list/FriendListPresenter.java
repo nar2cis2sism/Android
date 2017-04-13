@@ -1,5 +1,7 @@
 package com.project.ui.module.friend.list;
 
+import static com.project.app.bean.FriendListItem.CATEGORY;
+
 import android.content.Context;
 import android.text.TextUtils;
 
@@ -19,9 +21,7 @@ import engine.android.dao.util.JavaBeanLoader;
 import engine.android.framework.ui.BaseFragment.Presenter;
 import engine.android.framework.ui.widget.AvatarImageView;
 
-import static com.project.app.bean.FriendListItem.CATEGORY;
-
-public class FriendListPresenter extends Presenter {
+public class FriendListPresenter extends Presenter<FriendListFragment> {
     
     FriendListLoader loader;
     FriendListAdapter adapter;
@@ -30,15 +30,10 @@ public class FriendListPresenter extends Presenter {
     = new HashMap<String, Integer>(CATEGORY.length);
     
     @Override
-    public void onCreate(Context context) {
+    protected void onCreate(Context context) {
         loader = new FriendListLoader(context);
         adapter = new FriendListAdapter(context);
         getCallbacks().setDataSource(adapter, loader);
-    }
-    
-    @Override
-    public FriendListFragment getCallbacks() {
-        return (FriendListFragment) super.getCallbacks();
     }
     
     public void updateLetterMap() {
@@ -56,9 +51,20 @@ public class FriendListPresenter extends Presenter {
             }
         }
     }
-    
-    public Integer getPositionByLetter(String letter) {
-        return letterMap.get(letter);
+
+    public void onLetterChanged(String letter) {
+        Integer position = letterMap.get(letter);
+        if (position == null) return;
+        if (position < 0)
+        {
+            position = 0;
+        }
+        else
+        {
+            position += getCallbacks().getListView().getHeaderViewsCount();
+        }
+        
+        getCallbacks().getListView().setSelection(position);
     }
 }
 

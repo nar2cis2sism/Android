@@ -22,7 +22,7 @@ import engine.android.util.ui.FloatingWindow;
 import engine.android.widget.base.CustomView;
 
 /**
- * 快速搜索控件
+ * 字母搜索控件
  * 
  * @author Daimon
  * @version N
@@ -124,6 +124,10 @@ public class LetterBar extends CustomView {
             textColorHighlight = color;
             if (showLetters != null) invalidate();
         }
+    }
+    
+    public String[] getLetters() {
+        return letters;
     }
     
     public void setLetters(String[] letters) {

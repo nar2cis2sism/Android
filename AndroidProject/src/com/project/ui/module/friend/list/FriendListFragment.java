@@ -9,11 +9,13 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.project.R;
 import com.project.app.bean.FriendListItem;
 
+import engine.android.core.Injector;
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseListFragment;
 import engine.android.util.AndroidUtil;
@@ -24,6 +26,7 @@ import engine.android.widget.ChooseButton;
 import engine.android.widget.LetterBar;
 import engine.android.widget.LetterBar.OnLetterChangedListener;
 import engine.android.widget.SearchBox;
+import engine.android.widget.SearchBox.SearchProvider;
 import engine.android.widget.TitleBar;
 
 /**
@@ -33,32 +36,33 @@ import engine.android.widget.TitleBar;
  */
 public class FriendListFragment extends BaseListFragment implements OnLetterChangedListener {
     
+    ListHeader list_header = new ListHeader();
+    
     @InjectView(R.id.letter_bar)
     LetterBar letter_bar;
+
+    @InjectView(R.id.search_empty)
+    ImageView search_empty;
     
     FriendListPresenter presenter;
+    SearchPresenter searchPresenter;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         presenter = addPresenter(FriendListPresenter.class);
+        searchPresenter = addPresenter(SearchPresenter.class);
     }
     
     @Override
     protected void setupTitleBar(TitleBar titleBar) {
         titleBar
+        .setTitle("搜索") // 搜索时显示
         .setDisplayShowTitleEnabled(false)
         .setDisplayShowCustomEnabled(true)
         .setCustomView(onCreateTitleMiddleView())
-        .addAction(R.drawable.friend_add, new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-//                startActivity(SinglePaneActivity.buildIntent(
-//                        getContext(), AddFriendFragment.class, null));
-            }
-        })
+        .addAction(R.drawable.friend_add)
         .show();
     }
     
@@ -80,7 +84,7 @@ public class FriendListFragment extends BaseListFragment implements OnLetterChan
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = super.onCreateView(inflater, container, savedInstanceState);
-        replaceListView(root, R.layout.friend_list_view);
+        injectListContainer(root, R.layout.friend_list_view);
         return root;
     }
     
@@ -95,66 +99,47 @@ public class FriendListFragment extends BaseListFragment implements OnLetterChan
     }
     
     private View onCreateListHeader() {
-        View header = LayoutInflater.from(getContext()).inflate(R.layout.friend_list_header, null);
-        // 搜索框
-        SearchBox search_box = (SearchBox) header.findViewById(R.id.search_box);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.friend_list_header, (ViewGroup) null);
         
-        ActionContainer action_container = (ActionContainer) header.findViewById(R.id.action_container);
-        // 群
-        action_container.addAction(R.drawable.friend_group, R.string.friend_group);
-        // 讨论组
-        action_container.addAction(R.drawable.friend_discuss, R.string.friend_discuss);
-        // 公众好友
-        action_container.addAction(R.drawable.friend_public, R.string.friend_public);
-        // 好友推荐
-        action_container.addAction(R.drawable.friend_recommend, R.string.friend_recommend);
+        Injector.inject(list_header, view);
+        list_header.setupView();
         
-        ViewSize.observeViewSize(header, new ViewSizeObserver() {
+        ViewSize.observeViewSize(view, new ViewSizeObserver() {
             
             @Override
             public void onSizeChanged(View view, ViewSize size) {
                 letter_bar.getLayoutParams().height = getView().getHeight() - size.height;
             }
         });
-        return header;
-        
-        
-        
-//        View headerView = inflater.inflate(R.layout.friend_list_header, null);
-//    
-//        SearchBox search_box = (SearchBox) headerView.findViewById(R.id.search_box);
-//        search_box.getSearchEditText().addTextChangedListener(new MyTextWatcher() {
-//            
-//            @Override
-//            public void changeToEmpty(String before) {
-//                showFriendListWithSearch(false);
-//            }
-//            
-//            @Override
-//            public void changeFromEmpty(String after) {
-//                showFriendListWithSearch(true);
-//            }
-//            
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                super.afterTextChanged(s);
-//                search(s.toString());
-//            }
-//        });
-//        
-//        header_action = headerView.findViewById(R.id.header_action);
-//        
-//        headerView.findViewById(R.id.group).setOnClickListener(this);
-//        headerView.findViewById(R.id.discuss).setOnClickListener(this);
-//        headerView.findViewById(R.id.public_friend).setOnClickListener(this);
-//        headerView.findViewById(R.id.friend_recommend).setOnClickListener(this);
-//        
-//        return headerView;
+        return view;
     }
     
-    @Override
-    protected void notifyDataSetChanged() {
-        presenter.updateLetterMap();
+    class ListHeader implements SearchProvider {
+        
+        @InjectView(R.id.search_box)
+        SearchBox search_box;
+
+        @InjectView(R.id.action_container)
+        ActionContainer action_container;
+        
+        public void setupView() {
+            // 搜索框
+            search_box.setSearchProvider(this);
+            
+            // 群
+            action_container.addAction(R.drawable.friend_group, R.string.friend_group);
+            // 讨论组
+            action_container.addAction(R.drawable.friend_discuss, R.string.friend_discuss);
+            // 公众好友
+            action_container.addAction(R.drawable.friend_public, R.string.friend_public);
+            // 好友推荐
+            action_container.addAction(R.drawable.friend_recommend, R.string.friend_recommend);
+        }
+
+        @Override
+        public void search(CharSequence constraint) {
+            searchPresenter.search(constraint);
+        }
     }
     
     @Override
@@ -172,17 +157,27 @@ public class FriendListFragment extends BaseListFragment implements OnLetterChan
 
     @Override
     public void onLetterChanged(String letter) {
-        Integer position = presenter.getPositionByLetter(letter);
-        if (position == null) return;
-        if (position < 0)
-        {
-            position = 0;
-        }
-        else
-        {
-            position += getListView().getHeaderViewsCount();
-        }
-        
-        getListView().setSelection(position);
+        presenter.onLetterChanged(letter);
+    }
+    
+    private void updateLetterBar() {
+        letter_bar.setVisibility(searchPresenter.inSearch || getListAdapter().isEmpty() ? View.GONE : View.VISIBLE);
+    }
+    
+    @Override
+    protected void notifyDataSetChanged() {
+        presenter.updateLetterMap();
+        searchPresenter.adapter.update(presenter.adapter.getItems());
+        updateLetterBar();
+    }
+    
+    public void inSearch(boolean inSearch) {
+        setListAdapter(inSearch ? searchPresenter.adapter : presenter.adapter);
+        // ListView will get focus when update the adapter so request focus manually.
+        list_header.search_box.requestFocus();
+
+        list_header.action_container.setVisibility(inSearch ? View.GONE : View.VISIBLE);
+        getTitleBar().setDisplayShowTitleEnabled(inSearch).setDisplayShowCustomEnabled(!inSearch);
+        updateLetterBar();
     }
 }

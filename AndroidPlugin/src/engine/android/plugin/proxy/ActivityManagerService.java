@@ -4,8 +4,7 @@ import android.app.IActivityManager;
 import android.content.ComponentName;
 import android.content.Intent;
 
-import engine.android.plugin.Plugin;
-import engine.android.plugin.PluginLog;
+import engine.android.plugin.PluginEnvironment;
 import engine.android.plugin.proxy.component.PluginService;
 import engine.android.plugin.util.PluginProxy;
 
@@ -13,16 +12,19 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public class ActivityManagerService extends PluginProxy<IActivityManager> {
+    
+    private final PluginEnvironment environment;
 
-    public ActivityManagerService(IActivityManager obj) {
+    public ActivityManagerService(IActivityManager obj, PluginEnvironment environment) {
         super(obj);
+        this.environment = environment;
     }
     
     @Override
     public Object invoke(Object proxy, Method method, Object[] args)
             throws Throwable {
         String name = method.getName();
-        PluginLog.debug("ActivityManagerService." + name, Arrays.toString(args));
+        PluginEnvironment.log("ActivityManagerService." + name, Arrays.toString(args));
         if ("startActivity".equals(name))
         {
             startActivity(args);
@@ -64,7 +66,7 @@ public class ActivityManagerService extends PluginProxy<IActivityManager> {
         Intent intent = (Intent) args[1];
         String resolvedType = (String) args[2];
         
-        Plugin.interceptActivityIntent(intent, resolvedType);
+        environment.interceptActivityIntent(intent, resolvedType);
     }
     
     private void startActivities(Object[] args) {
@@ -77,7 +79,7 @@ public class ActivityManagerService extends PluginProxy<IActivityManager> {
         
         for (int i = 0; i < intents.length; i++)
         {
-            Plugin.interceptActivityIntent(intents[i], resolvedTypes[i]);
+            environment.interceptActivityIntent(intents[i], resolvedTypes[i]);
         }
     }
     
@@ -85,30 +87,30 @@ public class ActivityManagerService extends PluginProxy<IActivityManager> {
         Intent service = (Intent) args[1];
         String resolvedType = (String) args[2];
         
-        return Plugin.interceptServiceIntent(service, resolvedType);
+        return environment.interceptServiceIntent(service, resolvedType);
     }
     
     private ComponentName stopService(Object[] args) {
         Intent service = (Intent) args[1];
         String resolvedType = (String) args[2];
 
-        return Plugin.interceptServiceIntent(service, resolvedType);
+        return environment.interceptServiceIntent(service, resolvedType);
     }
     
     private void bindService(Object[] args) {
         Intent intent = (Intent) args[2];
         String resolvedType = (String) args[3];
 
-        Plugin.interceptServiceIntent(intent, resolvedType);
+        environment.interceptServiceIntent(intent, resolvedType);
     }
 
     private void registerReceiver(Object[] args) {
         String callerPackage = (String) args[1];
         
-        args[1] = Plugin.interceptReceiverPackage(callerPackage);
+        args[1] = environment.interceptReceiverPackage(callerPackage);
     }
     
-    private static boolean isPluginComponent(ComponentName name) {
-        return name != null && !name.getPackageName().equals(Plugin.getPackage());
+    private boolean isPluginComponent(ComponentName name) {
+        return name != null && !name.getPackageName().equals(environment.PACKAGE);
     }
 }

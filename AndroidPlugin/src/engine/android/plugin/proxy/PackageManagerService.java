@@ -1,17 +1,19 @@
 package engine.android.plugin.proxy;
 
+import static engine.android.plugin.PluginEnvironment.log;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.IPackageManager;
+import android.content.pm.InstrumentationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.PackageParser;
 import android.content.pm.PackageParser.ActivityIntentInfo;
-import android.content.pm.InstrumentationInfo;
 import android.content.pm.PackageUserState;
 import android.content.pm.PermissionGroupInfo;
 import android.content.pm.PermissionInfo;
@@ -21,17 +23,10 @@ import android.content.pm.ServiceInfo;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
 import com.android.internal.app.ResolverActivity;
-
-import engine.android.plugin.Plugin;
-import engine.android.plugin.PluginLog;
-import engine.android.plugin.PluginManager;
-import engine.android.plugin.util.IntentResolver;
-import engine.android.plugin.util.PluginProxy;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -45,7 +40,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import engine.android.plugin.PluginEnvironment;
+import engine.android.plugin.PluginMagic;
+import engine.android.plugin.util.IntentResolver;
+import engine.android.plugin.util.PluginProxy;
+
 public class PackageManagerService extends PluginProxy<IPackageManager> {
+    
+    private final PluginEnvironment environment;
 
     final DisplayMetrics mMetrics;
 
@@ -97,18 +99,20 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
     // Broadcast actions that are only available to the system.
     final HashSet<String> mProtectedBroadcasts = new HashSet<String>();
 
-    public PackageManagerService(IPackageManager obj) throws NameNotFoundException {
+    public PackageManagerService(IPackageManager obj, PluginEnvironment environment)
+            throws NameNotFoundException {
         super(obj);
+        this.environment = environment;
         
         mMetrics = new DisplayMetrics();
 
-        WindowManager wm = (WindowManager) Plugin.getContext()
+        WindowManager wm = (WindowManager) environment.getContext()
                 .getSystemService(Context.WINDOW_SERVICE);
         Display d = wm.getDefaultDisplay();
         d.getMetrics(mMetrics);
         
         try {
-            mAndroidApplication = obj.getApplicationInfo("android", 0, Plugin.getUserId());
+            mAndroidApplication = obj.getApplicationInfo("android", 0, environment.getUserId());
         } catch (RemoteException e) {
             // Should not be arrived.
             throw new RuntimeException(e);
@@ -251,7 +255,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
                         else
                         {
                             PackageParser.Provider other = mProviders.get(names[j]);
-                            PluginLog.debug("scanPackage", "Skipping provider name " + names[j] +
+                            log("scanPackage", "Skipping provider name " + names[j] +
                                     " (in package " + pkg.applicationInfo.packageName +
                                     "): name already used by "
                                     + ((other != null && other.getComponentName() != null)
@@ -291,7 +295,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
                 }
                 else
                 {
-                    PluginLog.debug("Permission group " + pg.info.name + " from package "
+                    log("Permission group " + pg.info.name + " from package "
                             + pg.info.packageName + " ignored: original from "
                             + cur.info.packageName);
                 }
@@ -307,7 +311,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
                 }
                 else
                 {
-                    PluginLog.debug("Permission " + p.info.name + " from package "
+                    log("Permission " + p.info.name + " from package "
                             + p.info.packageName + " ignored: original from "
                             + cur.info.packageName);
                 }
@@ -340,7 +344,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
     }
 
     private File getDataPathForPackage(String packageName) {
-        return new File(PluginManager.getInstance().getPluginDataDir(), packageName);
+        return new File(PluginMagic.getManager().getPluginDataDir(), packageName);
     }
     
     public void removePackage(PackageParser.Package pkg) {
@@ -729,7 +733,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
     public Object invoke(Object proxy, Method method, Object[] args)
             throws Throwable {
         String name = method.getName();
-        PluginLog.debug("PackageManagerService." + name, Arrays.toString(args));
+        log("PackageManagerService." + name, Arrays.toString(args));
         if ("getPackageInfo".equals(name))
         {
             String packageName = (String) args[0];
@@ -994,7 +998,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
 
     private PackageInfo generatePackageInfo(PackageParser.Package p, int flags, int userId) {
         return PackageParser.generatePackageInfo(p, null, flags, 0, 0, null, 
-                Plugin.getUserState(), userId);
+                environment.getState(), userId);
     }
 
     public int getPackageUid(String packageName, int userId) {
@@ -1081,7 +1085,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
             if (p != null)
             {
                 return PackageParser.generateApplicationInfo(p, flags, 
-                        Plugin.getUserState(), userId);
+                        environment.getState(), userId);
             }
             
             if ("android".equals(packageName) || "system".equals(packageName))
@@ -1101,7 +1105,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
             if (a != null)
             {
                 return PackageParser.generateActivityInfo(a, flags, 
-                        Plugin.getUserState(), userId);
+                        environment.getState(), userId);
             }
     
             if (mResolveComponentName.equals(component))
@@ -1121,7 +1125,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
             if (a != null)
             {
                 return PackageParser.generateActivityInfo(a, flags, 
-                        Plugin.getUserState(), userId);
+                        environment.getState(), userId);
             }
         }
         
@@ -1136,7 +1140,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
             if (s != null)
             {
                 return PackageParser.generateServiceInfo(s, flags, 
-                        Plugin.getUserState(), userId);
+                        environment.getState(), userId);
             }
         }
         
@@ -1151,7 +1155,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
             if (p != null)
             {
                 return PackageParser.generateProviderInfo(p, flags, 
-                        Plugin.getUserState(), userId);
+                        environment.getState(), userId);
             }
         }
         
@@ -1545,7 +1549,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
             if (provider != null)
             {
                 return PackageParser.generateProviderInfo(provider, flags, 
-                        Plugin.getUserState(), userId);
+                        environment.getState(), userId);
             }
             
             return null;

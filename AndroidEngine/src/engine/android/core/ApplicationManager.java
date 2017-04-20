@@ -117,7 +117,7 @@ implements UncaughtExceptionHandler {
         return Looper.myLooper() == Looper.getMainLooper();
     }
 
-    static void ensureCallMethodOnMainThread() {
+    public static void ensureCallMethodOnMainThread() {
         if (!isMainThread())
         {
             throw new RuntimeException("You must call this method in main thread.");

@@ -154,7 +154,7 @@ public class ApkLoader {
             is = ActivityThread.currentApplication().getAssets().open(assetsPath);
             if (!FileUtils.copyToFile(is, apkFile))
             {
-                throw new Exception("Failed to load apk to:" + apkFile.getPath());
+                throw new Exception("Failed to copy apk to:" + apkFile.getPath());
             }
         } finally {
             if (is != null)

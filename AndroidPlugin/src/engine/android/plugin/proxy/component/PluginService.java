@@ -13,11 +13,23 @@ import android.os.IBinder;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
-import engine.android.plugin.Plugin;
-import engine.android.plugin.PluginLog;
+import engine.android.plugin.PluginEnvironment;
+import engine.android.plugin.PluginMagic;
 import engine.android.util.ReflectObject;
 
+/**
+ * 插件代理，需要在Manifest文件中注册
+ * 
+ * @author Daimon
+ * @version N
+ * @since 10/17/2014
+ */
 public class PluginService extends Service {
+    
+    /**
+     * <P>Type: ComponentName</P>
+     */
+    private static final String EXTRA_COMPONENT_NAME = "plugin_component";
     
     private static WeakReference<PluginService> instance;
     
@@ -59,7 +71,7 @@ public class PluginService extends Service {
     }
 
     private Service retrieveService(Intent intent, boolean createIfNeeded) {
-        ComponentName component = Plugin.handleIntent(intent);
+        ComponentName component = handleIntent(intent);
         if (component == null)
         {
             return null;
@@ -80,10 +92,22 @@ public class PluginService extends Service {
         
         return service;
     }
+
+    private static ComponentName handleIntent(Intent intent) {
+        ComponentName component = null;
+        if (intent != null && intent.hasExtra(EXTRA_COMPONENT_NAME))
+        {
+            component = intent.getParcelableExtra(EXTRA_COMPONENT_NAME);
+            intent.removeExtra(EXTRA_COMPONENT_NAME);
+            // 解析出真正的组件进行替换
+            intent.setComponent(component);
+        }
+    
+        return component;
+    }
     
     private Service handleCreateService(ComponentName component) throws Exception {
-        LoadedApk packageInfo = Plugin.getPluginLoader(component.getPackageName())
-                .getLoadedApk();
+        LoadedApk packageInfo = PluginMagic.getLoader(component.getPackageName()).getLoadedApk();
 
         String name = component.getClassName();
         java.lang.ClassLoader cl = packageInfo.getClassLoader();
@@ -155,7 +179,7 @@ public class PluginService extends Service {
                 try {
                     res = service.handleStopService(component) ? 1 : 0;
                 } catch (Exception e) {
-                    PluginLog.log(e);
+                    PluginEnvironment.log(e);
                 }
             }
         }
@@ -171,7 +195,7 @@ public class PluginService extends Service {
         {
             service.onDestroy();
 
-            Plugin.getPluginLoader(component.getPackageName()).getLoadedApk()
+            PluginMagic.getLoader(component.getPackageName()).getLoadedApk()
             .removeContextRegistrations(service, component.getClassName(), "Service");
             
             handle = true;

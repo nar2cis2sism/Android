@@ -6,15 +6,19 @@ import android.content.pm.ActivityInfo;
 import android.os.Handler;
 import android.os.Message;
 
-import engine.android.plugin.Plugin;
-import engine.android.plugin.PluginLog;
+import engine.android.plugin.PluginEnvironment;
 import engine.android.util.ReflectObject;
 
 public class PluginHandlerCallback implements Handler.Callback {
     
+    private final PluginEnvironment environment;
+    
+    public PluginHandlerCallback(PluginEnvironment environment) {
+        this.environment = environment;
+    }
+    
     @Override
     public boolean handleMessage(Message msg) {
-        PluginLog.debug(msg);
         try {
             switch (msg.what) {
                 case /* LAUNCH_ACTIVITY */100:
@@ -22,7 +26,7 @@ public class PluginHandlerCallback implements Handler.Callback {
                     break;
             }
         } catch (Exception e) {
-            PluginLog.log(e);
+            PluginEnvironment.log(e);
         }
         
         return false;
@@ -30,13 +34,13 @@ public class PluginHandlerCallback implements Handler.Callback {
     
     private void handleLaunchActivity(ReflectObject ActivityClientRecordRef) throws Exception {
         Intent intent = (Intent) ActivityClientRecordRef.get("intent");
-        ComponentName component = Plugin.handleIntent(intent);
+        ComponentName component = environment.handleIntent(intent);
         if (component == null)
         {
             return;
         }
         
-        ActivityInfo activityInfo = Plugin.resolveActivity(component);
+        ActivityInfo activityInfo = environment.resolveActivity(component);
         if (activityInfo == null)
         {
             throw new Exception("Plugin Activity is not registered:" + component.getClassName());

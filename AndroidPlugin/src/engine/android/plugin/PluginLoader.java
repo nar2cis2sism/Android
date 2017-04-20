@@ -1,7 +1,7 @@
 package engine.android.plugin;
 
-import android.app.ActivityThread;
 import android.app.Application;
+import android.app.Fragment;
 import android.app.LoadedApk;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageParser;
 import android.content.pm.ProviderInfo;
+import android.content.res.Resources;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,15 +27,20 @@ import engine.android.util.ReflectObject;
  * @version N
  * @since 10/17/2014
  */
-public class PluginLoader extends ApkLoader {
+public class PluginLoader {
+    
+    private final PluginEnvironment environment;
+    private final ApkLoader loader;
     
     private final PackageParser.Package pkg;    // 这个是用来解析APK包的信息
     private LoadedApk loadedApk;                // 这个是用来加载APK包的资源
+    private Application app;
     
     private boolean isPluginned;
-
-    PluginLoader(File apkFile, PackageParser.Package pkg) {
-        super(apkFile);
+    
+    PluginLoader(PluginEnvironment environment, File pluginFile, PackageParser.Package pkg) {
+        this.environment = environment;
+        loader = new ApkLoader(pluginFile);
         this.pkg = pkg;
     }
     
@@ -49,34 +55,40 @@ public class PluginLoader extends ApkLoader {
         
         try {
             injectPackage();
-            Application app = initApplication();
+            initApplication();
             registerReceiver();
             installProvider();
             // 需手动调用
-            app.onCreate();
+            environment.h.post(new Runnable() {
+                
+                @Override
+                public void run() {
+                    app.onCreate();
+                }
+            });
             
             isPluginned = true;
         } catch (Throwable e) {
-            PluginLog.log(e);
+            PluginEnvironment.log(e);
             isPluginned = false;
         }
     }
     
     private void injectPackage() throws Exception {
         // 通过这种方式将插件包注入到ActivityThread的mPackages属性中，后续通过包名就可以正确加载插件包的资源
-        loadedApk = ActivityThread.currentActivityThread().getPackageInfoNoCheck(
+        loadedApk = environment.activityThread.getPackageInfoNoCheck(
                 PackageParser.generateApplicationInfo(
-                        pkg, Plugin.STOCK_PM_FLAGS, Plugin.getUserState()),
-                getCompatibilityInfo());
+                        pkg, environment.STOCK_PM_FLAGS, environment.getState()),
+                ApkLoader.getCompatibilityInfo());
 
         // 替换组件类加载器为DexClassLoader，使动态加载代码具有组件生命周期
         ReflectObject loadedApkRef = new ReflectObject(loadedApk);
-        loadedApkRef.set("mClassLoader", getClassLoader());
+        loadedApkRef.set("mClassLoader", loader.getClassLoader());
     }
     
-    private Application initApplication() {
+    private void initApplication() {
         // 必须实例化application,因为在receiver和provider中可能会用到
-        return loadedApk.makeApplication(false, null);
+        app = loadedApk.makeApplication(false, null);
     }
     
     private void registerReceiver() throws Exception {
@@ -88,7 +100,7 @@ public class PluginLoader extends ApkLoader {
                     cl.loadClass(a.className).newInstance();
             for (IntentFilter filter : a.intents)
             {
-                Plugin.getContext().registerReceiver(receiver, filter);
+                app.registerReceiver(receiver, filter);
             }
         }
     }
@@ -100,8 +112,9 @@ public class PluginLoader extends ApkLoader {
         {
             ProviderInfo info = PackageParser.generateProviderInfo(
                     p, 
-                    Plugin.STOCK_PM_FLAGS | PackageManager.GET_URI_PERMISSION_PATTERNS,
-                    Plugin.getUserState(), Plugin.getUserId());
+                    environment.STOCK_PM_FLAGS | PackageManager.GET_URI_PERMISSION_PATTERNS,
+                    environment.getState(), 
+                    environment.getUserId());
             if (info != null)
             {
                 list.add(info);
@@ -115,10 +128,10 @@ public class PluginLoader extends ApkLoader {
         
         Collections.sort(list, PackageManagerService.mProviderInitOrderSorter);
         
-        getActivityThreadRef().invoke(
-                getActivityThreadRef().getMethod("installContentProviders", 
+        ApkLoader.getActivityThreadRef().invoke(
+                ApkLoader.getActivityThreadRef().getMethod("installContentProviders", 
                 Context.class, List.class), 
-                Plugin.getContext(), list);
+                environment.getContext(), list);
     }
     
     boolean isPluginned() {
@@ -129,7 +142,39 @@ public class PluginLoader extends ApkLoader {
         return pkg;
     }
     
+    /**
+     * @hide
+     */
     public LoadedApk getLoadedApk() {
         return loadedApk;
+    }
+    
+    public Context getContext() {
+        return app;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public <T> Class<T> loadClass(String className) throws Exception {
+        return (Class<T>) Class.forName(className, true, getClassLoader());
+    }
+    
+    public ClassLoader getClassLoader() {
+        try {
+            return loader.getClassLoader();
+        } catch (Exception e) {
+            environment.log("PluginLoader.getClassLoader", e);
+        }
+        
+        return null;
+    }
+    
+    public Resources getResources() {
+        try {
+            return loader.getResources();
+        } catch (Exception e) {
+            environment.log("PluginLoader.getResources", e);
+        }
+        
+        return null;
     }
 }

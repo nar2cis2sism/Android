@@ -1,0 +1,30 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.project.beside"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="14" />
+
+    <application
+        android:allowBackup="false"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:name="engine.android.framework.app.App"
+        android:theme="@style/AppTheme.NoTitleBar" >
+        
+        <activity
+            android:name="com.project.beside.ui.MainActivity"
+            android:screenOrientation="portrait" >
+            
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            
+        </activity>
+        
+    </application>
+
+</manifest>

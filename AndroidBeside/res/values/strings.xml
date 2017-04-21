@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="app_name">身边</string>
+    
+    <!-- Beside -->
+    <string name="beside_demo">Demo</string>
+    <string name="beside_effect">Effect</string>
+    <string name="beside_test">Test</string>
+
+</resources>

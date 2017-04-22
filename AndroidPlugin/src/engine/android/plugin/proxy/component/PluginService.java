@@ -13,8 +13,8 @@ import android.os.IBinder;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
+import engine.android.plugin.Plugin;
 import engine.android.plugin.PluginEnvironment;
-import engine.android.plugin.PluginMagic;
 import engine.android.util.ReflectObject;
 
 /**
@@ -27,7 +27,7 @@ import engine.android.util.ReflectObject;
 public class PluginService extends Service {
     
     /**
-     * <P>Type: ComponentName</P>
+     * @see PluginEnvironment#EXTRA_COMPONENT_NAME
      */
     private static final String EXTRA_COMPONENT_NAME = "plugin_component";
     
@@ -93,6 +93,9 @@ public class PluginService extends Service {
         return service;
     }
 
+    /**
+     * Copy from {@link PluginEnvironment#handleIntent(Intent)}
+     */
     private static ComponentName handleIntent(Intent intent) {
         ComponentName component = null;
         if (intent != null && intent.hasExtra(EXTRA_COMPONENT_NAME))
@@ -107,7 +110,7 @@ public class PluginService extends Service {
     }
     
     private Service handleCreateService(ComponentName component) throws Exception {
-        LoadedApk packageInfo = PluginMagic.getLoader(component.getPackageName()).getLoadedApk();
+        LoadedApk packageInfo = Plugin.getPlugin(component.getPackageName()).getApplication().mLoadedApk;
 
         String name = component.getClassName();
         java.lang.ClassLoader cl = packageInfo.getClassLoader();
@@ -176,18 +179,14 @@ public class PluginService extends Service {
             PluginService service = instance.get();
             if (service != null)
             {
-                try {
-                    res = service.handleStopService(component) ? 1 : 0;
-                } catch (Exception e) {
-                    PluginEnvironment.log(e);
-                }
+                res = service.handleStopService(component) ? 1 : 0;
             }
         }
         
         return res;
     }
     
-    private boolean handleStopService(ComponentName component) throws Exception {
+    private boolean handleStopService(ComponentName component) {
         boolean handle = false;
         
         Service service = serviceMap.remove(component);
@@ -195,7 +194,7 @@ public class PluginService extends Service {
         {
             service.onDestroy();
 
-            PluginMagic.getLoader(component.getPackageName()).getLoadedApk()
+            Plugin.getPlugin(component.getPackageName()).getApplication().mLoadedApk
             .removeContextRegistrations(service, component.getClassName(), "Service");
             
             handle = true;

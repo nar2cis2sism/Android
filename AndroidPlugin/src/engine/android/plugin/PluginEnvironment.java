@@ -18,6 +18,8 @@ import android.os.Process;
 import android.os.UserHandle;
 import android.util.Singleton;
 
+import java.io.File;
+
 import engine.android.core.ApplicationManager;
 import engine.android.core.util.LogFactory;
 import engine.android.core.util.LogFactory.LOG;
@@ -31,7 +33,7 @@ import engine.android.plugin.util.PluginProxy;
 import engine.android.util.ReflectObject;
 
 /**
- * Provide global environment for all framework.
+ * Provide global environment for entire framework.
  * 
  * @author Daimon
  * @version N
@@ -45,15 +47,19 @@ public class PluginEnvironment {
     private static final String EXTRA_COMPONENT_NAME = "plugin_component";
 
     // The flags that are set for all calls we make to the package manager.
-    public final int STOCK_PM_FLAGS = PackageManager.GET_SHARED_LIBRARY_FILES;
+    private final int STOCK_PM_FLAGS = PackageManager.GET_SHARED_LIBRARY_FILES;
     
-    public ActivityThread activityThread;
+    private ActivityThread activityThread;
     private Application app;
     private UserHandle user;
     private PackageUserState state;
-    public String PACKAGE;
+    private String PACKAGE;
     private ComponentName PLUGIN_ACTIVITY;
     private ComponentName PLUGIN_SERVICE;
+    // This is where all plugin package goes.
+    private File pluginDir;
+    // This is where all plugin application persistent data goes.
+    private File pluginDataDir;
     
     public PackageManagerService pm;
     public ActivityManagerService am;
@@ -71,6 +77,8 @@ public class PluginEnvironment {
         PACKAGE = app.getPackageName();
         PLUGIN_ACTIVITY = new ComponentName(PACKAGE, PluginActivity.class.getName());
         PLUGIN_SERVICE = new ComponentName(PACKAGE, PluginService.class.getName());
+        pluginDir = app.getDir("plugin", Context.MODE_PRIVATE);
+        pluginDataDir = new File(pluginDir, "data");
         
         pm = new PackageManagerService(ActivityThread.getPackageManager(), this);
         am = new ActivityManagerService(ActivityManagerNative.getDefault(), this);
@@ -83,8 +91,9 @@ public class PluginEnvironment {
             hookPackageManager();
             hookActivityManager();
             hookHandler();
+            
             prepared = true;
-            log("插件框架准备", "成功");
+            log("准备就绪");
         }
     }
     
@@ -125,25 +134,11 @@ public class PluginEnvironment {
         hRef.set("mCallback", new PluginHandlerCallback(this));
     }
     
-    static
-    {
-        if (!ApplicationManager.isDebuggable())
-        {
-            LogFactory.addLogFile(PluginEnvironment.class, "plugin.txt");
-        }
+    public ActivityThread getActivityThread() {
+        return activityThread;
     }
     
-    static boolean DEBUGGABLE = true;
-    
-    public static void log(Object message) {
-        if (DEBUGGABLE) LOG.log("插件", message);
-    }
-    
-    public static void log(String tag, Object message) {
-        if (DEBUGGABLE) LOG.log(tag, message);
-    }
-    
-    public Context getContext() {
+    public Application getApplication() {
         return app;
     }
     
@@ -153,6 +148,22 @@ public class PluginEnvironment {
     
     public PackageUserState getState() {
         return state;
+    }
+    
+    public int getFlags() {
+        return STOCK_PM_FLAGS;
+    }
+    
+    public String getPackage() {
+        return PACKAGE;
+    }
+
+    public File getPluginDir() {
+        return pluginDir;
+    }
+    
+    public File getPluginDataDir() {
+        return pluginDataDir;
     }
     
     public ComponentName interceptActivityIntent(Intent intent, String resolvedType) {
@@ -230,7 +241,7 @@ public class PluginEnvironment {
         {
             String pkg = component.getPackageName();
             if (!PACKAGE.equals(pkg)
-            &&  PluginMagic.isPluginned(pkg))
+            &&  Plugin.isPluginned(pkg))
             {
                 // 如果启动其它包中的组件，将其替换成代理组件
                 intent.setComponent(proxyComponent);
@@ -259,5 +270,19 @@ public class PluginEnvironment {
     
     public ActivityInfo resolveActivity(ComponentName component) {
         return pm.getActivityInfo(component, STOCK_PM_FLAGS, getUserId());
+    }
+    
+    static
+    {
+        if (!ApplicationManager.isDebuggable())
+        {
+            LogFactory.addLogFile(PluginEnvironment.class, "plugin.txt");
+        }
+    }
+    
+    static boolean DEBUGGABLE = true;
+    
+    public static void log(Object message) {
+        if (DEBUGGABLE) LOG.log("插件化", message);
     }
 }

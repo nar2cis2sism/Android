@@ -9,7 +9,7 @@ import com.project.network.socket.SocketInterceptor;
 import com.project.network.socket.SocketServlet;
 
 import engine.android.framework.app.App;
-import engine.android.plugin.PluginManager;
+import engine.android.plugin.Plugin;
 
 public class MyApp extends App implements
 MyConfiguration_NETWORK, 
@@ -20,12 +20,7 @@ MyConfiguration_SOCKET {
     public void onCreate() {
         super.onCreate();
         
-        try {
-            PluginManager.init();
-            PluginManager.getInstance().loadPluginFromAssets("AndroidBeside.apk", true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Plugin.init();
     }
     
     @Override

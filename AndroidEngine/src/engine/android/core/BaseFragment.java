@@ -77,7 +77,7 @@ public abstract class BaseFragment extends Fragment {
         return null;
     }
 
-    public final Context getContext() {
+    public Context getContext() {
         if (getActivity() != null) return getActivity();
         return ApplicationManager.getApplicationManager();
     }

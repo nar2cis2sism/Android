@@ -4,12 +4,11 @@ import android.app.IActivityManager;
 import android.content.ComponentName;
 import android.content.Intent;
 
+import java.lang.reflect.Method;
+
 import engine.android.plugin.PluginEnvironment;
 import engine.android.plugin.proxy.component.PluginService;
 import engine.android.plugin.util.PluginProxy;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
 
 public class ActivityManagerService extends PluginProxy<IActivityManager> {
     
@@ -24,7 +23,6 @@ public class ActivityManagerService extends PluginProxy<IActivityManager> {
     public Object invoke(Object proxy, Method method, Object[] args)
             throws Throwable {
         String name = method.getName();
-        PluginEnvironment.log("ActivityManagerService." + name, Arrays.toString(args));
         if ("startActivity".equals(name))
         {
             startActivity(args);
@@ -111,6 +109,6 @@ public class ActivityManagerService extends PluginProxy<IActivityManager> {
     }
     
     private boolean isPluginComponent(ComponentName name) {
-        return name != null && !name.getPackageName().equals(environment.PACKAGE);
+        return name != null && !name.getPackageName().equals(environment.getPackage());
     }
 }

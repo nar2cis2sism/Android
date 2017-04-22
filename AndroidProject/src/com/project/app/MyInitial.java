@@ -3,7 +3,7 @@ package com.project.app;
 import com.project.storage.MyDAOManager;
 import com.project.storage.MySharedPreferences;
 
-import engine.android.plugin.PluginManager;
+import engine.android.plugin.Plugin;
 
 public class MyInitial {
 
@@ -14,7 +14,7 @@ public class MyInitial {
 //        reset();
         
         initDatabase();
-//        initBesidePlugin();
+        initBesidePlugin();
 
         MySession.initialize();
     }
@@ -31,8 +31,7 @@ public class MyInitial {
      */
     private static void initBesidePlugin() {
         try {
-            PluginManager.init();
-            PluginManager.getInstance().loadPluginFromAssets("AndroidBeside.apk", true);
+            Plugin.loadPluginFromAssets("AndroidBeside.apk", true);
         } catch (Exception e) {
             e.printStackTrace();
         }

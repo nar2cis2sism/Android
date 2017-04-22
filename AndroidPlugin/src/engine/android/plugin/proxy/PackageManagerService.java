@@ -11,7 +11,6 @@ import android.content.pm.IPackageManager;
 import android.content.pm.InstrumentationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.PackageParser;
 import android.content.pm.PackageParser.ActivityIntentInfo;
 import android.content.pm.PackageUserState;
@@ -32,7 +31,6 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -41,7 +39,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import engine.android.plugin.PluginEnvironment;
-import engine.android.plugin.PluginMagic;
 import engine.android.plugin.util.IntentResolver;
 import engine.android.plugin.util.PluginProxy;
 
@@ -99,14 +96,13 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
     // Broadcast actions that are only available to the system.
     final HashSet<String> mProtectedBroadcasts = new HashSet<String>();
 
-    public PackageManagerService(IPackageManager obj, PluginEnvironment environment)
-            throws NameNotFoundException {
+    public PackageManagerService(IPackageManager obj, PluginEnvironment environment) {
         super(obj);
         this.environment = environment;
         
         mMetrics = new DisplayMetrics();
 
-        WindowManager wm = (WindowManager) environment.getContext()
+        WindowManager wm = (WindowManager) environment.getApplication()
                 .getSystemService(Context.WINDOW_SERVICE);
         Display d = wm.getDefaultDisplay();
         d.getMetrics(mMetrics);
@@ -255,7 +251,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
                         else
                         {
                             PackageParser.Provider other = mProviders.get(names[j]);
-                            log("scanPackage", "Skipping provider name " + names[j] +
+                            log("Skipping provider name " + names[j] +
                                     " (in package " + pkg.applicationInfo.packageName +
                                     "): name already used by "
                                     + ((other != null && other.getComponentName() != null)
@@ -344,7 +340,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
     }
 
     private File getDataPathForPackage(String packageName) {
-        return new File(PluginMagic.getManager().getPluginDataDir(), packageName);
+        return new File(environment.getPluginDataDir(), packageName);
     }
     
     public void removePackage(PackageParser.Package pkg) {
@@ -733,7 +729,6 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
     public Object invoke(Object proxy, Method method, Object[] args)
             throws Throwable {
         String name = method.getName();
-        log("PackageManagerService." + name, Arrays.toString(args));
         if ("getPackageInfo".equals(name))
         {
             String packageName = (String) args[0];

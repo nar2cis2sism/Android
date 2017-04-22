@@ -100,7 +100,7 @@ public class MainActivity extends BaseActivity {
         // 身边
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_BESIDE)
                 .setIndicator(new TabView(this, R.drawable.tab_beside))
-                .setContent(emptyContent), loadBesideClass(), null));
+                .setContent(emptyContent), BaseListFragment.class, null));
         // 更多
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_MORE)
                 .setIndicator(new TabView(this, R.drawable.tab_more))
@@ -129,8 +129,7 @@ public class MainActivity extends BaseActivity {
     
     private Class<? extends Fragment> loadBesideClass() {
         try {
-            return (Class<? extends Fragment>) Class.forName("com.project.beside.ui.BesideFragment", 
-                    true, Plugin.getPluginLoader("com.project.beside").getClassLoader());
+            return Plugin.getPlugin("com.project.beside").loadClass("com.project.beside.ui.BesideFragment");
         } catch (Exception e) {
             e.printStackTrace();
         }

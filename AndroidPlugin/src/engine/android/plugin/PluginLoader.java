@@ -10,16 +10,22 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageParser;
 import android.content.pm.ProviderInfo;
 
-import engine.android.plugin.proxy.PackageManagerService;
-import engine.android.plugin.util.ApkLoader;
-import engine.android.plugin.util.ReflectObject;
-import engine.android.plugin.util.Util;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import engine.android.plugin.proxy.PackageManagerService;
+import engine.android.plugin.util.ApkLoader;
+import engine.android.util.ReflectObject;
+
+/**
+ * Provide a mechanism to load plugin.
+ * 
+ * @author Daimon
+ * @version N
+ * @since 10/17/2014
+ */
 public class PluginLoader extends ApkLoader {
     
     private final PackageParser.Package pkg;    // 这个是用来解析APK包的信息
@@ -42,7 +48,6 @@ public class PluginLoader extends ApkLoader {
         }
         
         try {
-            PluginLog.debug(toString(pkg));
             injectPackage();
             Application app = initApplication();
             registerReceiver();
@@ -126,19 +131,5 @@ public class PluginLoader extends ApkLoader {
     
     public LoadedApk getLoadedApk() {
         return loadedApk;
-    }
-    
-    private String toString(PackageParser.Package pkg) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("packageName:").append(pkg.packageName).append("\n");
-        sb.append("applicationInfo:").append(Util.toString(pkg.applicationInfo)).append("\n");
-        sb.append("permissions:").append(pkg.permissions.size()).append("\n");
-        sb.append("permissionGroups:").append(pkg.permissionGroups.size()).append("\n");
-        sb.append("activities:").append(pkg.activities.size()).append("\n");
-        sb.append("receivers:").append(pkg.receivers.size()).append("\n");
-        sb.append("providers:").append(pkg.providers.size()).append("\n");
-        sb.append("services:").append(pkg.services.size()).append("\n");
-        sb.append("instrumentation:").append(pkg.instrumentation.size()).append("\n");
-        return sb.toString();
     }
 }

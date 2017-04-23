@@ -15,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version N
  * @since 6/6/2014
  */
-
 public final class Session {
 
     private static final Object NULL_VALUE = new Object();

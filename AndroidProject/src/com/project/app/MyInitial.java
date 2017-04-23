@@ -3,6 +3,8 @@ package com.project.app;
 import com.project.storage.MyDAOManager;
 import com.project.storage.MySharedPreferences;
 
+import engine.android.plugin.PluginManager;
+
 public class MyInitial {
 
     /**
@@ -12,6 +14,7 @@ public class MyInitial {
 //        reset();
         
         initDatabase();
+//        initBesidePlugin();
 
         MySession.initialize();
     }
@@ -21,6 +24,18 @@ public class MyInitial {
      */
     private static void initDatabase() {
         MyDAOManager.getDAO().getDataBase();
+    }
+    
+    /**
+     * 加载身边插件
+     */
+    private static void initBesidePlugin() {
+        try {
+            PluginManager.init();
+            PluginManager.getInstance().loadPluginFromAssets("AndroidBeside.apk", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     private static void reset() {

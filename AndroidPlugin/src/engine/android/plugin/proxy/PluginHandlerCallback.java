@@ -8,7 +8,7 @@ import android.os.Message;
 
 import engine.android.plugin.Plugin;
 import engine.android.plugin.PluginLog;
-import engine.android.plugin.util.ReflectObject;
+import engine.android.util.ReflectObject;
 
 public class PluginHandlerCallback implements Handler.Callback {
     

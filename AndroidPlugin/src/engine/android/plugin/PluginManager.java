@@ -9,15 +9,15 @@ import android.os.FileUtils;
 import android.os.Handler;
 import android.util.Singleton;
 
+import java.io.File;
+import java.io.InputStream;
+import java.util.HashMap;
+
 import engine.android.plugin.proxy.ActivityManagerService;
 import engine.android.plugin.proxy.PackageManagerService;
 import engine.android.plugin.proxy.PluginHandlerCallback;
 import engine.android.plugin.util.PluginProxy;
-import engine.android.plugin.util.ReflectObject;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.HashMap;
+import engine.android.util.ReflectObject;
 
 public class PluginManager {
     

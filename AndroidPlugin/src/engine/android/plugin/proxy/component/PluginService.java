@@ -10,12 +10,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
-import engine.android.plugin.Plugin;
-import engine.android.plugin.PluginLog;
-import engine.android.plugin.util.ReflectObject;
-
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
+
+import engine.android.plugin.Plugin;
+import engine.android.plugin.PluginLog;
+import engine.android.util.ReflectObject;
 
 public class PluginService extends Service {
     

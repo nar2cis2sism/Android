@@ -35,24 +35,44 @@ public class SinglePaneActivity extends BaseActivity {
         if (savedInstanceState == null)
         {
             // initial setup
-            Bundle args = getIntent().getExtras();
-            if (args == null)
+            Fragment fragment = parseIntent(getIntent());
+            if (fragment == null)
             {
-                return;
+                fragment = onCreateFragment();
             }
             
-            String fragmentClassName = args.getString(EXTRA_FRAGMENT_CLASS_NAME);
-            if (fragmentClassName == null)
+            if (fragment != null)
             {
-                return;
+                getFragmentManager().beginTransaction()
+                .add(CONTENT_ID, fragment)
+                .commit();
             }
-            
-            args.remove(EXTRA_FRAGMENT_CLASS_NAME);
-            
-            getFragmentManager().beginTransaction()
-            .add(CONTENT_ID, Fragment.instantiate(this, fragmentClassName, args))
-            .commit();
         }
+    }
+    
+    private Fragment parseIntent(Intent intent) {
+        if (intent != null)
+        {
+            Bundle args = intent.getExtras();
+            if (args != null)
+            {
+                String fragmentClassName = args.getString(EXTRA_FRAGMENT_CLASS_NAME);
+                if (fragmentClassName != null)
+                {
+                    args.remove(EXTRA_FRAGMENT_CLASS_NAME);
+                    return Fragment.instantiate(this, fragmentClassName, args);
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * You can assign through it when intent has no parameter of fragment.
+     */
+    protected Fragment onCreateFragment() {
+        return null;
     }
 
     /**

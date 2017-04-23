@@ -1,6 +1,7 @@
 package com.project.ui.module.main;
 
-import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -12,12 +13,12 @@ import android.widget.TabHost.TabContentFactory;
 import android.widget.TabHost.TabSpec;
 
 import com.project.R;
-import com.project.ui.module.beside.AppListFragment;
 import com.project.ui.module.friend.list.FriendListFragment;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseActivity;
 import engine.android.framework.ui.BaseListFragment;
+import engine.android.plugin.Plugin;
 import engine.android.widget.ViewPager;
 
 /**
@@ -87,7 +88,7 @@ public class MainActivity extends BaseActivity {
     private void setupView() {
         tabHost.setup();
         
-        ViewPagerAdapter adapter = new ViewPagerAdapter(this, TAB_COUNT);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager(), TAB_COUNT);
         // 消息
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_MESSAGE)
                 .setIndicator(new TabView(this, R.drawable.tab_message))
@@ -99,7 +100,7 @@ public class MainActivity extends BaseActivity {
         // 身边
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_BESIDE)
                 .setIndicator(new TabView(this, R.drawable.tab_beside))
-                .setContent(emptyContent), AppListFragment.class, null));
+                .setContent(emptyContent), loadBesideClass(), null));
         // 更多
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_MORE)
                 .setIndicator(new TabView(this, R.drawable.tab_more))
@@ -126,6 +127,17 @@ public class MainActivity extends BaseActivity {
         });
     }
     
+    private Class<? extends Fragment> loadBesideClass() {
+        try {
+            return (Class<? extends Fragment>) Class.forName("com.project.beside.ui.BesideFragment", 
+                    true, Plugin.getPluginLoader("com.project.beside").getClassLoader());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return null;
+    }
+    
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -150,11 +162,11 @@ public class MainActivity extends BaseActivity {
     
     private static class ViewPagerAdapter extends engine.android.widget.ViewPager.ViewPagerAdapter {
 
-        public ViewPagerAdapter(Activity context, int count) {
-            super(context, count);
+        public ViewPagerAdapter(FragmentManager fm, int count) {
+            super(fm, count);
         }
 
-        public TabSpec addTab(TabSpec tabSpec, Class<?> c, Bundle args) {
+        public TabSpec addTab(TabSpec tabSpec, Class<? extends Fragment> c, Bundle args) {
             addPage(tabSpec.getTag(), c, args);
             return tabSpec;
         }

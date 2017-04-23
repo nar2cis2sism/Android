@@ -1,15 +1,16 @@
 package engine.android.widget;
 
-import android.app.Activity;
 import android.app.Fragment;
+import android.app.Fragment.InstantiationException;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import engine.android.core.extra.FragmentPagerAdapter;
-
 import java.util.ArrayList;
+
+import engine.android.core.extra.FragmentPagerAdapter;
 
 /**
  * 自定义可滑动控制
@@ -51,31 +52,28 @@ public class ViewPager extends android.support.v4.view.ViewPager {
         private class PageInfo {
             
             public final String tag;
-            public final Class<?> c;
+            public final Class<? extends Fragment> c;
             public final Bundle args;
             
-            public PageInfo(String tag, Class<?> c, Bundle args) {
+            public PageInfo(String tag, Class<? extends Fragment> c, Bundle args) {
                 this.tag = tag;
                 this.c = c;
                 this.args = args;
             }
         }
         
-        private final Context context;
-        
         private final ArrayList<PageInfo> pages;
 
-        public ViewPagerAdapter(Activity context) {
-            this(context, 0);
+        public ViewPagerAdapter(FragmentManager fm) {
+            this(fm, 0);
         }
 
-        public ViewPagerAdapter(Activity context, int count) {
-            super(context.getFragmentManager());
-            this.context = context;
+        public ViewPagerAdapter(FragmentManager fm, int count) {
+            super(fm);
             pages = new ArrayList<PageInfo>(count);
         }
 
-        public void addPage(String tag, Class<?> c, Bundle args) {
+        public void addPage(String tag, Class<? extends Fragment> c, Bundle args) {
             pages.add(new PageInfo(tag, c, args));
         }
         
@@ -86,12 +84,29 @@ public class ViewPager extends android.support.v4.view.ViewPager {
         @Override
         public Fragment getItem(int position) {
             PageInfo info = pages.get(position);
-            return Fragment.instantiate(context, info.c.getName(), info.args);
+            return instantiate(info.c, info.args);
         }
 
         @Override
         public int getCount() {
             return pages.size();
+        }
+        
+        private Fragment instantiate(Class<? extends Fragment> clazz, Bundle args) {
+            try {
+                Fragment f = clazz.newInstance();
+                if (args != null)
+                {
+                    args.setClassLoader(f.getClass().getClassLoader());
+                    f.setArguments(args);
+                }
+                
+                return f;
+            } catch (Exception e) {
+                throw new InstantiationException("Unable to instantiate fragment " + clazz.getName()
+                        + ": make sure class name exists, is public, and has an"
+                        + " empty constructor that is public", e);
+            }
         }
     }
 }

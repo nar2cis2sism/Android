@@ -6,6 +6,7 @@ import android.content.res.CompatibilityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.FileUtils;
+import android.text.TextUtils;
 
 import dalvik.system.DexClassLoader;
 import dalvik.system.DexFile;
@@ -16,12 +17,14 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import engine.android.util.ReflectObject;
+
 /**
  * Provide a mechanism to access Apk file.
  * 
  * @author Daimon
  * @version N
- * @since 10/17/2012
+ * @since 10/17/2014
  */
 public class ApkLoader {
     
@@ -43,7 +46,7 @@ public class ApkLoader {
     public ApkLoader(File apkFile) {
         if (!apkFile.exists())
         {
-            throw new IllegalAccessError("File is not found.");
+            throw new IllegalAccessError("Apk is not found.");
         }
         
         String path = apkFile.getPath();
@@ -61,16 +64,16 @@ public class ApkLoader {
     }
     
     public DexClassLoader getClassLoader() throws Exception {
-        return getClassLoader(ClassLoader.getSystemClassLoader());
-    }
-    
-    public DexClassLoader getClassLoader(ClassLoader parent) throws Exception {
         if (dexLoader != null)
         {
             return dexLoader;
         }
         
-        if (cacheDir.mkdirs())
+        return getClassLoader(ClassLoader.getSystemClassLoader());
+    }
+    
+    public DexClassLoader getClassLoader(ClassLoader parent) throws Exception {
+        if (!cacheDir.exists() && cacheDir.mkdirs())
         {
             loadLibrary();
         }
@@ -218,9 +221,9 @@ public class ApkLoader {
     }
     
     public static String getApkName(String apkPath) {
-        if (apkPath == null)
+        if (TextUtils.isEmpty(apkPath))
         {
-            return null;
+            return apkPath;
         }
         
         int sidx = apkPath.lastIndexOf("/");

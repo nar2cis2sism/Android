@@ -56,7 +56,7 @@ public class GuideFragment extends BaseFragment implements OnViewChangeListener 
     }
     
     @OnClick({R.id.experience, R.id.skip})
-    private void finishGuide() {
+    void finishGuide() {
         MySharedPreferences.getInstance().finishGuide();
         
         getBaseActivity().startFragment(LoginFragment.class);

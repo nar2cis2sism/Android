@@ -65,6 +65,13 @@ public final class Injector {
         if (apt)
         {
             try {
+                // 有一种特殊情况（内部类诸如：MainActivity$ListHeader）需要处理
+                if (targetName.contains("$"))
+                {
+                    Package pkg = targetCls.getPackage();
+                    targetName = (pkg != null ? pkg.getName() + "." : "") + targetCls.getSimpleName();
+                }
+                
                 Class injectorCls = Class.forName(targetName + IInjector.INJECTOR_SUFFIX);
                 injector = (IInjector) injectorCls.newInstance();
             } catch (ClassNotFoundException e) {

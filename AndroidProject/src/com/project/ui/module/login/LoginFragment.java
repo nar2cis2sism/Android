@@ -169,7 +169,7 @@ public class LoginFragment extends BaseFragment {
     }
     
     @OnClick(R.id.login)
-    private void login() {
+    void login() {
         if (getBaseActivity().checkNetworkStatus(true)
         &&  getBaseActivity().requestValidation())
         {

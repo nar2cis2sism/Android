@@ -59,7 +59,7 @@ public class PluginLoader extends ApkLoader {
 
         // 替换组件类加载器为DexClassLoader，使动态加载代码具有组件生命周期
         ReflectObject loadedApkRef = new ReflectObject(loadedApk);
-        loadedApkRef.set("mClassLoader", getClassLoader());
+        loadedApkRef.set("mClassLoader", getClassLoader(environment.getApplication().getClassLoader()));
     }
     
     private void initApplication() {

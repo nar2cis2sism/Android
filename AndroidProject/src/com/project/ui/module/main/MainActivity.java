@@ -100,7 +100,7 @@ public class MainActivity extends BaseActivity {
         // 身边
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_BESIDE)
                 .setIndicator(new TabView(this, R.drawable.tab_beside))
-                .setContent(emptyContent), BaseListFragment.class, null));
+                .setContent(emptyContent), loadBesideClass(), null));
         // 更多
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_MORE)
                 .setIndicator(new TabView(this, R.drawable.tab_more))

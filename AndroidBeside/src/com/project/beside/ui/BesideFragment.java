@@ -12,6 +12,7 @@ import com.project.beside.R;
 import engine.android.core.ApplicationManager;
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseFragment;
+import engine.android.plugin.Plugin;
 import engine.android.util.AndroidUtil;
 import engine.android.widget.ActionContainer;
 import engine.android.widget.TitleBar;
@@ -26,9 +27,15 @@ public class BesideFragment extends BaseFragment {
     /**
      * 由于此界面是作为插件存在的，需注意绑定的Activity存在于宿主，故无法通过常规方法获取资源
      */
+    private Context context;
     @Override
     public Context getContext() {
-        return ApplicationManager.getApplicationManager();
+        if (context == null)
+        {
+            context = Plugin.getPlugin("com.project.beside").getApplication();
+        }
+        
+        return context;
     }
     
     @InjectView(R.id.action_container)

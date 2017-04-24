@@ -5,6 +5,6 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry exported="true" kind="lib" path="D:/Work/Java/Github/Java/JavaProtocol/bin/JavaProtocol.jar" sourcepath="D:/Work/Java/Github/Java/JavaProtocol/src"/>
+	<classpathentry exported="true" kind="lib" path="D:/Share/yanhao/Github/Java/JavaProtocol/bin/JavaProtocol.jar" sourcepath="D:/Work/Java/Github/Java/JavaProtocol/src"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

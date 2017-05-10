@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+        
+    <ListPreference
+        android:defaultValue="-1"
+        android:entries="@array/setting_list_titles"
+        android:entryValues="@array/setting_list_values"
+        android:key="list"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="ListPreference" />
+
+    <Preference android:title="反馈建议">
+        <intent 
+            android:action="android.intent.action.VIEW" 
+            android:data="http://wap.3g.qq.com/g/s?aid=wapsupport&amp;amp;fid=647" />
+    </Preference>
+    
+    <PreferenceScreen android:title="主界面" android:summary="singleTask">
+        <intent 
+            android:targetPackage="engine.activity" 
+            android:targetClass="engine.activity.MainActivity" />
+    </PreferenceScreen>
+	    
+</PreferenceScreen>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="xliff">
+        <xliff:g>%1$s</xliff:g>all%ssortsoftext\n
+        example1:四位数不足前面补零
+        <xliff:g>%04d</xliff:g>\n
+        example2:保留1位小数
+        <xliff:g>%3$#.1f</xliff:g>\n
+    </string>
+</resources>

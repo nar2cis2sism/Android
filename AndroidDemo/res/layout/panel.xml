@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+	xmlns:panel="http://schemas.android.com/apk/res/demo.android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#767c9b" >
+	<demo.widget.Panel
+		android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:gravity="center_horizontal"
+    	
+    	panel:animationDuration="1000"
+        panel:position="top"
+    	panel:animationEnable="true"
+    	panel:interpolator="@android:interpolator/bounce"
+    	panel:handlerIcon_open="@drawable/handler_open"
+    	panel:handlerIcon_close="@drawable/handler_close" >
+    	<Button
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:id="@id/panelHandle" />
+    	<LinearLayout
+    		android:orientation="vertical"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:id="@id/panelContent" >
+    		<CheckBox
+    			android:layout_width="wrap_content"
+    			android:layout_height="wrap_content"
+    			android:text="Top Panel!"
+    			android:textSize="16sp"
+    			android:textColor="#eee"
+    			android:textStyle="bold" />
+    		<EditText
+    			android:layout_width="200dp"
+    			android:layout_height="wrap_content" />
+    		<Button
+    			android:layout_width="100dp"
+    			android:layout_height="wrap_content"
+    			android:text="ok!" />
+    	</LinearLayout>
+    </demo.widget.Panel>
+</LinearLayout>

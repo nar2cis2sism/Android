@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center" >
+
+    <demo.widget.LockPatternView
+        android:id="@+id/lock"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:background="#334455" />
+
+    <Button
+        android:id="@+id/anim_demo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="动画演示" />
+
+    <Button
+        android:id="@+id/stealth_mode"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="静默模式" />
+
+    <Button
+        android:id="@+id/set_pwd"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="设置密码" />
+
+    <Button
+        android:id="@+id/reset_pwd"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="重置密码" />
+	
+</LinearLayout>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="com.project.ui.main.MainActivity">餐厅订餐</string>
+    <string name="com.project.ui.main.MainViewActivity">餐厅订餐-菜单详情</string>
+    <string name="com.project.ui.login.LoginActivity">餐厅订餐-用户登录</string>
+    <string name="com.project.ui.setting.SettingActivity">餐厅订餐-系统设置</string>
+</resources>

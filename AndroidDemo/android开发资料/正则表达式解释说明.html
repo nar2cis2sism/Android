@@ -1,0 +1,302 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<META NAME="Keywords" CONTENT="Java,正则表达式,Java正则表达式的解释说明">
+<meta name="description" content="文章标题：Java正则表达式的解释说明。中国IT实验室JAVA频道是一个专业的JAVA技术平台，着眼于业界尖端技术，提供及时全面的JAVA技术和资讯文章，为广大的JAVA爱好者提供一个技术学习共享的资源库。">
+<meta name="classification" content="Information Technology and Scientice">
+<meta name="robots" content="ALL">
+<meta name="distribution" content="Global">
+<meta name="rating" content="General">
+<meta name="author" content="http://www.chinaitlab.com/">
+<meta name="language" content="chinese">
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<meta name="resource-type" content="document">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="expires" content="SUN,09 JAN 1998 00:00:01 GMT">
+<link rel="SHORTCUT ICON" href="http://www.chinaitlab.com/favicon.ico" />
+<link rel="stylesheet" type="text/css" href="http://java.chinaitlab.com/style_new.css">
+<title>Java正则表达式的解释说明-Java频道-中国IT实验室</title>
+<style type="text/css">
+a.channel_keylink:link,a.channel_keylink:visited{	FONT-SIZE: 14px;COLOR: #0000FF;	line-height: 22px;}
+a.channel_keylink:hover,a.channel_keylink:active{	FONT-SIZE: 14px;COLOR: #FF3333;	TEXT-DECORATION: underline;line-height: 22px;}
+.STYLE1 a:link,.STYLE1 a:visited,.STYLE1 a:active{
+	COLOR: #ff0000; TEXT-DECORATION: none; font-family: "宋体"; font-size: 15px; font-weight:bold; padding-left:12px; padding-top:5px;
+}
+.STYLE1 a:hover{
+	COLOR: #000000; TEXT-DECORATION: underline; font-family: "宋体"; font-size: 15px; font-weight:bold;padding-left:12px; padding-top:5px;
+}
+.STYLE1 {
+	color: #000000;
+	font-weight: bold;padding-left:12px;
+	 padding-top:7px;
+}
+.STYLE11 {	color: #000000;
+	font-weight: bold;padding-left:12px;
+	 padding-top:7px;
+}
+</style>
+<script language="JavaScript">
+<!--
+//改变图片大小
+function resizepic(thispic)
+{
+if(thispic.width>700) thispic.width=700;
+}
+//无级缩放图片大小
+function bbimg(o)
+{
+  //var zoom=parseInt(o.style.zoom, 10)||100;
+  //zoom+=event.wheelDelta/12;
+  //if (zoom>0) o.style.zoom=zoom+'%';
+  return true;
+}
+-->
+</script>
+</head>
+<body>
+<!--顶端导航部分代码-->
+<div class="tong" style=" line-height: 23px; border:0px">
+<div style="TEXT-ALIGN: left; LINE-HEIGHT: 23px; WIDTH: 100%; FONT-FAMILY: 宋体; BACKGROUND: #fafafa; FONT-SIZE: 12px"><A title=中国IT实验室LOGO href="http://www.chinaitlab.com/" target=_blank><IMG style="FLOAT: left; MARGIN-RIGHT: 5px" border=0 alt=中国IT实验室LOGO src="http://www.chinaitlab.com/cms/images/logo_top.gif" width=145 height=42></A> <A title=中国IT实验室首页 href="http://www.chinaitlab.com/" target=_blank>首页</A> | <A title=互联网频道首页 href="http://internet.chinaitlab.com/" target=_blank>互联网</A> | <A title=IT动态频道首页 href="http://news.chinaitlab.com/" target=_blank>IT动态</A> | <A title=IT培训频道首页 href="http://edu.chinaitlab.com/" target=_blank><FONT color=#ff0000>IT培训</FONT></A> | <A title=Cisco频道首页 href="http://cisco.chinaitlab.com/" target=_blank>Cisco</A> | <A title=Windows频道首页 href="http://windows.chinaitlab.com/" target=_blank>Windows</A> | <A title=Linux频道首页 href="http://linux.chinaitlab.com/" target=_blank>Linux</A> | <A title=Java频道首页 href="http://java.chinaitlab.com/" target=_blank>Java</A> | <A title=.Net频道首页 href="http://dotnet.chinaitlab.com/" target=_blank>.Net</A> | <A title=Oracle频道首页 href="http://oracle.chinaitlab.com/" target=_blank>Oracle</A> | <A title=软件测试频道首页 href="http://softtest.chinaitlab.com/" target=_blank>软件测试</A> | <A title=C/C++频道首页 href="http://c.chinaitlab.com/" target=_blank>C/C++</A> | <A title=嵌入式开发频道首页 href="http://embed.chinaitlab.com/" target=_blank><FONT color=#ff0000>嵌入式</FONT></A> | <A title=存储世界频道首页 href="http://www.storworld.com/" target=_blank>存储世界</A><A title=服务器频道首页 href="http://www.idcquan.com/" target=_blank><FONT color=#ff0000></FONT></A><A href="http://server.chinaitlab.com/" target=_blank>服务器</A> | <A title=华为频道首页 href="http://huawei.chinaitlab.com/" target=_blank>华为</A> | <A title=网络设备频道首页 href="http://network.chinaitlab.com/" target=_blank>网络设备</A> | <A title=IDC频道首页 href="http://www.idcquan.com/" target=_blank>IDC</A> | <A title=安全频道首页 href="http://live.chinaitlab.com/" target=_blank></A><A href="http://security.chinaitlab.com/" target=_blank>安全</A> | <A title=21世纪人才网首页 href="http://www.21itjob.com/" target=_blank><FONT color=#ff0000>求职招聘</FONT></A> | <A title=数字网校首页 href="http://school.chinaitlab.com/" target=_blank>数字网校</A> | <A title=北大青鸟首页 href="http://edu.chinaitlab.com/special/bdqn/Index.html" target=_blank>北大青鸟</A> | <A title=技术专题首页 href="http://special.chinaitlab.com/" target=_blank>技术专题</A> | <A title=电子书下载频道首页 href="http://download.chinaitlab.com/" target=_blank>电子书下载</A> | <A title=视频教学首页 href="http://download.chinaitlab.com/video.html" target=_blank>教学视频</A> | <A title=源码下载首页 href="http://down.idcquan.com/" target=_blank><FONT color=#ff0000>源码下载</FONT></A> | <A title=中国IT实验室技术文章搜索 href="http://search.chinaitlab.com/" target=_blank>搜索</A> | <A title=中国IT实验室技术博客 href="http://blog.chinaitlab.com/" target=_blank>博客</A> | <A title=活动沙龙首页 href="http://salon.chinaitlab.com/" target=_blank>活动沙龙</A> | <A title=中国IT实验室技术论谈 href="http://bbs.chinaitlab.com/" target=_blank>论坛</A></div>
+</div>
+<div class="blank"></div>
+<div class="tong">
+	<!-- 广告位：JAVA文章页第一通栏 -->
+<script type="text/javascript" >BAIDU_CLB_SLOT_ID = "55152";</script>
+<script type="text/javascript" src="http://cbjs.baidu.com/js/o.js"></script>
+</div>
+<!--页面顶端通栏广告代码段-->
+<div class="blank"></div>
+<div class="tong"><span id="udtop"></span></div>
+<div class="blank"></div>
+<!--频道导航代码段-->
+<div class="tong">
+	<table cellSpacing=0 cellPadding=0 width=960 align=center border=0>
+    <tr>
+      <td width=223><A title=欢迎光临中国IT实验室Java频道 href="http://java.chinaitlab.com/" target=_blank><IMG height=49 alt=中国IT实验室Linux频道 src="http://java.chinaitlab.com/images/00.gif" width=224 border=0></A></td>
+      <td vAlign=bottom width=724 background=http://java.chinaitlab.com/images/02.gif>
+        <table height=38 cellSpacing=0 cellPadding=0 width=712 align=center border=0>
+          <tr>
+            <td class=zhi12 width=461 height=29><SCRIPT LANGUAGE="JavaScript" src=http://float2006.tq.cn/floatcard?adminid=8369877&sort=0></SCRIPT><IMG id="tq_kefu_main" version="20100823" style="background:transparent none repeat scroll 0% 0%;cursor:pointer" onclick="TQKF.kefuimg.Distrabute()" /></td>
+            <td width=251>
+              <table cellSpacing=0 cellPadding=0 width=220 align=center border=0>
+<form action="http://www.google.com.hk/cse" id="cse-search-box" target="_blank">
+  <div>
+    <input type="hidden" name="cx" value="partner-pub-8985212780093870:x1p2o758mwk" />
+    <input type="hidden" name="ie" value="GB2312" />
+    <input type="text" name="q" size="24" />
+    <input type="submit" name="sa" value="&#x641c;&#x7d22;" />
+  </div>
+</form>
+<script type="text/javascript
+" src="http://www.google.cn/cse/brand?form=cse-search-box&amp;lang=zh-Hans"></script>
+
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+      <td width=13><IMG height=49 src="http://java.chinaitlab.com/images/01.gif" width=13></td>
+    </tr>
+  </table>
+  <table cellSpacing=0 cellPadding=0 width=960 align=center border=0>
+    <tr>
+      <td width=11><IMG height=38 src="http://java.chinaitlab.com/images/03.gif" width=12></td>
+      <td width=935 background=http://java.chinaitlab.com/images/04.gif>
+        <table height=24 cellSpacing=0 cellPadding=0 width="100%" border=0>
+          <tr align=middle>
+            <td height=24><A class=DHbnr title=中国IT实验室Linux频道首页 href="http://java.chinaitlab.com/" target=_blank>首页</A></td>
+            <td><IMG height=38 src="http://java.chinaitlab.com/images/07.gif" width=3></td>
+            <td><A class=DHbnr title=资讯动态 href="http://java.chinaitlab.com/List_171.html" target=_blank>资讯动态</A></td>
+            <td><IMG height=38 src="http://java.chinaitlab.com/images/07.gif" width=3></td>
+            <td><A class=DHbnr title=认证考试 href="http://java.chinaitlab.com/List_172.html" target=_blank>认证考试</A></td>
+            <td><IMG height=38 src="http://java.chinaitlab.com/images/07.gif" width=3></td>
+            <td><A class=DHbnr title=新手入门 href="http://java.chinaitlab.com/List_173.html" target=_blank>新手入门</A></td>
+            <td><IMG height=38 src="http://java.chinaitlab.com/images/07.gif" width=3></td>
+            <td><A class=DHbnr title=核心技术 href="http://java.chinaitlab.com/List_174.html" target=_blank>核心技术</A></td>
+            <td><IMG height=38 src="http://java.chinaitlab.com/images/07.gif" width=3></td>
+            <td><A class=DHbnr title=高级技术 href="http://java.chinaitlab.com/List_175.html" target=_blank>高级技术</A></td>
+            <td><IMG height=38 src="http://java.chinaitlab.com/images/07.gif" width=3></td>
+            <td><A class=DHbnr title=J2EE href="http://java.chinaitlab.com/List_176.html" target=_blank>J2EE</A></td>
+            <td><IMG height=38 src="http://java.chinaitlab.com/images/07.gif" width=3></td>
+            <td><A class=DHbnr title=J2ME href="http://java.chinaitlab.com/List_177.html" target=_blank>J2ME</A></td>
+            <td><IMG height=38 src="http://java.chinaitlab.com/images/07.gif" width=3></td>
+            <td><A class=DHbnr title=Java&XML href="http://java.chinaitlab.com/List_178.html" target=_blank>Java&XML</A></td>
+            <td><IMG height=38 src="http://java.chinaitlab.com/images/07.gif" width=3></td>
+            <td><A class=DHbnr title=开源技术 href="http://java.chinaitlab.com/List_179.html" target=_blank>开源技术</A></td>
+            <td><IMG height=38 src="http://java.chinaitlab.com/images/07.gif" width=3></td>
+            <td><A class=DHbnr title=其他技术 href="http://java.chinaitlab.com/List_180.html" target=_blank>其他技术</A></td>
+            <td><IMG height=38 src="http://java.chinaitlab.com/images/07.gif" width=3></td>
+            <td><A class=DHbnr title=欢迎订阅Java频道文章 href="http://java.chinaitlab.com/rss.xml" target=_blank>RSS订阅</A></td>
+            <td><IMG height=38 src="http://java.chinaitlab.com/images/07.gif" width=3></td>
+            <td><A class=DHbnr title=Java论坛 href="http://bbs.chinaitlab.com/forum-201-1.html" target=_blank>论坛</A></td>
+            <td><IMG height=38 src="http://java.chinaitlab.com/images/07.gif" width=3></td>
+            <td><A class=DHbnr title=Java专题 href="http://special.chinaitlab.com/List_1934.html" target=_blank>专题</A></td>
+          </tr>
+        </table>
+      </td>
+      <td width=13><IMG height=38 src="http://java.chinaitlab.com/images/05.gif" width=13></td>
+    </tr>
+  </table>
+</div>
+<div class="blank"></div>
+<div class="tong">
+  <div class="Prt_left border_kuang">
+    <div class="WeiZhi"> <img src="images/f02.gif" width="9" height="30" border="0" />您现在的位置：&nbsp;<a class='LinkPath' href='http://www.chinaitlab.com'>中国IT实验室</a>&nbsp;>>&nbsp;<a class='LinkPath' href='http://java.chinaitlab.com/Index.html'>Java</a>&nbsp;>>&nbsp;<a class='LinkPath' href='http://java.chinaitlab.com/List_173.html'>新手入门</a>&nbsp;>>&nbsp;<a class='LinkPath' href='http://java.chinaitlab.com/List_186.html'>基础入门</a>&nbsp;>>&nbsp;正文 </div>
+    <h1 class="Article_tle">Java正则表达式的解释说明 </h1>
+    <div class="Ud_tle"> <span style="float:left; border-right:1px dashed #cccccc; width:50%">
+      <script language='javascript' src='http://java.chinaitlab.com/JS/und_title_left.js'></script>
+      <script language='javascript' src='http://java.chinaitlab.com/JS/tech_title_rencai.js'></script>
+      </span> <span style="float:right; width:48%">
+        <script language='javascript' src='http://java.chinaitlab.com/JS/und_title_right.js'></script>
+        <script language='javascript' src='http://java.chinaitlab.com/JS/tech_title_school.js'></script>
+      </span> </div>
+    <div class="infor"> <img src="http://cisco.chinaitlab.com/images/source.gif" width="15" height="16" alt="文章来源" /><a href='http://www.chinaitlab.com/ShowCopyFrom.asp?ChannelID=1004&SourceName=xiaobai's daily life'>xiaobai's daily life</a> <img src="http://cisco.chinaitlab.com/images/author.gif" width="14" height="15"  alt="作者"/><a href='http://www.chinaitlab.com/ShowAuthor.asp?ChannelID=1004&AuthorName=xiaobai' title='xiaobai'>xiaobai</a> <img src="http://cisco.chinaitlab.com/images/time.gif" width="14" height="16"  alt="更新时间"/>2009-6-10 9:40:07 <img src="http://cisco.chinaitlab.com/images/save.gif" width="16" height="16" alt="保存本文" /><a href="javascript:window.external.AddFavorite('http://cisco.chinaitlab.com/base/786394.html','Java正则表达式的解释说明|中国IT实验室')" target=_top>保存本文</a> <img src="http://cisco.chinaitlab.com/images/tuijian.gif" width="20" height="16" alt="推荐给好友" /><a onclick="javascript:window.open('http://www.chinaitlab.com/www/news/sendfriend.asp?id1=32580&location1='+document.all.location1.value)" href="http://cisco.chinaitlab.com/base/786394.html">推荐给好友</a> <img src="http://cisco.chinaitlab.com/images/faver.gif" width="14" height="15"  alt="收藏本页"/><a href="javascript:window.external.AddFavorite('http://www.chinaitlab.com','中国IT实验室')" target=_top>收藏本页</a> </div>
+    <div class="Article_content">
+      <div class="STYLE11"><a href="http://bbs.chinaitlab.com/" target="_blank" class="STYLE11">欢迎进入Java社区论坛，与200万技术人员互动交流  >>进入</a></div>
+      <P>表达式意义：<BR>
+<P><STRONG>1.字符<BR></STRONG><BR>x&nbsp;&nbsp;&nbsp; 字符 x。例如a表示字符a<BR>\\&nbsp;&nbsp;&nbsp; 反斜线字符。在书写时要写为<A>\\\\</A>。（注意：因为java在第一次解析时,把<A>\\\\</A>解析成正则表达式\\，在第二次解析时再解析为\，所以凡是不是1.1列举到的转义字符，包括1.1的\\,而又带有\的都要写两次）<BR>\0n&nbsp;&nbsp;&nbsp; 带有八进制值 0的字符 n (0 &lt;= n &lt;= 7)<BR>\0nn&nbsp;&nbsp;&nbsp; 带有八进制值 0的字符 nn (0 &lt;= n &lt;= 7)<BR>\0mnn&nbsp;&nbsp;&nbsp; 带有八进制值 0的字符 mnn（0 &lt;= m &lt;= 3、0 &lt;= n &lt;= 7）<BR>\xhh&nbsp;&nbsp;&nbsp; 带有十六进制值 0x的字符 hh<BR>\uhhhh&nbsp;&nbsp;&nbsp; 带有十六进制值 0x的字符 hhhh<BR>\t&nbsp;&nbsp;&nbsp; 制表符 ('\u0009')<BR>\n&nbsp;&nbsp;&nbsp; 新行（换行）符 ('\u000A')<BR>\r&nbsp;&nbsp;&nbsp; 回车符 ('\u000D')<BR>\f&nbsp;&nbsp;&nbsp; 换页符 ('\u000C')<BR>\a&nbsp;&nbsp;&nbsp; 报警 (bell) 符 ('\u0007')<BR>\e&nbsp;&nbsp;&nbsp; 转义符 ('\u001B')<BR>\cx&nbsp;&nbsp;&nbsp; 对应于 x 的控制符<BR><STRONG>2.字符类<BR></STRONG>[abc]&nbsp;&nbsp;&nbsp; a、b或 c（简单类）。例如[egd]表示包含有字符e、g或d。<BR>[^abc]&nbsp;&nbsp;&nbsp; 任何字符，除了 a、b或 c（否定）。例如[^egd]表示不包含字符e、g或d。<BR>[a-zA-Z]&nbsp;&nbsp;&nbsp; a到 z或 A到 Z，两头的字母包括在内（范围）<BR>[a-d[m-p]]&nbsp;&nbsp;&nbsp; a到 d或 m到 p：[a-dm-p]（并集）<BR>[a-z&amp;&amp;[def]]&nbsp;&nbsp;&nbsp; d、e或 f（交集）<BR>[a-z&amp;&amp;[^bc]]&nbsp;&nbsp;&nbsp; a到 z，除了 b和 c：[ad-z]（减去）<BR>[a-z&amp;&amp;[^m-p]]&nbsp;&nbsp;&nbsp; a到 z，而非 m到 p：[a-lq-z]（减去）<BR><STRONG>3.预定义字符类</STRONG>(注意反斜杠要写两次，例如\d<SPAN style="FONT-FAMILY: 宋体; mso-ascii-font-family: Calibri; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin" twffan="done"><SPAN style="FONT-FAMILY: 宋体; mso-ascii-font-family: Calibri; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin" twffan="done">写为</SPAN><SPAN lang=EN-US twffan="done"><A href="file://d/"><SPAN style="COLOR: windowtext" twffan="done"><FONT face=Calibri><U>\\d</U></FONT></SPAN></A><FONT face=Calibri>)</FONT></SPAN><SPAN style="FONT-FAMILY: 宋体; mso-ascii-font-family: Calibri; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin" twffan="done">任何字符</SPAN></P></SPAN>
+<P>（与行结束符可能匹配也可能不匹配）<BR>\d&nbsp;&nbsp;&nbsp; 数字：[0-9]<BR>\D&nbsp;&nbsp;&nbsp; 非数字： [^0-9]<BR>\s&nbsp;&nbsp;&nbsp; 空白字符：[ \t\n\x0B\f\r]<BR>\S&nbsp;&nbsp;&nbsp; 非空白字符：[^\s]<BR>\w&nbsp;&nbsp;&nbsp; 单词字符：[a-zA-Z_0-9]<BR>\W&nbsp;&nbsp;&nbsp; 非单词字符：[^\w]<BR><STRONG>4.POSIX 字符类</STRONG>（仅 US-ASCII)(注意反斜杠要写两次，例如\p{Lower}写为\\p{Lower})<BR>\p{Lower}&nbsp;&nbsp;&nbsp; 小写字母字符：[a-z]。<BR>\p{Upper}&nbsp;&nbsp;&nbsp; 大写字母字符：[A-Z]<BR>\p{ASCII}&nbsp;&nbsp;&nbsp; 所有 ASCII：[\x00-\x7F]<BR>\p{Alpha}&nbsp;&nbsp;&nbsp; 字母字符：[\p{Lower}\p{Upper}]<BR>\p{Digit}&nbsp;&nbsp;&nbsp; 十进制数字：[0-9]<BR>\p{Alnum}&nbsp;&nbsp;&nbsp; 字母数字字符：[\p{Alpha}\p{Digit}]<BR>\p{Punct}&nbsp;&nbsp;&nbsp; 标点符号：!"#$%&amp;'()*+,-./:;&lt;=&gt;?@[\]^_`{|}~<BR>\p{Graph}&nbsp;&nbsp;&nbsp; 可见字符：[\p{Alnum}\p{Punct}]<BR>\p{Print}&nbsp;&nbsp;&nbsp; 可打印字符：[\p{Graph}\x20]<BR>\p{Blank}&nbsp;&nbsp;&nbsp; 空格或制表符：[ \t]<BR>\p{Cntrl}&nbsp;&nbsp;&nbsp; 控制字符：[\x00-\x1F\x7F]<BR>\p{XDigit}&nbsp;&nbsp;&nbsp; 十六进制数字：[0-9a-fA-F]<BR>\p{Space}&nbsp;&nbsp;&nbsp; 空白字符：[ \t\n\x0B\f\r]<BR><STRONG>5.java.lang.Character 类</STRONG>（简单的 java 字符类型）<BR>\p{javaLowerCase}&nbsp;&nbsp;&nbsp; 等效于 java.lang.Character.isLowerCase()<BR>\p{javaUpperCase}&nbsp;&nbsp;&nbsp; 等效于 java.lang.Character.isUpperCase()<BR>\p{javaWhitespace}&nbsp;&nbsp;&nbsp; 等效于 java.lang.Character.isWhitespace()<BR>\p{javaMirrored}&nbsp;&nbsp;&nbsp; 等效于 java.lang.Character.isMirrored()<BR><STRONG>6.Unicode 块和类别的类</STRONG><BR>\p{InGreek}&nbsp;&nbsp;&nbsp; Greek 块（简单块）中的字符<BR>\p{Lu}&nbsp;&nbsp;&nbsp; 大写字母（简单类别）<BR>\p{Sc}&nbsp;&nbsp;&nbsp; 货币符号<BR>\P{InGreek}&nbsp;&nbsp;&nbsp; 所有字符，Greek 块中的除外（否定）<BR>[\p{L}&amp;&amp;[^\p{Lu}]] &nbsp;&nbsp;&nbsp; 所有字母，大写字母除外（减去）<BR><STRONG>7.边界匹配器</STRONG><BR>^&nbsp;&nbsp;&nbsp; 行的开头，请在正则表达式的开始处使用^。例如：^(abc)表示以abc开头的字符串。注意编译的时候要设置参数MULTILINE，如 Pattern p = Pattern.compile(regex,Pattern.MULTILINE);<BR>$&nbsp;&nbsp;&nbsp; 行的结尾，请在正则表达式的结束处使用。例如：(^bca).*(abc$)表示以bca开头以abc结尾的行。<BR>\b&nbsp;&nbsp;&nbsp; 单词边界。例如\b(abc)表示单词的开始或结束包含有abc,（abcjj、jjabc 都可以匹配）<BR>\B&nbsp;&nbsp;&nbsp; 非单词边界。例如\B(abc)表示单词的中间包含有abc,(jjabcjj匹配而jjabc、abcjj不匹配)<BR>\A&nbsp;&nbsp;&nbsp; 输入的开头<BR>\G&nbsp;&nbsp;&nbsp; 上一个匹配的结尾(个人感觉这个参数没什么用)。例如\\Gdog表示在上一个匹配结尾处查找dog如果没有的话则从开头查找,注意如果开头不是dog则不能匹配。<BR>\Z&nbsp;&nbsp;&nbsp; 输入的结尾，仅用于最后的结束符（如果有的话）<BR>行结束符 是一个或两个字符的序列，标记输入字符序列的行结尾。<BR>以下代码被识别为行结束符： <BR>‐新行（换行）符 ('\n')、 <BR>‐后面紧跟新行符的回车符 ("\r\n")、 <BR>‐单独的回车符 ('\r')、 <BR>‐下一行字符 ('\u0085')、 <BR>‐行分隔符 ('\u2028') 或 <BR>‐段落分隔符 ('\u2029)。<BR>\z&nbsp;&nbsp;&nbsp; 输入的结尾<BR>当编译模式时，可以设置一个或多个标志，例如<BR>Pattern pattern = Pattern.compile(patternString,Pattern.CASE_INSENSITIVE + Pattern.UNICODE_CASE);<BR>下面六个标志都是支持的：<BR>‐CASE_INSENSITIVE：匹配字符时与大小写无关，该标志默认只考虑US ASCII字符。<BR>‐UNICODE_CASE：当与CASE_INSENSITIVE结合时，使用Unicode字母匹配<BR>‐MULTILINE：^和$匹配一行的开始和结尾，而不是整个输入<BR>‐UNIX_LINES： 当在多行模式下匹配^和$时，只将'\n'看作行终止符<BR>‐DOTALL: 当使用此标志时，.符号匹配包括行终止符在内的所有字符<BR>‐CANON_EQ: 考虑Unicode字符的规范等价<BR><STRONG>8.Greedy 数量词<BR></STRONG>X?&nbsp;&nbsp;&nbsp; X，一次或一次也没有<BR>X*&nbsp;&nbsp;&nbsp; X，零次或多次<BR>X+&nbsp;&nbsp;&nbsp; X，一次或多次<BR>X{n}&nbsp;&nbsp;&nbsp; X，恰好 n 次<BR>X{n,}&nbsp;&nbsp;&nbsp; X，至少 n 次<BR>X{n,m}&nbsp;&nbsp;&nbsp; X，至少 n 次，但是不超过 m 次<BR><STRONG>9.Reluctant 数量词<BR></STRONG>X??&nbsp;&nbsp;&nbsp; X，一次或一次也没有<BR>X*?&nbsp;&nbsp;&nbsp; X，零次或多次<BR>X+?&nbsp;&nbsp;&nbsp; X，一次或多次<BR>X{n}?&nbsp;&nbsp;&nbsp; X，恰好 n 次<BR>X{n,}?&nbsp;&nbsp;&nbsp; X，至少 n 次<BR>X{n,m}?&nbsp;&nbsp;&nbsp; X，至少 n 次，但是不超过 m 次<BR><STRONG>10.Possessive 数量词</STRONG><BR>X?+&nbsp;&nbsp;&nbsp; X，一次或一次也没有<BR>X*+&nbsp;&nbsp;&nbsp; X，零次或多次<BR>X++&nbsp;&nbsp;&nbsp; X，一次或多次<BR>X{n}+&nbsp;&nbsp;&nbsp; X，恰好 n 次<BR>X{n,}+&nbsp;&nbsp;&nbsp; X，至少 n 次<BR>X{n,m}+&nbsp;&nbsp;&nbsp; X，至少 n 次，但是不超过 m 次<BR>Greedy，Reluctant，Possessive的区别在于:(注意仅限于进行.等模糊处理时)<BR>greedy量 词被看作“贪婪的”，因为它第一次就读入整个被模糊匹配的字符串。如果第一个匹配尝试（整个输入字符串）失败，匹配器就会在被匹配字符串中的最后一位后退一个字符并且再次尝试，重复这个过程，直到找到匹配或者没有更多剩下的字符可以后退为止。根据表达式中使用的量词，它最后试图匹配的内容是1 个或者0个字符。<BR>但是，reluctant量词采取相反的方式：它们从被匹配字符串的开头开始，然后逐步地一次读取一个字符搜索匹配。它们最后试图匹配的内容是整个输入字符串。<BR>最后，possessive量词总是读完整个输入字符串，尝试一次（而且只有一次）匹配。和greedy量词不同，possessive从不后退。<BR><STRONG>11.Logical 运算符<BR></STRONG>XY&nbsp;&nbsp;&nbsp; X 后跟 Y<BR>X|Y&nbsp;&nbsp;&nbsp; X 或 Y<BR>(X)&nbsp;&nbsp;&nbsp; X，作为捕获组。例如(abc)表示把abc作为一个整体进行捕获<BR><STRONG>12.Back 引用</STRONG><BR>\n&nbsp;&nbsp;&nbsp; 任何匹配的 nth捕获组<BR>捕获组可以通过从左到右计算其开括号来编号。例如，在表达式 ((A)(B(C)))中，存在四个这样的组： <BR>1&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ((A)(B(C)))<BR>2&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; \A<BR>3&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; (B(C))<BR>4&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; (C)<BR>在表达式中可以通过\n来对相应的组进行引用，例如(ab)34\1就表示ab34ab，(ab)34(cd)\1\2就表示ab34cdabcd。<BR><STRONG>13.引用<BR></STRONG>\&nbsp;&nbsp;&nbsp; Nothing，但是引用以下字符<BR>\Q&nbsp;&nbsp;&nbsp; Nothing，但是引用所有字符，直到 \E。QE之间的字符串会原封不动的使用(1.1中转义字符的除外)。例如, ab\\Q{|}\\\\E<BR>可以匹配ab{|}\\<BR>\E&nbsp;&nbsp;&nbsp; Nothing，但是结束从 \Q开始的引用<BR><STRONG>14.特殊构造（非捕获）</STRONG><BR>(?:X)&nbsp;&nbsp;&nbsp; X，作为非捕获组<BR>(?idmsux-idmsux) &nbsp;&nbsp;&nbsp; Nothing，但是将匹配标志由 on 转为 off。比如：表达式 (?i)abc(?-i)def 这时，(?i) 打开不区分大小写开关，abc 匹配<BR>idmsux说明如下：<BR>‐i CASE_INSENSITIVE :US-ASCII 字符集不区分大小写。(?i)<BR>‐d UNIX_LINES : 打开UNIX换行符<BR>‐m MULTILINE :多行模式(?m)<BR>UNIX下换行为\n<BR>WINDOWS下换行为\r\n(?s)<BR>‐u UNICODE_CASE : Unicode 不区分大小写。(?u)<BR>‐x COMMENTS :可以在pattern里面使用注解，忽略pattern里面的whitespace，以及"#"一直到结尾（#后面为注解）。(?x)例如(?x)abc#asfsdadsa可以匹配字符串abc<BR>(?idmsux-idmsux:X) &nbsp;&nbsp;&nbsp; X，作为带有给定标志 on - off 的非捕获组。与上面的类似，上面的表达式，可以改写成为：(?i:abc)def，或者 (?i)abc(?-i:def)<BR>(?=X)&nbsp;&nbsp;&nbsp; X，通过零宽度的正 lookahead。零宽度正先行断言，仅当子表达式 X 在 此位置的右侧匹配时才继续匹配。例如，\w+(?=\d) 表示字母后面跟数字，但不捕获数字（不回溯）<BR>(?!X)&nbsp;&nbsp;&nbsp; X，通过零宽度的负 lookahead。零宽度负先行断言。仅当子表达式 X 不在 此位置的右侧匹配时才继续匹配。例如，\w+(?!\d) 表示字母后面不跟数字，且不捕获数字。<BR>(?&lt;=X)&nbsp;&nbsp;&nbsp; X，通过零宽度的正 lookbehind。零宽度正后发断言。仅当子表达式 X 在 此位置的左侧匹配时才继续匹配。例如，(?&lt;=19)99 表示99前面是数字19，但不捕获前面的19。（不回溯）<BR>(?<!X)&nbsp;&nbsp;&nbsp; X，通过零宽度的负 lookbehind。零宽度负后发断言。仅当子表达式 X 不在此位置的左侧匹配时才继续匹配。例如，(?<!19)99 表示99前面不能是19，且不捕获前面的东东。<br>(?&gt;X)&nbsp;&nbsp;&nbsp; X，作为独立的非捕获组（不回溯）<BR>(?=X)与(?&gt;X)的区别在于(?&gt;X)是不回溯的。例如被匹配的字符串为abcm<BR>当表达式为a(?:b|bc)m是可以匹配的，而当表达式是a(?&gt;b|bc)时是不能匹配的，因为当后者匹配到b时，由于已经匹配，就跳出了非捕获组，而不再次对组内的字符进行匹配。可以加快速度。</P>
+      <div align=right style="margin:3px 0;"> <span style="border:1px dashed #cccccc; margin:3px;">
+        <script type="text/javascript"><!--
+google_ad_client = "pub-8985212780093870";
+/* 468x60, 创建于 10-9-21 */
+google_ad_slot = "4499687408";
+google_ad_width = 468;
+google_ad_height = 60;
+//-->
+</script>
+        <script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+        </span> <a title="Java频道
+中国IT实验室" href="http://Java.chinaitlab.com/" target=_blank><img 
+height=14 src="http://www.chinaitlab.com/cms/images/logo14.gif" width=14 
+border=0 /></a>【责编:Chuan】
+        <script language='javascript' src='http://www.chinaitlab.com/adjs/200605/88.js'></script>
+    </div>
+  </div>
+  <br />
+  <p></p>
+  <div class="Fushu" style="border:0;">
+    <div class="F_lst" style="float:left">
+      <div class="F_tle"><img src="http://cisco.chinaitlab.com/images/f06.gif" width="9" height="7" border="0" />相关文章</div>
+      <div style="margin: 5px 10px; width:90%;"><a class='LinkArticleCorrelative' href='http://java.chinaitlab.com/base/862312.html' title='文章标题：实例：用Java实现约瑟夫环
+作&nbsp;&nbsp;&nbsp;&nbsp;者：佚名
+更新时间：2011-8-30 6:26:41' target="_self">实例：用Java实现约瑟夫环</a><br><a class='LinkArticleCorrelative' href='http://java.chinaitlab.com/base/862298.html' title='文章标题：Java工程师可能不知道的那些FE潜规则
+作&nbsp;&nbsp;&nbsp;&nbsp;者：佚名
+更新时间：2011-8-30 17:06:10' target="_self">Java工程师可能不知道的那些FE潜规则</a><br><a class='LinkArticleCorrelative' href='http://java.chinaitlab.com/dynamic/862237.html' title='文章标题：Thymeleaf:面向Java的XML/HTML模板引擎
+作&nbsp;&nbsp;&nbsp;&nbsp;者：佚名
+更新时间：2011-8-28 6:28:30' target="_self">Thymeleaf:面向Java的XML/HTML模板引擎</a><br><a class='LinkArticleCorrelative' href='http://java.chinaitlab.com/experience/862078.html' title='文章标题：Java认证：Java线程检测基本问题猜想
+作&nbsp;&nbsp;&nbsp;&nbsp;者：佚名
+更新时间：2011-8-26 23:59:39' target="_self">Java认证：Java线程检测基本问题猜想</a><br><a class='LinkArticleCorrelative' href='http://java.chinaitlab.com/dynamic/862035.html' title='文章标题：Java中23种设计模式详解
+作&nbsp;&nbsp;&nbsp;&nbsp;者：佚名
+更新时间：2011-8-26 17:04:36' target="_self">Java中23种设计模式详解</a><br><a class='LinkArticleCorrelative' href='http://java.chinaitlab.com/experience/861926.html' title='文章标题：Java认证：JavaRunnable线程编写接口代码
+作&nbsp;&nbsp;&nbsp;&nbsp;者：佚名
+更新时间：2011-8-25 17:56:02' target="_self">Java认证：JavaRunnable线程编写接口代码</a><br><a class='LinkArticleCorrelative' href='http://java.chinaitlab.com/base/861921.html' title='文章标题：深入Java，初探JVM
+作&nbsp;&nbsp;&nbsp;&nbsp;者：佚名
+更新时间：2011-8-25 17:07:10' target="_self">深入Java，初探JVM</a><br><a class='LinkArticleCorrelative' href='http://java.chinaitlab.com/experience/861821.html' title='文章标题：Java认证：Java实现点在线添加
+作&nbsp;&nbsp;&nbsp;&nbsp;者：佚名
+更新时间：2011-8-24 1:30:36' target="_self">Java认证：Java实现点在线添加</a><br><a class='LinkArticleCorrelative' href='http://java.chinaitlab.com/experience/861812.html' title='文章标题：Java认证：Java中goto实现
+作&nbsp;&nbsp;&nbsp;&nbsp;者：佚名
+更新时间：2011-8-24 0:57:25' target="_self">Java认证：Java中goto实现</a><br><a class='LinkArticleCorrelative' href='http://java.chinaitlab.com/experience/861804.html' title='文章标题：Java认证：关于JAVA可移植性
+作&nbsp;&nbsp;&nbsp;&nbsp;者：佚名
+更新时间：2011-8-21 0:24:45' target="_self">Java认证：关于JAVA可移植性</a><br></div>
+    </div>
+    <div class="F_lst" style="float:right">
+      <div class="F_tle"><img src="http://cisco.chinaitlab.com/images/f06.gif" width="9" height="7" border="0" />编辑推荐</div>
+      ·&nbsp;[<a class="" href="http://java.chinaitlab.com/List_186.html">基础入门</a>]<a class="" href="http://java.chinaitlab.com/base/839656.html" title="利用字符串连接巧妙解决问题" target="_blank">利用字符串连接巧妙解决问题</a><br />·&nbsp;[<a class="" href="http://java.chinaitlab.com/List_191.html">高级编程</a>]<a class="" href="http://java.chinaitlab.com/advance/839653.html" title="实现Java调用.net&nbsp;DLL的方法" target="_blank">实现Java调用.net&nbsp;DLL的方法</a><br />·&nbsp;[<a class="" href="http://java.chinaitlab.com/List_192.html">网络编程</a>]<a class="" href="http://java.chinaitlab.com/net/839204.html" title="Java设置与读取Cookie属性" target="_blank">Java设置与读取Cookie属性</a><br />·&nbsp;[<a class="" href="http://java.chinaitlab.com/List_186.html">基础入门</a>]<a class="" href="http://java.chinaitlab.com/base/826410.html" title="和我共同了解Java是什么" target="_blank">和我共同了解Java是什么</a><br />·&nbsp;[<a class="" href="http://java.chinaitlab.com/List_186.html">基础入门</a>]<a class="" href="http://java.chinaitlab.com/base/823200.html" title="Java语言与C++语言在作用域上的差异" target="_blank">Java语言与C++语言在作用域上的差异</a><br />·&nbsp;[<a class="" href="http://java.chinaitlab.com/List_186.html">基础入门</a>]<a class="" href="http://java.chinaitlab.com/base/822786.html" title="Java源代码的折行规则" target="_blank">Java源代码的折行规则</a><br />·&nbsp;[<a class="" href="http://java.chinaitlab.com/List_186.html">基础入门</a>]<a class="" href="http://java.chinaitlab.com/base/811183.html" title="Java中的静态数组与动态数组" target="_blank">Java中的静态数组与动态数组</a><br />·&nbsp;[<a class="" href="http://java.chinaitlab.com/List_186.html">基础入门</a>]<a class="" href="http://java.chinaitlab.com/base/811154.html" title="Java版简易俄罗斯方块" target="_blank">Java版简易俄罗斯方块</a><br />·&nbsp;[<a class="" href="http://java.chinaitlab.com/List_186.html">基础入门</a>]<a class="" href="http://java.chinaitlab.com/base/811117.html" title="随机数组合，随机号码产生器" target="_blank">随机数组合，随机号码产生器</a><br />·&nbsp;[<a class="" href="http://java.chinaitlab.com/List_192.html">网络编程</a>]<a class="" href="http://java.chinaitlab.com/net/810900.html" title="Java访问WebService返回xml数据" target="_blank">Java访问WebService返回xml数据</a><br />
+    </div>
+  </div>
+  <div class="blank"></div>
+  <div class="Fushu" style="border:0;">
+    <iframe src="http://java.chinaitlab.com/cio_new.html" width="660"  height="300" frameborder="0" scrolling="no"  marginheight="0" marginwidth="0"></iframe>
+  </div>
+  <div class="blank"></div>
+  <div class="Fushu">
+    <div class="title_line2 font14"> <img src="http://windows.chinaitlab.com/images/f04.gif" width="7" height="29" />相关产品和培训 </div>
+    <iframe src="http://java.chinaitlab.com/peixun_new.htm" width="660"  height="159" frameborder="0" scrolling="no"  marginheight="0" marginwidth="0"></iframe>
+  </div>
+  <div class="blank"></div>
+  <div class="Fushu">
+    <div class="title_line2 font14"> <img src="http://cisco.chinaitlab.com/images/f04.gif" width="7" height="29" />文章评论 </div>
+    <iframe src="http://www.chinaitlab.com/CMS2006_Comment/Comment/ArticleComment.asp?ID=786394" width="100%" height="330" frameborder="0"scrolling="yes"></iframe>
+  </div>
+  <div class=blank></div>
+<div class=tjtitle>　友情推荐链接</div>
+<div class=yqtj>
+<div class=yqtj_lf>·<A title=Asp源码 href="http://down.idcquan.com/download/asp/asp-1-1.html" target=_blank>Asp源码</A> <A title=PHP源码 href="http://down.idcquan.com/download/php/php-2-1.html" target=_blank>PHP源码</A><BR>·<A title=CGI源码 href="http://down.idcquan.com/download/cgi/cgi-5-1.html" target=_blank>CGI源码</A> <A title=JSP源码 href="http://down.idcquan.com/download/jsp/jsp-3-1.html" target=_blank>JSP源码</A><BR>·<A title=书籍教程 href="http://down.idcquan.com/download/book/book-6-1.html" target=_blank>建站书籍教程</A><BR>·<A title=服务器软件 href="http://down.idcquan.com/download/soft/soft-8-1.html" target=_blank>服务器软件</A> <A title=.net源码 href="http://down.idcquan.com/download/dotnet/dotnet-4-1.html" target=_blank>.net源码</A><BR>·<A title=工具软件 href="http://down.idcquan.com/download/tool/tool-9-1.html" target=_blank>建站工具软件</A><BR></div>
+<div class=yqtj_rt>·<A href="http://www.idcquan.com/2007idcpages" target=_blank>IDC资讯大全</A><BR>·<A href="http://www.idcquan.com/2007idcsurvey/" target=_blank>机房品质万里行</A><BR>·<A href="http://www.idcquan.com/" target=_blank>IDC托管必备知识</A><BR>·<A href="http://www.idcquan.com/" target=_blank>网站推广优化</A><BR>·<A href="http://www.idcquan.com/" target=_blank>全国IDC报价</A><BR></div></div>
+  <div class="blank"></div>
+</div>
+<div class="Prt_right" style="height:220px;">
+	<!-- 广告位：JAVA文章页右侧画中画 -->
+<script type="text/javascript" >BAIDU_CLB_SLOT_ID = "55155";</script>
+<script type="text/javascript" src="http://cbjs.baidu.com/js/o.js"></script>
+</div>
+<table width="270" border="0" align="right">
+  <tr>
+    <td><table border=0 cellSpacing=0 cellPadding=0 width=265 height=180>
+    <tr>
+      <td height=5></td>
+    </tr>
+    <tr>
+      <td height=180><IFRAME height=195 marginHeight=0 src="http://edu.chinaitlab.com/extend/7.html" frameBorder=0 width=265 marginWidth=0 scrolling=no></IFRAME></td>
+    </tr>
+  </table></td>
+  </tr>
+</table>
+	<div class="Prt_right border_kuang">
+		<div class="title_line"><img src="http://cisco.chinaitlab.com/images/f06.gif" width="9" height="7" border="0" />　认证培训</div>
+		<div class=right_lst><script language="javascript" src="http://java.chinaitlab.com/JS/java_peixun.js"></script></div>
+	</div>
+	<div class="Prt_right border_kuang">
+		<div class="title_line"><img src="http://cisco.chinaitlab.com/images/f06.gif" width="9" height="7" border="0" />　专题推荐</div>
+		<a href="http://oracle.chinaitlab.com/Special/Oracle_OCP/index.htm" title="Oracle&nbsp;10g&nbsp;OCP考证秘笈" target=_blank><img class='pic1' src='http://oracle.chinaitlab.com/Special/Oracle_OCP/images/3010042012090.jpg'  width='120' height='90' border='0'></a><a href="http://java.chinaitlab.com/Special/javajm/Index.html" title="开发必备&nbsp;漫谈Java加密保护" target=_blank><img class='pic1' src='http://java.chinaitlab.com/Special/javajm/images/javajm.jpg'  width='120' height='90' border='0'></a><br>
+		　·<a href="http://java.chinaitlab.com/Special/java_ee/index.html" target=_blank title="Java&nbsp;EE&nbsp;6规范中文版">Java&nbsp;EE&nbsp;6规范中文版</a><br>　·<a href="http://oracle.chinaitlab.com/Special/Oracle_OCP/index.htm" target=_blank title="Oracle&nbsp;10g&nbsp;OCP考证秘笈">Oracle&nbsp;10g&nbsp;OCP考证秘笈</a><br>　·<a href="http://c.chinaitlab.com/special/algorithm/Index.html" target=_blank title="算法分析与设计之五大常用算法">算法分析与设计之五大常用算法</a><br>　·<a href="http://java.chinaitlab.com/Special/javajm/Index.html" target=_blank title="开发必备&nbsp;漫谈Java加密保护">开发必备&nbsp;漫谈Java加密保护</a><br>　·<a href="http://embed.chinaitlab.com/special/arm/Index.html" target=_blank title="嵌入式开发--ARM技术专题">嵌入式开发--ARM技术专题</a><br>　·<a href="http://c.chinaitlab.com/special/pointer/Index.html" target=_blank title="C/C++指针，认真了解，灵活运用">C/C++指针，认真了解，灵活运用</a><br>　·<a href="http://dotnet.chinaitlab.com/special/c/Index.html" target=_blank title=".NET开发：C#实用基础教程">.NET开发：C#实用基础教程</a><br>　·<a href="http://softtest.chinaitlab.com/special/qtp/Index.html" target=_blank title="软件测试工具QTP学习专题">软件测试工具QTP学习专题</a><br>　·<a href="http://embed.chinaitlab.com/special/fan/Index.html" target=_blank title="嵌入式开发单片机解决方案专题">嵌入式开发单片机解决方案专题</a><br>　·<a href="http://java.chinaitlab.com/Special/greenfootsc/Index.html" target=_blank title="Java开发环境&nbsp;Greenfoot&nbsp;程序员手册">Java开发环境&nbsp;Greenfoot&nbsp;程序员手册</a><br>
+	</div>
+<div class=Prt_right style="HEIGHT: 250px"><script language="javascript" src="http://www.chinaitlab.com/adjs/201105/274.js"></script>
+</div>
+	<div class="Prt_right border_kuang">
+		<div class="title_line"><img src="http://cisco.chinaitlab.com/images/f06.gif" width="9" height="7" border="0" />　今日更新</div>
+		<div class=right_lst>·&nbsp;<a class="" href="http://java.chinaitlab.com/dynamic/862327.html" title="惹恼程序员的十件事&nbsp;代码排第一位" target="_blank">惹恼程序员的十件事&nbsp;代码排第一位</a><br />·&nbsp;<a class="" href="http://java.chinaitlab.com/base/862298.html" title="Java工程师可能不知道的那些FE潜规则" target="_blank">Java工程师可能不知道的那些FE潜规则</a><br />·&nbsp;<a class="" href="http://java.chinaitlab.com/base/862297.html" title="用Java实现约瑟夫环" target="_blank">用Java实现约瑟夫环</a><br />·&nbsp;<a class="" href="http://java.chinaitlab.com/base/862312.html" title="实例：用Java实现约瑟夫环" target="_blank">实例：用Java实现约瑟夫环</a><br />·&nbsp;<a class="" href="http://java.chinaitlab.com/base/862199.html" title="好的Java编码七条好习惯" target="_blank">好的Java编码七条好习惯</a><br />·&nbsp;<a class="" href="http://java.chinaitlab.com/base/862198.html" title="关于java获取操作系统信息" target="_blank">关于java获取操作系统信息</a><br />·&nbsp;<a class="" href="http://java.chinaitlab.com/core/862242.html" title="J2EE综合：Struts常见错误的全面汇总" target="_blank">J2EE综合：Struts常见错误的全面汇总</a><br />·&nbsp;<a class="" href="http://java.chinaitlab.com/base/859122.html" title="java集合框架部分理解" target="_blank">java集合框架部分理解</a><br />·&nbsp;<a class="" href="http://java.chinaitlab.com/dynamic/862237.html" title="Thymeleaf:面向Java的XML/HTML模板引擎" target="_blank">Thymeleaf:面向Java的XML/HTML模板引擎</a><br />·&nbsp;<a class="" href="http://java.chinaitlab.com/core/862236.html" title="J2EE应用：WebService服务的实现及调用" target="_blank">J2EE应用：WebService服务的实现及调用</a><br /></div>
+	</div>
+	<div class="Prt_right border_kuang">
+		<div class="title_line"><img src="http://cisco.chinaitlab.com/images/f06.gif" width="9" height="7" border="0" />　社区讨论</div>
+		<div class=right_lst><iframe src="http://java.chinaitlab.com/bbs.html" width="265"  height="188" frameborder="0" scrolling="no"  marginheight="0" marginwidth="0"></iframe></div>
+	</div>
+	<div class="Prt_right border_kuang">
+		<div class="title_line"><img src="http://cisco.chinaitlab.com/images/f06.gif" width="9" height="7" border="0" />　博客论点</div>
+		<div class=right_lst><iframe src="http://java.chinaitlab.com/blog.html" width="265"  height="188" frameborder="0" scrolling="no"  marginheight="0" marginwidth="0"></iframe></div>
+	</div>
+	<div class="Prt_right border_kuang">
+		<div class="title_line"><img src="http://cisco.chinaitlab.com/images/f06.gif" width="9" height="7" border="0" />　频道精选</div>
+		<div class=right_lst>· <a href=http://cisco.chinaitlab.com/CCNACCDA/725394.html target=_blank title="新版CCNA考试大纲 07年8月1日生效">新版CCNA考试大纲 07年8月1日生效</a><br \>
+· <a href=http://linux.chinaitlab.com/special/linuxcom/Index.html target=_blank title="新手学习宝典：Linux常用命令全集">新手学习宝典：Linux常用命令全集</a><br \>
+· <a href=http://windows.chinaitlab.com/Special/systemsafety/Index.html target=_blank title="知已知彼，深入了解系统安全知识">知已知彼，深入了解系统安全知识</a><br \>
+· <a href=http://java.chinaitlab.com/Special/shijian/Index.html target=_blank title="从入门到精通 java初学者实践系列教程">从入门到精通 java初学者实践系列教程</a><br \>
+· <a href=http://www.chinaitlab.com/www/techspecial/OracleBasic/ target=_blank title="共同学习——Oracle入门基础专题">共同学习——Oracle入门基础专题</a><br \>
+· <a href=http://dotnet.chinaitlab.com/ADONET/727687.html target=_blank title="ADO.net与PowerBuilder的综合比">ADO.net与PowerBuilder的综合比较</a><br \>
+· <a href=http://internet.chinaitlab.com/observe/729460.html target=_blank title="评论：中国互联网“钱”途何在？">评论：中国互联网“钱”途何在？</a><br \>
+· <a href=http://news.chinaitlab.com/ityw/729103.html target=_blank title="中科院：龙芯要成“中国奔腾” 能卖1亿颗">中科院：龙芯要成"中国奔腾" 能卖1亿颗</a><br \></div>
+	</div>
+	<div class="Prt_right border_kuang">
+		<div class="title_line"><img src="http://cisco.chinaitlab.com/images/f06.gif" width="9" height="7" border="0" />　Java	频道导航</div>
+		<div class=right_lst><STRONG><A href="http://java.chinaitlab.com/List_173.html" target=_blank>新手入门</A>：</STRONG> <BR><A href="http://java.chinaitlab.com/List_185.html" target=_blank>安装配置</A> | <A href="http://java.chinaitlab.com/List_187.html" target=_blank>开发工具</A> | <A href="http://java.chinaitlab.com/List_188.html" target=_blank>JDK</A> | <A href="http://java.chinaitlab.com/List_189.html" target=_blank>oop面向对象</A><BR><STRONG><A href="http://java.chinaitlab.com/List_174.html" target=_blank>核心技术</A>：</STRONG> <BR><A href="http://java.chinaitlab.com/List_190.html" target=_parent>SwingAwtApplet</A> | <A href="http://java.chinaitlab.com/List_191.html" target=_blank>高级编程</A> | <A href="http://java.chinaitlab.com/List_192.html" target=_blank>网络编程</A><A href="http://java.chinaitlab.com/List_193.html" target=_blank>Jvm技术</A> | <A href="http://java.chinaitlab.com/List_194.html" target=_blank>JavaMedia</A><BR><STRONG><A href="http://java.chinaitlab.com/List_175.html" target=_blank>高级技术</A>：</STRONG> <BR><A href="http://java.chinaitlab.com/List_195.html" target=_blank>设计模式</A> | <A href="http://java.chinaitlab.com/List_196.html" target=_blank>UML／OO</A> | <A href="http://java.chinaitlab.com/List_197.html" target=_blank>p2p／Jxta</A> | <A href="http://java.chinaitlab.com/List_198.html" target=_blank>多线程</A> | <A href="http://java.chinaitlab.com/List_199.html">JavaSecurity</A><BR><STRONG><A href="http://java.chinaitlab.com/List_176.html" target=_blank>J2EE</A>：</STRONG> <BR><A href="http://java.chinaitlab.com/List_200.html" target=_blank>J2ee核心</A> | <A href="http://java.chinaitlab.com/List_201.html" target=_blank>Servlet／Jsp</A> | <A href="http://java.chinaitlab.com/List_202.html" target=_blank>EJB</A><BR>| <A href="http://java.chinaitlab.com/List_203.html" target=_blank>JDBC／JDO</A> | <A href="http://java.chinaitlab.com/List_204.html" target=_blank>Rmi／Corba／Jini</A> | <A href="http://java.chinaitlab.com/List_206.html" target=_blank>Mvcwea</A> | <A href="http://java.chinaitlab.com/List_205.html" target=_blank>应用服务器</A><BR><STRONG><A href="http://java.chinaitlab.com/List_177.html" target=_blank>J2ME</A>：</STRONG> <BR><A href="http://java.chinaitlab.com/List_207.html" target=_blank>核心技术</A> | <A href="http://java.chinaitlab.com/List_208.html" target=_blank>嵌入式</A> | <A href="http://java.chinaitlab.com/List_209.html" target=_blank>无线开发</A><BR><STRONG><A href="http://java.chinaitlab.com/List_178.html" target=_blank>Java&XML</A>：</STRONG> <BR><A href="http://java.chinaitlab.com/List_210.html" target=_blank>XMLBeans</A> | <A href="http://java.chinaitlab.com/List_211.html" target=_blank>WebServices</A><BR><STRONG><A href="http://java.chinaitlab.com/List_179.html" target=_blank>开源技术</A>：</STRONG> <BR><A href="http://java.chinaitlab.com/List_212.html" target=_blank>ANT</A> | <A href="http://java.chinaitlab.com/List_213.html" target=_blank>Struts</A> | <A href="http://java.chinaitlab.com/List_214.html" target=_blank>Hibernate</A> | <A href="http://java.chinaitlab.com/List_215.html" target=_blank>Spring</A><BR><A href="http://java.chinaitlab.com/List_216.html" target=_blank>Eclipse</A> | <A href="http://java.chinaitlab.com/List_218.html" target=_blank>JBoss</A> | <A href="http://java.chinaitlab.com/List_219.html" target=_blank>Tomcat</A> | <A href="http://java.chinaitlab.com/List_220.html" target=_blank>JUnit</A><BR><STRONG><A href="http://java.chinaitlab.com/List_180.html" target=_blank>其他技术</A></STRONG><BR></div>
+	</div>
+	
+</div>
+<div class="blank"></div>
+<div class="tong"><iframe src="http://www.chinaitlab.com/down.htm" width="100%"  height="200" frameborder="0" scrolling="no"  marginheight="0" marginwidth="0"></iframe></div>
+
+<!-- 广告位：A专家级频道通用漂浮右下 -->
+<script type="text/javascript" >BAIDU_CLB_SLOT_ID = "136211";</script>
+<script type="text/javascript" src="http://cbjs.baidu.com/js/o.js"></script>
+<!-- tj -->
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F5039d1ba7ab33da6b0c51675b4deb8f0' type='text/javascript'%3E%3C/script%3E"));
+</script>
+</body>
+</html>

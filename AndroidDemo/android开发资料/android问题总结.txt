@@ -1,0 +1,48 @@
+Gallery
+当显示View的数量<=总数量时，若循环显示。。拖曳的时候会出现错位的效果
+解决方案：动态创建View
+
+自定义BaseAdapter
+在getView(int position, View convertView, ViewGroup parent)函数中，当光标下移到屏幕最底部，新显示出来的View使用了缓存convertView；
+也就是说Adapter仅仅缓存了可视范围内的View，随后的滚动都是对这些View进行数据更新，这就造成了状态可能混乱，因为滚动时会重复显示第一屏的数据
+解决方案1：初始化所有显示View，直接返回这些View，但是对于数量较多的情况则不实用，可以使用解决方案2
+解决方案2：将状态保存在List中，每次调用更新
+优化方案：用静态内部类ViewHolder来优化，但是也只是空间换时间的做法
+
+ListView
+当显示View内含有EditText时，由于ListView抢了EditText的焦点，可能会导致EditText看不到光标的bug，但是可以输入
+解决方案1：用ScrollView+LinearLayout代替，如果数量较多则失去了ListView的缓存功能
+解决方案2：自定义Adapter，但是需要在GetView函数里面构建显示View
+
+若没有固定ListView的高度，会导致getView方法多次调用，因为它自身会尝试计算
+
+
+
+
+
+
+
+注意事项：
+1.代码安装APK包必须从SD卡安装，否则会出现“解析包出错”的提示
+2.AIDL远程接口调用具有实时性，对于异步操作可用BroadcastReceiver代替实现
+3.通过矩阵变换创建图片及其消耗资源，如操作不当会内存溢出
+4.实时刷新界面中，如有非常消耗资源的操作，需手动通知GC回收
+5.尽量少用静态变量，复位比较麻烦
+6.按下搜索按键会关闭一切对话框，特别是进度条对话框，最好屏蔽此按键
+7.旋转屏幕时会关闭没用onCreateDialog()打开的对话框，因为其可以自动管理维持其状态
+8.android每隔16ms(60fps)会触发渲染UI，所以UI更新最好不要超过这个时间，否则会有卡顿现象
+
+游戏开发时使用android API1.5打包不用拉伸画布即可自动适配屏幕
+AbsListView.OnScrollListener在android API2.2以下灵敏度很低，通常只有第一个可见条目变化时才有反应
+API3.0以下图片须手动回收
+
+最诡异的bug：
+1.理论上assets文件夹下不能存放单个内容大于1M的文件，但是往里拷贝和替换文件均不受此限制，
+而如果将文件A删除并将文件B重命名为A，则会在文件前面出现一个红叉
+2.读取assets文件夹下大于1M的apk文件抛出异常Data exceeds UNCOMPRESS_DATA_MAX (1654014 vs 1048576)，但之前是可以的，
+怀疑是将apk包做了改动，这令我百思不得其解
+最后将apk包里面raw文件夹下的音乐文件从wav格式替换为mp3格式得以解决，彻底无语
+3.http联网时使用代理，url地址需有后缀，即"xx:xx/xx"的格式，否则使用wap网络时无反应，应该是地址解析错误
+4.<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="7" />，android:minSdkVersion必须设置为3且不能设置android:targetSdkVersion，否则密度会计算错误
+5.android:anyDensity="true"也会造成密度计算错误
+6.工程运行时出现Unable to execute dex: Cannot merge new index 65620 into a non-jumbo instruction!但是编译不过报错，原因是classes.dex超过了8M，临时的解决方案是在project.properties里面加上一句dex.force.jumbo=true

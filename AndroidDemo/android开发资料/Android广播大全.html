@@ -1,0 +1,726 @@
+﻿
+
+<!doctype html public "-//w3c//dtd html 4.01 transitional//en" "http://www.w3c.org/tr/1999/rec-html401-19991224/loose.dtd">
+<html>
+<head>
+<title>Android 广播大全 Intent Action 事件  - Android开发 - OPEN开发经验库</title>
+<meta content="text/html; charset=utf-8" http-equiv=content-type>
+<meta name=robots content=index,follow>
+<meta name=keywords content="Android,Android开发">
+<meta name=description content="Android 广播大全 Intent Action 事件 ,Android开发">
+<link rel="shortcut icon" href="/lib/favicon.ico">
+<link rel=copyright href="http://www.open-open.com/">
+
+<script type="text/javascript" src="/lib/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="/lib/js/thickbox.patch.js"></script>
+<script type="text/javascript" src="/lib/js/jquery.ui.js"></script>
+<script type="text/javascript" src="/lib/js/view.js"></script>
+<script type="text/javascript" src="/lib/syntaxhighlighter_2.1.382/scripts/shCore.js"></script>
+<script type="text/javascript" src="/lib/syntaxhighlighter_2.1.382/scripts/shBrush.js"></script>
+
+<link type="text/css" rel="stylesheet" href="/lib/syntaxhighlighter_2.1.382/styles/shCore.css"/>
+<link type="text/css" rel="stylesheet" href="/lib/syntaxhighlighter_2.1.382/styles/shThemeEclipse.css"/>
+<script type="text/javascript">
+	SyntaxHighlighter.config.clipboardSwf = '/lib/syntaxhighlighter_2.1.382/scripts/clipboard.swf';
+	//SyntaxHighlighter.defaults['collapse'] = true; 
+	SyntaxHighlighter.config.strings.expandSource = "展开代码";
+	SyntaxHighlighter.config.strings.copyToClipboard = "复制到剪切板";
+	SyntaxHighlighter.config.strings.copyToClipboardConfirmation = "代码已经复制到剪切板";
+	SyntaxHighlighter.config.strings.viewSource = "查看源码";
+	SyntaxHighlighter.config.strings.print = "打印";
+	SyntaxHighlighter.all();
+</script>
+<style type="text/css" media="screen, projection">
+		/*<![CDATA[*/
+			@import "/lib/css/common.css";
+			@import "/lib/css/main.css";
+			@import "/lib/css/thickbox.css";
+			@import "/lib/css/jquery.ui.css";
+		/*]]>*/
+</style>
+<script type="text/javascript">
+	var rooturl="/lib";
+	var wgDocKey='1331187479249';
+	var wgDocTitle='Android 广播大全 Intent Action 事件 ';
+	var wgDocStatusFlag='';
+	var wgUserFolders=null;
+	var wgDownFrame=null;
+	var wgCostByUser=null;
+	var wgDocFavoriteByUser=false;
+	var wgDocScoreByUser=null;
+	var wgUserLogined=0;
+	var tb_pathToImage = "/lib/images/loadingAnimation.gif";
+</script>
+</head>
+<body id=view>
+
+        
+
+
+<div id=topnav>
+<div id=Personal>
+	
+		<a href="/lib/members/login?keepThis=true&TB_iframe=true&height=177&width=278" title="登录OPEN经验库" class="thickbox"">登录</a>&nbsp;&nbsp;
+		<a href="/lib/members/register?keepThis=true&TB_iframe=true&height=460&width=710" title="注册新的账号" class="thickbox">注册</a>
+	
+		
+</div>
+<div id=topmenu>
+<ul>
+		<li><a title=Java开源 href="http://www.open-open.com/">Java开源</a></li>
+		<li><a title=PHP开源 href="http://www.php-open.com/">PHP开源</a></li>
+		<li><a title=JS脚本大全 href="http://www.open-open.com/ajax">JS脚本大全</a></li>
+		<li><a title=OPEN家园 href="http://www.open-open.com/home">OPEN家园</a></li>
+		<li class=selected>OPEN经验库</li>
+		<li><a title='OPEN文档频道' href="http://www.open-open.com/doc">OPEN文档</a></li>
+		<li><a title='OPEN资讯频道' href="http://www.open-open.com/news/">OPEN资讯</a></li>
+		<li><a title='OPEN论坛频道' href="http://www.open-open.com/bbs">OPEN论坛</a></li>
+</ul>
+</div>
+</div>
+<!--end top nav-->
+<div id=head>
+<div id=head-logo><a title=OPEN开发经验库 href="/lib"><img border=0 alt=OPEN开发经验库 src="/lib/images/logo.jpg"></a></div>
+<div id=head-search>
+<form method=get name=search action="/lib/search" accept-charset="GBK" onsubmit="document.charset='GBK';">
+
+<table border=0 cellspacing=0 cellpadding=0>
+		
+		<tbody>
+				<tr>
+						<td align=left>
+							<input id=searchinput maxlength="1048" style="height: 23px;font-size:18px"  value="" size=45 name=q>
+							<input id=searchbutton value="经验搜索" type="submit" style="height: 28px;font-size:17">
+							<input id=od  type=hidden name=od value="0">
+						</td>
+						</tr>
+		</tbody>
+</table>
+</form>
+</div>
+<div id=head-ad></div>
+</div>
+<!-- end head -->
+
+<div id=content>
+<div id=content-nav>
+<a href="/lib/list/all">所有分类</a>
+
+	&nbsp;&gt;&nbsp;
+	<a href="/lib/list/36">开发语言与工具</a>
+
+	&nbsp;&gt;&nbsp;
+	<a href="/lib/list/41">移动开发</a>
+
+	&nbsp;&gt;&nbsp;
+	<a href="/lib/list/177">Android开发</a>
+
+</div>
+<div id=view-main>
+
+
+<div id=view-titleh>
+<div id=view-title>
+	<h3>Android 广播大全 Intent Action 事件 </h3>
+</div>
+<div id=view-summary>
+<table>
+		<tbody>
+				<tr>
+						<td><strong>您的评价</strong>:</td>
+						<td>
+						<div id=rate class=rate-container><span id=star1 class=star-big-off title=很差>&nbsp;</span><span id=star2 class=star-big-off title=较差>&nbsp;</span><span id=star3 class=star-big-off title=还行>&nbsp;</span><span
+								id=star4 class=star-big-off title=不错>&nbsp;</span><span id=star5 class=star-big-off title=力荐>&nbsp;</span></div>
+						</td>
+						<td width=30>
+						<div id=rate-tip></div>
+						</td>
+						
+						<td>
+						<div id=favorite-container><span class="icon favorite">&nbsp;</span><a id=favorite href="javascript:void(0)"><strong>收藏该经验</strong></a></div>
+						</td>
+				</tr>
+		</tbody>
+</table>
+<div id=favorite-box>
+<table>
+		<tbody>
+				<tr>
+						<td width=70 align=right>文件夹</td>
+						<td><select id=fav_folderlist name=folder>
+								<option selected value=0>请选择...</option>
+								<option id=newfolder-sp disabled value="">-------------</option>
+								<option value=-1>新增文件夹...</option>
+						</select></td>
+				</tr>
+				<tr style="display: none" id=newfolder-input>
+						<td align=right>新增文件夹</td>
+						<td><input id=fav_newfolder maxlength=50 type=text name=newfolder></td>
+				</tr>
+				<tr>
+						<td align=right>标签</td>
+						<td><input id=fav_tags maxlength=135 size=20 type=text name=tags></td>
+				</tr>
+				<tr>
+						<td></td>
+						<td colspan=2>(多个标签用逗号分隔)</td>
+				</tr>
+		</tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+
+
+<div id=readercontainer>
+<p align="left">Intent.ACTION_AIRPLANE_MODE_CHANGED;</p>
+<p align="left">//关闭或打开飞行模式时的广播</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_BATTERY_CHANGED;</p>
+<p align="left">//充电状态，或者电池的电量发生变化</p>
+<p align="left">//电池的充电状态、电荷级别改变，不能通过组建声明接收这个广播，只有通过Context.registerReceiver()注册</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_BATTERY_LOW;</p>
+<p align="left">//表示电池电量低</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_BATTERY_OKAY;</p>
+<p align="left">//表示电池电量充足，即从电池电量低变化到饱满时会发出广播</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_BOOT_COMPLETED;</p>
+<p align="left">//在系统启动完成后，这个动作被广播一次（只有一次）。</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_CAMERA_BUTTON;</p>
+<p align="left">//按下照相时的拍照按键(硬件按键)时发出的广播</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_CLOSE_SYSTEM_DIALOGS;</p>
+<p align="left">//当屏幕超时进行锁屏时,当用户按下电源按钮,长按或短按(不管有没跳出话框)，进行锁屏时,android系统都会广播此Action消息</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_CONFIGURATION_CHANGED;</p>
+<p align="left">//设备当前设置被改变时发出的广播(包括的改变:界面语言，设备方向，等，请参考Configuration.java)</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_DATE_CHANGED;</p>
+<p align="left">//设备日期发生改变时会发出此广播</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_DEVICE_STORAGE_LOW;</p>
+<p align="left">//设备内存不足时发出的广播,此广播只能由系统使用，其它APP不可用？</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_DEVICE_STORAGE_OK;</p>
+<p align="left">//设备内存从不足到充足时发出的广播,此广播只能由系统使用，其它APP不可用？</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_DOCK_EVENT;</p>
+<p align="left">//</p>
+<p align="left">//发出此广播的地方frameworks\base\services\java\com\android\server\DockObserver.java</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE;</p>
+<p align="left">////移动APP完成之后，发出的广播(移动是指:APP2SD)</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE;</p>
+<p align="left">//正在移动APP时，发出的广播(移动是指:APP2SD)</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_GTALK_SERVICE_CONNECTED;</p>
+<p align="left">//Gtalk已建立连接时发出的广播</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_GTALK_SERVICE_DISCONNECTED;</p>
+<p align="left">//Gtalk已断开连接时发出的广播</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_HEADSET_PLUG;</p>
+<p align="left">//在耳机口上插入耳机时发出的广播</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_INPUT_METHOD_CHANGED;</p>
+<p align="left">//改变输入法时发出的广播</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_LOCALE_CHANGED;</p>
+<p align="left">//设备当前区域设置已更改时发出的广播</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_MANAGE_PACKAGE_STORAGE;</p>
+<p align="left">//</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_MEDIA_BAD_REMOVAL;</p>
+<p align="left">//未正确移除SD卡(正确移除SD卡的方法:设置--SD卡和设备内存--卸载SD卡)，但已把SD卡取出来时发出的广播</p>
+<p align="left">//广播：扩展介质（扩展卡）已经从 SD 卡插槽拔出，但是挂载点 (mount point) 还没解除 (unmount)</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_MEDIA_BUTTON;</p>
+<p align="left">//按下"Media Button" 按键时发出的广播,假如有"Media Button"按键的话(硬件按键)</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_MEDIA_CHECKING;</p>
+<p align="left">//插入外部储存装置，比如SD卡时，系统会检验SD卡，此时发出的广播?</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_MEDIA_EJECT;</p>
+<p align="left">//已拔掉外部大容量储存设备发出的广播（比如SD卡，或移动硬盘）,不管有没有正确卸载都会发出此广播?</p>
+<p align="left">//广播：用户想要移除扩展介质（拔掉扩展卡）。</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_MEDIA_MOUNTED;</p>
+<p align="left">//插入SD卡并且已正确安装（识别）时发出的广播</p>
+<p align="left">//广播：扩展介质被插入，而且已经被挂载。</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_MEDIA_NOFS;</p>
+<p align="left">//</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_MEDIA_REMOVED;</p>
+<p align="left">//外部储存设备已被移除，不管有没正确卸载,都会发出此广播？</p>
+<p align="left">// 广播：扩展介质被移除。</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_MEDIA_SCANNER_FINISHED;</p>
+<p align="left">//广播：已经扫描完介质的一个目录</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_MEDIA_SCANNER_SCAN_FILE;</p>
+<p align="left">//</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_MEDIA_SCANNER_STARTED;</p>
+<p align="left">//广播：开始扫描介质的一个目录</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_MEDIA_SHARED;</p>
+<p align="left">// 广播：扩展介质的挂载被解除 (unmount)，因为它已经作为 USB 大容量存储被共享。</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_MEDIA_UNMOUNTABLE;</p>
+<p align="left">//</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_MEDIA_UNMOUNTED</p>
+<p align="left">// 广播：扩展介质存在，但是还没有被挂载 (mount)。&nbsp;</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_NEW_OUTGOING_CALL;</p>
+<p align="left">//</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_PACKAGE_ADDED;</p>
+<p align="left">//成功的安装APK之后</p>
+<p align="left">//广播：设备上新安装了一个应用程序包。</p>
+<p align="left">//一个新应用包已经安装在设备上，数据包括包名（最新安装的包程序不能接收到这个广播）</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_PACKAGE_CHANGED;</p>
+<p align="left">//一个已存在的应用程序包已经改变，包括包名</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_PACKAGE_DATA_CLEARED;</p>
+<p align="left">//清除一个应用程序的数据时发出的广播(在设置－－应用管理－－选中某个应用，之后点清除数据时?)</p>
+<p align="left">//用户已经清除一个包的数据，包括包名（清除包程序不能接收到这个广播）</p>
+<p align="left">&nbsp;</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_PACKAGE_INSTALL;</p>
+<p align="left">//触发一个下载并且完成安装时发出的广播，比如在电子市场里下载应用？</p>
+<p align="left">//</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_PACKAGE_REMOVED;</p>
+<p align="left">//成功的删除某个APK之后发出的广播</p>
+<p align="left">//一个已存在的应用程序包已经从设备上移除，包括包名（正在被安装的包程序不能接收到这个广播）</p>
+<p align="left">&nbsp;</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_PACKAGE_REPLACED;</p>
+<p align="left">//替换一个现有的安装包时发出的广播（不管现在安装的APP比之前的新还是旧，都会发出此广播？）</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_PACKAGE_RESTARTED;</p>
+<p align="left">//用户重新开始一个包，包的所有进程将被杀死，所有与其联系的运行时间状态应该被移除，包括包名（重新开始包程序不能接收到这个广播）</p>
+<p align="left">&nbsp;</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_POWER_CONNECTED;</p>
+<p align="left">//插上外部电源时发出的广播</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_POWER_DISCONNECTED;</p>
+<p align="left">//已断开外部电源连接时发出的广播</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_PROVIDER_CHANGED;</p>
+<p align="left">//</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_REBOOT;</p>
+<p align="left">//重启设备时的广播</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_SCREEN_OFF;</p>
+<p align="left">//屏幕被关闭之后的广播</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_SCREEN_ON;</p>
+<p align="left">//屏幕被打开之后的广播</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_SHUTDOWN;</p>
+<p align="left">//关闭系统时发出的广播</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_TIMEZONE_CHANGED;</p>
+<p align="left">//时区发生改变时发出的广播</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_TIME_CHANGED;</p>
+<p align="left">//时间被设置时发出的广播</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_TIME_TICK;</p>
+<p align="left">//广播：当前时间已经变化（正常的时间流逝）。</p>
+<p align="left">//当前时间改变，每分钟都发送，不能通过组件声明来接收，只有通过Context.registerReceiver()方法来注册</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_UID_REMOVED;</p>
+<p align="left">//一个用户ID已经从系统中移除发出的广播</p>
+<p align="left">//</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_UMS_CONNECTED;</p>
+<p align="left">//设备已进入USB大容量储存状态时发出的广播？</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_UMS_DISCONNECTED;</p>
+<p align="left">//设备已从USB大容量储存状态转为正常状态时发出的广播？</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_USER_PRESENT;</p>
+<p align="left">//</p>
+<p align="left">&nbsp;</p>
+<p align="left">Intent.ACTION_WALLPAPER_CHANGED;</p>
+<p align="left">//设备墙纸已改变时发出的广播</p>
+</div>
+<div style="margin-top: 10px;margin-bottom: 2px;">
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-7963911354665843";
+/* 经验详细页 */
+google_ad_slot = "4709171087";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
+</div>
+
+			<table width='100%'><tr>
+				<td  valign='top' width="49%" class="Related">
+                <div style="border-bottom: 1px #ccc solid;margin-top: 5px"><strong>相关资讯</strong> 　—　<a href="http://www.open-open.com/news" target="_blank">更多</a></div>
+            	<ul>
+            		
+            	     <li><a href="http://www.open-open.com/news/view/1ad28d3" target="_blank" title="HTML.Next会给我们带来什么？">HTML.Next会给我们带来什么？</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/119a523" target="_blank" title="Google 官方：对 Android 手机硬件菜单按钮说拜拜">Google 官方：对 Android 手机硬件菜单按钮说拜拜</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/c63d3" target="_blank" title="免费的Android UI库及组件推荐 ">免费的Android UI库及组件推荐 </a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/37efce" target="_blank" title="Android 4.0设计规范 优先导读 十大改变 （附全文翻译pdf）">Android 4.0设计规范 优先导读 十大改变 （附全文翻译pdf）</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/127f6ac" target="_blank" title="Android SDK 和 ADT R17 发布">Android SDK 和 ADT R17 发布</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/6d9332" target="_blank" title="亮点纷呈 -  Android 4.0 发布会小结">亮点纷呈 -  Android 4.0 发布会小结</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/e49c78" target="_blank" title="Android 4.0 Ice Cream Sandwich 和 Galaxy Nexus 香港发布会实录">Android 4.0 Ice Cream Sandwich 和 Galaxy Nexus 香港发布会实录</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/151350d" target="_blank" title="可以免费下载的20个流行Android游戏">可以免费下载的20个流行Android游戏</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/1c3608f" target="_blank" title="你会喜欢玩的25个最流行的免费Android游戏">你会喜欢玩的25个最流行的免费Android游戏</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/16d0421" target="_blank" title="Android 编年史">Android 编年史</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/1f95902" target="_blank" title="采访 Google 高管：关于 Android 4.0的一些问题">采访 Google 高管：关于 Android 4.0的一些问题</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/12b675a" target="_blank" title="跨平台移动开发框架 PhoneGap 1.5 发布">跨平台移动开发框架 PhoneGap 1.5 发布</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/5dac8e" target="_blank" title="WP7应用运行效率之谜：流畅的代价很高">WP7应用运行效率之谜：流畅的代价很高</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/14eb02b" target="_blank" title="Android 操作系统修改版 CyanogenMod 介绍">Android 操作系统修改版 CyanogenMod 介绍</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/59e468" target="_blank" title="Windows Phone之于Android的基因进化">Windows Phone之于Android的基因进化</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/12746fd" target="_blank" title="为什么说 Android 很了不起！">为什么说 Android 很了不起！</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/11a24e" target="_blank" title="Siri挑战者 Google语音应用Majel或年内发布">Siri挑战者 Google语音应用Majel或年内发布</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/4d1bb1" target="_blank" title="Android 4.0与Android 3.0亮点对比">Android 4.0与Android 3.0亮点对比</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/19c7e8" target="_blank" title="Spring for Android 1.0.0 发布">Spring for Android 1.0.0 发布</a></li>            
+            	     
+            	     <li><a href="http://www.open-open.com/news/view/9b3775" target="_blank" title="大规模Android恶意软件或感染500万用户">大规模Android恶意软件或感染500万用户</a></li>            
+            	     
+            	     
+            	</ul>
+        		 <div style="clear: both; font-size: 1px; line-height: 0;"></div>
+            </td>
+			<td width="5px"></td>
+			<td valign='top' width="49%" class="Relatedb">
+			 	<div style="border-bottom: 1px #ccc solid;margin-top: 5px"><strong>相关文档</strong> 　—　<a href="http://www.open-open.com/doc" target="_blank">更多</a></div>
+            	<ul >
+            		
+            	     <li><a  href="http://www.open-open.com/doc/view/7d950420077d4d4491dd2e980ef52d3f" target="_blank" title="Android Intent 机制实例详解.doc">Android Intent 机制实例详解.doc</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/361a5a82596e4158948ec26b81e47360" target="_blank" title="Android 开发秘籍.pdf">Android 开发秘籍.pdf</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/6b73016cd4894cfbbf63fd0bf6ea3446" target="_blank" title="Android Intent的几种用法全面总结.doc">Android Intent的几种用法全面总结.doc</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/6102321ed5da413bb6fb86409967d790" target="_blank" title="Android用户界面UI元素之Intent.ppt">Android用户界面UI元素之Intent.ppt</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/787b542742094266abe982482b91c90b" target="_blank" title="广播接收者.doc">广播接收者.doc</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/f4faf2ea38974c1b8f6c7d849832985d" target="_blank" title="Android 的Activity、Intent、Service、Broadcas receiver 介绍.ppt">Android 的Activity、Intent、Service、Broadcas receiver 介绍.ppt</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/5409f51fea304945859cd7d3f4835412" target="_blank" title="Android  Activity和Intent机制学习笔记.docx">Android  Activity和Intent机制学习笔记.docx</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/d11559ad3f0e4fe4ae2c0ec144370b7e" target="_blank" title="Android应用程序开发03.pdf">Android应用程序开发03.pdf</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/b9bd6f34e35d466f9eac67ff2db24a13" target="_blank" title="Android 开发指南中文版.chm">Android 开发指南中文版.chm</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/9e310f014f7b46ca9c491c465adb34a1" target="_blank" title="中国电信Android框架及应用开发介绍.ppt">中国电信Android框架及应用开发介绍.ppt</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/eab69ace31cb4245b98d8d04e718cd10" target="_blank" title="Android 底层开发平台.pdf.pdf">Android 底层开发平台.pdf.pdf</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/0b4c9bebd0a34446852a73a463f4b23e" target="_blank" title="Android Service组件使用.ppt">Android Service组件使用.ppt</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/9520f96b465c4a1eb35d101219a2d3a1" target="_blank" title="第六章 Android 进程间通信.pdf">第六章 Android 进程间通信.pdf</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/9520f96b465c4a1eb35d101219a2d3a1" target="_blank" title="第六章 Android 进程间通信.pdf">第六章 Android 进程间通信.pdf</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/e1cc00c3b6304b2ca2a33c71fd300e64" target="_blank" title="Android核心分析之一.doc">Android核心分析之一.doc</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/9d384fe05f2c4dc4b7324ce22b2a86c1" target="_blank" title="基于Android平台的星座查询软件设计(学位论文).pdf">基于Android平台的星座查询软件设计(学位论文).pdf</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/76725b846d1e4422b8eb51a4cc67751c" target="_blank" title="Android 进程间通信.pdf">Android 进程间通信.pdf</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/8c2f54513b434aed94500eb8d27632ca" target="_blank" title="Android的事件处理机制.pptx">Android的事件处理机制.pptx</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/ed4e93ea306148e199ef12f2523fda9b" target="_blank" title="Android 权限大全.doc">Android 权限大全.doc</a></li>            
+            	    
+            	     <li><a  href="http://www.open-open.com/doc/view/c777c2a508484c30b2ce3434b299326e" target="_blank" title="Android开源项目大全(史上最全).pdf">Android开源项目大全(史上最全).pdf</a></li>            
+            	    
+            	</ul>
+            </td>
+			</tr></table>
+</div>
+
+<div id=view-side>
+<div id=upload-box class="box-blue angle">
+<div class=box-bg>
+<div class=box-body><a id=upload class=upload href="#"></a>
+</div>
+</div>
+</div>
+
+<div class="box-blue angle-footer">
+<div class=box_1></div>
+<div class=box_2></div>
+<div class=box_3></div>
+<div class=box-bg>
+<div class=box-title>内容信息</div>
+<div id=docinfo class=box-body>
+<div id=doc-score><span id=score-stars class=stars-big-10 title=经验评价得分：5.0分>&nbsp;</span><span id=score-num>5.0</span><br>
+<div id=score-ratecount>(已有1个人评价)</div>
+<div id=score-scale>
+<span class="starscale stars-small-10" title=力荐>&nbsp;</span>
+<div style="width: 100px" class=power></div>
+100%<br>
+<span class="starscale stars-small-8" title=不错>&nbsp;</span>
+<div style="width: 0px" class=power></div>
+0%<br>
+<span class="starscale stars-small-6" title=还行>&nbsp;</span>
+<div style="width: 0px" class=power></div>
+0%<br>
+<span class="starscale stars-small-4" title=较差>&nbsp;</span>
+<div style="width: 0px" class=power></div>
+0%<br>
+<span class="starscale stars-small-2" title=很差>&nbsp;</span>
+<div style="width: 0px" class=power></div>
+0%<br>
+</div>
+</div>
+<div class=sp></div>
+<div id=doc-status><span class=item>浏览：951次</span><br>
+<br>
+<span class=item>贡献者：<a href="http://www.open-open.com/home/361" target="_blank">openkk</a></span><br>
+<span class=item>上传时间：2012-03-08 15:58:52</span>
+
+</div>
+</div>
+</div>
+</div>
+<div id=view-tag class="box-blue angle">
+<div class=box-bg>
+<div class=box-title>经验标签</div>
+<div id=tag-list class=box-body>
+	
+		<a href="/lib/tag/Android">Android</a>
+	 
+</div>
+
+</div>
+</div>
+<div id=view-topic class="box-blue angle">
+<div class=box-bg>
+<div class=box-title>同类热门经验</div>
+<div class=box-body>
+	<ul id=topic-list class=file-shortlist>
+		
+			<li>
+				<span class="samelist"></span><a title=上百个Android开源项目分享 href="/lib/view/open1328063267889.html"><span class=title>上百个Android开源项目分享</span></a>
+				<div class=attribute><span>6120次浏览</span></div>
+			</li>
+		
+			<li>
+				<span class="samelist"></span><a title=Android 软件自动更新功能的实现 href="/lib/view/open1322529319718.html"><span class=title>Android 软件自动更新功能的实现</span></a>
+				<div class=attribute><span>6835次浏览</span></div>
+			</li>
+		
+			<li>
+				<span class="samelist"></span><a title=用Android-X86和VirtualBox打造高性能Android开发环境 href="/lib/view/open1324451830077.html"><span class=title>用Android-X86和VirtualBox打造高性能Android开发环境</span></a>
+				<div class=attribute><span>4495次浏览</span></div>
+			</li>
+		
+			<li>
+				<span class="samelist"></span><a title=自定义 Android 对话框 (AlertDialog) 的样式 href="/lib/view/open1325635738437.html"><span class=title>自定义 Android 对话框 (AlertDialog) 的样式</span></a>
+				<div class=attribute><span>9703次浏览</span></div>
+			</li>
+		
+			<li>
+				<span class="samelist"></span><a title=Android实现应用下载并自动安装apk包 href="/lib/view/open1329274683593.html"><span class=title>Android实现应用下载并自动安装apk包</span></a>
+				<div class=attribute><span>2771次浏览</span></div>
+			</li>
+		
+			<li>
+				<span class="samelist"></span><a title=在Android中通过XFire WebService远程上传以及下载图片 href="/lib/view/open1328840815202.html"><span class=title>在Android中通过XFire WebService远程上传以及下载图片</span></a>
+				<div class=attribute><span>1508次浏览</span></div>
+			</li>
+		
+</ul>
+</div>
+</div>
+</div>
+
+<div id=view-top-category class="box-blue angle-header">
+<div class=box-bg>
+<div class=box-title>相关经验</div>
+<div class=box-body>
+<ul id=top-list class=file-shortlist>
+		
+			<li><span class="samelist"></span><a title=Android学习笔记之广播机制（1）  href="/lib/view/open1328007672078.html" target=_blank><span
+				class=title>Android学习笔记之广播机制（1） </span></a><br>
+			<div class=attribute><span class="score stars-small-0" title=经验评价得分：0.0分>&nbsp;</span> <span>0人评</span>
+			</div>
+		</li>
+		
+			<li><span class="samelist"></span><a title=Android创建桌面快捷方式几种方法 href="/lib/view/open1326263344046.html" target=_blank><span
+				class=title>Android创建桌面快捷方式几种方法</span></a><br>
+			<div class=attribute><span class="score stars-small-0" title=经验评价得分：0.0分>&nbsp;</span> <span>0人评</span>
+			</div>
+		</li>
+		
+			<li><span class="samelist"></span><a title=Android学习笔记之广播（2）  href="/lib/view/open1328015201437.html" target=_blank><span
+				class=title>Android学习笔记之广播（2） </span></a><br>
+			<div class=attribute><span class="score stars-small-0" title=经验评价得分：0.0分>&nbsp;</span> <span>0人评</span>
+			</div>
+		</li>
+		
+			<li><span class="samelist"></span><a title=Android 电池电量监控初步 href="/lib/view/open1327829183952.html" target=_blank><span
+				class=title>Android 电池电量监控初步</span></a><br>
+			<div class=attribute><span class="score stars-small-10" title=经验评价得分：5.0分>&nbsp;</span> <span>2人评</span>
+			</div>
+		</li>
+		
+			<li><span class="samelist"></span><a title=Android 如何从系统图库中选择图片 href="/lib/view/open1336734928683.html" target=_blank><span
+				class=title>Android 如何从系统图库中选择图片</span></a><br>
+			<div class=attribute><span class="score stars-small-0" title=经验评价得分：0.0分>&nbsp;</span> <span>0人评</span>
+			</div>
+		</li>
+		
+			<li><span class="samelist"></span><a title=Android 抽屉效果实现  href="/lib/view/open1328191409234.html" target=_blank><span
+				class=title>Android 抽屉效果实现 </span></a><br>
+			<div class=attribute><span class="score stars-small-9" title=经验评价得分：4.7分>&nbsp;</span> <span>3人评</span>
+			</div>
+		</li>
+		
+			<li><span class="samelist"></span><a title=Android程序调用摄像头  href="/lib/view/open1329102090281.html" target=_blank><span
+				class=title>Android程序调用摄像头 </span></a><br>
+			<div class=attribute><span class="score stars-small-6" title=经验评价得分：3.0分>&nbsp;</span> <span>1人评</span>
+			</div>
+		</li>
+		
+			<li><span class="samelist"></span><a title=如何设定Android Activity间切换时的动画  href="/lib/view/open1334652032311.html" target=_blank><span
+				class=title>如何设定Android Activity间切换时的动画 </span></a><br>
+			<div class=attribute><span class="score stars-small-0" title=经验评价得分：0.0分>&nbsp;</span> <span>0人评</span>
+			</div>
+		</li>
+		
+			<li><span class="samelist"></span><a title=android 调用webservice href="/lib/view/open1329484955296.html" target=_blank><span
+				class=title>android 调用webservice</span></a><br>
+			<div class=attribute><span class="score stars-small-10" title=经验评价得分：5.0分>&nbsp;</span> <span>1人评</span>
+			</div>
+		</li>
+		
+			<li><span class="samelist"></span><a title=android实现开机启动服务 href="/lib/view/open1329280273124.html" target=_blank><span
+				class=title>android实现开机启动服务</span></a><br>
+			<div class=attribute><span class="score stars-small-6" title=经验评价得分：3.0分>&nbsp;</span> <span>1人评</span>
+			</div>
+		</li>
+		
+			<li><span class="samelist"></span><a title=Android动态壁纸的制作教程 href="/lib/view/open1328713164921.html" target=_blank><span
+				class=title>Android动态壁纸的制作教程</span></a><br>
+			<div class=attribute><span class="score stars-small-0" title=经验评价得分：0.0分>&nbsp;</span> <span>0人评</span>
+			</div>
+		</li>
+		
+			<li><span class="samelist"></span><a title=Android创建桌面快捷方式两种方法 href="/lib/view/open1329995632249.html" target=_blank><span
+				class=title>Android创建桌面快捷方式两种方法</span></a><br>
+			<div class=attribute><span class="score stars-small-0" title=经验评价得分：0.0分>&nbsp;</span> <span>0人评</span>
+			</div>
+		</li>
+		
+			<li><span class="samelist"></span><a title=Android实现图表绘制和展示 href="/lib/view/open1333959064077.html" target=_blank><span
+				class=title>Android实现图表绘制和展示</span></a><br>
+			<div class=attribute><span class="score stars-small-0" title=经验评价得分：0.0分>&nbsp;</span> <span>0人评</span>
+			</div>
+		</li>
+		
+			<li><span class="samelist"></span><a title=在Android上监听网络状态的变更 href="/lib/view/open1329296857312.html" target=_blank><span
+				class=title>在Android上监听网络状态的变更</span></a><br>
+			<div class=attribute><span class="score stars-small-0" title=经验评价得分：0.0分>&nbsp;</span> <span>0人评</span>
+			</div>
+		</li>
+		
+</ul>
+</div>
+</div>
+<div class=box_3></div>
+<div class=box_2></div>
+<div class=box_1></div>
+
+</div>
+
+<div id=view-top-category class="box-blue angle-header">
+<div class=box-bg>
+<div class=box-title>相关讨论 - <a href="http://www.open-open.com/bbs" target="_blank">更多</a></div>
+<div class=box-body>
+<ul id=top-list class=file-shortlist>
+		
+			<li >
+			<span class="samelist"></span><a title=Android AIDL 远程服务器使用示例 href="http://www.open-open.com/bbs/view/1319170031937" target=_blank><span class=title>Android AIDL 远程服务器使用示例</span></a>
+		</li>
+		
+			<li >
+			<span class="samelist"></span><a title=Android: SMS TEL MAIL 使用集合  href="http://www.open-open.com/bbs/view/1319464820140" target=_blank><span class=title>Android: SMS TEL MAIL 使用集合 </span></a>
+		</li>
+		
+			<li >
+			<span class="samelist"></span><a title=Android 复习_Task 与 Back Stack href="http://www.open-open.com/bbs/view/1319245489905" target=_blank><span class=title>Android 复习_Task 与 Back Stack</span></a>
+		</li>
+		
+			<li >
+			<span class="samelist"></span><a title=Android 编程基础 href="http://www.open-open.com/bbs/view/1318820343953" target=_blank><span class=title>Android 编程基础</span></a>
+		</li>
+		
+			<li >
+			<span class="samelist"></span><a title=Android 访问权限许可大全  href="http://www.open-open.com/bbs/view/1319170829328" target=_blank><span class=title>Android 访问权限许可大全 </span></a>
+		</li>
+		
+			<li >
+			<span class="samelist"></span><a title=Android通讯录 简单实例(源码下载与讲解) href="http://www.open-open.com/bbs/view/1318494610171" target=_blank><span class=title>Android通讯录 简单实例(源码下载与讲解)</span></a>
+		</li>
+		
+			<li >
+			<span class="samelist"></span><a title=Android核心模块内容概述 href="http://www.open-open.com/bbs/view/1318333423124" target=_blank><span class=title>Android核心模块内容概述</span></a>
+		</li>
+		
+</ul>
+</div>
+</div>
+<div class=box_3></div>
+<div class=box_2></div>
+<div class=box_1></div>
+
+</div>
+
+<!-- end top list--></div>
+</div>
+
+
+
+
+<div id=footer>
+<div id=footer-menu><a href="http://www.open-open.com/home/1">联系我们</a> - <a href="http://www.open-open.com/home/1">问题反馈</a> </div>
+<p>2005-2012 OPEN-OPEN, all rights reserved.</p>
+</div>
+</body>
+</html>

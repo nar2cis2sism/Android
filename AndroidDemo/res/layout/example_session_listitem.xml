@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 会话列表项 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    //标题背景
+    <LinearLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    
+	    android:gravity="center_vertical"
+	    
+	    android:id="@+id/title_bg"
+	    >
+	    //标题
+	    <TextView
+		    style="@style/session_text"
+		    android:layout_weight="1"
+		    
+		    android:layout_marginLeft="10dp"
+		    android:layout_marginRight="10dp"
+		    
+		    android:singleLine="true"
+		    
+		    android:id="@+id/title" />
+    
+	    //状态图片
+	    <ImageView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    
+		    android:layout_marginRight="10dp"
+		    
+		    android:id="@+id/status" />
+    </LinearLayout>
+    
+    //内容详情
+    <LinearLayout
+    	android:orientation="vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@drawable/session_content_bg"
+	    
+	    android:id="@+id/detail"
+	    >
+	    //日期
+	    <RelativeLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    
+		    android:layout_marginTop="5dp"
+		    >
+		    //开始时间
+		    <TextView
+			    style="@style/session_text"
+			    
+			    android:layout_marginLeft="30dp"
+			    
+			    android:id="@+id/start_time" />
+			    
+		    //至
+		    <TextView
+			    style="@style/session_text"
+			    
+			    android:layout_centerHorizontal="true"
+			    
+			    android:text="至" />
+			    
+		    //结束时间
+		    <TextView
+			    style="@style/session_text"
+			    
+			    android:layout_alignParentRight="true"
+			    android:layout_marginRight="30dp"
+			    
+			    android:id="@+id/end_time" />
+	    </RelativeLayout>
+    
+	    //接收人名称
+	    <TextView
+		    style="@style/session_text"
+				    
+			android:layout_marginLeft="30dp"
+		    android:layout_marginTop="3dp"
+		    
+		    android:id="@+id/to_name" />
+	    
+	    //消息内容
+	    <TextView
+		    style="@style/session_text"
+				    
+		    android:layout_marginTop="3dp"
+		    
+		    android:id="@+id/content" />
+	    
+	    //发送人名称
+	    <TextView
+		    style="@style/session_text"
+		    
+		    android:layout_gravity="right"
+			android:layout_marginRight="30dp"
+			
+		    android:layout_marginTop="3dp"
+		    
+		    android:id="@+id/from_name" />
+    </LinearLayout>
+</LinearLayout>

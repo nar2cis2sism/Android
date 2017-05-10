@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+	<TextView
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="下载路径" />
+	<EditText
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="http://download.kanbox.com/android/kanbox_3.1.6.apk"
+	    android:id="@+id/path" />
+	<Button
+	    android:layout_width="100dp"
+	    android:layout_height="wrap_content"
+	    android:text="开始下载"
+	    android:id="@+id/download" />
+	<ProgressBar
+		style="?android:attr/progressBarStyleHorizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:id="@+id/progress" />
+	<TextView
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center_horizontal"
+	    android:id="@+id/result" />
+</LinearLayout>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+	<LinearLayout
+	    android:orientation="vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" >
+	
+		<demo.widget.BadgeView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="OK" />
+	
+	    <TextView
+	        android:id="@+id/default_badge"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Default"
+	        android:drawableTop="@drawable/icon" />
+	
+	    <Button
+	        android:id="@+id/Position"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Position" />
+	
+	    <Button
+	        android:id="@+id/Size_Color"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Size/Color" />
+	
+	    <Button
+	        android:id="@+id/Animate_default"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Animate (default)" />
+	
+	    <Button
+	        android:id="@+id/Animate_custom"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Animate (custom)" />
+	
+	    <Button
+	        android:id="@+id/Custom"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Custom background drawable" />
+	
+	    <Button
+	        android:id="@+id/Clickable"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Clickable" />
+	
+	    <Button
+	        android:id="@+id/Increment"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Increment" />
+	
+	</LinearLayout>
+</ScrollView>

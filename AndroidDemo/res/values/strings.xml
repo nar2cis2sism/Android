@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="hello">Hello World, MainActivity!</string>
+    <string name="app_name">AndroidDemo</string>
+    <string name="real_app_name">非礼勿视</string>
+    <string name="searchLabel">查询</string>
+    <string name="searchHint">请输入查询内容</string>
+    
+    <string name="wallpaper_name">浪漫樱花</string>
+    <string name="wallpaper_description">浪漫樱花动态壁纸</string>
+    
+    <string name="refresh_tap">Tap to refresh..</string>
+    <string name="refresh_pull">Pull to refresh..</string>
+    <string name="refresh_release">Release &#160;to refresh..</string>
+    <string name="refresh_loading">Loading&#8230;</string>
+    <string name="refresh_completed">刷新完成</string>
+    
+    <string name="xliff">
+        <xliff:g>%1$s</xliff:g>种%s样的文本标记\n
+        example1:四位数不足前面补零
+        <xliff:g>%04d</xliff:g>\n
+        example2:保留1位小数
+        <xliff:g>%3$#.1f</xliff:g>\n
+    </string>
+</resources>

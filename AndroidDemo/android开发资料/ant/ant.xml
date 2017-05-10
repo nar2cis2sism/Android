@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="makeDTD">
+    <target name="makeDTD">
+        <antstructure output="ant_DTD.dtd" />
+    </target>
+</project>

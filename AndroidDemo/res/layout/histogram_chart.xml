@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="250dp"
+    android:background="@drawable/histogram_chart_bg"
+    android:layout_gravity="center_horizontal"
+    android:padding="10dp" >
+
+	<TextView
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center_horizontal"
+	    android:text="柱状图"
+	    android:textSize="18sp"
+	    android:textColor="#fdb814" />
+
+    <LinearLayout
+        android:id="@+id/histogram_container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center_horizontal"
+        android:paddingBottom="20dp" />
+
+</LinearLayout>

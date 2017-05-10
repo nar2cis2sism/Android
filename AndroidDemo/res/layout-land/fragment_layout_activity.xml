@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    android:baselineAligned="false"
+    android:showDividers="middle"
+    android:divider="?android:attr/dividerHorizontal" >
+
+    <fragment 
+        class="demo.fragment.TitlesFragment"
+        android:id="@+id/titles" 
+        android:layout_width="0px" 
+        android:layout_height="fill_parent"
+        android:layout_weight="1" />
+
+    <FrameLayout 
+        android:id="@+id/details" 
+        android:layout_width="0px" 
+        android:layout_height="fill_parent"
+        android:layout_weight="1" />
+
+</LinearLayout>

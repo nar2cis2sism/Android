@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+	<LinearLayout
+		android:orientation="vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:background="#ffffff"
+	    >
+	    <ListView
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="45dp"
+		    android:divider="@drawable/weibo_divider"
+		    android:listSelector="#00000000"
+		    android:cacheColorHint="#00000000"
+		    android:fadingEdge="none"
+		    android:id="@+id/lv" />
+	</LinearLayout>
+	
+	<RelativeLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@drawable/weibo_top"
+	    >
+	    <ImageView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_marginLeft="12dp"
+		    android:layout_centerVertical="true"
+		    android:src="@drawable/weibo_refresh" />
+	    <TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_centerInParent="true"
+		    android:text="闫昊"
+		    android:textColor="#ffffff"
+		    android:textSize="22sp"
+		    android:id="@+id/nick" />
+	    <ImageView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentRight="true"
+		    android:layout_marginRight="12dp"
+		    android:layout_centerVertical="true"
+		    android:src="@drawable/weibo_edit" />
+	</RelativeLayout>
+</FrameLayout>

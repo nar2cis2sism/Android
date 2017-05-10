@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="anim_type">
+        <item>zoom_enter</item>
+        <item>fade</item>
+        <item>alpha_rotate</item>
+        <item>alpha_scale_rotate</item>
+        <item>alpha_scale_translate_rotate</item>
+        <item>alpha_scale_translate</item>
+        <item>alpha_scale</item>
+        <item>alpha_translate_rotate</item>
+        <item>alpha_translate</item>
+        <item>my_rotate_action</item>
+        <item>my_scale_action</item>
+        <item>my_translate_action</item>
+        <item>myanimation_simple</item>
+        <item>myown_design</item>
+        <item>scale_rotate</item>
+        <item>scale_translate_rotate</item>
+        <item>scale_translate</item>
+        <item>translate_rotate</item>
+        <item>hyperspace_in</item>
+        <item>shake</item>
+        <item>push_left_in</item>
+        <item>push_up_in</item>
+        <item>slide_left</item>
+        <item>slide_top_to_bottom</item>
+        <item>wave_scale</item>
+    </string-array>
+    
+    <string-array name="setting_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    
+    <string-array name="setting_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+</resources>

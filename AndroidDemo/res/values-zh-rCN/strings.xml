@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    
+    <!-- Register Activity -->
+    
+    <string name="Register_username">用&#160;&#160;户&#160;&#160;名：</string>
+    <string name="Register_password">密&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;码：</string>
+    <string name="Register_password_confirm">密码确认：</string>
+    <string name="Register_mobile_number">手机号码：</string>
+    <string name="Register_name">真实姓名：</string>
+    <string name="Register_sex">性&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;别：</string>
+    <string name="Register_sex_male">男</string>
+    <string name="Register_sex_female">女</string>
+    <string name="Register_email">电子邮箱：</string>
+    <string name="Register_register">注册</string>
+    <string name="Register_back">返回</string>
+</resources>

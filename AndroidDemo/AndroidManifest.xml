@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="demo.android"
+      android:versionCode="1"
+      android:versionName="1.0">
+      
+    <!-- 为什么要加这个呢，因为某些低密度的小屏手机不能获取正确的屏幕尺寸 -->
+    <supports-screens 
+        android:smallScreens="true"
+        android:normalScreens="true"
+        android:largeScreens="true"
+        android:xlargeScreens="true"
+        android:resizeable="true"
+        android:anyDensity="true"
+        
+        android:requiresSmallestWidthDp="320"
+        android:compatibleWidthLimitDp="600"
+        android:largestWidthLimitDp="720" />
+    
+    <!-- android:targetSdkVersion<11才能在平板上显示菜单键 -->
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="7" />
+
+	<!-- 在SDCard中创建与删除文件权限 -->
+	<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+	<!-- 往SDCard写入数据权限 -->
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	
+    <!-- 访问互联网权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+	
+	<!-- 拨打电话权限 -->
+	<uses-permission android:name="android.permission.CALL_PHONE" />
+	<!-- 访问GSM网络状态权限 -->
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<!-- 改变GSM网络状态权限 -->
+	<uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+	<!-- 访问无线网络状态权限 -->
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<!-- 改变无线网络状态权限 -->
+	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+	<!-- 访问锁权限 -->
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<!-- 添加系统服务权限 -->
+	<uses-permission android:name="android.permission.ADD_SYSTEM_SERVICE" />
+	<!-- 摄像头控制权限 -->
+	<uses-permission android:name="android.permission.CAMERA" />
+	<!-- 录制音频权限 -->
+	<uses-permission android:name="android.permission.RECORD_AUDIO" />
+	<!-- 录制视频权限 -->
+	<uses-permission android:name="android.permission.RECORD_VIDEO" />
+	<!-- 发送短信权限 -->
+	<uses-permission android:name="android.permission.SEND_SMS" />
+	<!-- 手机振动权限 -->
+	<uses-permission android:name="android.permission.VIBRATE" />
+	<!-- 读取手机状态权限 -->
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<!-- 手机定位权限 -->
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<!-- 修改系统设置权限 -->
+	<uses-permission android:name="android.permission.WRITE_SETTINGS" />
+	<!-- 修改系统安全设置权限（一般不能修改） -->
+	<uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+	<!-- 接收短信权限 -->
+	<uses-permission android:name="android.permission.RECEIVE_SMS" />
+	<!-- 读取联系人权限 -->
+	<uses-permission android:name="android.permission.READ_CONTACTS" />
+	<!-- 电源管理权限 -->
+	<uses-permission android:name="android.permission.DEVICE_POWER" />
+	<!-- 开机广播权限 -->
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+	<!-- 创建快捷方式权限 -->
+	<uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+	<!-- 删除快捷方式权限 -->
+	<uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
+    <!-- 读取桌面快捷方式设置权限 -->
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+	<!-- 添加系统弹出框权限 -->
+	<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+	<!-- 设置壁纸权限 -->
+	<uses-permission android:name="android.permission.SET_WALLPAPER" />
+	<!-- 添加账户权限 -->
+	<uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+	<!-- 获取账户权限 -->
+	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
+	<!-- 同步账户权限 -->
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+	<!-- 蓝牙操作权限 -->
+	<uses-permission android:name="android.permission.BLUETOOTH" />
+	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+	<!-- 解除屏幕锁定权限 -->
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <!-- 获取系统任务权限 -->
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <!-- 读取日志权限 -->
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <!-- 改变系统配置权限 -->
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+	
+	<!-- 摄像头硬件 -->
+	<uses-feature android:name="android.hardware.camera" />
+	<uses-feature android:name="android.hardware.camera.autofocus" />
+    
+    <!-- 动态壁纸 -->
+    <uses-feature android:name="android.software.live_wallpaper"
+                  android:required="false" />
+    
+    <application android:label="@string/app_name" 
+                 android:icon="@drawable/icon" 
+                 android:name="engine.android.core.ApplicationManager"
+                 android:debuggable="true"
+                 android:theme="@style/AppTheme.NoTitleBar.Fullscreen" >// 可以设置应用程序主体
+    	<!-- 使用GOOGLE地图库,Tablet上不支持-->
+    	<uses-library android:name="com.google.android.maps" android:required="false" />
+    	
+        <activity android:name="demo.activity.MainActivity"
+                  android:label="@string/hello"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:launchMode="singleTask" >
+                  <!-- 设置横竖屏 -->
+                  android:screenOrientation="portrait|landscape"
+                  <!-- 设置软键盘不挤压界面 -->
+                  android:windowSoftInputMode="adjustPan"
+                  <!-- （屏幕方向或者实体键盘状态）改变不销毁当前Activity
+                  	在onConfigurationChanged方法里面处理 -->
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  <!-- 效果请到设置界面查看 -->
+                  android:launchMode="singleTask"
+            <intent-filter android:label="@string/real_app_name">
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <activity android:name="demo.activity.IntentActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:theme="@android:style/Theme" />
+        <activity android:name="demo.activity.LocationActivity" />
+        <activity android:name="demo.activity.MyMapActivity"
+                  android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />// 捕获搜索事件onSearchRequested()
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />// 搜索配置
+        </activity>
+        <activity android:name="demo.activity.ViewActivity" />
+        <activity android:name="demo.activity.NotificationActivity" />
+        <activity android:name="demo.activity.WebViewActivity" />
+        <activity android:name="demo.activity.GesturesActivity" />
+        <activity android:name="demo.activity.SettingActivity" 
+        		  android:theme="@style/Theme.setting" >
+            <intent-filter>
+                <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name="demo.activity.FaceActivity" />
+        <activity android:name="demo.activity.BluetoothActivity" />
+        <activity android:name="demo.activity.RingtoneActivity" />
+        <activity android:name="demo.activity.FragmentLayoutActivity"
+                  android:theme="@style/AppTheme"
+                  android:parentActivityName=".MainActivity"
+                  android:uiOptions="splitActionBarWhenNarrow" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data 
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+            
+            <meta-data 
+                android:name="android.support.UI_OPTIONS"
+                android:value="splitActionBarWhenNarrow" />
+        </activity>
+        <activity android:name="demo.activity.FragmentLayoutActivity$DetailsActivity" />
+        <activity android:name="demo.fragment.activity.NavigationDrawerActivity"
+                  android:label="Navigation Drawer"
+                  android:icon="@drawable/ic_launcher"
+                  android:theme="@style/AppTheme" />
+        <activity android:name="demo.fragment.activity.ViewPagerActivity"
+                  android:theme="@style/AppTheme" />
+        <activity android:name="demo.fragment.activity.PropertyAnimationActivity" />
+        <activity android:name="demo.activity.BatteryActivity"
+                  android:theme="@android:style/Theme.Dialog" />
+        <activity android:name="demo.activity.QRCodeActivity" />
+        <activity android:name=".QRCodeActivity$QRCodeImageActivity" />
+        <activity android:name="demo.activity.SensorActivity" />
+        <activity android:name="demo.activity.ShapeDrawble1" />
+        <activity android:name="demo.activity.MediaActivity" />
+        <activity android:name="demo.activity.WebServiceActivity" />
+        <activity android:name="demo.activity.Flashlight" />
+        <activity android:name="demo.activity.CallForwarding" />
+        <activity android:name="demo.activity.ThirdPartyActivity" />
+        <activity android:name="demo.activity.ThirdPartyActivity$TowerDefenceActivity" />
+        <activity android:name="demo.activity.AppUpgradeActivity" />
+        
+        <activity android:name="demo.activity.effect.EffectActivity" />
+        <activity android:name="demo.activity.effect.PanelActivity" />
+        <activity android:name="demo.activity.effect.GalleryActivity" />
+        <activity android:name="demo.activity.effect.Rotate3DActivity" />
+        <activity android:name="demo.activity.effect.TakePhotoActivity" />
+        <activity android:name="demo.activity.effect.RockerActivity" />
+        <activity android:name="demo.activity.effect.WaterActivity" />
+        <activity android:name="demo.activity.effect.FlingGalleryActivity" />
+        <activity android:name="demo.activity.effect.ImageZoomActivity" />
+        <activity android:name="demo.activity.effect.ScrollActivity" />
+        <activity android:name="demo.activity.effect.FloatingActivity"
+        		  android:theme="@android:style/Theme.NoTitleBar" />
+        <activity android:name="demo.activity.effect.LyricActivity" />
+        <activity android:name="demo.activity.effect.BookActivity" />
+        <activity android:name="demo.activity.effect.WheelActivity" />
+        <activity android:name="demo.activity.effect.PhotoFlowActivity" />
+        <activity android:name="demo.activity.effect.PasswordActivity" />
+        <activity android:name="demo.activity.effect.MagnifierActivity" />
+        <activity android:name="demo.activity.effect.BlazeActivity" />
+        <activity android:name="demo.activity.effect.BadgeActivity" />
+        <activity android:name="demo.activity.effect.LockPatternActivity"
+                  android:screenOrientation="portrait" />
+        <activity android:name="demo.activity.effect.BitmapActivity" />
+        <activity android:name="demo.activity.effect.AnimationActivity"
+                  android:theme="@style/AppTheme"
+                  android:label="Activity Animation" />
+        <activity android:name="demo.activity.effect.BlurGlassActivity"
+                  android:label="blur glass"
+                  android:icon="@drawable/ic_launcher"
+                  android:theme="@style/AppTheme.TranslucentActionBar" />
+        
+        <activity android:name="demo.activity.example.ExampleActivity" />
+        <activity android:name="demo.activity.example.LoginActivity" />
+        <activity android:name="demo.activity.example.SessionActivity" />
+        <activity android:name="demo.activity.example.MyRefreshActivity"
+                  android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" />
+        <activity android:name="demo.activity.example.MyTabActivity" />
+        <activity android:name="demo.activity.example.HeartActivity" />
+        <activity android:name="demo.activity.example.HttpConnectActivity" />
+        <activity android:name="demo.activity.example.WeiboActivity" />
+        <activity android:name="demo.activity.example.J2EETestActivity" />
+        <activity android:name="demo.activity.example.DownloadActivity" />
+        <activity android:name="demo.activity.example.MyExpandableListActivity" />
+        <activity android:name="demo.activity.example.ContactsActivity" />
+        <activity android:name="demo.activity.example.PinnedHeaderActivity" />
+        <activity android:name="demo.activity.example.FirstLetterActivity" />
+        <activity android:name="demo.activity.example.FileBrowser"
+                  android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" />
+        <activity android:name="demo.activity.example.XYChartActivity" />
+        <activity android:name="demo.activity.example.ScrawlActivity" />
+        <activity android:name="demo.activity.example.CalculatorActivity" 
+				  android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity android:name="demo.activity.example.HistogramChartActivity" 
+				  android:theme="@android:style/Theme.Dialog" />
+        <activity android:name="demo.activity.example.HorizontalActivity"
+                  android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" />
+        <activity android:name="demo.activity.example.DateTimePickerActivity"
+                  android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" />
+        <activity android:name="demo.activity.example.RegisterActivity"
+                  android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" />
+        
+        <activity android:name="demo.activity.test.TestActivity" />
+        <activity android:name="demo.activity.test.TestOnMethod" />
+        <activity android:name="demo.activity.test.TestOnHardWare" />
+        <activity android:name="demo.activity.test.TestOnUtil" />
+        <activity android:name="demo.activity.test.TestOnDateTime" />
+        <activity android:name="demo.activity.test.TestOnCrypto" />
+        <activity android:name="demo.activity.test.TestOnTouch" />
+        <activity android:name="demo.activity.test.TestOnDataBase" />
+        
+        <activity android:name="demo.library.LibraryActivity" />
+        <activity android:name="demo.library.Android_Flip" />
+        <activity android:name="demo.library.ExplosionActivity" />
+        
+        <!-- OAuth认证 -->
+        <activity android:name="demo.activity.example.OAuthActivity"
+                  android:launchMode="singleTask">
+	        <intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="oauth" android:host="oauth" />
+	        </intent-filter>
+        </activity>
+        <!-- ********************************************************************* -->
+        
+        <!-- AIDL定义 -->
+        <activity android:name="demo.aidl.AidlActivity" />
+        <service android:name="demo.aidl.AidlService"
+         		 android:process=":remote" >// 可以进程间通信
+        	<intent-filter>
+        		// 配置AIDL接口完整路径，客户端能够通过AIDL类名查找到它的实现类
+        		<action android:name="demo.aidl.IAidl" />
+        	</intent-filter>
+        </service>
+        <!-- ********************************************************************* -->
+        
+        <!-- 自定义搜索框 -->
+        <activity android:name="demo.search.SearchBox"
+        		  android:launchMode="singleTop" >// 单例模式，再次开启时会调用onNewIntent(Intent intent)函数
+        	<intent-filter>
+        		<action android:name="android.intent.action.SEARCH" />// 捕获搜索事件onSearchRequested()
+        	</intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />// 搜索配置
+        </activity>
+		<!--声名搜索提示内容提供者 -->
+        <provider android:name="demo.search.SearchProvider" android:authorities="searchprovider" />
+		<!--声名在整个应用程序中都可以使用自定义搜索框（通过调用onSearchRequested()或系统按键）进行搜索-->
+		<meta-data
+            android:name="android.app.default_searchable"
+            android:value="demo.search.SearchBox" /> 
+        <!-- ********************************************************************* -->
+        
+        <!-- AppWidget配置 -->
+        <activity android:name="demo.appwidget.ConfigActivity" >
+        	<intent-filter>
+        		<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+        	</intent-filter>
+        </activity>
+        
+        <receiver android:name="demo.appwidget.AppWidget"
+                  android:label="AndroidDemo widget">
+        	<intent-filter>
+        		<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        	</intent-filter>
+        	<meta-data android:name="android.appwidget.provider"
+        			   android:resource="@xml/appwidget" />
+        </receiver>
+        
+        <service android:name="demo.appwidget.WidgetService" 
+                 android:permission="android.permission.BIND_REMOTEVIEWS" />
+        
+        <activity android:name="demo.appwidget.EditWidget" />
+        <!-- ********************************************************************* -->
+        
+        <!-- 应用程序自启动 -->
+        <receiver android:name="demo.service.BootReceiver">
+        	<intent-filter>
+				<!-- 订阅启动意图 -->
+				<action android:name="android.intent.action.BOOT_COMPLETED"/>
+				<category android:name="android.intent.category.HOME" />
+        	</intent-filter>
+        </receiver>
+        <service android:name="demo.service.BootService" />
+        <!-- ********************************************************************* -->
+        
+        <!-- The authenticator service -->
+        <service
+            android:name="demo.account.AuthenticationService"
+            android:exported="true"
+            android:permission="demo.permission">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+        <!-- The sync service -->
+        <service
+            android:name="demo.account.SyncService"
+            android:exported="true"
+            android:permission="demo.permission">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+            <meta-data
+                android:name="android.provider.CONTACTS_STRUCTURE"
+                android:resource="@xml/contacts" />
+        </service>
+        <!-- ********************************************************************* -->
+        
+        <!-- Content Provider -->
+        <provider android:name="demo.provider.MyContentProvider" 
+            	  android:authorities="demo.provider.MyContentProvider" />
+        <activity android:name="demo.provider.EditContactActivity">
+        	<!-- Insert data -->
+            <intent-filter>
+                <action android:name="android.intent.action.INSERT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="demo.provider.MyContentProvider/android.insert"/>
+            </intent-filter>
+        	<!-- Edit data -->
+            <intent-filter>
+                <action android:name="android.intent.action.EDIT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="demo.provider.MyContentProvider/android.edit"/>
+            </intent-filter>
+        </activity>
+        <!-- ********************************************************************* -->
+        
+        <!-- 屏幕解锁 -->
+        <activity android:name="demo.lockscreen.LockActivity"
+                  android:theme="@android:style/Theme.Wallpaper.NoTitleBar.Fullscreen"
+                  android:launchMode="singleTask" />
+        <service android:name="demo.lockscreen.LockService" />
+        <!-- ********************************************************************* -->
+        
+        <!-- 屏幕锁屏 -->
+        <receiver android:name="demo.admin.MyAdmin"
+            	  android:permission="android.permission.BIND_DEVICE_ADMIN">
+        	<meta-data android:name="android.app.device_admin"
+        	    	   android:resource="@xml/my_admin"/>
+        	<intent-filter>
+				<action android:name="android.app.action.DEVICE_ADMIN_ENABLED"/>
+        	</intent-filter>
+        </receiver>
+        <!-- ********************************************************************* -->
+        
+        <!-- 动态壁纸 -->
+        <service android:name="demo.wallpaper.LiveWallpaper"
+                 android:label="@string/wallpaper_name"
+                 android:permission="android.permission.BIND_WALLPAPER">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService"/>
+            </intent-filter>
+            <meta-data android:name="android.service.wallpaper" android:resource="@xml/wallpaper" />
+        </service>
+        <activity android:name="demo.wallpaper.ConfigActivity" 
+                  android:label="测试"
+                  android:exported="true" />
+        <!-- ********************************************************************* -->
+        
+        <!-- 程序卸载问卷调查 -->
+        <activity android:name="demo.activity.UninstallActivity" />
+        <activity android:name="demo.activity.UninstallActivity$UninstallPage"
+                  android:launchMode="singleInstance" />
+        <service android:name="demo.activity.UninstallActivity$UninstallService" />
+        <!-- ********************************************************************* -->
+        
+        <!-- 网络监听器 -->
+        <receiver android:name="demo.service.ConnectivityChangeReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
+        <!-- ********************************************************************* -->
+        
+        <!-- 第三方包注入研究 -->
+        <activity android:name="com.chat.MainActivity"
+                  android:screenOrientation="portrait" />
+
+        <activity android:name="com.chat.WordsActivity" />
+        <activity android:name="com.chat.StoryActivity" />
+        <activity android:name="com.chat.JokeActivity" />
+        <activity android:name="com.chat.LifeActivity" />
+        <!-- ********************************************************************* -->
+    </application>
+</manifest> 

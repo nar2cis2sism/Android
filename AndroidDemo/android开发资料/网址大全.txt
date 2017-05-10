@@ -1,0 +1,29 @@
+Android?? 1.6 android.R.drawable Icon Resources
+	http://since2006.com/android/1.6-drawables.php
+	
+HttpClient 教程
+	http://www.cnblogs.com/loveyakamoz/archive/2011/07/21/2112804.html
+	
+众多Android 开源项目
+	http://www.cnblogs.com/TerryBlog/archive/2011/04/18/2019907.html
+	
+排序算法总结
+	http://www.doc88.com/p-69318940091.html
+	
+android源码
+	http://www.oschina.net/code/explore/android-4.0.1
+	
+android代码格式
+	http://source.android.com/source/code-style.html
+	
+GCM
+	http://www.cnblogs.com/tamer/archive/2012/06/28/2568739.html
+	
+Android开源库集锦 
+	http://blog.csdn.net/lancees/article/details/9223505
+	
+Android优秀开源项目
+	http://www.eoeandroid.com/thread-272453-1-1.html
+	
+GrepCode插件
+	http://repository.grepcode.com/java/ext-eclipse/

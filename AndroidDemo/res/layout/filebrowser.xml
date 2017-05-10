@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <TextView
+        android:id="@+id/path"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/filebrowser_path_bg"
+        
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:gravity="center_vertical"
+        
+        android:textSize="18sp"
+        
+        android:singleLine="true"
+        android:ellipsize="middle" />
+	<ListView
+	    android:id="@+id/fileList"
+	    android:layout_width="fill_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="1"
+	    
+        android:divider="#ff3089fe"
+        android:dividerHeight="2dp"
+        android:cacheColorHint="#00000000" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/filebrowser_toobar_bg"
+        >
+	    <ImageView
+	        android:id="@+id/toobar_up"
+	        android:layout_width="0dp"
+	        android:layout_height="35dp"
+	        android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+	        android:src="@drawable/filebrowser_toobar_up" />
+        <ImageView
+            android:id="@+id/toobar_history"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/filebrowser_toobar_history" />
+        <ImageView
+            android:id="@+id/toobar_edit"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/filebrowser_toobar_edit" />
+        <ImageView
+            android:id="@+id/toobar_refresh"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/filebrowser_toobar_refresh" />
+        <ImageView
+            android:id="@+id/toobar_option"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/filebrowser_toobar_option" />
+    </LinearLayout>
+</LinearLayout>

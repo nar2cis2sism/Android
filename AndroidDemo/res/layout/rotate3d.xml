@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<demo.widget.Rotate3DView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <RelativeLayout
+        android:layout_width="fill_parent" 
+        android:layout_height="fill_parent"
+        android:background="@drawable/rotate3d_bg1"
+        >
+        <include layout="@layout/rotate3d_button1" />
+    </RelativeLayout>
+    
+    <LinearLayout
+        android:layout_width="fill_parent" 
+        android:layout_height="fill_parent"
+        android:background="@drawable/rotate3d_bg2" />
+    
+    <RelativeLayout
+        android:layout_width="fill_parent" 
+        android:layout_height="fill_parent"
+        android:background="@drawable/rotate3d_bg3"
+        >
+        <include layout="@layout/rotate3d_button2" />
+    </RelativeLayout>
+</demo.widget.Rotate3DView>

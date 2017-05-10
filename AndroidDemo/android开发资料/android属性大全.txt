@@ -1,0 +1,22 @@
+manifest
+
+<activity>供其他应用使用的情况：
+
+android:allowTaskReparenting:当有另外一个应用要打开我们的程序，与Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET相似
+例如在一个应用中要查看一个web页面，在启动系统浏览器Activity后，这个Activity实例和当前应用处于同一个task，当我们的应用退居后台之后用户再次从主选单中启动应用，此时这个Activity实例将会重新宿主到Browser应用的task内，在我们的应用中将不会再看到这个Activity实例，而如果此时启动Browser应用，就会发现，第一个界面就是我们刚才打开的web页面，证明了这个Activity实例确实是宿主到了Browser应用的task内。
+
+<activity>应用在所有activity身上
+
+android:alwaysRetainTaskState:不允许系统清理task(只有定义在root activity of a task才有效)
+默认情况下，如果一个应用在后台呆的太久例如30分钟，用户从主选单再次选择该应用时，系统就会对该应用的task进行清理，除了根Activity，其他Activity都会被清除出栈，但是如果在根Activity中设置了此属性之后，用户再次启动应用时，仍然可以看到上一次操作的界面。
+
+android:clearTaskOnLaunch:每次启动打开首页(只有定义在root activity of a task才有效)
+每次用户重新启动这个应用时，都只会看到根Activity，task中的其他Activity都会被清除出栈。
+
+android:excludeFromRecents:不显示在recent apps里面(只有定义在root activity of a task才有效)
+
+
+
+
+android:finishOnTaskLaunch:每次启动销毁自己(文档上说对root activity有效，实际测试无效)
+这个属性和android:allowReparenting属性相似，但是会覆盖android:allowReparenting属性.The activity is not re-parented, but destroyed.

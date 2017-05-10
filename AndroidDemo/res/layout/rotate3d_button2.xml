@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <RelativeLayout
+        android:id="@+id/rotate3d_level3"
+        android:layout_width="280dp"
+        android:layout_height="140dp"
+        android:background="@drawable/rotate3d_level3"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        >
+        <ImageButton
+            android:id="@+id/rotate3d_level3_ic1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rotate3d_level3_ic1"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="12dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="6dp" />
+
+        <ImageButton
+            android:id="@+id/rotate3d_level3_ic2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rotate3d_level3_ic2"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="28dp"
+            android:layout_above="@+id/rotate3d_level3_ic1"
+            android:layout_marginBottom="12dp" />
+
+        <ImageButton
+            android:id="@+id/rotate3d_level3_ic3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rotate3d_level3_ic3"
+            android:layout_toRightOf="@+id/rotate3d_level3_ic2"
+            android:layout_marginLeft="6dp"
+            android:layout_above="@+id/rotate3d_level3_ic2"
+            android:layout_marginBottom="8dp" />
+
+        <ImageButton
+            android:id="@+id/rotate3d_level3_ic4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rotate3d_level3_ic4"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="6dp" />
+
+        <ImageButton
+            android:id="@+id/rotate3d_level3_ic5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rotate3d_level3_ic5"
+            android:layout_toLeftOf="@+id/rotate3d_level3_ic6"
+            android:layout_marginRight="6dp"
+            android:layout_above="@+id/rotate3d_level3_ic6"
+            android:layout_marginBottom="8dp" />
+
+        <ImageButton
+            android:id="@+id/rotate3d_level3_ic6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rotate3d_level3_ic6"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="28dp"
+            android:layout_above="@+id/rotate3d_level3_ic7"
+            android:layout_marginBottom="12dp" />
+
+        <ImageButton
+            android:id="@+id/rotate3d_level3_ic7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rotate3d_level3_ic7"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="12dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="6dp" />
+    </RelativeLayout>
+    
+    <RelativeLayout
+        android:id="@+id/rotate3d_level2"
+        android:layout_width="180dp"
+        android:layout_height="90dp"
+        android:background="@drawable/rotate3d_level2"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        >
+        <ImageButton
+            android:id="@+id/rotate3d_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rotate3d_menu"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="6dp" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rotate3d_search"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rotate3d_myyouku"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp" />
+    </RelativeLayout>
+    
+    <RelativeLayout
+        android:id="@+id/rotate3d_level1"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:background="@drawable/rotate3d_level1"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        >
+        <ImageButton
+            android:id="@+id/rotate3d_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rotate3d_home"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp" />
+    </RelativeLayout>
+</merge>

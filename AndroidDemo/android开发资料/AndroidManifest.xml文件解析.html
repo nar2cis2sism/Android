@@ -1,0 +1,1149 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Android学习笔记之AndroidManifest.xml文件解析 - 皮狼 - 博客园</title>
+<link type="text/css" rel="stylesheet" href="http://www.cnblogs.com/css/common.css"/>
+<link id="MainCss" type="text/css" rel="stylesheet" href="http://www.cnblogs.com/Skins/Valentine/style.css"/>
+<link type="text/css" rel="stylesheet" href="http://www.cnblogs.com/css/common2.css"/>
+<link type="text/css" rel="stylesheet" href="http://common.cnblogs.com/css/shCore.css"/>
+<link type="text/css" rel="stylesheet" href="http://common.cnblogs.com/css/shThemeDefault.css"/>
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/pilang/rss"/>
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/pilang/rsd.xml"/> 
+<script src="http://common.cnblogs.com/script/jquery.js" type="text/javascript"></script>  
+<script src="/script/common.js" type="text/javascript"></script>
+<script src="http://common.cnblogs.com/script/jquery.json-2.2.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="http://common.cnblogs.com/script/shCore.js"></script>
+<script type="text/javascript" src="http://common.cnblogs.com/script/shLanguage.js"></script>
+</head>
+<body>
+    <a name="top"></a>
+    <form method="post" action="2022932.html" id="Form1">
+<div class="aspNetHidden">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['Form1'];
+if (!theForm) {
+    theForm = document.Form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+        
+<!--done-->
+<TABLE cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
+<TR>
+	<TD width=184 background="/skins/Valentine/images/banner1.gif"></TD>
+	<TD background="/skins/Valentine/images/banner.gif">
+<!--done-->
+<div class="header">
+	<div class="headerText">
+		<a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/pilang/">皮狼</a><br>
+		<span style="font-size:12px;color:#4371A6;padding-left:20;">人生就像一场旅途，不在乎终点，我们要选择的是方向，思路与策略</span>
+	</div>
+</div>
+</TD>
+	<TD width=295 background="/skins/Valentine/images/banner2.gif"></TD>
+</TR>
+</TABLE>
+<div id="mylinks">
+<!--done-->
+<a id="MyLinks1_HomeLink" class="menu" href="http://www.cnblogs.com/">博客园</a>&nbsp;&nbsp;&nbsp;<a id="MyLinks1_MyHomeLink" class="mainmenu" href="http://www.cnblogs.com/pilang/">首页</a>&nbsp;&nbsp;&nbsp;<a id="MyLinks1_NewPostLink" class="mainmenu" rel="nofollow" href="http://www.cnblogs.com/pilang/admin/EditPosts.aspx?opt=1">新随笔</a>&nbsp;&nbsp;&nbsp;<a id="MyLinks1_NewArticleLink" class="mainmenu" href="/EnterMyBlog.aspx?NewArticle=1">新文章</a>&nbsp;&nbsp;&nbsp;<a id="MyLinks1_ContactLink" accesskey="9" class="mainmenu" rel="nofollow" href="http://space.cnblogs.com/msg/send/%e7%9a%ae%e7%8b%bc">联系</a>&nbsp;&nbsp;&nbsp;<a id="MyLinks1_Syndication" class="mainmenu" href="http://www.cnblogs.com/pilang/rss">订阅</a><a id="MyLinks1_XMLLink" href="http://www.cnblogs.com/pilang/rss"><img src="http://www.cnblogs.com/images/xml.gif" alt="订阅" /></a>&nbsp;&nbsp;&nbsp;<a id="MyLinks1_Admin" class="menu" rel="nofollow" href="http://www.cnblogs.com/pilang/admin/EditPosts.aspx">管理</a>
+</div>
+<div id="mytopmenu">
+	
+		<DIV id="mystats">
+			
+<!--done-->
+<div class="blogStats">
+posts - 4,comments - 5,trackbacks - 0
+
+</div></DIV>
+	
+</div>
+<div id="leftcontent" style="display:none">
+	
+		<DIV id="leftcontentcontainer">
+			<table id="Calendar1_entryCal" class="Cal" cellspacing="0" cellpadding="0" title="Calendar" style="border-width:1px;border-style:solid;border-collapse:collapse;border:0px">
+	<tr><td colspan="7" style="background-color:Transparent;"><table class="CalTitle" cellspacing="0" style="width:100%;border-collapse:collapse;">
+		<tr><td class="CalNextPrev" style="width:15%;"><a href="javascript:__doPostBack('Calendar1$entryCal','V4077')" style="color:Black" title="Go to the previous month">&lt;</a></td><td align="center" style="width:70%;">2011年4月</td><td class="CalNextPrev" align="right" style="width:15%;"><a href="javascript:__doPostBack('Calendar1$entryCal','V4138')" style="color:Black" title="Go to the next month">&gt;</a></td></tr>
+	</table></td></tr><tr><th class="CalDayHeader" align="center" abbr="日" scope="col">日</th><th class="CalDayHeader" align="center" abbr="一" scope="col">一</th><th class="CalDayHeader" align="center" abbr="二" scope="col">二</th><th class="CalDayHeader" align="center" abbr="三" scope="col">三</th><th class="CalDayHeader" align="center" abbr="四" scope="col">四</th><th class="CalDayHeader" align="center" abbr="五" scope="col">五</th><th class="CalDayHeader" align="center" abbr="六" scope="col">六</th></tr><tr><td class="CalOtherMonthDay" align="center" style="width:14%;">27</td><td class="CalOtherMonthDay" align="center" style="width:14%;">28</td><td class="CalOtherMonthDay" align="center" style="width:14%;">29</td><td class="CalOtherMonthDay" align="center" style="width:14%;">30</td><td class="CalOtherMonthDay" align="center" style="width:14%;">31</td><td align="center" style="width:14%;">1</td><td class="CalWeekendDay" align="center" style="width:14%;">2</td></tr><tr><td class="CalWeekendDay" align="center" style="width:14%;">3</td><td align="center" style="width:14%;">4</td><td align="center" style="width:14%;">5</td><td align="center" style="width:14%;">6</td><td align="center" style="width:14%;">7</td><td align="center" style="width:14%;">8</td><td class="CalWeekendDay" align="center" style="width:14%;">9</td></tr><tr><td class="CalWeekendDay" align="center" style="width:14%;">10</td><td align="center" style="width:14%;">11</td><td align="center" style="width:14%;">12</td><td align="center" style="width:14%;">13</td><td align="center" style="width:14%;">14</td><td align="center" style="width:14%;">15</td><td class="CalWeekendDay" align="center" style="width:14%;">16</td></tr><tr><td class="CalWeekendDay" align="center" style="width:14%;">17</td><td align="center" style="width:14%;">18</td><td align="center" style="width:14%;">19</td><td align="center" style="width:14%;"><a href="http://www.cnblogs.com/pilang/archive/2011/4/20.html"><u>20</u></a></td><td align="center" style="width:14%;">21</td><td align="center" style="width:14%;">22</td><td class="CalWeekendDay" align="center" style="width:14%;">23</td></tr><tr><td class="CalWeekendDay" align="center" style="width:14%;">24</td><td align="center" style="width:14%;">25</td><td align="center" style="width:14%;">26</td><td align="center" style="width:14%;">27</td><td align="center" style="width:14%;">28</td><td align="center" style="width:14%;">29</td><td class="CalWeekendDay" align="center" style="width:14%;">30</td></tr><tr><td class="CalOtherMonthDay" align="center" style="width:14%;">1</td><td class="CalOtherMonthDay" align="center" style="width:14%;">2</td><td class="CalOtherMonthDay" align="center" style="width:14%;">3</td><td class="CalOtherMonthDay" align="center" style="width:14%;">4</td><td class="CalOtherMonthDay" align="center" style="width:14%;">5</td><td class="CalOtherMonthDay" align="center" style="width:14%;">6</td><td class="CalOtherMonthDay" align="center" style="width:14%;">7</td></tr>
+</table>
+<br>
+			
+<!--done-->
+<div class="newsItem">
+	<div id="profile_block">昵称：<a href="http://home.cnblogs.com/u/pilang/">皮狼</a><br/>园龄：<a href="http://home.cnblogs.com/u/pilang/" title="入园时间：2010-04-17">1年5个月</a><br/>粉丝：<a href="http://home.cnblogs.com/u/pilang/followers/">3</a><br/>关注：<a href="http://home.cnblogs.com/u/pilang/followees/">0</a><div id="p_b_follow"></div><script type="text/javascript">cnblogs.UserManager.GetFollowStatus('2971f970-c149-df11-ba8f-001cf0cd104b')</script></div>
+</div>
+
+			
+<div id="side_ing_block">
+<h3 class="catListTitle">最新闪存</h3>
+<ul><li>一切从心开始 <a href="http://home.cnblogs.com/ing/180484/" class="ing_lnk">04-20 16:24</a></li><li><a href="http://home.cnblogs.com/pilang/ing/" class="ing_lnk">更多闪存...</a></li></ul>
+</div>
+
+
+<script type="text/javascript">
+var blogapp = 'pilang';
+</script>
+<div class="mySearch">
+<h3 class="catListTitle">搜索</h3>
+
+<div class="div_my_zzk"><input  type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk"/>&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk"/></div>
+
+<div class="div_my_zzk"><input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk"/>&nbsp;<input onclick="google_go()" type="button" value="谷歌搜索"  class="btn_my_zzk"/></div>
+
+</div>
+<h3 class="catListTitle">常用链接</h3>
+<ul>
+
+		<li><a id="SingleColumn1_ctl02_rptMainLinks_lnkLinkItem_0" href="http://www.cnblogs.com/pilang/MyPosts.html">我的随笔</a></li>
+	
+		<li><a id="SingleColumn1_ctl02_rptMainLinks_lnkLinkItem_1" href="http://home.cnblogs.com/pilang/">我的空间</a></li>
+	
+		<li><a id="SingleColumn1_ctl02_rptMainLinks_lnkLinkItem_2" href="http://space.cnblogs.com/msg/recent">我的短信</a></li>
+	
+		<li><a id="SingleColumn1_ctl02_rptMainLinks_lnkLinkItem_3" href="http://www.cnblogs.com/pilang/MyComments.html">我的评论</a></li>
+	
+<li><a id="itemListLink" onclick="this.blur();WarpClass('itemListLink', 'itemListLin_con');return false;" href="#">更多链接</a></li>
+</ul>
+<div id="itemListLin_con" style="display:none;">
+<ul>
+		<li><a id="SingleColumn1_ctl02_repeaterLinks_lnkLinkItem_0" title="我发表过评论的随笔" href="http://www.cnblogs.com/pilang/OtherPosts.html">我的参与</a></li>
+	
+		<li><a id="SingleColumn1_ctl02_repeaterLinks_lnkLinkItem_1" href="http://www.cnblogs.com/pilang/MyNews.html">我的新闻</a></li>
+	
+		<li><a id="SingleColumn1_ctl02_repeaterLinks_lnkLinkItem_2" href="http://www.cnblogs.com/pilang/RecentComments.html">最新评论</a></li>
+	
+		<li><a id="SingleColumn1_ctl02_repeaterLinks_lnkLinkItem_3" href="http://www.cnblogs.com/pilang/tag/">我的标签</a></li>
+	</ul>
+</div>
+
+<h3 class="catListTitle">我的标签</h3>
+<div id="MyTag">
+<ul>
+<li><a href="http://www.cnblogs.com/pilang/tag/WPF%20%E5%8A%A8%E6%80%81/">WPF 动态</a>(1)</li><li><a href="http://www.cnblogs.com/pilang/tag/wpf%20%E7%BB%91%E5%AE%9A/">wpf 绑定</a>(1)</li><li><a href="http://www.cnblogs.com/pilang/tag/WPF/">WPF</a>(1)</li><li><a href="http://www.cnblogs.com/pilang/tag/Image/">Image</a>(1)</li><li><a href="http://www.cnblogs.com/pilang/tag/%E5%8A%A8%E6%80%81/">动态</a>(1)</li><li><a href="http://www.cnblogs.com/pilang/tag/oracle%20connect%20resource/">oracle connect resource</a>(1)</li>
+</ul>
+</div>
+<!--done-->
+
+		<h1 class = "catListTitle">随笔分类</h1>
+		
+				<ul class = "catList">
+			
+				<li class = "catListItem"> <a id="SingleColumn1_Categories_CatList_LinkList_0_Link_0" class="listitem" href="http://www.cnblogs.com/pilang/category/311826.html">ORACLE积累</a><a id="SingleColumn1_Categories_CatList_LinkList_0_RssLink_0" class="listitem" href="#" onclick="return open_link(&#39;http://www.cnblogs.com/pilang/category/311826.html/rss&#39;);"><img src="/Images/xml.gif" alt="" /></a></li>
+			
+				<li class = "catListItem"> <a id="SingleColumn1_Categories_CatList_LinkList_0_Link_1" class="listitem" href="http://www.cnblogs.com/pilang/category/244402.html">WPF学习笔记(2)</a><a id="SingleColumn1_Categories_CatList_LinkList_0_RssLink_1" class="listitem" href="#" onclick="return open_link(&#39;http://www.cnblogs.com/pilang/category/244402.html/rss&#39;);"><img src="/Images/xml.gif" alt="" /></a></li>
+			
+				</ul>
+			
+	
+		<h1 class = "catListTitle">随笔档案</h1>
+		
+				<ul class = "catList">
+			
+				<li class = "catListItem"> <a id="SingleColumn1_Categories_CatList_LinkList_1_Link_0" class="listitem" href="http://www.cnblogs.com/pilang/archive/2011/04.html">2011年4月 (2)</a></li>
+			
+				<li class = "catListItem"> <a id="SingleColumn1_Categories_CatList_LinkList_1_Link_1" class="listitem" href="http://www.cnblogs.com/pilang/archive/2010/05.html">2010年5月 (2)</a></li>
+			
+				</ul>
+			
+	
+		<h1 class = "catListTitle">文章分类</h1>
+		
+				<ul class = "catList">
+			
+				<li class = "catListItem"> <a id="SingleColumn1_Categories_CatList_LinkList_2_Link_0" class="listitem" href="http://www.cnblogs.com/pilang/category/311831.html">ORACLE积累(7)</a><a id="SingleColumn1_Categories_CatList_LinkList_2_RssLink_0" class="listitem" href="#" onclick="return open_link(&#39;http://www.cnblogs.com/pilang/category/311831.html/rss&#39;);"><img src="/Images/xml.gif" alt="" /></a></li>
+			
+				<li class = "catListItem"> <a id="SingleColumn1_Categories_CatList_LinkList_2_Link_1" class="listitem" href="http://www.cnblogs.com/pilang/category/243359.html">WCF学习心得</a><a id="SingleColumn1_Categories_CatList_LinkList_2_RssLink_1" class="listitem" href="#" onclick="return open_link(&#39;http://www.cnblogs.com/pilang/category/243359.html/rss&#39;);"><img src="/Images/xml.gif" alt="" /></a></li>
+			
+				<li class = "catListItem"> <a id="SingleColumn1_Categories_CatList_LinkList_2_Link_2" class="listitem" href="http://www.cnblogs.com/pilang/category/243360.html">WPF学习心得(1)</a><a id="SingleColumn1_Categories_CatList_LinkList_2_RssLink_2" class="listitem" href="#" onclick="return open_link(&#39;http://www.cnblogs.com/pilang/category/243360.html/rss&#39;);"><img src="/Images/xml.gif" alt="" /></a></li>
+			
+				<li class = "catListItem"> <a id="SingleColumn1_Categories_CatList_LinkList_2_Link_3" class="listitem" href="http://www.cnblogs.com/pilang/category/243362.html">工作思考</a><a id="SingleColumn1_Categories_CatList_LinkList_2_RssLink_3" class="listitem" href="#" onclick="return open_link(&#39;http://www.cnblogs.com/pilang/category/243362.html/rss&#39;);"><img src="/Images/xml.gif" alt="" /></a></li>
+			
+				<li class = "catListItem"> <a id="SingleColumn1_Categories_CatList_LinkList_2_Link_4" class="listitem" href="http://www.cnblogs.com/pilang/category/243361.html">软件工程学习</a><a id="SingleColumn1_Categories_CatList_LinkList_2_RssLink_4" class="listitem" href="#" onclick="return open_link(&#39;http://www.cnblogs.com/pilang/category/243361.html/rss&#39;);"><img src="/Images/xml.gif" alt="" /></a></li>
+			
+				<li class = "catListItem"> <a id="SingleColumn1_Categories_CatList_LinkList_2_Link_5" class="listitem" href="http://www.cnblogs.com/pilang/category/243363.html">生活点滴(1)</a><a id="SingleColumn1_Categories_CatList_LinkList_2_RssLink_5" class="listitem" href="#" onclick="return open_link(&#39;http://www.cnblogs.com/pilang/category/243363.html/rss&#39;);"><img src="/Images/xml.gif" alt="" /></a></li>
+			
+				<li class = "catListItem"> <a id="SingleColumn1_Categories_CatList_LinkList_2_Link_6" class="listitem" href="http://www.cnblogs.com/pilang/category/295116.html">项目管理</a><a id="SingleColumn1_Categories_CatList_LinkList_2_RssLink_6" class="listitem" href="#" onclick="return open_link(&#39;http://www.cnblogs.com/pilang/category/295116.html/rss&#39;);"><img src="/Images/xml.gif" alt="" /></a></li>
+			
+				<li class = "catListItem"> <a id="SingleColumn1_Categories_CatList_LinkList_2_Link_7" class="listitem" href="http://www.cnblogs.com/pilang/category/243364.html">心情随笔(1)</a><a id="SingleColumn1_Categories_CatList_LinkList_2_RssLink_7" class="listitem" href="#" onclick="return open_link(&#39;http://www.cnblogs.com/pilang/category/243364.html/rss&#39;);"><img src="/Images/xml.gif" alt="" /></a></li>
+			
+				</ul>
+			
+	
+		<h1 class = "catListTitle">Android</h1>
+		
+				<ul class = "catList">
+			
+				<li class = "catListItem"> <a id="SingleColumn1_Categories_CatList_LinkList_3_Link_0" class="listitem" href="http://www.cnblogs.com/coolszy/archive/2011/03/24/1993631.html">http://www.cnblogs.com/coolszy/archive/2011/03/24/1993631.html</a></li>
+			
+				</ul>
+			
+	
+
+
+<h3 class="catListTitle">最新评论</h3>
+<div class="RecentComment" id="RecentComments">
+	
+			<ul>
+		
+			<li>
+				<a id="SingleColumn1__1df23cc_CommentList_Hyperlink1_0" href="http://www.cnblogs.com/pilang/archive/2011/04/20/2022932.html#2183079">1. Re:Android学习笔记之AndroidManifest.xml文件解析</a>
+			</li>
+			<li>
+				good
+			</li>
+			<li style="text-align:right;margin-right:4px">
+				--TINKL</li>
+		
+			<li>
+				<a id="SingleColumn1__1df23cc_CommentList_Hyperlink1_1" href="http://www.cnblogs.com/pilang/archive/2010/05/30/1747485.html#2092078">2. Re:WPF之IMage控件</a>
+			</li>
+			<li>
+				楼主的方法很好，但是写的太简单了
+			</li>
+			<li style="text-align:right;margin-right:4px">
+				--jpjiang4648</li>
+		
+			<li>
+				<a id="SingleColumn1__1df23cc_CommentList_Hyperlink1_2" href="http://www.cnblogs.com/pilang/archive/2011/04/20/2022932.html#2076589">3. Re:Android学习笔记之AndroidManifest.xml文件解析</a>
+			</li>
+			<li>
+				GOOD! 详细的讲解和翻译很有帮助。 3Q<br/>
+			</li>
+			<li style="text-align:right;margin-right:4px">
+				--TINKL</li>
+		
+			<li>
+				<a id="SingleColumn1__1df23cc_CommentList_Hyperlink1_3" href="http://www.cnblogs.com/pilang/archive/2011/04/20/2022336.html#2076055">4. Re:多项目管理的一点思考</a>
+			</li>
+			<li>
+				撒，有闲情逸致的话就去过CMM4吧，就不用想这些东西了……
+			</li>
+			<li style="text-align:right;margin-right:4px">
+				--陈梓瀚(vczh)</li>
+		
+			<li>
+				<a id="SingleColumn1__1df23cc_CommentList_Hyperlink1_4" href="http://www.cnblogs.com/pilang/archive/2010/05/30/1747485.html#1839504">5. Re:WPF之IMage控件</a>
+			</li>
+			<li>
+				可阅读性不强,内容应该不错.
+			</li>
+			<li style="text-align:right;margin-right:4px">
+				--yawer</li>
+		
+			</ul>
+		
+</div>
+
+<h3 class="catListTitle">阅读排行榜</h3>
+<div class="RecentComment" id="TopViewPosts"> 
+	
+			<ul style="word-break:break-all">
+		
+			<li>
+				<a id="SingleColumn1_ctl06_TopList_Hyperlink1_0" href="http://www.cnblogs.com/pilang/archive/2011/04/20/2022932.html">1. Android学习笔记之AndroidManifest.xml文件解析(3830)</a>
+			</li>
+		
+			<li>
+				<a id="SingleColumn1_ctl06_TopList_Hyperlink1_1" href="http://www.cnblogs.com/pilang/archive/2010/05/30/1747485.html">2. WPF之IMage控件(1964)</a>
+			</li>
+		
+			<li>
+				<a id="SingleColumn1_ctl06_TopList_Hyperlink1_2" href="http://www.cnblogs.com/pilang/archive/2010/05/05/1728112.html">3. wpf动态加载控件(1016)</a>
+			</li>
+		
+			<li>
+				<a id="SingleColumn1_ctl06_TopList_Hyperlink1_3" href="http://www.cnblogs.com/pilang/archive/2011/04/20/2022336.html">4. 多项目管理的一点思考(207)</a>
+			</li>
+		
+			</ul>
+		
+</div>
+
+<h3 class="catListTitle">评论排行榜</h3>
+<div class="RecentComment" id="TopCommentsPosts">
+	
+			<ul style="word-break:break-all">
+		
+			<li>
+				<a id="SingleColumn1_ctl07_TopList_Hyperlink1_0" href="http://www.cnblogs.com/pilang/archive/2011/04/20/2022932.html">1. Android学习笔记之AndroidManifest.xml文件解析(2)</a>
+			</li>
+		
+			<li>
+				<a id="SingleColumn1_ctl07_TopList_Hyperlink1_1" href="http://www.cnblogs.com/pilang/archive/2010/05/30/1747485.html">2. WPF之IMage控件(2)</a>
+			</li>
+		
+			<li>
+				<a id="SingleColumn1_ctl07_TopList_Hyperlink1_2" href="http://www.cnblogs.com/pilang/archive/2011/04/20/2022336.html">3. 多项目管理的一点思考(1)</a>
+			</li>
+		
+			<li>
+				<a id="SingleColumn1_ctl07_TopList_Hyperlink1_3" href="http://www.cnblogs.com/pilang/archive/2010/05/05/1728112.html">4. wpf动态加载控件(0)</a>
+			</li>
+		
+			</ul>
+		
+</div></DIV>
+	
+</div>
+<div id="centercontent">
+	
+					
+<!--done-->
+<div class = "post">
+	<div class = "postTitle">
+		<a id="ctl02_TitleUrl" class="postTitle2" href="http://www.cnblogs.com/pilang/archive/2011/04/20/2022932.html">Android学习笔记之AndroidManifest.xml文件解析</a>
+	</div>
+	<div id="cnblogs_post_body"><p>一、关于AndroidManifest.xml</p>
+<p>AndroidManifest.xml 是每个android程序中必须的文件。它位于整个项目的根目录，描述了package中暴露的组件（activities, services, 等等），他们各自的实现类，各种能被处理的数据和启动位置。 除了能声明程序中的Activities, ContentProviders, Services, 和Intent Receivers,还能指定permissions和instrumentation（安全控制和测试）</p>
+<p>二、AndroidManifest.xml结构</p>
+<p>&lt;?xmlversion="1.0"encoding="utf-8"?&gt;</p>
+<p>&lt;manifest&gt;</p>
+<p>&nbsp;&nbsp;&nbsp; &lt;application&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;activity&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;intent-filter&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;action/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;category/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/intent-filter&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/activity&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;activity-alias&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;intent-filter&gt;&lt;/intent-filter&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;meta-data/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/activity-alias&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;service&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;intent-filter&gt;&lt;/intent-filter&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;meta-data/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/service&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;receiver&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;intent-filter&gt;&lt;/intent-filter&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;meta-data/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/receiver&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;provider&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;grant-uri-permission/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;meta-data/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/provider&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;uses-library/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp; &lt;/application&gt;</p>
+<p>&nbsp;&nbsp;&nbsp; &lt;uses-permission/&gt;</p>
+
+<p>&nbsp;&nbsp;&nbsp; &lt;permission/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp; &lt;permission-tree/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp; &lt;permission-group/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp; &lt;instrumentation/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp; &lt;uses-sdk/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp; &lt;uses-configuration/&gt;&nbsp; </p>
+<p>&nbsp;&nbsp;&nbsp; &lt;uses-feature/&gt;&nbsp; </p>
+<p>&nbsp;&nbsp;&nbsp; &lt;supports-screens/&gt; </p>
+
+<p>&lt;/manifest&gt;</p>
+
+<p>三、各个节点的详细介绍</p>
+<p>&nbsp;上面就是整个am(androidManifest).xml的结构，下面以外向内开始阐述～～</p>
+<p>1、第一层(&lt;Manifest&gt;):(属性)</p>
+<p>&lt;manifest&nbsp; xmlns:android="<a href="http://schemas.android.com/apk/res/android">http://schemas.android.com/apk/res/android</a>"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; package="com.woody.test"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:sharedUserId="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:sharedUserLabel="string resource"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:versionCode="integer"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:versionName="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:installLocation=["auto" | "internalOnly" | "preferExternal"] &gt;<br />&lt;/manifest&gt;</p>
+<p>A、xmlns:android</p>
+<p>定义android命名空间，一般为<a href="http://schemas.android.com/apk/res/android">http://schemas.android.com/apk/res/android</a>，这样使得Android中各种标准属性能在文件中使用，提供了大部分元素中的数据。</p>
+
+<p><br />B、package</p>
+<p>指定本应用内java主程序包的包名，它也是一个应用进程的默认名称</p>
+
+<p><br />C、sharedUserId</p>
+<p>表明数据权限，因为默认情况下，Android给每个APK分配一个唯一的UserID，所以是默认禁止不同APK访问共享数据的。若要共享数据，第一可以采用Share Preference方法，第二种就可以采用sharedUserId了，将不同APK的sharedUserId都设为一样，则这些APK之间就可以互相共享数据了。详见：<a href="http://wallage.blog.163.com/blog/static/17389624201011010539408/">http://wallage.blog.163.com/blog/static/17389624201011010539408/</a></p>
+
+<p>D、sharedUserLabel</p>
+<p>一个共享的用户名，它只有在设置了sharedUserId属性的前提下才会有意义</p>
+
+<p><br />E、versionCode</p>
+<p>是给设备程序识别版本(升级)用的必须是一个interger值代表app更新过多少次，比如第一版一般为1，之后若要更新版本就设置为2，3等等。。。</p>
+
+<p><br />F、versionName</p>
+<p>这个名称是给用户看的，你可以将你的APP版本号设置为1.1版，后续更新版本设置为1.2、2.0版本等等。。。</p>
+
+<p><br />G、installLocation</p>
+<p>安装参数，是Android2.2中的一个新特性，installLocation有三个值可以选择：internalOnly、auto、preferExternal</p>
+<p>选择preferExternal,系统会优先考虑将APK安装到SD卡上(当然最终用户可以选择为内部ROM存储上，如果SD存储已满，也会安装到内部存储上)</p>
+<p>选择auto，系统将会根据存储空间自己去适应</p>
+<p>选择internalOnly是指必须安装到内部才能运行</p>
+<p>(注：需要进行后台类监控的APP最好安装在内部，而一些较大的游戏APP最好安装在SD卡上。现默认为安装在内部，如果把APP安装在SD卡上，首先得设置你的level为8，并且要配置android:installLocation这个参数的属性为preferExternal)</p>
+
+<p><br />2、第二层(&lt;Application&gt;):属性</p>
+<p>一个AndroidManifest.xml中必须含有一个Application标签，这个标签声明了每一个应用程序的组件及其属性(如icon,label,permission等)</p>
+<p>&lt;application&nbsp; android:allowClearUserData=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:allowTaskReparenting=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:backupAgent="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:debuggable=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:description="string resource"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:enabled=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:hasCode=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:icon="drawable resource"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:killAfterRestore=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:label="string resource"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:manageSpaceActivity="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:name="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:permission="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:persistent=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:process="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:restoreAnyVersion=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:taskAffinity="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:theme="resource or theme" &gt;<br />&lt;/application&gt;</p>
+<p>A、android:allowClearUserData('true' or 'false')</p>
+<p>用户是否能选择自行清除数据，默认为true，程序管理器包含一个选择允许用户清除数据。当为true时，用户可自己清理用户数据，反之亦然</p>
+
+<p><br />B、android:allowTaskReparenting('true' or 'false')</p>
+<p>是否允许activity更换从属的任务，比如从短信息任务切换到浏览器任务</p>
+
+<p><br />C、android:backupAgent</p>
+<p>这也是Android2.2中的一个新特性，设置该APP的备份，属性值应该是一个完整的类名，如com.project.TestCase，此属性并没有默认值，并且类名必须得指定(就是个备份工具，将数据备份到云端的操作)</p>
+
+<p><br />D、android:debuggable</p>
+<p>这个从字面上就可以看出是什么作用的，当设置为true时，表明该APP在手机上可以被调试。默认为false,在false的情况下调试该APP，就会报以下错误：</p>
+
+<p>Device XXX requires that applications explicitely declare themselves as debuggable in their manifest.</p>
+<p>&nbsp;Application XXX does not have the attribute 'debuggable' set to TRUE in its manifest and cannot be debugged.</p>
+
+<p><br />E、android:description/android:label</p>
+<p>此两个属性都是为许可提供的，均为字符串资源，当用户去看许可列表(android:label)或者某个许可的详细信息(android:description)时，这些字符串资源就可以显示给用户。label应当尽量简短，之需要告知用户该许可是在保护什么功能就行。而description可以用于具体描述获取该许可的程序可以做哪些事情，实际上让用户可以知道如果他们同意程序获取该权限的话，该程序可以做什么。我们通常用两句话来描述许可，第一句描述该许可，第二句警告用户如果批准该权限会可能有什么不好的事情发生</p>
+
+<p><br />F、android:enabled</p>
+<p>Android系统是否能够实例化该应用程序的组件，如果为true，每个组件的enabled属性决定那个组件是否可以被 enabled。如果为false，它覆盖组件指定的值；所有组件都是disabled。</p>
+
+<p><br />G、android:hasCode('true' or 'false')</p>
+<p>表示此APP是否包含任何的代码，默认为true，若为false，则系统在运行组件时，不会去尝试加载任何的APP代码</p>
+<p>一个应用程序自身不会含有任何的代码，除非内置组件类，比如Activity类，此类使用了AliasActivity类，当然这是个罕见的现象</p>
+<p>(在Android2.3可以用标准C来开发应用程序，可在androidManifest.xml中将此属性设置为false,因为这个APP本身已经不含有任何的JAVA代码了)</p>
+
+<p>H、android:icon</p>
+<p>这个很简单，就是声明整个APP的图标，图片一般都放在drawable文件夹下</p>
+
+<p>I、android:killAfterRestore</p>
+
+<p>J、android:manageSpaceActivity</p>
+
+<p>K、android:name</p>
+<p>为应用程序所实现的Application子类的全名。当应用程序进程开始时，该类在所有应用程序组件之前被实例化。 </p>
+<p>若该类(比方androidMain类)是在声明的package下，则可以直接声明android:name="androidMain",但此类是在package下面的子包的话，就必须声明为全路径或android:name="package名称.子包名成.androidMain"</p>
+
+<p>L、android:permission</p>
+<p>设置许可名，这个属性若在&lt;application&gt;上定义的话，是一个给应用程序的所有组件设置许可的便捷方式，当然它是被各组件设置的许可名所覆盖的</p>
+
+<p>M、android:presistent</p>
+<p>该应用程序是否应该在任何时候都保持运行状态,默认为false。因为应用程序通常不应该设置本标识，持续模式仅仅应该设置给某些系统应用程序才是有意义的。 </p>
+
+<p>N、android:process</p>
+<p>应用程序运行的进程名，它的默认值为&lt;manifest&gt;元素里设置的包名，当然每个组件都可以通过设置该属性来覆盖默认值。如果你想两个应用程序共用一个进程的话，你可以设置他们的android:process相同，但前提条件是他们共享一个用户ID及被赋予了相同证书的时候</p>
+
+<p>O、android:restoreAnyVersion</p>
+<p>同样也是android2.2的一个新特性，用来表明应用是否准备尝试恢复所有的备份，甚至该备份是比当前设备上更要新的版本，默认是false</p>
+
+<p>P、android:taskAffinity </p>
+<p>拥有相同的affinity的Activity理论上属于相同的Task，应用程序默认的affinity的名字是&lt;manifest&gt;元素中设定的package名</p>
+
+<p><br />Q、android:theme</p>
+<p>是一个资源的风格，它定义了一个默认的主题风格给所有的activity,当然也可以在自己的theme里面去设置它，有点类似style。</p>
+<p>3、第三层(&lt;Activity&gt;):属性</p>
+<p>&lt;activity android:allowTaskReparenting=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:alwaysRetainTaskState=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:clearTaskOnLaunch=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:configChanges=["mcc", "mnc", "locale",<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "touchscreen", "keyboard", "keyboardHidden",<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "navigation", "orientation", "screenLayout",<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "fontScale", "uiMode"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:enabled=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:excludeFromRecents=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:exported=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:finishOnTaskLaunch=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:icon="drawable resource"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:label="string resource"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:launchMode=["multiple" | "singleTop" |<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "singleTask" | "singleInstance"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:multiprocess=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:name="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:noHistory=["true" | "false"]&nbsp; <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:permission="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:process="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:screenOrientation=["unspecified" | "user" | "behind" |<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "landscape" | "portrait" |<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "sensor" | "nosensor"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:stateNotNeeded=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:taskAffinity="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:theme="resource or theme"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:windowSoftInputMode=["stateUnspecified",<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "stateUnchanged", "stateHidden",<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "stateAlwaysHidden", "stateVisible",<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "stateAlwaysVisible", "adjustUnspecified",<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "adjustResize", "adjustPan"] &gt;&nbsp;&nbsp; <br />&lt;/activity&gt;</p>
+<p>(注：有些在application中重复的就不多阐述了)</p>
+<p>1、android:alwaysRetainTaskState</p>
+<p>&nbsp;是否保留状态不变， 比如切换回home, 再从新打开，activity处于最后的状态。比如一个浏览器拥有很多状态(当打开了多个TAB的时候)，用户并不希望丢失这些状态时，此时可将此属性设置为true</p>
+
+<p>2、android:clearTaskOnLaunch <br />比如 P 是 activity, Q 是被P 触发的 activity, 然后返回Home, 重新启动 P，是否显示 Q</p>
+
+<p>3、android:configChanges</p>
+<p>当配置list发生修改时， 是否调用 onConfigurationChanged() 方法&nbsp; 比如 "locale|navigation|orientation". <br />这个我用过,主要用来看手机方向改变的. android手机在旋转后,layout会重新布局, 如何做到呢?<br />正常情况下. 如果手机旋转了.当前Activity后杀掉,然后根据方向重新加载这个Activity. 就会从onCreate开始重新加载.<br />如果你设置了 这个选项, 当手机旋转后,当前Activity之后调用onConfigurationChanged() 方法. 而不跑onCreate方法等.</p>
+
+<p>4、android:excludeFromRecents</p>
+<p>是否可被显示在最近打开的activity列表里，默认是false</p>
+
+<p>5、android:finishOnTaskLaunch</p>
+<p>当用户重新启动这个任务的时候，是否关闭已打开的activity，默认是false</p>
+<p>如果这个属性和allowTaskReparenting都是true,这个属性就是王牌。Activity的亲和力将被忽略。该Activity已经被摧毁并非re-parented</p>
+
+<p><br />6、android:launchMode(Activity加载模式)</p>
+<p>在多Activity开发中，有可能是自己应用之间的Activity跳转，或者夹带其他应用的可复用Activity。可能会希望跳转到原来某个Activity实例，而不是产生大量重复的Activity。这需要为Activity配置特定的加载模式，而不是使用默认的加载模式</p>
+
+<p>Activity有四种加载模式：</p>
+<p>standard、singleTop、singleTask、singleInstance(其中前两个是一组、后两个是一组)，默认为standard <br />&nbsp;</p>
+<p>standard：就是intent将发送给新的实例，所以每次跳转都会生成新的activity。</p>
+<p>singleTop：也是发送新的实例，但不同standard的一点是，在请求的Activity正好位于栈顶时(配置成singleTop的Activity)，不会构造新的实例</p>
+<p>singleTask：和后面的singleInstance都只创建一个实例，当intent到来，需要创建设置为singleTask的Activity的时候，系统会检查栈里面是否已经有该Activity的实例。如果有直接将intent发送给它。</p>
+<p>singleInstance：</p>
+<p>首先说明一下task这个概念，Task可以认为是一个栈，可放入多个Activity。比如启动一个应用，那么Android就创建了一个Task，然后启动这个应用的入口Activity，那在它的界面上调用其他的Activity也只是在这个task里面。那如果在多个task中共享一个Activity的话怎么办呢。举个例来说，如果开启一个导游服务类的应用程序，里面有个Activity是开启GOOGLE地图的，当按下home键退回到主菜单又启动GOOGLE地图的应用时，显示的就是刚才的地图，实际上是同一个Activity，实际上这就引入了singleInstance。singleInstance模式就是将该Activity单独放入一个栈中，这样这个栈中只有这一个Activity，不同应用的intent都由这个Activity接收和展示，这样就做到了共享。当然前提是这些应用都没有被销毁，所以刚才是按下的HOME键，如果按下了返回键，则无效</p>
+
+<p>7、android:multiprocess</p>
+<p>是否允许多进程，默认是false</p>
+<p>具体可看该篇文章：<a href="http://www.bangchui.org/simple/?t3181.html">http://www.bangchui.org/simple/?t3181.html</a></p>
+
+<p>8、android:noHistory</p>
+<p>当用户从Activity上离开并且它在屏幕上不再可见时，Activity是否从Activity stack中清除并结束。默认是false。Activity不会留下历史痕迹</p>
+
+<p>9、android:screenOrientation </p>
+<p>activity显示的模式</p>
+<p>默认为unspecified：由系统自动判断显示方向</p>
+<p>landscape横屏模式，宽度比高度大</p>
+<p>portrait竖屏模式, 高度比宽度大</p>
+<p>user模式，用户当前首选的方向</p>
+<p>behind模式：和该Activity下面的那个Activity的方向一致(在Activity堆栈中的) </p>
+<p>sensor模式：有物理的感应器来决定。如果用户旋转设备这屏幕会横竖屏切换</p>
+<p>nosensor模式：忽略物理感应器，这样就不会随着用户旋转设备而更改了 </p>
+
+<p>10、android:stateNotNeeded</p>
+<p>activity被销毁或者成功重启时是否保存状态 </p>
+
+<p>11、android:windowSoftInputMode</p>
+<p>activity主窗口与软键盘的交互模式，可以用来避免输入法面板遮挡问题，Android1.5后的一个新特性。</p>
+<p>这个属性能影响两件事情：</p>
+<p>【A】当有焦点产生时，软键盘是隐藏还是显示</p>
+<p>【B】是否减少活动主窗口大小以便腾出空间放软键盘</p>
+<p>各值的含义：</p>
+<p>【A】stateUnspecified：软键盘的状态并没有指定，系统将选择一个合适的状态或依赖于主题的设置</p>
+<p>【B】stateUnchanged：当这个activity出现时，软键盘将一直保持在上一个activity里的状态，无论是隐藏还是显示</p>
+<p>【C】stateHidden：用户选择activity时，软键盘总是被隐藏</p>
+<p>【D】stateAlwaysHidden：当该Activity主窗口获取焦点时，软键盘也总是被隐藏的</p>
+<p>【E】stateVisible：软键盘通常是可见的</p>
+<p>【F】stateAlwaysVisible：用户选择activity时，软键盘总是显示的状态</p>
+<p>【G】adjustUnspecified：默认设置，通常由系统自行决定是隐藏还是显示</p>
+<p>【H】adjustResize：该Activity总是调整屏幕的大小以便留出软键盘的空间</p>
+<p>【I】adjustPan：当前窗口的内容将自动移动以便当前焦点从不被键盘覆盖和用户能总是看到输入内容的部分</p>
+
+
+<p>4、第四层(&lt;intent-filter&gt;)</p>
+<p>结构图：</p>
+<p>&lt;intent-filter&nbsp; android:icon="drawable resource"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:label="string resource"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:priority="integer" &gt;</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;action /&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;category /&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;data /&gt;</p>
+<p>&lt;/intent-filter&gt; <br />&nbsp;</p>
+<p>intent-filter属性</p>
+<p>android:priority(解释：有序广播主要是按照声明的优先级别，如A的级别高于B，那么，广播先传给A，再传给B。优先级别就是用设置priority属性来确定，范围是从-1000～1000，数越大优先级别越高)</p>
+
+<p><br />Intent filter内会设定的资料包括action,data与category三种。也就是说filter只会与intent里的这三种资料作对比动作</p>
+
+<p><br />action属性</p>
+<p>action很简单，只有android:name这个属性。常见的android:name值为android.intent.action.MAIN，表明此activity是作为应用程序的入口。有关android:name具体有哪些值，可参照这个网址：<a href="http://hi.baidu.com/linghtway/blog/item/83713cc1c2d053170ff477a7.html">http://hi.baidu.com/linghtway/blog/item/83713cc1c2d053170ff477a7.html</a></p>
+
+<p>category属性</p>
+<p>category也只有android:name属性。常见的android:name值为android.intent.category.LAUNCHER(决定应用程序是否显示在程序列表里)</p>
+<p>有关android:name具体有哪些值，可参照这个网址：<a href="http://chroya.javaeye.com/blog/685871">http://chroya.javaeye.com/blog/685871</a></p>
+
+<p>data属性</p>
+<p>&lt;data&nbsp; android:host="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:mimeType="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:path="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:pathPattern="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:pathPrefix="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:port="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:scheme="string"/&gt;</p>
+<p>【1】每个&lt;data&gt;元素指定一个URI和数据类型（MIME类型）。它有四个属性scheme、host、port、path对应于URI的每个部分： <br />scheme://host:port/path </p>
+<p>scheme的值一般为"http"，host为包名，port为端口号，path为具体地址。如：<a href="http://com.test.project:200/folder/etc">http://com.test.project:200/folder/etc</a></p>
+<p>其中host和port合起来构成URI的凭据(authority)，如果host没有指定，则port也会被忽略</p>
+<p>要让authority有意义，scheme也必须要指定。要让path有意义，scheme+authority也必须要指定</p>
+<p>【2】mimeType（指定数据类型），若mimeType为'Image'，则会从content Provider的指定地址中获取image类型的数据。还有'video'啥的，若设置为video/mp4，则表示在指定地址中获取mp4格式的video文件</p>
+<p>【3】而pathPattern和PathPrefix主要是为了格式化path所使用的</p>
+
+<p>5、第四层&lt;meta-data&gt;</p>
+<p>&lt;meta-data android:name="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:resource="resource specification"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:value="string"/&gt;</p>
+<p>这是该元素的基本结构.可以包含在&lt;activity&gt; &lt;activity-alias&gt; &lt;service&gt; &lt;receiver&gt;四个元素中。</p>
+<p>android:name（解释：元数据项的名字，为了保证这个名字是唯一的，采用java风格的命名规范，如com.woody.project.fried)</p>
+<p>android:resource(解释：资源的一个引用，指定给这个项的值是该资源的id。该id可以通过方法Bundle.getInt()来从meta-data中找到。)</p>
+<p>android:value(解释：指定给这一项的值。可以作为值来指定的数据类型并且组件用来找回那些值的Bundle方法：[getString],[getInt],[getFloat],[getString],[getBoolean])</p>
+
+<p><br />6、第三层&lt;activity-alias&gt;属性</p>
+<p>&lt;activity-alias android:enabled=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:exported=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:icon="drawable resource"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:label="string resource"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:name="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:permission="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:targetActivity="string"&gt;</p>
+<p>&lt;intent-filter/&gt; <br />&lt;meta-data/&gt;<br />&lt;/activity-alias&gt;</p>
+<p>&lt;activity-alias&gt;是为activity创建快捷方式的，如下实例：</p>
+<p><br />&lt;activity android:name=".shortcut"&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;intent-filter&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;action android:name="android.intent.action.MAIN" /&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/intent-filter&gt;</p>
+<p>&lt;/activity&gt;</p>
+
+<p>&nbsp;&lt;activity-alias android:name=".CreateShortcuts" android:targetActivity=".shortcut" android:label="@string/shortcut"&gt;</p>
+
+<p>&nbsp;&nbsp;&nbsp; &lt;intent-filter&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;action android:name="android.intent.action.CREATE_SHORTCUT" /&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;category android:name="android.intent.category.DEFAULT" /&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; &lt;/intent-filter&gt;</p>
+
+<p>&nbsp;&lt;/activity-alias&gt;</p>
+<p>其中android.targetActivity是指向对应快捷方式的activity,如上述的shortcut(此Activity名)</p>
+<p>android:label是指快捷方式的名称，而快捷方式的图标默认是给定的application图标</p>
+<p><br />7、第三层&lt;service&gt;</p>
+<p>【1】service与activity同级，与activity不同的是，它不能自己启动的，运行在后台的程序，如果我们退出应用时，Service进程并没有结束，它仍然在后台运行。比如听音乐，网络下载数据等，都是由service运行的</p>
+
+<p>【2】service生命周期：Service只继承了onCreate(),onStart(),onDestroy()三个方法，第一次启动Service时，先后调用了onCreate(),onStart()这两个方法，当停止Service时，则执行onDestroy()方法，如果Service已经启动了，当我们再次启动Service时，不会在执行onCreate()方法，而是直接执行onStart()方法</p>
+
+<p>【3】service与activity间的通信</p>
+<p>Service后端的数据最终还是要呈现在前端Activity之上的，因为启动Service时，系统会重新开启一个新的进程，这就涉及到不同进程间通信的问题了(AIDL)，Activity与service间的通信主要用IBinder负责。具体可参照：<a href="http://zhangyan1158.blog.51cto.com/2487362/491358">http://zhangyan1158.blog.51cto.com/2487362/491358</a></p>
+<p>【4】</p>
+<p>&lt;service android:enabled=["true" | "false"]</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:exported[="true" | "false"]</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:icon="drawable resource"</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:label="string resource"</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:name="string"</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:permission="string"</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:process="string"&gt;</p>
+<p>&lt;/service&gt;</p>
+<p>service标签内的属性之前已有描述，在此不重复了～</p>
+
+<p>8、第三层&lt;receiver&gt;</p>
+<p>receiver的属性与service一样，这里就不显示了</p>
+<p>BroadcastReceiver：用于发送广播，broadcast是在应用程序之间传输信息的一种机制，而BroadcastReceiver是对发送出来的 Broadcast进行过滤接受并响应的一类组件，具体参照<a href="http://kevin2562.javaeye.com/blog/686787">http://kevin2562.javaeye.com/blog/686787</a></p>
+
+<p>9、第三层&lt;provider&gt;属性</p>
+<p>&lt;provider android:authorities="list"</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:enabled=["true" | "false"]</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:exported=["true" | "false"]</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:grantUriPermissions=["true" | "false"]</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:icon="drawable resource"</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:initOrder="integer"</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:label="string resource"</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:multiprocess=["true" | "false"]</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:name="string"</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:permission="string"</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:process="string"</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:readPermission="string"</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:syncable=["true" | "false"]</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:writePermission="string"&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;grant-uri-permission/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;meta-data/&gt;</p>
+<p>&lt;/provider&gt;</p>
+<p>contentProvider(数据存储)</p>
+<p>【1】android:authorities：</p>
+<p>标识这个ContentProvider，调用者可以根据这个标识来找到它</p>
+<p>【2】android:grantUriPermission：</p>
+<p>对某个URI授予的权限</p>
+<p>【3】android:initOrder</p>
+
+
+<p>10、第三层&lt;uses-library&gt;</p>
+<p>用户库，可自定义。所有android的包都可以引用</p>
+
+<p>11、第一层&lt;supports-screens&gt;</p>
+<p>&lt;supports-screens&nbsp; android:smallScreens=["true" | "false"] <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:normalScreens=["true" | "false"] <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:largeScreens=["true" | "false"] <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:anyDensity=["true" | "false"] /&gt;</p>
+<p>这是在android1.6以后的新特性，支持多屏幕机制</p>
+<p>各属性含义：这四个属性，是否支持大屏，是否支持中屏，是否支持小屏，是否支持多种不同密度</p>
+
+<p>12、第二层&lt;uses-configuration /&gt;与&lt;uses-feature&gt;性能都差不多</p>
+<p>&lt;uses-configuration&nbsp; android:reqFiveWayNav=["true" | "false"] <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:reqHardKeyboard=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:reqKeyboardType=["undefined" | "nokeys" | "qwerty" |&nbsp;&nbsp; "twelvekey"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:reqNavigation=["undefined" | "nonav" | "dpad" |&nbsp; "trackball" | "wheel"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:reqTouchScreen=["undefined" | "notouch" | "stylus" | "finger"] /&gt;</p>
+<p>&lt;uses-feature android:glEsVersion="integer"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:name="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:required=["true" | "false"] /&gt;</p>
+<p>这两者都是在描述应用所需要的硬件和软件特性，以便防止应用在没有这些特性的设备上安装。</p>
+
+<p><br />13、第二层&lt;uses-sdk /&gt;</p>
+<p>&lt;uses-sdk android:minSdkVersion="integer"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:targetSdkVersion="integer"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:maxSdkVersion="integer"/&gt;</p>
+<p>描述应用所需的api level，就是版本，目前是android 2.2 = 8，android2.1 = 7，android1.6 = 4，android1.5=3</p>
+<p>在此属性中可以指定支持的最小版本，目标版本以及最大版本</p>
+
+<p>14、第二层&lt;instrumentation /&gt;</p>
+<p>&lt;instrumentation android:functionalTest=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:handleProfiling=["true" | "false"]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:icon="drawable resource"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:label="string resource"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:name="string"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:targetPackage="string"/&gt;</p>
+<p>&nbsp;定义一些用于探测和分析应用性能等等相关的类，可以监控程序。在各个应用程序的组件之前instrumentation类被实例化</p>
+<p>android:functionalTest(解释：instrumentation类是否能运行一个功能测试，默认为false)</p>
+
+<p>15、&lt;permission&gt;、&lt;uses-permission&gt;、&lt;permission-tree /&gt;、&lt;permission-group /&gt;区别～</p>
+<p>最常用的当属&lt;uses-permission&gt;，当我们需要获取某个权限的时候就必须在我们的manifest文件中声明，此&lt;uses-permission&gt;与&lt;application&gt;同级，具体权限列表请看此处</p>
+<p>通常情况下我们不需要为自己的应用程序声明某个权限，除非你提供了供其他应用程序调用的代码或者数据。这个时候你才需要使用&lt;permission&gt; 这个标签。很显然这个标签可以让我们声明自己的权限。比如：</p>
+<p>&lt;permission android:name="com.teleca.project.MY_SECURITY" . . . /&gt;</p>
+<p>那么在activity中就可以声明该自定义权限了，如：</p>
+<p><br />&lt;application . . .&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;activity android:name="XXX" . . . &gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; android:permission="com.teleca.project.MY_SECURITY"&gt; &lt;/activity&gt;</p>
+<p>&nbsp;&lt;/application&gt;</p>
+<p>当然自己声明的permission也不能随意的使用，还是需要使用&lt;uses-permission&gt;来声明你需要该权限</p>
+<p>&lt;permission-group&gt; 就是声明一个标签，该标签代表了一组permissions，而&lt;permission-tree&gt;是为一组permissions声明了一个namespace。这两个标签可以看之前的系列文章。</p></div>
+<script type="text/javascript">
+if ($ != jQuery) {
+	$ = jQuery.noConflict();
+}
+var isLogined = false;
+var cb_blogId = 69812;
+var cb_entryId = 2022932;
+var cb_blogApp = "pilang";
+var cb_blogUserGuid = "2971f970-c149-df11-ba8f-001cf0cd104b";
+var cb_entryCreatedDate = '2011/4/20 21:37:00';
+</script>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory"></div>
+<div id="EntryTag"></div>
+<div id="green_channel" style="display:none;">
+绿色通道：<a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(cb_entryId,cb_blogId,1);green_channel_success(this,'谢谢推荐！');">好文要顶</a><a id="green_channel_follow" onclick="c_follow();" href="javascript:void(0);">关注我</a><a id="green_channel_favorite" onclick="AddToWz(2022932);return false;" href="javascript:void(0);" >收藏该文</a><a id="green_channel_contact" href="http://space.cnblogs.com/msg/send/%e7%9a%ae%e7%8b%bc" target="_blank">与我联系</a>
+</div>
+<div id="digg_block">
+<div id="author_profile">
+<div id="author_profile_info" class="author_profile_info">
+<div id="author_profile_detail" class="author_profile_info">
+</div>
+</div>
+<div class="clear"></div>
+<div id="author_profile_honor"></div>
+<div id="author_profile_follow"></div>
+</div>
+<div id="div_digg" style="display:none;">										
+	<div class="diggit" onclick="DiggIt(cb_entryId,cb_blogId,1)"> 
+		<span class="diggnum" id="digg_count"></span>
+	</div>
+	<div class="buryit" onclick="DiggIt(cb_entryId,cb_blogId,2)"> 
+		<span class="burynum" id="bury_count"></span>
+	</div>
+	<div class="clear"></div>	
+	<div class="diggword" id="digg_tips"></div>	
+</div>
+</div>
+<div class="clear"></div>
+<div id="post_next_prev">
+</div>
+</div>
+<script type="text/javascript">
+LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+</script>
+
+
+
+
+	<div class = "postDesc">posted on 2011-04-20 21:37 <a href='http://www.cnblogs.com/pilang/'>皮狼</a> 阅读(3830) <a href='#commentform'>评论(2)</a>  <a href ="#" onclick="open_link('http://www.cnblogs.com/pilang/admin/EditPosts.aspx?postid=2022932')" rel="nofollow">编辑</a> <a href="#" onclick="AddToWz(2022932);return false;">收藏</a></div>
+</div>
+<img src ="http://www.cnblogs.com/pilang/aggbug/2022932.html?type=1&webview=1" width="1px" height="1px" alt=""/>
+
+<a name="pagedcomment"></a>
+<!--done-->
+<br>
+<b>FeedBack:</b>
+<div class="feedbackNoItems"><span id='span_comment_maxid' style='display:none'>2183079</span></div>
+	
+
+		<div class="feedbackItem">
+			<div class = "feedbackListTitle"><a href="#2076589">#1楼</a><a name="2076589" id="comment_anchor_2076589"></a></div>
+			<div class = "feedbackListSubtitle">
+				<span class="comment_date">2011-04-21 09:56</span> | <a id="Comments1_CommentList_NameLink_0" href="http://www.cnblogs.com/ljh223/" target="_blank">TINKL</a>&nbsp;<a href="http://space.cnblogs.com/msg/send/TINKL" title="给此人发送站内短消息" class="sendMsg2This">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a><br>
+				<div align=left><span id="comment_body_2076589" class="blog_comment_body">GOOD! 详细的讲解和翻译很有帮助。 3Q<br/></span><br>　<a onclick="ReplyComment(&quot;TINKL&quot;,2076589,&quot;R2YCdJlfffjQndKlbIOsAtF1diqoH58hXlcT23o6S00goD+kfIx2iw==&quot;)" href="/pilang/archive/2011/04/20/2022932.html#commentform">回复</a>　<a onclick="QuoteComment(2076589,&quot;R2YCdJlfffjQndKlbIOsAtF1diqoH58hXlcT23o6S00goD+kfIx2iw==&quot;)" href="/pilang/archive/2011/04/20/2022932.html#commentform">引用</a>　<a title="查看该作者发表过的评论" href="http://www.cnblogs.com/CommentsByAuthor.aspx?author=TINKL" target="_blank">查看</a>　<a id="Comments1_CommentList_DeleteLink_0" href="javascript:__doPostBack(&#39;Comments1$CommentList$ctl00$DeleteLink&#39;,&#39;&#39;)"></a>&nbsp;&nbsp;<a id="Comments1_CommentList_EditLink_0"></a></div>
+			</div>
+			
+			
+		</div>
+	
+		<div class="feedbackItem">
+			<div class = "feedbackListTitle"><a href="#2183079">#2楼</a><a name="2183079" id="comment_anchor_2183079"></a><a name="Post"></a></div>
+			<div class = "feedbackListSubtitle">
+				<span class="comment_date">2011-08-22 17:57</span> | <a id="Comments1_CommentList_NameLink_1" href="http://www.cnblogs.com/ljh223/" target="_blank">TINKL</a>&nbsp;<a href="http://space.cnblogs.com/msg/send/TINKL" title="给此人发送站内短消息" class="sendMsg2This">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a><br>
+				<div align=left><span id="comment_body_2183079" class="blog_comment_body">good</span><br>　<a onclick="ReplyComment(&quot;TINKL&quot;,2183079,&quot;R2YCdJlfffjQndKlbIOsAtF1diqoH58hXlcT23o6S00goD+kfIx2iw==&quot;)" href="/pilang/archive/2011/04/20/2022932.html#commentform">回复</a>　<a onclick="QuoteComment(2183079,&quot;R2YCdJlfffjQndKlbIOsAtF1diqoH58hXlcT23o6S00goD+kfIx2iw==&quot;)" href="/pilang/archive/2011/04/20/2022932.html#commentform">引用</a>　<a title="查看该作者发表过的评论" href="http://www.cnblogs.com/CommentsByAuthor.aspx?author=TINKL" target="_blank">查看</a>　<a id="Comments1_CommentList_DeleteLink_1" href="javascript:__doPostBack(&#39;Comments1$CommentList$ctl01$DeleteLink&#39;,&#39;&#39;)"></a>&nbsp;&nbsp;<a id="Comments1_CommentList_EditLink_1"></a></div>
+			</div>
+			
+			
+		</div>
+	
+
+
+
+
+<script type="text/javascript">
+    var commentAuthorHasChecked = false;
+    var commentAuthorIsValid = false;
+    var commentUrlIsValid = true;
+    var commentEmailIsValid = true;
+    var authenCodeHasChecked = false;
+    var authenCodeIsValid = true;
+    var hasLogined = false;
+    
+    function PostComment() {    
+        
+        var isValid = true;
+        
+        if($("#wrapAuthenCode").css("display")=="none"){
+            ShowAuthenCode();
+            $("#tip_AuthenCode").css("color","red");
+            $("#tip_AuthenCode").html("请输入验证码！");
+            isValid = false;
+        }
+        
+        if(!hasLogined && !commentAuthorHasChecked){
+            CheckAuthor();        
+        }                
+        if(!hasLogined && !commentAuthorIsValid){
+            isValid = false;
+        }
+                       
+        if(!authenCodeHasChecked){
+            CheckAuthenCode();            
+        }
+        if(!authenCodeIsValid){
+            isValid = false;
+        }
+        
+        if(!hasLogined && !commentUrlIsValid){            
+            isValid = false;
+        }        
+        if(!commentEmailIsValid){            
+            isValid = false;
+        }        
+        if(!CheckCommentContent()){
+            isValid = false;
+        }    
+        if(!isValid){
+            return;
+        }
+
+        var content = $("#tbCommentBody").val();
+        if(content.length>2000){
+            alert("评论内容过长！不允许发布！");
+            return;
+        }     
+        
+        if(content.indexOf("　Ｅ　　　　　　　　　Ｅ　　　　　　　　　　Ｅ　　　　　　")>=0){
+            alert("该内容不允许布！");
+            return;
+        }   
+        
+       if ($("#span_comment_posted").html()!='' && $("#span_comment_posted").html()==content){
+            alert("该评论已发表过!");
+            return;
+        }
+        
+        $("#tip_comment").html("评论提交中...");
+        $("#span_comment_posted").html(content);
+        //content = content.replace("'", "\\'");
+        var email = $("#tbCommentEmail").val();
+        var authenNum = $("#tbAuthenCode").val();
+        var authenId = $("#span_comment_test").html();
+        var comment = {};
+        comment.authenNum = authenNum;
+        comment.authenId= authenId;
+        comment.parentId = 0;
+        comment.blogId = 0;
+        comment.sourceUrl = '';
+        comment.author = $("#tbCommentAuthor").val();
+        comment.url = $("#tbCommentAuthorUrl").val();
+        comment.authenCode = $("#tbAuthenCode").val();
+        comment.email = email;
+        comment.title = '';
+        comment.content = content;
+        comment.parentCommentId = $("#span_parentcomment_id").html();
+        $.ajax({
+            url: '/ws/CommentService.asmx/AddAnonymousComment',
+            data: $.toJSON(comment),
+            type: "post",
+            dataType: "json",
+            contentType: "application/json; charset=utf8",
+            success: function(data) {
+               if (data.d["IsSuccess"]) {
+                    ShowCommentMsg("感谢您的回复:)");
+                    //RereshComments2(comment.parentId);
+                    $("#tbCommentBody").val('');
+                    //$("#divCommentShow").html(data.d["ReturnData"]+content.replace(/\n/g,"<br/>")+"<br/><br/>");
+                    $("#divCommentShow").html($("#divCommentShow").html()+data.d["ReturnData"]); 
+                    $("#tip_AuthenCode").html('');
+                    RefreshAuthenCode();
+                    $("#tbAuthenCode").val("");                    
+                    CommentNotify(data.d["CommentID"]);
+                }
+                else {
+                    ShowCommentMsg(data.d["ReturnData"]);//"抱歉！评论提交失败！请与管理员联系。");
+                    $("#span_comment_posted").html(''); 
+                }
+            },
+            error: function(xhr) {
+                ShowCommentMsg("抱歉！评论提交失败！请与管理员联系。");
+                $("#span_comment_posted").html('');  
+                //alert(xhr.responseText);
+            }
+        }
+        );
+    }
+    
+    function RefreshAuthenCode(){
+        AjaxPost("/ws/CommentService.asmx/RefreshAuthenCode","{}",RefreshImg); 
+        $("#lnkRereshAuthenCode").html("<span style='color:red'>刷新中...</span>");
+        return false;
+    }
+    
+    function RefreshImg(response){
+       $("#imgAuthenCode").attr("src","/Modules/CaptchaImage/ValidCodeImage.aspx?id="+encodeURIComponent(response));
+       $("#span_comment_test").html(response);
+       $("#lnkRereshAuthenCode").html("看不清，换一个");
+    }
+    
+    function ShowAuthenCode(){
+        //if($("#wrapAuthenCode").css("display")=="none"){    
+        //    AjaxPost("/ws/CommentService.asmx/RefreshAuthenCode","{}",ShowAuthenCodeOk);
+        //}
+        $("#wrapAuthenCode").show();      
+    }
+    
+    function ShowAuthenCodeOk(response){
+         UpdateAuthenCode();
+         $("#tbAuthenCode").val("");
+         $("#wrapAuthenCode").show();
+         $("#tip_AuthenCode").html('');
+    }  
+ 
+    
+    function CheckAuthor(isOnblur){
+        commentAuthorHasChecked = true;
+        var maxLength = 30;
+        if($("#tbCommentAuthor").val().length == 0){
+            $("#tip_author").html("请输入您的昵称！");
+            commentAuthorIsValid = false;
+            return false;
+        }     
+        else if($("#tbCommentAuthor").val().length > maxLength){
+            $("#tip_author").html("昵称不允许超过" + maxLength + "个字符！");
+            commentAuthorIsValid = false;
+            return false;
+        }
+        else{
+            //if(isOnblur){
+                AjaxPost("/ws/CommentService.asmx/IsAuthorExist","{author:'"+$("#tbCommentAuthor").val()+"'}" ,OnCheckAuthorExist);
+            //}
+            //else{
+            //    $("#tip_author").html("");
+            //    commentAuthorIsValid = true;
+            //}
+            return true;
+        }
+   }
+   
+    function OnCheckAuthorExist(response){        
+        if(!response){
+            $("#tip_author").html("");
+            commentAuthorIsValid = true;
+        }
+        else{
+            $("#tip_author").html("该昵称已被使用，请更换昵称");
+            commentAuthorIsValid = false;
+        }
+   }
+   
+    function CheckUrl(){
+        var maxLength = 50;
+        var url = $("#tbCommentAuthorUrl").val();
+        
+        if(url.length == 0){
+            commentUrlIsValid = true;
+            return true;
+        }
+        else if(url.length > maxLength){
+            $("#tip_url").html("主页地址不允许超过" + maxLength + "个字符！");
+            commentUrlIsValid = false;
+            return false;
+        }
+        else if(url.indexOf("http://")!=0 || url.indexOf(".") < 0){
+            $("#tip_url").html("主页地址要以“http://”开头");
+            commentUrlIsValid = false;
+            return false;
+        }
+        else{
+            $("#tip_url").html("");
+            commentUrlIsValid = true;
+            return true;
+        }
+   }
+   
+   function CheckEmail(){
+        var email = $("#tbCommentEmail").val();
+        if(email.length>0){
+            var regExp = new RegExp("\\w+@((\\w|\-)+\\.)+[a-z]{2,3}");
+            if(!regExp.test(email)){
+                $("#tip_email").html("请输入正确的邮件地址!");
+                commentEmailIsValid = false;
+            }
+            else{
+                commentEmailIsValid = true;
+                 $("#tip_email").html("");
+            }
+        }
+        else{
+            commentEmailIsValid = true;
+            $("#tip_email").html("");  
+        }
+   }
+   
+   function CheckAuthenCode(){
+        authenCodeHasChecked = true;
+        var num = $("#tbAuthenCode").val();
+        var id = $("#span_comment_test").html();
+        $("#tip_AuthenCode").css("color","red");
+        if(num.length==0){
+             authenCodeIsValid = false;
+             $("#tip_AuthenCode").html("请输入验证码！");
+             return;
+        }
+        else if(num.length!=4){
+            authenCodeIsValid = false;
+            $("#tip_AuthenCode").html("请输入四位数字！");
+             return;
+        }
+        else if(new RegExp("(\d+)").test(num)){
+            authenCodeIsValid = false;
+            $("#tip_AuthenCode").html("请输入四位数字！");
+             return;
+        }
+        else{
+            AjaxPost("/ws/CommentService.asmx/CheckAuthenCode","{number:"+num+",id:'"+id+"'}", OnCheckAuthenCode);
+        }
+   }
+   
+   function OnCheckAuthenCode(response){
+        if(response){
+            $("#tip_AuthenCode").css("color","green");
+            $("#tip_AuthenCode").html("验证码输入正确！");
+            authenCodeIsValid = true;            
+        }
+        else{
+            $("#tip_AuthenCode").css("color","red");
+            $("#tip_AuthenCode").html("验证码输错啦！");
+            RefreshAuthenCode();
+            authenCodeIsValid = false;           
+        }
+   }
+   
+   function CheckCommentContent(){
+    if($("#tbCommentBody").val().length==0){
+        alert("请输入评论内容！");
+        return false;
+    }
+    return true;
+   }
+    
+</script>
+<div id="ctl03_comment_form" class="commentform">
+
+<script type="text/javascript">
+    try {
+        SyntaxHighlighter.all();
+        isSyntaxHighlighted = true;
+    } catch (e) { }
+</script>
+
+
+<div id="ctl03_divLoginPannel">
+<div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="http://passport.cnblogs.com/login.aspx?ReturnUrl=http%3a%2f%2fwww.cnblogs.com%2fpilang%2farchive%2f2011%2f04%2f20%2f2022932.html%3flogin%3d1%23commentform" class="underline">登录</a> 或 <a rel="nofollow" href="http://passport.cnblogs.com/register.aspx?ReturnUrl=http%3a%2f%2fwww.cnblogs.com%2fpilang%2farchive%2f2011%2f04%2f20%2f2022932.html%23Bottom2" class="underline">注册</a>，<a href="http://www.cnblogs.com" target="_blank">返回博客园首页</a>。</div>
+</div>
+
+<div class="itnews c_ad_block">
+<div id="ad_text_commentbox">
+<a href="http://a4.yeshj.com/rd/40860/" target="_blank">不3k就业不给1分学费(java, .net, php, android)</a>
+</div>
+<b>最新IT新闻</b>:<br />
+
+          ·  <a href="http://news.cnblogs.com/n/115391/" target="_blank">这次真去火星了 NASA公布新运载火箭设计</a><br />
+	
+          ·  <a href="http://news.cnblogs.com/n/115388/" target="_blank">给程序员的VIM速查卡</a><br />
+	
+          ·  <a href="http://news.cnblogs.com/n/115386/" target="_blank">PayPal 展示“未来的血拼”</a><br />
+	
+          ·  <a href="http://news.cnblogs.com/n/115385/" target="_blank">Mozilla 副总裁 Mike Shaver 即将离职</a><br />
+	
+          ·  <a href="http://news.cnblogs.com/n/115383/" target="_blank">Google Docs 终于有了格式刷，还可拖拽插入图片</a><br />
+	
+&raquo; <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a>
+</div>
+
+
+<div class="itnews c_ad_block" id="kb_block">
+<b>最新知识库文章</b>:<br />
+<div id="kb_recent">
+
+·  <a href="http://kb.cnblogs.com/page/106323/" target="_blank">软件开发应该以史为鉴，还是从头再来？</a><br />
+
+·  <a href="http://kb.cnblogs.com/page/106263/" target="_blank">Web应用程序的开发步骤</a><br />
+
+·  <a href="http://kb.cnblogs.com/page/115136/" target="_blank">利用Httponly提升web应用程序安全性</a><br />
+
+·  <a href="http://kb.cnblogs.com/page/114905/" target="_blank">理解RESTful架构</a><br />
+
+·  <a href="http://kb.cnblogs.com/page/106177/" target="_blank">我不是一个工程师  – 我是一个软件开发者</a><br />
+
+</div>
+&raquo; <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a>
+</div>
+
+<script type="text/javascript" src="http://common.cnblogs.com/script/google_service.js"></script>
+<script type="text/javascript">
+    var c_enable_dfp = true;
+    if (navigator.userAgent.indexOf("Chrome/6.0.401.1") > 0) {
+        c_enable_dfp = false;
+    }
+    if (c_enable_dfp) {
+        try {
+            GS_googleAddAdSenseService("ca-pub-4210569241504288");
+            GS_googleEnableAllServices();
+        }
+        catch (e) { }
+    }
+</script>
+<script type="text/javascript">
+    if (c_enable_dfp) {
+        try {
+            GA_googleAddSlot("ca-pub-4210569241504288", "cnblogs_blogpost_bottom");
+            GA_googleAddSlot("ca-pub-4210569241504288", "cnblogs_blogpost_C2");
+        }
+        catch (e) { }
+    }
+</script>
+<script type="text/javascript">
+    if (c_enable_dfp) {
+        try {
+            GA_googleFetchAds();
+        } catch (e) { }
+    }
+</script>
+<div class="c_ad_block">
+<script type="text/javascript">
+    try {
+        if (c_enable_dfp) {
+
+            GA_googleFillSlot("cnblogs_blogpost_bottom");
+        }
+    }
+    catch (e) { }
+</script>
+</div>
+<div class="c_ad_block">
+<script type="text/javascript">
+    try {
+        if (c_enable_dfp) {
+
+            GA_googleFillSlot("cnblogs_blogpost_C2");
+        }
+    }
+    catch (e) { }
+</script>
+</div>
+
+<div id="HistoryToday" class="c_ad_block">
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    });
+</script>
+<div id="ad_under_comment2" class="c_ad_block">
+<a href="http://www.china-pub.com/STATIC07/1107/2011chinapub_6810_110718/2011chinapub_6810_110718.asp" target="_blank" rel="nofollow"><img src="http://static.cnblogs.com/images/a4/china-pub.jpg" alt="" style="border:0px;"/></a><br />
+<a href="http://www.china-pub.com/STATIC07/1107/zh_autumntb_110725/zh_autumntb_110725.asp" target="_blank" rel="nofollow">China-pub 2011秋季教材巡展</a><br />
+<a href="http://www.china-pub.com/static07/0901/zh_jueba_090121.asp" target="_blank" rel="nofollow">China-Pub 计算机绝版图书按需印刷服务</a><br />
+</div>
+<div id="clear_reader_link">
+
+</div>
+<div id="site_nav_under" class="c_ad_block">
+网站导航: <a href="http://www.cnblogs.com/" target="_blank" title="程序员的网上家园">网站首页</a><a href="http://kb.cnblogs.com/" target="_blank">知识库</a><a href="http://news.cnblogs.com/" target="_blank">IT新闻</a><a href="http://home.cnblogs.com/" target="_blank">我的园子</a><a href="http://home.cnblogs.com/ing/" target="_blank">闪存</a><a href="http://job.cnblogs.com/" target="_blank">程序员招聘</a><a href="http://home.cnblogs.com/q/" target="_blank">博问</a> 
+</div>
+
+
+
+
+
+</div>
+
+
+				
+</div>
+
+<!--done-->
+<div class="footer">
+	
+	Copyright &copy;2011 皮狼 Powered By<a href="/">博客园</a> 模板提供：<a href="http://blog.hjenglish.com">沪江博客</a>
+</div>
+    </form> 
+    <script type="text/javascript">
+        if (!isSyntaxHighlighted) {
+            try {
+                SyntaxHighlighter.all();
+            } catch (e) { }
+        }
+    </script>
+    <script type="text/javascript" src="/script/ShowHidden.js"></script>
+    
+</body>
+</html>

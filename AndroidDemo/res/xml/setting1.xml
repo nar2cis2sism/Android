@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+	    
+	<CheckBoxPreference
+        android:defaultValue="true"
+        android:key="isUpload"
+        android:title="是否上传到服务器"
+        android:summaryOn="通话录音将上传到服务器"
+        android:summaryOff="未开启上传服务" />
+	        
+    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
+	<EditTextPreference
+		android:key="uploadAddress"
+		android:title="上传地址" />
+
+    <RingtonePreference
+        android:defaultValue="content://settings/system/notification_sound"
+        android:dependency="isUpload"
+        android:key="ringtone"
+        android:ringtoneType="notification"
+        android:title="电话铃声" />
+	
+</PreferenceScreen>

@@ -1,0 +1,6 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:state_window_focused="false" 
+        android:drawable="@drawable/weibo_listitem_normal" /> 
+  <item android:state_pressed="true" 
+        android:drawable="@drawable/weibo_listitem_pressed" /> 
+</selector>

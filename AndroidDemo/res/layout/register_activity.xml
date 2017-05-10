@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal" >
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+        <TableRow >
+		    <TextView
+		        android:text="@string/Register_username" />
+            <EditText
+                android:id="@+id/username"
+                android:layout_width="180dp" />
+        </TableRow>
+        <TableRow >
+            <TextView
+                android:text="@string/Register_password" />
+            <EditText
+                android:id="@+id/password"
+                android:inputType="textPassword" />
+        </TableRow>
+        <TableRow >
+            <TextView
+                android:text="@string/Register_password_confirm" />
+            <EditText
+                android:id="@+id/password_confirm"
+                android:inputType="textPassword" />
+        </TableRow>
+        <TableRow >
+            <TextView
+                android:text="@string/Register_mobile_number" />
+            <EditText
+                android:id="@+id/mobile_number"
+                android:inputType="phone" />
+        </TableRow>
+        <TableRow >
+            <TextView
+                android:text="@string/Register_name" />
+            <EditText
+                android:id="@+id/name" />
+        </TableRow>
+        <TableRow >
+            <TextView
+                android:layout_gravity="center_vertical"
+                android:text="@string/Register_sex" />
+            <RadioGroup
+                android:id="@+id/sex"
+                android:orientation="horizontal"
+                android:checkedButton="@+id/sex_male" >
+                <RadioButton
+                    android:id="@+id/sex_male"
+                    android:text="@string/Register_sex_male" />
+                <RadioButton
+                    android:id="@+id/sex_female"
+                    android:layout_marginLeft="15dp"
+                    android:text="@string/Register_sex_female" />
+            </RadioGroup>
+        </TableRow>
+        <TableRow >
+            <TextView
+                android:text="@string/Register_email" />
+            <EditText
+                android:id="@+id/email"
+                android:inputType="textEmailAddress" />
+        </TableRow>
+        <TableRow >
+            <RelativeLayout
+                android:layout_column="1" >
+	            <Button
+                    android:id="@+id/register"
+	                android:layout_width="wrap_content"
+	                android:layout_height="45dp"
+	                android:text="@string/Register_register" />
+                <Button
+                    android:id="@+id/back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/Register_back" />
+            </RelativeLayout>
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>

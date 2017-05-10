@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+	android:shape="rectangle"
+	<gradient android:startColor="#FFFF0000" android:endColor="#80FF00FF" 
+            android:angle="270"/>
+  gradient  产生颜色渐变  android:angle 从哪个角度开始变 只有45的整数倍可以 
+	
+  <solid android:color="#f0600000"/>
+  实心的 填充里面
+  
+  <stroke android:width="3dp" android:color="#ffff8080"
+  				android:dashWidth="3dp" android:dashGap="2dp" />
+  描边 采用那样的方式将外形轮廓线画出来
+  android:width="2dp" android:color="#FF00ff00"笔的粗细， 
+  android:dashWidth="5dp" android:dashGap="5dp" 实现- - -这样的效果，dashWidth指的是一条小横线的宽度 
+  dashGap 指的是小横线与小横线的间距。 width="2dp" 不能太宽
+  
+  <corners android:radius="3dp" />
+  转角处半径
+  
+  <padding android:left="10dp" android:top="10dp"
+      		 android:right="10dp" android:bottom="10dp" />
+</shape>

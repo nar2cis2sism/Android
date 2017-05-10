@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/calculator_bg"
+    android:paddingTop="5dp"
+    android:paddingBottom="10dp">
+	<LinearLayout
+        android:orientation="vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp">
+        <EditText
+            android:id="@+id/et"
+            android:layout_width="fill_parent"
+            android:layout_height="90dp"
+            android:background="@drawable/calculator_button_bg"
+            android:gravity="right|center_vertical"
+            android:paddingTop="10dp"
+            android:paddingBottom="15dp"
+            
+            android:textSize="20sp"
+            android:hint="请输入你的算式" />
+        
+        <!-- ( ) Clean Backspace -->
+	    <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+            android:paddingTop="10dip"
+            android:paddingBottom="5dp">
+            <Button 
+                android:id="@+id/left_bracket"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                android:layout_marginRight="5dp"
+                
+                android:text="("
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+            <Button 
+                android:id="@+id/right_bracket"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                android:layout_marginRight="5dp"
+                
+                android:text=")"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+            <Button 
+                android:id="@+id/clean"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                android:layout_marginRight="5dp"
+                
+                android:text="Clean"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+            <Button 
+                android:id="@+id/backspace"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                
+                android:text="Backspace"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+	    </LinearLayout>
+        
+        <!-- 7 8 9 ÷ -->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp">
+            <Button 
+                android:id="@+id/num7"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                android:layout_marginRight="5dp"
+                
+                android:text="7"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+            <Button 
+                android:id="@+id/num8"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                android:layout_marginRight="5dp"
+                
+                android:text="8"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+            <Button 
+                android:id="@+id/num9"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                android:layout_marginRight="5dp"
+                
+                android:text="9"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+            <Button 
+                android:id="@+id/div"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                
+                android:text="÷"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+        </LinearLayout>
+        
+        <!-- 4 5 6 × -->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp">
+            <Button 
+                android:id="@+id/num4"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                android:layout_marginRight="5dp"
+                
+                android:text="4"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+            <Button 
+                android:id="@+id/num5"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                android:layout_marginRight="5dp"
+                
+                android:text="5"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+            <Button 
+                android:id="@+id/num6"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                android:layout_marginRight="5dp"
+                
+                android:text="6"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+            <Button 
+                android:id="@+id/mul"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                
+                android:text="×"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+        </LinearLayout>
+        
+        <!-- 1 2 3 － -->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp">
+            <Button 
+                android:id="@+id/num1"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                android:layout_marginRight="5dp"
+                
+                android:text="1"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+            <Button 
+                android:id="@+id/num2"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                android:layout_marginRight="5dp"
+                
+                android:text="2"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+            <Button 
+                android:id="@+id/num3"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                android:layout_marginRight="5dp"
+                
+                android:text="3"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+            <Button 
+                android:id="@+id/sub"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                
+                android:text="－"
+                android:textSize="35sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+        </LinearLayout>
+        
+        <!-- 0 . ＋ ＝ -->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp">
+            <Button 
+                android:id="@+id/num0"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                android:layout_marginRight="5dp"
+                
+                android:text="0"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+            <Button 
+                android:id="@+id/dot"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                android:layout_marginRight="5dp"
+                
+                android:text="."
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+            <Button 
+                android:id="@+id/add"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                android:layout_marginRight="5dp"
+                
+                android:text="＋"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+            <Button 
+                android:id="@+id/equ"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                
+                android:text="＝"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+        </LinearLayout>
+        
+        <!-- +/- MoveLeft MoveRight -->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <Button 
+                android:id="@+id/minus"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                android:layout_marginRight="5dp"
+                
+                android:text="+/-"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+            <Button 
+                android:id="@+id/moveLeft"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                android:layout_marginRight="5dp"
+                
+                android:text="MoveLeft"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+            <Button 
+                android:id="@+id/moveRight"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/calculator_button_bg"
+                
+                android:text="MoveRight"
+                android:textStyle="bold"
+                
+                android:onClick="onClick" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

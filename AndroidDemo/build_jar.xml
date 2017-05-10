@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="java_rules" default="jar">
+    
+    <property name="source.dir" value="src" />
+    <property name="libs.dir" value="libs" />
+    <property name="out.dir" value="bin" />
+    <property name="classes.dir" location="${out.dir}/classes" />
+    <property name="jar" value="${out.dir}/${ant.project.name}.jar" />
+    <property name="Main-class" value="" />
+    
+    <property name="android.jar" value="${sdk.dir}/platforms/${target}/android.jar" />
+    
+    <!-- 第三方jar包的路径 -->
+    <path id="lib-classpath">
+        <fileset dir="${libs.dir}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+    
+    <target name="clean">
+        <delete dir="${out.dir}" />
+    </target>
+    
+    <target name="init">
+        <mkdir dir="${out.dir}" />
+        <mkdir dir="${classes.dir}" />
+    </target>
+    
+    <target name="compile" depends="init">
+        <javac srcdir="${source.dir}" destdir="${classes.dir}" bootclasspath="${android.jar}">
+            <compilerarg line="-encoding UTF-8" />
+            <classpath refid="lib-classpath" />
+        </javac>
+    </target>
+    
+    <target name="jar" depends="compile">
+        <copy todir="${out.dir}/lib">
+            <fileset dir="${libs.dir}" />
+        </copy>
+
+        <!-- create a property containing all .jar files, prefix lib/, and seperated with a space -->
+	    <pathconvert property="mf.classpath" pathsep=" ">
+	        <mapper>
+	            <chainedmapper>
+	                <!-- jar包文件只留文件名，去掉目录信息 -->
+	                <flattenmapper />
+	                <!-- add lib/ prefix -->
+	                <globmapper from="*" to="lib/*" />
+	            </chainedmapper>
+	        </mapper>
+	        <path refid="lib-classpath" />
+	    </pathconvert>
+	    
+	    <jar destfile="${jar}" basedir="${classes.dir}">
+	        <manifest>
+	            <attribute name="Main-class" value="${Main-class}" />
+	            <attribute name="Class-Path" value="${mf.classpath}" />
+	        </manifest>
+	    </jar>
+    </target>
+
+</project>

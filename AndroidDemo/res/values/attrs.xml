@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="Panel">
+    	//动画演变时长
+    	<attr name="animationDuration" format="integer" />
+    	//摆放位置，只能取下面的4个值
+    	<attr name="position">
+    		<enum name="top" value="0" />
+    		<enum name="bottom" value="1" />
+    		<enum name="left" value="2" />
+    		<enum name="right" value="3" />
+    	</attr>
+    	//开合是否有动画效果
+    	<attr name="animationEnable" format="boolean" />
+        //动画插入器
+        <attr name="interpolator" format="reference" />
+    	//开关展开图片
+    	<attr name="handlerIcon_open" format="reference|color" />
+    	//开关闭合图片
+    	<attr name="handlerIcon_close" format="reference|color" />
+    </declare-styleable>
+</resources>

@@ -1,0 +1,51 @@
+﻿一.27种设计模式
+1.观察者模式主要有2个类，一个是类Observable,一个是接口类Observer
+
+Observable类是被观察者，子类只要继承它即可。而且添加观察者等方法已经都实现了.
+
+Observer是观察者，只有一个接口方法public void update(Observable observable, Object data)，需要其子类来实现.这里，observable是被观测的对象，而data是由notifyObservers( )方法传递的值。当被观测对象发生了改变，调用update( )方法 
+
+被观察者要继承Observable类
+
+被观察者通知观察者时，也就是调用notifyObservers方法时，一定要先调用setChanged()方法(该方法的作用就是将对象里面的changed这个boolean变量设定为true，因为notifyObservers要首先检查该变量是否为true，如果为false就不执行而直接返回了)
+
+Observable类的两个重载的notifyObservers方法，带参数的那个方法，里面的参数就是Observer接口中的update方法中的第二个参数
+
+一个被观测的对象必须服从下面的两个简单规则。第一，如果它被改变了，它必须调用setChanged( )方法。第二，当它准备通知观测程序它的改变时，它必须调用notifyObservers( )方法。这导致了在观测对象中对update( )方法的调用。注意——当对象在调用notifyObservers( )方法之前，没有调用setChanged( )方法，就不会有什么动作发生。在update( )被调用之前，被观测对象必须调用setChanged( )和notifyObservers( )两种方法
+
+看上去很简单。但是由于是继承，也会存在不方便的地方。
+
+二.基础知识
+1.dp
+dip: Density Independent Pixel. 不同设备有不同的显示效果,这个和设备硬件有关，一般我们为了支持WVGA、HVGA和QVGA 推荐使用这个，不依赖像素。
+dpi: dots-per-inch(屏幕像素密度).
+
+2.Should use onPause() to write crucial persistent data (such as user edits) to storage if the system must recover memory in an emergency, then onStop() and onDestroy() might not be called. 
+
+3.Provide a unique ID (with the android:id attribute) for each widget you want to save its state. If a widget does not have an ID, then the system cannot save its state.
+
+三。UI设计规范
+可触控的组件单元48dp
+组件间隔8dp
+边距间隔16dp
+Launcher icon:48dp(Optical square:42dp)
+Action bar icon:32dp(Optical square:24dp)
+Small icon:16dp(Optical square:12dp)
+Notification icon:24dp(Optical square:22dp)
+
+主流分辨率：
+mdpi		1		320*480
+hdpi		1.5		480*800
+xhdpi		2		720*1280
+xxhdpi		3		1080*1920
+
+四。多进程注意事项
+If you are going to split your app into multiple processes, only one process should be responsible for UI. Other processes should avoid any UI, as this will quickly increase the RAM required by the process (especially once you start loading bitmap assets and other resources). It may then be hard or impossible to reduce the memory usage once the UI is drawn.
+
+Additionally, when running more than one process, it's more important than ever that you keep your code as lean as possible, because any unnecessary RAM overhead for common implementations are now replicated in each process. For example, if you are using enums (though you should not use enums), all of the RAM needed to create and initialize those constants is duplicated in each process, and any abstractions you have with adapters and temporaries or other overhead will likewise be replicated.
+
+Another concern with multiple processes is the dependencies that exist between them. For example, if your app has a content provider that you have running in the default process which also hosts your UI, then code in a background process that uses that content provider will also require that your UI process remain in RAM. If your goal is to have a background process that can run independently of a heavy-weight UI process, it can't have dependencies on content providers or services that execute in the UI process.
+
+五。优化方案
+可以使用webp图片格式减少安装包体积，不过只在Android4.0以上支持。同一张图片，webp格式能比jpeg格式小约40%，不过压缩时间比jpg慢10倍以上
+

@@ -1,0 +1,24 @@
+﻿1.支持API级别，建议3.0以上，可以统一ActionBar并且引入Fragment
+2.是否支持平板
+3.是否支持横屏
+
+
+测试：
+1.Incoming call
+2.screen orientation
+3.Language change
+4.Font change
+5.TimeZone change
+6.Empty ListView
+7.network switch
+
+
+开发：
+1.绘制流程图
+2.制定协议
+3.错误处理
+4.横屏设计
+5.屏幕适配
+
+尽早进行代码重构
+优化是最后一步

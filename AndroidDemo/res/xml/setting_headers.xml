@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!-- These settings headers are only used on tablets. -->
+    
+    <header
+        android:fragment="engine.activity.SettingActivity$电话录音Preference"
+        android:title="电话录音" />
+    
+    <header
+        android:fragment="engine.activity.SettingActivity$设置示例Preference"
+        android:title="设置示例" />
+	
+</preference-headers>

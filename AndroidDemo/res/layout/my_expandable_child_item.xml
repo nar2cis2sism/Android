@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/my_ex_child_bg"
+    
+    android:gravity="center_vertical"
+    android:paddingLeft="20dp"
+    >
+    <LinearLayout
+    	android:orientation="vertical"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="1"
+	    >
+	    <TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    
+		    android:textColor="#000000"
+		    android:textSize="16sp"
+		    android:id="@+id/name"
+		    />
+	    <TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    
+		    android:textColor="#637584"
+		    android:textSize="14sp"
+		    android:id="@+id/text"
+		    />
+    </LinearLayout>
+    
+    <TextView
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    
+	    android:textColor="#6b6100"
+	    android:textSize="14sp"
+	    android:id="@+id/money"
+	    />
+    
+    <ImageView
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:src="@drawable/my_ex_child_icon"
+	    />
+</LinearLayout>

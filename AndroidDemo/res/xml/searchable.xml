@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- 
+android:label为搜索框上方的标题（必须引用文本）
+android:hint为搜索框里面的提示文本（必须引用文本）
+android:icon为搜索框前面的图标（默认显示图标为程序图标）
+android:searchMode为搜索模式（showSearchLabelAsBadge：显示标题）
+android:searchSuggestAuthorith配置搜索提示内容提供者，与SearchProvider中的AUTHORITH一致
+android:searchSuggestIntentAction当我们选中搜索提示的内容时发生的目的动作
+android:searchSuggestThreshold至少输入几个字符时才会弹出提示
+android:includeInGlobalSearch是否将内容加入android的全局搜索
+android:searchSuggestSelection=" ?"这个必须有，不然会报异常
+android:voiceSearchMode为语音搜索配置
+ -->
+
+<searchable xmlns:android="http://schemas.android.com/apk/res/android"
+    android:label="@string/searchLabel"
+    android:hint="@string/searchHint"
+    android:searchMode="showSearchLabelAsBadge"
+    android:searchSuggestAuthority="searchprovider"
+    android:searchSuggestIntentAction="android.intent.action.SEARCH"
+    android:searchSuggestThreshold="0"
+    android:includeInGlobalSearch="true"
+    android:searchSuggestSelection=" ?"
+    android:voiceSearchMode="showVoiceSearchButton|launchRecognizer" />

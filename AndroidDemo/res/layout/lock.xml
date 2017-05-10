@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <demo.lockscreen.LockScreen
+        android:id="@+id/lock"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@drawable/lock_bg"
+	    
+	    android:layout_gravity="bottom"
+	    android:layout_marginBottom="100dp"
+        >
+        <!-- unlock icon -->
+        <ImageView 
+            android:id="@+id/unlock"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:background="@drawable/slider_unlock"
+		    
+		    android:layout_alignParentRight="true"
+		    android:layout_marginRight="10dp"
+		    
+		    android:layout_centerVertical="true"
+            />
+        <!-- arrow animation -->
+        <ImageView 
+            android:id="@+id/arrow"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:background="@drawable/slider_arrow"
+		    
+		    android:layout_toLeftOf="@+id/unlock"
+		    android:layout_marginRight="20dp"
+		    
+		    android:layout_centerVertical="true"
+            />
+        <!-- unlock hint -->
+        <TextView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    
+		    android:layout_toLeftOf="@+id/arrow"
+		    android:layout_marginRight="10dp"
+		    
+		    android:layout_centerVertical="true"
+		    
+		    android:text="向右滑动结束提醒"
+            />
+        <!-- slider icon -->
+        <ImageView 
+            android:id="@+id/slider"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:background="@drawable/slider_normal"
+            />
+    </demo.lockscreen.LockScreen>
+</LinearLayout>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <RelativeLayout
+        android:id="@+id/rotate3d_icons"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        >
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rotate3d_camera"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10.667dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="142dp"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rotate3d_contact"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="52dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="135.333dp"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rotate3d_location"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="89.33333333333333dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="116.666dp"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rotate3d_music"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="118.6666666666667dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="87.33333333333333dp"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rotate3d_chat"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="137.3333333333333dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="50dp"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rotate3d_moon"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="144dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="8.666666666666667dp"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rotate3d_button"
+        android:layout_width="60dp"
+        android:layout_height="57.33333333333333dp"
+        android:background="@drawable/rotate3d_button"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        >
+        <ImageView
+            android:id="@+id/rotate3d_icon_plus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/rotate3d_icon_plus"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+</merge>

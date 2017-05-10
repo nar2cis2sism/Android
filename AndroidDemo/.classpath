@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry kind="src" path="src_interview"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/framework"/>
+	<classpathentry kind="lib" path="libs/fragment/android-support-v4.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/ZXing-2.1/android-integration/android-integration.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/工具库/commons-lang-2.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/汉语拼音/pinyin4j-2.5.0.jar"/>
+	<classpathentry kind="lib" path="D:/Work/Java/Android/eclipse/plugins/org.apache.ant_1.8.3.v201301120609/lib/ant.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/ZXing-2.1/core.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/SQLCipher/SQLCipher for Android v2.2.2.zip"/>
+	<classpathentry exported="true" kind="lib" path="libs/文件上传/httpmime-4.1.2.jar"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <include layout="@layout/pinned_header_category" />
+    
+	<LinearLayout
+        android:orientation="vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+    
+	    android:paddingLeft="32dp"
+	    android:paddingTop="2dp"
+	    android:paddingBottom="3dp"
+	    >
+	    <LinearLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    >
+		    <TextView
+		        android:id="@+id/from"
+			    android:layout_width="0dp"
+			    android:layout_height="wrap_content"
+			    android:layout_weight="1"
+			    
+			    android:textColor="#333333"
+			    android:textAppearance="?android:attr/textAppearanceMedium"
+			    android:textStyle="bold"
+			    
+			    android:singleLine="true" />
+		    <TextView
+		        android:id="@+id/date"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    
+			    android:layout_marginRight="10dp"
+			    
+			    android:textColor="#888888"
+			    android:textAppearance="?android:attr/textAppearanceSmall"
+			    
+			    android:singleLine="true" />
+	    </LinearLayout>
+	    
+	    <TextView
+	        android:id="@+id/subject"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    
+		    android:layout_marginRight="6dp"
+		    
+		    android:textColor="#333333"
+		    android:textAppearance="?android:attr/textAppearanceMedium"
+		    
+		    android:singleLine="true" />
+	    
+	    <TextView
+	        android:id="@+id/body"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    
+		    android:layout_marginRight="6dp"
+		    
+		    android:textColor="#888888"
+		    android:textAppearance="?android:attr/textAppearanceSmall"
+		    
+		    android:lines="2" />
+    </LinearLayout>
+</LinearLayout>

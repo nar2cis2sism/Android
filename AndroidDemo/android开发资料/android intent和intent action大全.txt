@@ -1,0 +1,234 @@
+android 中intent是经常要用到的。不管是页面牵转，还是传递数据，或是调用外部程序，系统功能都要用到intent。在做了一些intent的例子之后，整理了一下intent，希望对大家有用。由于intent内容太多，不可能真的写全，难免会有遗落，以后我会随时更新。如果你们有疑问或新的intent内容，希望交流。 
+★intent大全： 
+1.从google搜索内容 
+Intent intent = new Intent(); 
+intent.setAction(Intent.ACTION_WEB_SEARCH); 
+intent.putExtra(SearchManager.QUERY,"searchString") 
+startActivity(intent); 
+
+2.浏览网页 
+Uri uri = Uri.parse("http://www.google.com"); 
+Intent it   = new Intent(Intent.ACTION_VIEW,uri); 
+startActivity(it); 
+
+3.显示地图 
+Uri uri = Uri.parse("geo:38.899533,-77.036476"); 
+Intent it = new Intent(Intent.Action_VIEW,uri); 
+startActivity(it); 
+
+4.路径规划 
+Uri uri = Uri.parse("http://maps.google.com/maps?f=dsaddr=startLat%20startLng&daddr=endLat%20endLng&hl=en"); 
+Intent it = new Intent(Intent.ACTION_VIEW,URI); 
+startActivity(it); 
+
+5.拨打电话 
+Uri uri = Uri.parse("tel:xxxxxx"); 
+Intent it = new Intent(Intent.ACTION_DIAL, uri);   
+startActivity(it); 
+
+6.调用发短信的程序 
+Intent it = new Intent(Intent.ACTION_VIEW);   
+it.putExtra("sms_body", "The SMS text");   
+it.setType("vnd.android-dir/mms-sms");   
+startActivity(it); 
+
+7.发送短信 
+Uri uri = Uri.parse("smsto:0800000123");   
+Intent it = new Intent(Intent.ACTION_SENDTO, uri);   
+it.putExtra("sms_body", "The SMS text");   
+startActivity(it); 
+String body="this is sms demo"; 
+Intent mmsintent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("smsto", number, null)); 
+mmsintent.putExtra(Messaging.KEY_ACTION_SENDTO_MESSAGE_BODY, body); 
+mmsintent.putExtra(Messaging.KEY_ACTION_SENDTO_COMPOSE_MODE, true); 
+mmsintent.putExtra(Messaging.KEY_ACTION_SENDTO_EXIT_ON_SENT, true); 
+startActivity(mmsintent); 
+
+8.发送彩信 
+Uri uri = Uri.parse("content://media/external/images/media/23");   
+Intent it = new Intent(Intent.ACTION_SEND);   
+it.putExtra("sms_body", "some text");   
+it.putExtra(Intent.EXTRA_STREAM, uri);   
+it.setType("image/png");   
+startActivity(it); 
+StringBuilder sb = new StringBuilder(); 
+sb.append("file://"); 
+sb.append(fd.getAbsoluteFile()); 
+Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mmsto", number, null)); 
+// Below extra datas are all optional. 
+intent.putExtra(Messaging.KEY_ACTION_SENDTO_MESSAGE_SUBJECT, subject); 
+intent.putExtra(Messaging.KEY_ACTION_SENDTO_MESSAGE_BODY, body); 
+intent.putExtra(Messaging.KEY_ACTION_SENDTO_CONTENT_URI, sb.toString()); 
+intent.putExtra(Messaging.KEY_ACTION_SENDTO_COMPOSE_MODE, composeMode); 
+intent.putExtra(Messaging.KEY_ACTION_SENDTO_EXIT_ON_SENT, exitOnSent); 
+startActivity(intent); 
+
+9.发送Email 
+Uri uri = Uri.parse("mailto:xxx@abc.com"); 
+Intent it = new Intent(Intent.ACTION_SENDTO, uri); 
+startActivity(it); 
+Intent it = new Intent(Intent.ACTION_SEND);   
+it.putExtra(Intent.EXTRA_EMAIL, "me@abc.com");   
+it.putExtra(Intent.EXTRA_TEXT, "The email body text");   
+it.setType("text/plain");   
+startActivity(Intent.createChooser(it, "Choose Email Client")); 
+Intent it=new Intent(Intent.ACTION_SEND);     
+String[] tos={"me@abc.com"};     
+String[] ccs={"you@abc.com"};     
+it.putExtra(Intent.EXTRA_EMAIL, tos);     
+it.putExtra(Intent.EXTRA_CC, ccs);     
+it.putExtra(Intent.EXTRA_TEXT, "The email body text");     
+it.putExtra(Intent.EXTRA_SUBJECT, "The email subject text");     
+it.setType("message/rfc822");     
+startActivity(Intent.createChooser(it, "Choose Email Client"));   
+
+Intent it = new Intent(Intent.ACTION_SEND);   
+it.putExtra(Intent.EXTRA_SUBJECT, "The email subject text");   
+it.putExtra(Intent.EXTRA_STREAM, "file:///sdcard/mysong.mp3");   
+sendIntent.setType("audio/mp3");   
+startActivity(Intent.createChooser(it, "Choose Email Client")); 
+
+10.播放多媒体   
+Intent it = new Intent(Intent.ACTION_VIEW); 
+Uri uri = Uri.parse("file:///sdcard/song.mp3"); 
+it.setDataAndType(uri, "audio/mp3"); 
+startActivity(it); 
+Uri uri = Uri.withAppendedPath(MediaStore.Audio.Media.INTERNAL_CONTENT_URI, "1");   
+Intent it = new Intent(Intent.ACTION_VIEW, uri);   
+startActivity(it); 
+
+11.uninstall apk 
+Uri uri = Uri.fromParts("package", strPackageName, null);   
+Intent it = new Intent(Intent.ACTION_DELETE, uri);   
+startActivity(it); 
+
+12.install apk 
+Uri installUri = Uri.fromParts("package", "xxx", null); 
+returnIt = new Intent(Intent.ACTION_PACKAGE_ADDED, installUri); 
+
+13. 打开照相机 
+<1>Intent i = new Intent(Intent.ACTION_CAMERA_BUTTON, null); 
+          this.sendBroadcast(i); 
+    <2>long dateTaken = System.currentTimeMillis(); 
+         String name = createName(dateTaken) + ".jpg"; 
+         fileName = folder + name; 
+         ContentValues values = new ContentValues(); 
+         values.put(Images.Media.TITLE, fileName); 
+         values.put("_data", fileName); 
+         values.put(Images.Media.PICASA_ID, fileName); 
+         values.put(Images.Media.DISPLAY_NAME, fileName); 
+         values.put(Images.Media.DESCRIPTION, fileName); 
+         values.put(Images.ImageColumns.BUCKET_DISPLAY_NAME, fileName); 
+         Uri photoUri = getContentResolver().insert( 
+                   MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values); 
+           
+         Intent inttPhoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE); 
+         inttPhoto.putExtra(MediaStore.EXTRA_OUTPUT, photoUri); 
+         startActivityForResult(inttPhoto, 10); 
+
+14.从gallery选取图片 
+   Intent i = new Intent(); 
+         i.setType("image/*"); 
+         i.setAction(Intent.ACTION_GET_CONTENT); 
+         startActivityForResult(i, 11); 
+
+15. 打开录音机 
+Intent mi = new Intent(Media.RECORD_SOUND_ACTION); 
+         startActivity(mi); 
+
+16.显示应用详细列表      
+Uri uri = Uri.parse("market://details?id=app_id");        
+Intent it = new Intent(Intent.ACTION_VIEW, uri);        
+startActivity(it);        
+//where app_id is the application ID, find the ID         
+//by clicking on your application on Market home         
+//page, and notice the ID from the address bar     
+
+刚才找app id未果，结果发现用package name也可以 
+Uri uri = Uri.parse("market://details?id=<packagename>"); 
+这个简单多了 
+
+17寻找应用      
+Uri uri = Uri.parse("market://search?q=pname:pkg_name");        
+Intent it = new Intent(Intent.ACTION_VIEW, uri);        
+startActivity(it); 
+//where pkg_name is the full package path for an application      
+
+18打开联系人列表 
+         <1>           
+          Intent i = new Intent(); 
+          i.setAction(Intent.ACTION_GET_CONTENT); 
+          i.setType("vnd.android.cursor.item/phone"); 
+          startActivityForResult(i, REQUEST_TEXT); 
+
+         <2> 
+         Uri uri = Uri.parse("content://contacts/people"); 
+         Intent it = new Intent(Intent.ACTION_PICK, uri); 
+         startActivityForResult(it, REQUEST_TEXT); 
+
+19 打开另一程序 
+Intent i = new Intent(); 
+         ComponentName cn = new ComponentName("com.yellowbook.android2", 
+                   "com.yellowbook.android2.AndroidSearch"); 
+         i.setComponent(cn); 
+         i.setAction("android.intent.action.MAIN"); 
+         startActivityForResult(i, RESULT_OK); 
+
+★intent action大全： 
+
+android.intent.action.ALL_APPS 
+android.intent.action.ANSWER 
+android.intent.action.ATTACH_DATA 
+android.intent.action.BUG_REPORT 
+android.intent.action.CALL 
+android.intent.action.CALL_BUTTON 
+android.intent.action.CHOOSER 
+android.intent.action.CREATE_LIVE_FOLDER 
+android.intent.action.CREATE_SHORTCUT 
+android.intent.action.DELETE 
+android.intent.action.DIAL 
+android.intent.action.EDIT 
+android.intent.action.GET_CONTENT 
+android.intent.action.INSERT 
+android.intent.action.INSERT_OR_EDIT 
+android.intent.action.MAIN 
+android.intent.action.MEDIA_SEARCH 
+android.intent.action.PICK 
+android.intent.action.PICK_ACTIVITY 
+android.intent.action.RINGTONE_PICKER 
+android.intent.action.RUN 
+android.intent.action.SEARCH 
+android.intent.action.SEARCH_LONG_PRESS 
+android.intent.action.SEND 
+android.intent.action.SENDTO 
+android.intent.action.SET_WALLPAPER 
+android.intent.action.SYNC 
+android.intent.action.SYSTEM_TUTORIAL 
+android.intent.action.VIEW 
+android.intent.action.VOICE_COMMAND 
+android.intent.action.WEB_SEARCH 
+android.net.wifi.PICK_WIFI_NETWORK 
+android.settings.AIRPLANE_MODE_SETTINGS 
+android.settings.APN_SETTINGS 
+android.settings.APPLICATION_DEVELOPMENT_SETTINGS 
+android.settings.APPLICATION_SETTINGS 
+android.settings.BLUETOOTH_SETTINGS 
+android.settings.DATA_ROAMING_SETTINGS 
+android.settings.DATE_SETTINGS 
+android.settings.DISPLAY_SETTINGS 
+android.settings.INPUT_METHOD_SETTINGS 
+android.settings.INTERNAL_STORAGE_SETTINGS 
+android.settings.LOCALE_SETTINGS 
+android.settings.LOCATION_SOURCE_SETTINGS 
+android.settings.MANAGE_APPLICATIONS_SETTINGS 
+android.settings.MEMORY_CARD_SETTINGS 
+android.settings.NETWORK_OPERATOR_SETTINGS 
+android.settings.QUICK_LAUNCH_SETTINGS 
+android.settings.SECURITY_SETTINGS 
+android.settings.SETTINGS 
+android.settings.SOUND_SETTINGS 
+android.settings.SYNC_SETTINGS 
+android.settings.USER_DICTIONARY_SETTINGS 
+android.settings.WIFI_IP_SETTINGS 
+android.settings.WIFI_SETTINGS 
+android.settings.WIRELESS_SETTINGS

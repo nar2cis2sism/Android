@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TranslucentActionBar" parent="android:Widget.ActionBar">
+        <item name="android:background">@drawable/ab_transparent</item>
+    </style>
+    
+    <style name="login_setting_check" parent="@android:style/Widget.CompoundButton.CheckBox">
+    //登录界面设置选项布局复选框样式
+    	<item name="android:button">@drawable/login_check</item>
+    	<item name="android:paddingLeft">28dp</item>
+    	<item name="android:textColor">@color/login_check</item>
+    	<item name="android:textSize">16sp</item>
+    </style>
+    
+    <style name="session_text">
+    //会话界面文本样式
+    	<item name="android:layout_width">wrap_content</item>
+    	<item name="android:layout_height">wrap_content</item>
+    	<item name="android:textColor">#FF3D8CB8</item>
+    	<item name="android:textSize">20sp</item>
+    </style>
+    
+    <style name="my_tab">
+    //自定义标签样式
+    	<item name="android:layout_width">wrap_content</item>
+    	<item name="android:layout_height">wrap_content</item>
+    	<item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/my_tab_bg</item>
+        <item name="android:gravity">center_horizontal</item>  
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        
+    	<item name="android:textColor">#FFFFFFFF</item>
+    	<item name="android:textSize">10sp</item>
+        <item name="android:singleLine">true</item>
+        
+        <item name="android:drawablePadding">2dp</item>
+    </style>
+    
+    <style name="setting_title">
+    //设置界面标题栏
+        <item name="android:textSize">20sp</item>  
+        <item name="android:textColor">#ffffff</item>  
+        <item name="android:paddingLeft">10dp</item>
+    </style>
+    
+    <style name="setting_title_bg">
+    //设置界面标题栏背景
+    	<item name="android:background">@drawable/setting_title_bg</item>
+    </style>
+    
+    <style name="setting_listview">
+    //设置界面列表样式
+    	<item name="android:scrollbarSize">10dp</item>
+        <item name="android:scrollbarThumbVertical">@drawable/setting_scrollbar_thumb</item>
+    </style>
+</resources>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    //标题栏
+    <LinearLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@drawable/my_ex_title_bar_bg"
+	    android:gravity="center_vertical"
+	    >
+	    <Button
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:background="@drawable/my_ex_title_bar_back"
+		    android:layout_marginLeft="8dp"
+		    android:layout_marginRight="8dp"
+		    
+		    android:text="返回"
+		    android:textColor="#ffffff"
+		    android:textSize="17sp"
+		    />
+	    <TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
+		    android:gravity="center_horizontal"
+		    
+		    android:text="帐户"
+		    android:textColor="#ffffff"
+		    android:textSize="20sp"
+		    android:singleLine="true"
+		    />
+	    <Button
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:background="@drawable/my_ex_title_bar_menu"
+		    android:layout_marginLeft="8dp"
+		    android:layout_marginRight="8dp"
+		    
+		    android:text="菜单"
+		    android:textColor="#ffffff"
+		    android:textSize="17sp"
+		    />
+    </LinearLayout>
+    
+    //内容区域
+    <LinearLayout
+    	android:orientation="vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:background="@drawable/my_ex_content_bg"
+	    >
+	    <FrameLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    >
+		    <LinearLayout
+			    android:layout_width="fill_parent"
+			    android:layout_height="52dp"
+	    		android:background="@drawable/my_ex_account_bg"
+			    >
+			    <RelativeLayout
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_weight="1"
+				    
+				    android:paddingLeft="20dp"
+				    android:paddingRight="8dp"
+				    android:paddingTop="12dp"
+				    android:paddingBottom="5dp"
+				    >
+				    <TextView
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:layout_alignParentRight="true"
+					    
+					    android:text="资产"
+					    android:textColor="#80000000"
+					    android:drawableLeft="@drawable/my_ex_account_zichan"
+					    />
+				    <TextView
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:layout_alignParentRight="true"
+					    android:layout_alignParentBottom="true"
+					    
+					    android:text="正在计算..."
+					    android:textColor="#ffffff"
+					    />
+			    </RelativeLayout>
+			    
+			    <RelativeLayout
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_weight="1"
+				    
+				    android:paddingLeft="20dp"
+				    android:paddingRight="8dp"
+				    android:paddingTop="12dp"
+				    android:paddingBottom="5dp"
+				    >
+				    <ImageView
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:src="@drawable/my_ex_account_minus"
+					    />
+				    <TextView
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:layout_alignParentRight="true"
+					    
+					    android:text="负债"
+					    android:textColor="#80000000"
+					    android:drawableLeft="@drawable/my_ex_account_fuzhai"
+					    />
+				    <TextView
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:layout_alignParentRight="true"
+					    android:layout_alignParentBottom="true"
+					    
+					    android:text="正在计算..."
+					    android:textColor="#ffffff"
+					    />
+			    </RelativeLayout>
+			    
+			    <RelativeLayout
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_weight="1"
+				    
+				    android:paddingLeft="20dp"
+				    android:paddingRight="8dp"
+				    android:paddingTop="12dp"
+				    android:paddingBottom="5dp"
+				    >
+				    <ImageView
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:src="@drawable/my_ex_account_equal"
+					    />
+				    <TextView
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:layout_alignParentRight="true"
+					    
+					    android:text="净资产"
+					    android:textColor="#80000000"
+					    android:drawableLeft="@drawable/my_ex_account_jingzichan"
+					    />
+				    <TextView
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:layout_alignParentRight="true"
+					    android:layout_alignParentBottom="true"
+					    
+					    android:text="正在计算..."
+					    android:textColor="#ffffff"
+					    />
+			    </RelativeLayout>
+		    </LinearLayout>
+		    
+		    <ImageView
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:src="@drawable/my_ex_menu_bar_bg"
+			    />
+	    </FrameLayout>
+	    
+	    <ExpandableListView
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:divider="@null"
+		    android:scrollbars="none"
+		    android:groupIndicator="@null"
+		    android:id="@+id/lv"
+		    />
+    </LinearLayout>
+</LinearLayout>

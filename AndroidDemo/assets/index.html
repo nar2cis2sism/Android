@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+
+<html> 
+
+<head> 
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+
+<title>联系人列表</title> 
+
+<script type="text/javascript"> 
+
+       function show(jsondata){ 
+
+             var jsonobjs = eval(jsondata); 
+
+             var table = document.getElementById("personTable"); 
+
+             for(var y=0; y<jsonobjs.length; y++){ 
+
+                var tr = table.insertRow(table.rows.length); //添加一行 
+
+                //添加三列 
+
+                var td1 = tr.insertCell(0); 
+
+                var td2 = tr.insertCell(1); 
+
+                td2.align = "center"; 
+
+                var td3 = tr.insertCell(2); 
+
+                //设置列内容和属性 
+
+                td1.innerHTML = jsonobjs[y].id; 
+
+                td2.innerHTML = jsonobjs[y].name; 
+
+                td3.innerHTML = "<a href='javascript:js.call(\""+ jsonobjs[y].phone +"\")'>"+ jsonobjs[y].phone+ 
+
+"</a>"; 
+
+             } 
+
+       } 
+
+</script> 
+
+</head> 
+
+<body bgcolor="#00FF00" text="#000000" style="margin:0 0 0 0" onload="javascript:js.getContacts()"> 
+<a href='http://www.google.com'>谷歌Google</a>
+       <table border="0" width="100%" id="personTable" cellspacing="0" style="word-wrap:break-word;overflow:hidden"> 
+
+              <tr> 
+
+                    <td width="15%">编号</td><td align="center">姓名</td><td width="15%">电话</td> 
+
+              </tr> 
+
+       </table> 
+       
+       <img src="index.gif"> 
+
+</body> 
+
+</html> 

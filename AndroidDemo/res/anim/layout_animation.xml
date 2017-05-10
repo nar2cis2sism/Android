@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layoutAnimation xmlns:android="http://schemas.android.com/apk/res/android"
+        android:delay="30%"
+        android:animationOrder="reverse"
+        android:animation="@anim/slide_right">
+</layoutAnimation>
+
+<!-- 
+android:delay  子类动画时间间隔 （延迟）   70% 也可以是一个浮点数 如“1.2”等
+
+android:animationOrder="random"   子类的显示方式 random表示随机
+
+android:animationOrder 的取值有 
+
+normal  0   默认 
+reverse 1   倒序 
+random  2   随机 
+
+ -->

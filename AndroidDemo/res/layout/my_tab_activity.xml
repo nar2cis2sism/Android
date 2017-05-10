@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+	<FrameLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:layout_weight="1"
+	    android:id="@+id/frame" />
+	<RadioGroup
+		android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@drawable/my_tab_menubar_bg"
+	    android:gravity="center_vertical"
+	    android:paddingTop="2dp"
+	    android:id="@+id/menuBar"
+	    >
+		<RadioButton
+			style="@style/my_tab"
+			
+		    android:text="首页"
+		    android:drawableTop="@drawable/my_tab_icon_1"
+		    
+		    android:id="@+id/tab_1" />
+		<RadioButton
+			style="@style/my_tab"
+			
+		    android:text="信息"
+		    android:drawableTop="@drawable/my_tab_icon_2"
+		    
+		    android:id="@+id/tab_2" />
+		<RadioButton
+			style="@style/my_tab"
+			
+		    android:text="关于"
+		    android:drawableTop="@drawable/my_tab_icon_3"
+		    
+		    android:id="@+id/tab_3" />
+		<RadioButton
+			style="@style/my_tab"
+			
+		    android:text="搜索"
+		    android:drawableTop="@drawable/my_tab_icon_4"
+		    
+		    android:id="@+id/tab_4" />
+		<RadioButton
+			style="@style/my_tab"
+			
+		    android:text="更多"
+		    android:drawableTop="@drawable/my_tab_icon_5"
+		    
+		    android:id="@+id/tab_5" />
+    </RadioGroup>
+</LinearLayout>

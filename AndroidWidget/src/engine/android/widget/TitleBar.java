@@ -12,7 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 /**
- * 自定义标题栏
+ * 标题栏
  * 
  * @author Daimon
  * @version N

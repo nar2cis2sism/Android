@@ -1,7 +1,5 @@
 package com.project.network.action;
 
-import static engine.android.framework.app.App.getHttpManager;
-
 import com.google.gson.reflect.TypeToken;
 import com.project.app.MySession;
 import com.project.network.Actions;
@@ -10,25 +8,26 @@ import com.project.network.http.HttpJsonParser;
 import com.project.storage.MyDAOManager;
 import com.project.storage.db.Friend;
 
-import engine.android.dao.DAOTemplate;
-import engine.android.dao.DAOTemplate.DAOTransaction;
-import engine.android.framework.network.event.EventObserver.EventCallback;
-import engine.android.framework.network.http.HttpManager.HttpBuilder;
-import engine.android.framework.util.GsonUtil;
-import engine.android.http.HttpConnector;
-
 import org.json.JSONObject;
 
-import protocol.java.json.FriendInfo;
-
 import java.util.List;
+
+import engine.android.dao.DAOTemplate;
+import engine.android.dao.DAOTemplate.DAOTransaction;
+import engine.android.framework.network.http.HttpManager;
+import engine.android.framework.network.http.HttpManager.HttpBuilder;
+import engine.android.framework.network.http.HttpManager.StringEntity;
+import engine.android.framework.util.GsonUtil;
+import engine.android.http.HttpConnector;
+import engine.android.http.util.HttpParser;
+import protocol.java.json.FriendInfo;
 
 /**
  * 查询好友列表
  * 
  * @author Daimon
  */
-public class QueryFriendList implements HttpBuilder {
+public class QueryFriendList implements HttpBuilder, StringEntity {
     
     public final String action = Actions.QUERY_FRIEND_LIST;
     
@@ -42,12 +41,18 @@ public class QueryFriendList implements HttpBuilder {
     }
 
     @Override
-    public HttpConnector buildHttpConnector() {
-        return getHttpManager().buildHttpConnector(
-                NetworkConfig.HTTP_URL, 
-                action, 
-                GsonUtil.toJson(this), 
-                new Parser(action, getHttpManager()));
+    public HttpConnector buildConnector(HttpManager http) {
+        return http.buildHttpConnector(NetworkConfig.HTTP_URL, action, this);
+    }
+    
+    @Override
+    public String toString() {
+        return GsonUtil.toJson(this);
+    }
+
+    @Override
+    public HttpParser buildParser() {
+        return new Parser();
     }
     
     private class Parser extends HttpJsonParser {
@@ -59,10 +64,6 @@ public class QueryFriendList implements HttpBuilder {
         private int sync_type;
         private int sync_status;
         private List<FriendInfo> friendList;
-
-        public Parser(String action, EventCallback callback) {
-            super(action, callback);
-        }
         
         @Override
         protected Object process(JSONObject data) {

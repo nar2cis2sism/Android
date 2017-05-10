@@ -1,15 +1,17 @@
 package engine.android.framework.app;
 
-import engine.android.framework.network.ConnectionInterceptor;
-import engine.android.framework.ui.util.ImageManager.Transformer;
-import engine.android.http.HttpProxy.HttpServlet;
-import engine.android.socket.SocketProxy.SocketServlet;
-import engine.android.util.MyThreadFactory;
+import android.content.Context;
 
 import java.io.File;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import engine.android.framework.network.ConnectionStatus.ConnectionInterceptor;
+import engine.android.framework.ui.util.ImageManager.Transformer;
+import engine.android.http.HttpProxy.HttpServlet;
+import engine.android.socket.SocketProxy.SocketServlet;
+import engine.android.util.MyThreadFactory;
 
 /**
  * 配置应用程序公用的功能组件
@@ -18,10 +20,15 @@ import java.util.concurrent.TimeUnit;
  */
 public class AppConfig {
     
-    private NetworkConfig network;
-    private HttpConfig http;
-    private SocketConfig socket;
-    private ImageConfig image;
+    private Context context;
+    
+    public AppConfig(Context context) {
+        this.context = context.getApplicationContext();
+    }
+    
+    public Context getContext() {
+        return context;
+    }
     
     public boolean isOffline() {
         return configNetwork().offline;
@@ -35,7 +42,7 @@ public class AppConfig {
         ThreadPoolExecutor threadPool = configHttp().threadPool;
         if (threadPool == null)
         {
-            threadPool = configHttp().threadPool = ConnectionConfig.getDefaultThreadPool("Http网络连接");
+            configHttp().threadPool = threadPool = ConnectionConfig.getDefaultThreadPool("Http网络连接");
         }
         
         return threadPool;
@@ -45,7 +52,7 @@ public class AppConfig {
         ThreadPoolExecutor threadPool = configSocket().threadPool;
         if (threadPool == null)
         {
-            threadPool = configSocket().threadPool = ConnectionConfig.getDefaultThreadPool("Socket请求");
+            configSocket().threadPool = threadPool = ConnectionConfig.getDefaultThreadPool("Socket请求");
         }
         
         return threadPool;
@@ -79,7 +86,7 @@ public class AppConfig {
         File imageDir = configImage().imageDir;
         if (imageDir == null)
         {
-            imageDir = configImage().imageDir = AppContext.getContext().getDir("image", 0);
+            configImage().imageDir = imageDir = context.getDir("image", 0);
         }
         
         return imageDir;
@@ -143,7 +150,7 @@ public class AppConfig {
         }
         
         /**
-         * 设置网络连接拦截器
+         * 设置网络拦截器
          */
         public void setInterceptor(ConnectionInterceptor interceptor) {
             this.interceptor = interceptor;
@@ -198,11 +205,11 @@ public class AppConfig {
         /**
          * 设置图片转换器
          */
-        public void setTransformer(Transformer transformer) {
+        public ImageConfig setTransformer(Transformer transformer) {
             this.transformer = transformer;
+            return this;
         }
     }
-    
     
     /**
      * 配置网络连接
@@ -235,4 +242,9 @@ public class AppConfig {
         if (image == null) image = new ImageConfig();
         return image;
     }
+    
+    private NetworkConfig network;
+    private HttpConfig http;
+    private SocketConfig socket;
+    private ImageConfig image;
 }

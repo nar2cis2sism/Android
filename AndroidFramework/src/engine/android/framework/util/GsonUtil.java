@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 import java.lang.reflect.Type;
 
-public class GsonUtil {
+public final class GsonUtil {
     
     private static final Gson gson = new Gson();
     

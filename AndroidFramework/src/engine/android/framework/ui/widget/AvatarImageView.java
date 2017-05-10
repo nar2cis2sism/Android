@@ -7,7 +7,7 @@ import android.widget.ImageView;
 
 import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
 import engine.android.framework.R;
-import engine.android.framework.app.App;
+import engine.android.framework.app.AppGlobal;
 import engine.android.framework.ui.util.ImageManager.ImageUrl;
 import engine.android.util.ui.UIUtil;
 import engine.android.widget.base.CustomView;
@@ -75,6 +75,7 @@ public class AvatarImageView extends ImageView {
     }
 
     public void display(ImageUrl url) {
-        App.getImageManager().display(this, url, getResources().getDrawable(R.drawable.avatar_default));
+        AppGlobal.get(getContext()).getImageManager()
+        .display(this, url, getResources().getDrawable(R.drawable.avatar_default));
     }
 }

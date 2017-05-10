@@ -3,7 +3,8 @@ package com.project.storage;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import engine.android.framework.app.AppContext;
+import com.project.app.MyContext;
+
 import engine.android.util.Singleton;
 
 /**
@@ -13,14 +14,14 @@ import engine.android.util.Singleton;
  */
 public class MySharedPreferences {
 
-    private static final String SHARED_PREFERENCES_NAME = "project";
+    public static final String SHARED_PREFERENCES_NAME = "project";
     
     private static final Singleton<MySharedPreferences> instance
     = new Singleton<MySharedPreferences>() {
         
         @Override
         protected MySharedPreferences create() {
-            return new MySharedPreferences(AppContext.getContext());
+            return new MySharedPreferences(MyContext.getContext());
         }
     };
     
@@ -33,8 +34,7 @@ public class MySharedPreferences {
     private final SharedPreferences sp;
     
     MySharedPreferences(Context context) {
-        sp = context.getSharedPreferences(SHARED_PREFERENCES_NAME, 
-                Context.MODE_PRIVATE);
+        sp = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     }
     
     public void reset() {

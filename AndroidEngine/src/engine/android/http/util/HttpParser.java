@@ -3,7 +3,7 @@ package engine.android.http.util;
 import engine.android.http.HttpResponse;
 
 /**
- * Http解析器
+ * HTTP解析器
  * 
  * @author Daimon
  * @version N
@@ -11,5 +11,5 @@ import engine.android.http.HttpResponse;
  */
 public interface HttpParser {
 
-    public void parse(HttpResponse response) throws Exception;
+    Object parse(HttpResponse response) throws Exception;
 }

@@ -4,6 +4,8 @@ import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
+import engine.android.http.HttpRequest.ByteArray;
+
 /**
  * Http代理（单机测试用）
  * 
@@ -19,11 +21,11 @@ public class HttpProxy extends HttpConnector {
         super(url);
     }
 
-    public HttpProxy(String url, byte[] postData) {
+    public HttpProxy(String url, ByteArray postData) {
         super(url, postData);
     }
 
-    public HttpProxy(String url, Map<String, String> headers, byte[] postData) {
+    public HttpProxy(String url, Map<String, String> headers, ByteArray postData) {
         super(url, headers, postData);
     }
 
@@ -60,9 +62,9 @@ public class HttpProxy extends HttpConnector {
         }
     }
 
-    public static interface HttpServlet {
+    public interface HttpServlet {
 
-        public void doServlet(HttpRequest req, HttpResponse resp);
+        void doServlet(HttpRequest req, HttpResponse resp);
         
         public static class HttpResponse {
 
@@ -76,11 +78,7 @@ public class HttpProxy extends HttpConnector {
              * 设置头信息
              */
             public void setHeader(String key, String value) {
-                if (headers == null)
-                {
-                    headers = new HashMap<String, String>();
-                }
-
+                if (headers == null) headers = new HashMap<String, String>();
                 headers.put(key, value);
             }
             

@@ -19,10 +19,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.WeakHashMap;
 
+import engine.android.core.Forelet.FragmentTransaction;
+import engine.android.core.Forelet.Task;
 import engine.android.core.Forelet.Task.TaskExecutor;
 
 /**
@@ -895,4 +899,26 @@ public class Forelet extends Activity implements TaskCallback {
 interface TaskCallback {
     
     public void onTaskCallback(int taskId, Object result);
+}
+
+class SavedInstance {
+    
+    private static final WeakHashMap<Bundle, SavedInstance> savedInstanceMap
+    = new WeakHashMap<Bundle, SavedInstance>();
+    
+    public static void save(Bundle bundle, SavedInstance savedInstance) {
+        savedInstanceMap.put(bundle, savedInstance);
+    }
+    
+    public static SavedInstance restore(Bundle bundle) {
+        return savedInstanceMap.get(bundle);
+    }
+    
+    public Task task;
+    
+    public Object progress;
+    
+    public FragmentTransaction transaction;
+    
+    public final HashMap<String, Object> savedMap = new HashMap<String, Object>();
 }

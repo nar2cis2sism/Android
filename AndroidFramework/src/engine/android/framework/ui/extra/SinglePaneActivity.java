@@ -16,6 +16,8 @@ import engine.android.framework.ui.BaseActivity;
  * 提供一个通用界面（显示单个Fragment）
  * 
  * @author Daimon
+ * @version N
+ * @since 6/6/2014
  */
 public class SinglePaneActivity extends BaseActivity {
     
@@ -76,7 +78,7 @@ public class SinglePaneActivity extends BaseActivity {
     }
 
     /**
-     * 通过此方法构造出Intent才能启动
+     * 通过此方法构造出Intent启动
      * 
      * @param fragmentCls Fragment类名
      * @param args Fragment参数

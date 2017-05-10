@@ -72,17 +72,17 @@ public class SocketConnector {
     /**
      * Socket数据包
      */
-    public static interface SocketData {
+    public interface SocketData {
 
-        public void wrapData(OutputStream out) throws IOException;
+        void wrapData(OutputStream out) throws IOException;
     }
 
     /**
      * Socket接收数据解析
      */
-    public static interface SocketReceiver {
+    public interface SocketReceiver {
 
-        public Object parseData(InputStream in) throws IOException;
+        Object parseData(InputStream in) throws IOException;
     }
 
     public SocketConnector(String host, int port) {
@@ -210,7 +210,7 @@ public class SocketConnector {
         }
         else
         {
-            throw new IllegalStateException("Please close the socket first");
+            throw new IllegalStateException("Please close the socket first.");
         }
     }
 
@@ -297,6 +297,7 @@ public class SocketConnector {
     public void clear() {
         conns.clear();
     }
+    
     /******************** 数据收发 ********************/
 
     private Socket socket;                              // Socket连接
@@ -437,7 +438,6 @@ public class SocketConnector {
     /**
      * 可自定义握手协议
      */
-
     protected void handshake(InputStream in, OutputStream out) throws IOException {
         // 读取握手信息
         byte[] bs = new byte[16];

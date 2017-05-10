@@ -1,13 +1,11 @@
 package engine.android.core.util;
 
-import static engine.android.core.ApplicationManager.getApplicationManager;
+import static engine.android.core.ApplicationManager.getMainApplication;
 
 import android.app.Application;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.StringBuilderPrinter;
-
-import engine.android.core.ApplicationManager;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -15,6 +13,8 @@ import java.util.Calendar;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import engine.android.core.ApplicationManager;
 
 /**
  * 日志管理工厂<p>
@@ -30,7 +30,7 @@ public final class LogFactory {
 
     private static final AtomicBoolean logEnabled
     = new AtomicBoolean();                                      // 日志开启状态
-
+    
     private static final AtomicBoolean logOpened
     = new AtomicBoolean();                                      // 日志是否开启过
 
@@ -49,8 +49,8 @@ public final class LogFactory {
     public static void enableLOG(boolean enable) {
         if (logEnabled.compareAndSet(!enable, enable) && logOpened.compareAndSet(false, true))
         {
-            LOG.log(null, null, "程序启动", ApplicationManager.getSession().getCreationTime());
-            LOG.log((StackTraceElement) null, null);
+            LOG.log(null, null, "程序启动", ApplicationManager.getMainApplication().getLaunchTime());
+            LOG.log();
         }
     }
 
@@ -64,18 +64,18 @@ public final class LogFactory {
     /**
      * 获取日志输出目录
      */
-    public static synchronized File getLogDir() {
+    private static synchronized File getLogDir() {
         if (logDir == null)
         {
             String logDirName = "log";
-            // 其它进程加前缀，与主进程Log区分开
+            // 其它进程加后缀，与主进程Log区分开
             String processName = ApplicationManager.getProcessName();
-            if (!processName.equals(getApplicationManager().getPackageName()))
+            if (!TextUtils.equals(processName, getMainApplication().getApplicationInfo().processName))
             {
                 logDirName += "-" + processName;
             }
             
-            logDir = getApplicationManager().getDir(logDirName, 0);
+            logDir = getMainApplication().getDir(logDirName, 0);
             purge();
         }
 
@@ -92,7 +92,6 @@ public final class LogFactory {
     /**
      * 添加日志映射
      */
-
     public static void addLogFile(Class<?> logClass, Class<?> mapClass) {
         String logFile = map.get(mapClass.getName());
         if (logFile != null)
@@ -104,8 +103,7 @@ public final class LogFactory {
     /**
      * 操作日志文件
      */
-
-    static LogFile getLogFile(String className) {
+    private static LogFile getLogFile(String className) {
         String logFile;
         if (TextUtils.isEmpty(className))
         {
@@ -127,12 +125,14 @@ public final class LogFactory {
      * @param logFile 日志文件名称
      */
     private static LogFile getOrCreateLogFile(String logFile) {
-        if (!logs.containsKey(logFile))
+        LogFile log = logs.get(logFile);
+        if (log == null)
         {
             logs.putIfAbsent(logFile, new LogFile(new File(getLogDir(), logFile)));
+            log = logs.get(logFile);
         }
-
-        return logs.get(logFile);
+        
+        return log;
     }
 
     /**
@@ -173,18 +173,20 @@ public final class LogFactory {
     }
 
     /**
-     * It may block current thread.
+     * 需要导出日志时调用此方法获取日志目录（会阻塞当前线程）
      */
-    public static void flush() {
+    public static File flush() {
         for (LogFile log : logs.values())
         {
             try {
                 log.flush();
             } catch (Exception e) {
                 Log.w(LogFactory.class.getName(),
-                        String.format("Failed to flush Log:\n%s", log));
+                        String.format("Failed to flush Log:\n%s", log), e);
             }
         }
+        
+        return getLogDir();
     }
 
     /**
@@ -194,8 +196,8 @@ public final class LogFactory {
 
         private static final int CAPACITY = 10;
 
-        private static final ConcurrentLinkedQueue<LogRecord> logs =
-                new ConcurrentLinkedQueue<LogRecord>();
+        private static final ConcurrentLinkedQueue<LogRecord> logs
+        = new ConcurrentLinkedQueue<LogRecord>();
 
         private final File logFile;
 
@@ -209,7 +211,7 @@ public final class LogFactory {
             logs.offer(new LogRecord(tag, message, timeInMillis));
             if (logs.size() >= CAPACITY && isFlushing.compareAndSet(false, true))
             {
-                new Thread(this).start();
+                new Thread(this, logFile.getName()).start();
             }
         }
 
@@ -298,66 +300,7 @@ public final class LogFactory {
             }
 
             public String getTag() {
-                return getFixedText(tag, 40);
-            }
-
-            /**
-             * Daimon:获取固定长度文本
-             */
-            private static String getFixedText(String text, int length) {
-                StringBuilder sb = new StringBuilder();
-                int len;
-
-                if (TextUtils.isEmpty(text))
-                {
-                    len = 0;
-                }
-                else
-                {
-                    sb.append(text);
-                    len = length(text);
-                }
-
-                if (len < length)
-                {
-                    for (int i = len; i < length; i++)
-                    {
-                        sb.append(" ");
-                    }
-                }
-                else if (len > length)
-                {
-                    sb.delete(0, sb.length());
-                    text = substring(text, length - 3);
-
-                    sb.append(text).append("...");
-                    len = length(text) + 3;
-
-                    if (len < length)
-                    {
-                        for (int i = len; i < length; i++)
-                        {
-                            sb.append(" ");
-                        }
-                    }
-                }
-
-                return sb.toString();
-            }
-
-            private static String substring(String s, int length) {
-                int len = length;
-                String sub;
-                while (length(sub = s.substring(0, len)) > length)
-                {
-                    len--;
-                }
-
-                return sub;
-            }
-
-            private static int length(String s) {
-                return s.replaceAll("[^\\x00-\\xff]", "**").length();
+                return LogUtil.getFixedText(tag, 40);
             }
         }
     }
@@ -366,6 +309,13 @@ public final class LogFactory {
      * 日志输出
      */
     public static final class LOG {
+        
+        /**
+         * 输出日志（空行）
+         */
+        public static void log() {
+            log("", null);
+        }
 
         /**
          * 输出日志（取调用函数的类名+方法名作为标签）
@@ -400,7 +350,7 @@ public final class LogFactory {
          * @param message 日志内容
          */
         public static void log(StackTraceElement stack, Object message) {
-            if (!isLogEnabled() && !ApplicationManager.isDebuggable())
+            if (!isLogEnabled() && !isDebuggable())
             {
                 return;
             }
@@ -410,40 +360,30 @@ public final class LogFactory {
             if (stack != null)
             {
                 className = stack.getClassName();
-                tag = String.format("%s.%s",
-                        className.substring(className.lastIndexOf(".") + 1),
-                        stack.getMethodName());
+                tag = LogUtil.getClassAndMethod(stack);
             }
 
             log(className, tag, message, System.currentTimeMillis());
         }
 
-        static void log(String className, String tag, Object message, long timeInMillis) {
-            String msg = null;
+        private static void log(String className, String tag, Object message, long timeInMillis) {
+            String msg = getMessage(message);
             if (isLogEnabled())
             {
                 LogFile log = getLogFile(className);
                 if (log != null)
                 {
-                    log.LOG(tag, msg = getMessage(msg, message), timeInMillis);
+                    log.LOG(tag, msg, timeInMillis);
                 }
             }
 
-            if (ApplicationManager.isDebuggable())
+            if (isDebuggable())
             {
-                Log.d(tag, getMessage(msg, message));
+                Log.d(tag, msg);
             }
         }
         
-        /**
-         * 如果不需打印日志，就不用转换数据
-         */
-        private static String getMessage(String msg, Object message) {
-            if (msg != null)
-            {
-                return msg;
-            }
-            
+        private static String getMessage(Object message) {
             if (message instanceof Throwable)
             {
                 return LogUtil.getExceptionInfo((Throwable) message);
@@ -452,6 +392,10 @@ public final class LogFactory {
             {
                 return message == null ? "" : message.toString();
             }
+        }
+        
+        private static boolean isDebuggable() {
+            return ApplicationManager.isDebuggable(getMainApplication());
         }
     }
     
@@ -462,25 +406,25 @@ public final class LogFactory {
         /**
          * 获取当前函数堆栈信息
          */
-        public static final StackTraceElement getCurrentStackFrame() {
+        public static StackTraceElement getCurrentStackFrame() {
             return getStackFrame(CURRENT_STACK_FRAME);
         }
 
         /**
          * 获取调用函数堆栈信息
          */
-        public static final StackTraceElement getCallerStackFrame() {
+        public static StackTraceElement getCallerStackFrame() {
             return getStackFrame(CURRENT_STACK_FRAME + 1);
         }
 
         /**
          * 顾名思义
          */
-        public static final StackTraceElement getSuperCallerStackFrame() {
+        public static StackTraceElement getSuperCallerStackFrame() {
             return getStackFrame(CURRENT_STACK_FRAME + 2);
         }
 
-        private static final StackTraceElement getStackFrame(int index) {
+        private static StackTraceElement getStackFrame(int index) {
             StackTraceElement[] stacks = Thread.currentThread().getStackTrace();
             return stacks.length > ++index ? stacks[index] : null;
         }
@@ -488,8 +432,77 @@ public final class LogFactory {
         /**
          * 获取异常信息
          */
-        public static final String getExceptionInfo(Throwable tr) {
+        public static String getExceptionInfo(Throwable tr) {
             return Log.getStackTraceString(tr);
+        }
+        
+        /**
+         * 提取类名+方法名
+         */
+        public static String getClassAndMethod(StackTraceElement stack) {
+            String className = stack.getClassName();
+            return String.format("%s.%s", 
+                    className.substring(className.lastIndexOf(".") + 1), 
+                    stack.getMethodName());
+        }
+
+        /**
+         * Daimon:获取固定长度文本
+         */
+        public static String getFixedText(String text, int length) {
+            StringBuilder sb = new StringBuilder();
+            int len;
+
+            if (TextUtils.isEmpty(text))
+            {
+                len = 0;
+            }
+            else
+            {
+                sb.append(text);
+                len = length(text);
+            }
+
+            if (len < length)
+            {
+                for (int i = len; i < length; i++)
+                {
+                    sb.append(" ");
+                }
+            }
+            else if (len > length)
+            {
+                sb.delete(0, sb.length());
+                text = substring(text, length - 3);
+
+                sb.append(text).append("...");
+                len = length(text) + 3;
+
+                if (len < length)
+                {
+                    for (int i = len; i < length; i++)
+                    {
+                        sb.append(" ");
+                    }
+                }
+            }
+
+            return sb.toString();
+        }
+
+        private static String substring(String s, int length) {
+            int len = length;
+            String sub;
+            while (length(sub = s.substring(0, len)) > length)
+            {
+                len--;
+            }
+
+            return sub;
+        }
+
+        private static int length(String s) {
+            return s.replaceAll("[^\\x00-\\xff]", "**").length();
         }
     }
 }

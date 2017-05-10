@@ -8,15 +8,15 @@ import android.os.Bundle;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import engine.android.framework.network.event.Event;
-import engine.android.framework.network.event.EventObserver;
-import engine.android.framework.network.event.EventObserver.EventCallback;
-import engine.android.framework.network.event.EventObserver.EventHandler;
+import engine.android.core.extra.EventBus;
+import engine.android.core.extra.EventBus.Event;
+import engine.android.core.extra.EventBus.EventHandler;
+import engine.android.framework.network.ConnectionStatus;
 import engine.android.framework.ui.util.PresentManager;
 import engine.android.framework.ui.util.PresentManager.BasePresenter;
 import engine.android.widget.TitleBar;
 
-public abstract class BaseFragment extends engine.android.core.BaseFragment implements EventHandler {
+public abstract class BaseFragment extends engine.android.core.BaseFragment {
     
     private BaseActivity baseActivity;
     
@@ -219,36 +219,22 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
     
     @Override
     public void onDestroy() {
-        unregisterEvent();
         getPresenters().onDestroy();
         super.onDestroy();
     }
 
     /******************************* EventBus *******************************/
     
-    private boolean isReceiveEventEnabled;
-    
     /**
      * 允许接收事件回调<br>
      * Call it in {@link #onCreate(android.os.Bundle)}
      */
-    protected void enableReceiveEvent(String... actions) {
-        if (isReceiveEventEnabled = true)
-        {
-            for (String action : actions)
-            {
-                EventObserver.getDefault().register(action, this);
-            }
-        }
-    }
-
-    @Override
-    public void handleEvent(final Event event) {
-        onReceive(event.action, event.status, event.param);
+    protected final void enableReceiveEvent(String... actions) {
+        addPresenter(new ConnectionPresenter(actions));
     }
     
-    private void onReceive(String action, int status, Object param) {
-        if (status == EventCallback.SUCCESS)
+    protected void onReceive(String action, int status, Object param) {
+        if (status == ConnectionStatus.SUCCESS)
         {
             onReceiveSuccess(action, param);
         }
@@ -261,14 +247,33 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
     protected void onReceiveSuccess(String action, Object param) {}
     
     protected void onReceiveFailure(String action, int status, Object param) {
-        baseActivity.hideProgress();
-        baseActivity.showErrorDialog(param);
+        baseActivity.onReceiveFailure(action, status, param);
     }
     
-    private void unregisterEvent() {
-        if (isReceiveEventEnabled)
-        {
-            EventObserver.getDefault().unregister(this);
+    public static class ConnectionPresenter extends Presenter<BaseFragment> implements EventHandler {
+        
+        private final String[] actions;
+        
+        public ConnectionPresenter(String... actions) {
+            this.actions = actions;
+        }
+        
+        @Override
+        protected void onCreate(Context context) {
+            for (String action : actions)
+            {
+                EventBus.getDefault().register(action, this);
+            }
+        }
+        
+        @Override
+        protected void onDestroy() {
+            EventBus.getDefault().unregister(this);
+        }
+
+        @Override
+        public void handleEvent(Event event) {
+            getCallbacks().onReceive(event.action, event.status, event.param);
         }
     }
 }

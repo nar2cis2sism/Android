@@ -1,6 +1,7 @@
 package engine.android.core;
 
-import static engine.android.core.util.LogFactory.LOG.log;
+import static engine.android.core.util.LogFactory.LogUtil.getCallerStackFrame;
+import static engine.android.core.util.LogFactory.LogUtil.getClassAndMethod;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -8,8 +9,6 @@ import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
@@ -18,94 +17,85 @@ import android.widget.Toast;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.WeakHashMap;
 
-import engine.android.core.Forelet.FragmentTransaction;
-import engine.android.core.Forelet.Task;
+import engine.android.core.util.LogFactory.LOG;
 
 /**
  * 应用程序管理器<p>
- * 功能：活动堆栈管理，程序退出，异常处理
+ * 功能：活动堆栈管理，程序退出，异常处理<br>
+ * Note：由于多进程或者插件化模式下Application会启动多次，需特别注意一些逻辑的处理
  * 
  * @author Daimon
  * @version N
  * @since 6/6/2014
  */
-public class ApplicationManager extends Application
-implements UncaughtExceptionHandler {
+public abstract class ApplicationManager extends Application implements UncaughtExceptionHandler {
+    
+    private static ApplicationManager instance;             // 应用主程序管理器实例
+    
+    private static UncaughtExceptionHandler ueh;            // 异常处理器
 
-    private static Session session;                         // 程序会话（储存全局属性）
-
-    private static ApplicationManager instance;             // 应用程序管理器实例
+    private final Session session;                          // 程序会话（储存全局属性）
 
     private final ActivityStack stack;                      // 活动堆栈管理
-
-    private final UncaughtExceptionHandler ueh;             // 异常处理器
-
-    private static boolean isDebuggable;                    // Debug模式
-
-    private static ExitTask exitTask;                       // 后台退出异步任务
+    
+    private boolean isMainApp;                              // 我们以第一次加载此类作为主程序根据
 
     public ApplicationManager() {
         session = new Session();
-        instance = this;
-        registerActivityLifecycleCallbacks(stack = new ActivityStack());
-        ueh = Thread.getDefaultUncaughtExceptionHandler();
-        Thread.setDefaultUncaughtExceptionHandler(this);
-    }
-
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-
-        isDebuggable = isDebuggable(base);
+        registerActivityLifecycleCallbacks(stack = new ActivityStack(this));
+        if (isMainApp = instance == null)
+        {
+            // 主程序设置一次就行了
+            instance = this;
+            ueh = Thread.getDefaultUncaughtExceptionHandler();
+            Thread.setDefaultUncaughtExceptionHandler(this);
+        }
     }
     
     /**
      * 供三方调用初始化
      */
-    public static final void init(Application app) {
-        ApplicationManager am = new ApplicationManager();
-        am.attachBaseContext(app.getBaseContext());
-        app.registerActivityLifecycleCallbacks(am.stack);
+    public final void init(Application app) {
+        attachBaseContext(app.getBaseContext());
+        app.registerActivityLifecycleCallbacks(stack);
+    }
+    
+    /**
+     * 获取应用主程序管理器
+     */
+    public static final ApplicationManager getMainApplication() {
+        if (instance != null) return instance;
+        throw new RuntimeException("ApplicationManager.init() is not called.");
     }
 
     /**
      * Provide a mechanism to process unfinished events before quit, run in
-     * background thread
+     * background thread.
      */
     protected void doExit() {};
 
     /**
      * 获取程序会话
      */
-    public static final Session getSession() {
+    public final Session getSession() {
         return session;
     }
 
     /**
-     * 获取应用程序管理器
+     * 获取程序启动时间
      */
-    public static final ApplicationManager getApplicationManager() {
-        if (instance != null) return instance;
-        throw new RuntimeException("ApplicationManager.init() is not called.");
-    }
-
-    /**
-     * 是否调试模式
-     */
-    public static boolean isDebuggable() {
-        return isDebuggable;
+    public final long getLaunchTime() {
+        return session.launchTime;
     }
 
     /**
      * 判断当前应用是否处于debug状态
      */
-    private static boolean isDebuggable(Context context) {
+    public static final boolean isDebuggable(Context context) {
         ApplicationInfo info = context.getApplicationInfo();
         return (info.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
     }
@@ -117,10 +107,14 @@ implements UncaughtExceptionHandler {
         return Looper.myLooper() == Looper.getMainLooper();
     }
 
-    public static void ensureCallMethodOnMainThread() {
+    /**
+     * 确保在主线程调用，否则抛出异常
+     */
+    public static final void ensureCallMethodOnMainThread() {
         if (!isMainThread())
         {
-            throw new RuntimeException("You must call this method in main thread.");
+            throw new RuntimeException(String.format("You must call %s in main thread.", 
+                    getClassAndMethod(getCallerStackFrame())));
         }
     }
 
@@ -143,13 +137,9 @@ implements UncaughtExceptionHandler {
     /**
      * 程序退出
      */
-    public void exit() {
+    public final void exit() {
         ensureCallMethodOnMainThread();
-        if (exitTask == null)
-        {
-            // 后台退出任务
-            (exitTask = new ExitTask()).execute();
-        }
+        stack.exit();
     }
 
     private class ExitTask extends AsyncTask<Void, Void, Void> {
@@ -161,9 +151,6 @@ implements UncaughtExceptionHandler {
 
         @Override
         protected Void doInBackground(Void... params) {
-            log((StackTraceElement) null, null);
-            log((StackTraceElement) null, "程序退出");
-
             try {
                 Thread.sleep(1500);
 
@@ -177,8 +164,11 @@ implements UncaughtExceptionHandler {
 
         @Override
         protected void onPostExecute(Void result) {
-            Process.killProcess(Process.myPid());
-            System.exit(0);
+            if (isMainApp)
+            {
+                Process.killProcess(Process.myPid());
+                System.exit(0);
+            }
         }
     }
 
@@ -188,16 +178,7 @@ implements UncaughtExceptionHandler {
      * @param message 提示信息
      */
     public static void showMessage(Object message) {
-        Toast.makeText(instance, String.valueOf(message), Toast.LENGTH_SHORT).show();
-    }
-
-    /**
-     * 加载图片
-     * 
-     * @param resourceId 图片资源ID
-     */
-    public static Bitmap loadImage(int resourceId) {
-        return BitmapFactory.decodeResource(instance.getResources(), resourceId);
+        Toast.makeText(getMainApplication(), String.valueOf(message), Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -206,7 +187,7 @@ implements UncaughtExceptionHandler {
     public static final String getProcessName() {
         int pid = Process.myPid();
 
-        ActivityManager am = (ActivityManager) instance.getSystemService(
+        ActivityManager am = (ActivityManager) getMainApplication().getSystemService(
                 Context.ACTIVITY_SERVICE);
         List<RunningAppProcessInfo> list = am.getRunningAppProcesses();
         if (list != null && !list.isEmpty())
@@ -220,12 +201,12 @@ implements UncaughtExceptionHandler {
             }
         }
 
-        return instance.getApplicationInfo().processName;
+        return getMainApplication().getApplicationInfo().processName;
     }
 
     @Override
     public final void uncaughtException(Thread thread, Throwable ex) {
-        log("程序出错--" + thread, ex);
+        LOG.log("程序出错--" + thread, ex);
         if (!handleException(ex) && ueh != null)
         {
             // 如果用户没有处理则让系统默认的异常处理器来处理
@@ -242,22 +223,18 @@ implements UncaughtExceptionHandler {
         return false;
     }
 
-    /**
-     * 设置是否跟踪打印Activity堆栈状态(默认开启)
-     * 
-     * @param open 开关
-     */
-    public static final void traceActivityStack(boolean open) {
-        ensureCallMethodOnMainThread();
-        ActivityStack.traceActivityStack = open;
-    }
-
     private static class ActivityStack implements ActivityLifecycleCallbacks {
+        
+        private final ApplicationManager am;
 
-        public static boolean traceActivityStack = true;
+        private final LinkedList<ActivityReference> history     // 活动历史堆栈
+        = new LinkedList<ActivityReference>();
 
-        private final LinkedList<ActivityReference> history
-        = new LinkedList<ActivityReference>();                  // 活动历史堆栈
+        private ExitTask exitTask;                              // 后台退出异步任务
+        
+        public ActivityStack(ApplicationManager am) {
+            this.am = am;
+        }
 
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -295,8 +272,6 @@ implements UncaughtExceptionHandler {
          */
         private void pushActivity(Activity activity) {
             history.addFirst(new ActivityReference(activity));
-            if (traceActivityStack)
-                log("活动入栈", "[" + activity.getTaskId() + "]" + activity);
         }
 
         /**
@@ -308,20 +283,15 @@ implements UncaughtExceptionHandler {
                 return;
             }
 
-            Activity a;
             Iterator<ActivityReference> iter = history.iterator();
             while (iter.hasNext())
             {
-                a = iter.next().get();
-                if (a == activity)
+                if (iter.next().get() == activity)
                 {
                     iter.remove();
                     break;
                 }
             }
-
-            if (traceActivityStack)
-                log("活动出栈", "[" + activity.getTaskId() + "]" + activity);
         }
 
         public Activity currentActivity() {
@@ -360,6 +330,14 @@ implements UncaughtExceptionHandler {
             history.clear();
         }
 
+        public void exit() {
+            if (exitTask == null)
+            {
+                // 后台退出任务
+                (exitTask = am.new ExitTask()).execute();
+            }
+        }
+
         private static class ActivityReference extends WeakReference<Activity> {
 
             public ActivityReference(Activity r) {
@@ -367,26 +345,4 @@ implements UncaughtExceptionHandler {
             }
         }
     }
-}
-
-class SavedInstance {
-    
-    private static final WeakHashMap<Bundle, SavedInstance> savedInstanceMap
-    = new WeakHashMap<Bundle, SavedInstance>();
-    
-    public static void save(Bundle bundle, SavedInstance savedInstance) {
-        savedInstanceMap.put(bundle, savedInstance);
-    }
-    
-    public static SavedInstance restore(Bundle bundle) {
-        return savedInstanceMap.get(bundle);
-    }
-    
-    public Task task;
-    
-    public Object progress;
-    
-    public FragmentTransaction transaction;
-    
-    public final HashMap<String, Object> savedMap = new HashMap<String, Object>();
 }

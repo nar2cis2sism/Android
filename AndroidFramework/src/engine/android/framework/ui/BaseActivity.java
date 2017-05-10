@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,22 +12,23 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.util.LinkedList;
+
 import engine.android.core.Forelet;
+import engine.android.core.extra.EventBus;
+import engine.android.core.extra.EventBus.Event;
+import engine.android.core.extra.EventBus.EventHandler;
 import engine.android.framework.R;
-import engine.android.framework.app.App;
-import engine.android.framework.app.AppConfig;
-import engine.android.framework.network.event.Event;
-import engine.android.framework.network.event.EventObserver;
-import engine.android.framework.network.event.EventObserver.EventCallback;
-import engine.android.framework.network.event.EventObserver.EventHandler;
+import engine.android.framework.app.AppGlobal;
+import engine.android.framework.network.ConnectionStatus;
+import engine.android.framework.network.http.HttpManager;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
+import engine.android.framework.network.socket.SocketManager;
+import engine.android.framework.network.socket.SocketManager.SocketBuilder;
 import engine.android.framework.ui.extra.SinglePaneActivity;
 import engine.android.http.HttpConnector;
 import engine.android.util.Util;
 import engine.android.widget.TitleBar;
-
-import java.util.LinkedList;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BaseActivity extends Forelet implements EventHandler {
     
@@ -77,13 +79,20 @@ public class BaseActivity extends Forelet implements EventHandler {
         setContentView(view);
     }
     
+    /**
+     * Provide a convenient way to start fragment wrapped in {@link SinglePaneActivity}.
+     */
+    public void startFragment(Class<? extends Fragment> fragmentCls) {
+        startActivity(SinglePaneActivity.buildIntent(this, fragmentCls, null));
+    }
+    
     /******************** TitleBar模块 ********************/
     
     public final TitleBar getTitleBar() {
         return title_bar;
     }
     
-    final void onNavigationUpClicked() {
+    protected void onNavigationUpClicked() {
         Class<? extends Activity> cls = parentActivity();
         if (cls != null)
         {
@@ -138,17 +147,16 @@ public class BaseActivity extends Forelet implements EventHandler {
         
         super.onBackPressed();
     }
-    
-    /**
-     * Provide a convenient way to start fragment wrapped in {@link SinglePaneActivity}.
-     */
-    public void startFragment(Class<? extends Fragment> fragmentCls) {
-        startActivity(SinglePaneActivity.buildIntent(this, fragmentCls, null));
-    }
 
     /******************************* 网络事件封装 *******************************/
     
-    private static final AppConfig CONFIG = App.getConfig();
+    private AppGlobal app;
+    
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(newBase);
+        app = AppGlobal.get(newBase);
+    }
     
     /**
      * 检查网络状态
@@ -156,7 +164,7 @@ public class BaseActivity extends Forelet implements EventHandler {
      * @param showTip 网络不可用时是否提示用户
      */
     public boolean checkNetworkStatus(boolean showTip) {
-        if (CONFIG.isOffline())
+        if (app.getConfig().isOffline())
         {
             return true;
         }
@@ -173,60 +181,67 @@ public class BaseActivity extends Forelet implements EventHandler {
         
         return false;
     }
-    
+
     public void sendHttpRequest(HttpBuilder builder) {
-        executeTask(new HttpTask(builder), false);
+        executeTask(new Request(app.getHttpManager(), builder), false);
     }
+    
+    public void sendSocketRequest(SocketBuilder builder) {
+        executeTask(new Request(app.getSocketManager(), builder), false);
+    }
+    
+    private static class Request extends Task {
 
-    private static class HttpTask extends Task {
-
-        public HttpTask(HttpBuilder builder) {
-            super(new HttpTaskExecutor(builder));
+        public Request(HttpManager http, HttpBuilder builder) {
+            super(new HttpTaskExecutor(http, builder));
         }
-
+        
+        public Request(SocketManager socket, SocketBuilder builder) {
+            super(new SocketTaskExecutor(socket, builder));
+        }
+        
         @Override
         protected void doExecuteTask() {
-            executeOnExecutor(CONFIG.getHttpThreadPool());
+            // 由于请求已经是异步操作，这里不执行任务
         }
         
         private static class HttpTaskExecutor implements TaskExecutor {
             
-            private final HttpBuilder builder;
+            private final HttpManager http;
             
-            private final AtomicBoolean isCancelled = new AtomicBoolean();
+            private final int id;
             
-            private HttpConnector conn;
-            
-            public HttpTaskExecutor(HttpBuilder builder) {
-                this.builder = builder;
+            public HttpTaskExecutor(HttpManager http, HttpBuilder builder) {
+                this.http = http;
+                id = http.sendHttpRequest(builder);
             }
 
             @Override
-            public Object doExecute() {
-                if (isCancelled.get())
-                {
-                    return null;
-                }
-                
-                conn = builder.buildHttpConnector();
-                if (isCancelled.get())
-                {
-                    return null;
-                }
-                
-                try {
-                    return conn.connect();
-                } catch (Exception e) {
-                    return null;
-                }
-            }
+            public Object doExecute() { return null; }
 
             @Override
             public void cancel() {
-                if (isCancelled.compareAndSet(false, true) && conn != null)
-                {
-                    conn.cancel();
-                }
+                http.cancelHttpRequest(id);
+            }
+        }
+        
+        private static class SocketTaskExecutor implements TaskExecutor {
+            
+            private final SocketManager socket;
+            
+            private final int id;
+            
+            public SocketTaskExecutor(SocketManager socket, SocketBuilder builder) {
+                this.socket = socket;
+                id = socket.sendSocketRequest(builder);
+            }
+
+            @Override
+            public Object doExecute() { return null; }
+
+            @Override
+            public void cancel() {
+                socket.cancelSocketRequest(id);
             }
         }
     }
@@ -239,12 +254,12 @@ public class BaseActivity extends Forelet implements EventHandler {
      * 允许接收事件回调<br>
      * Call it in {@link #onCreate(android.os.Bundle)}
      */
-    protected void enableReceiveEvent(String... actions) {
+    protected final void enableReceiveEvent(String... actions) {
         if (isReceiveEventEnabled = true)
         {
             for (String action : actions)
             {
-                EventObserver.getDefault().register(action, this);
+                EventBus.getDefault().register(action, this);
             }
         }
     }
@@ -254,8 +269,8 @@ public class BaseActivity extends Forelet implements EventHandler {
         onReceive(event.action, event.status, event.param);
     }
     
-    private void onReceive(String action, int status, Object param) {
-        if (status == EventCallback.SUCCESS)
+    protected void onReceive(String action, int status, Object param) {
+        if (status == ConnectionStatus.SUCCESS)
         {
             onReceiveSuccess(action, param);
         }
@@ -275,7 +290,7 @@ public class BaseActivity extends Forelet implements EventHandler {
     private void unregisterEvent() {
         if (isReceiveEventEnabled)
         {
-            EventObserver.getDefault().unregister(this);
+            EventBus.getDefault().unregister(this);
         }
     }
     

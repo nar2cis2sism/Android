@@ -1,21 +1,20 @@
 package com.project.network.action;
 
-import static engine.android.framework.app.App.getHttpManager;
-
+import com.project.app.MyContext;
 import com.project.app.MySession;
 import com.project.network.Actions;
 import com.project.network.NetworkConfig;
 import com.project.network.http.HttpJsonParser;
 
-import engine.android.framework.app.AppContext;
-import engine.android.framework.network.event.EventObserver.EventCallback;
-import engine.android.framework.network.http.HttpManager.HttpBuilder;
-import engine.android.framework.util.GsonUtil;
-import engine.android.http.HttpConnector;
-import engine.android.util.AndroidUtil;
-
 import org.json.JSONObject;
 
+import engine.android.framework.network.http.HttpManager;
+import engine.android.framework.network.http.HttpManager.HttpBuilder;
+import engine.android.framework.network.http.HttpManager.StringEntity;
+import engine.android.framework.util.GsonUtil;
+import engine.android.http.HttpConnector;
+import engine.android.http.util.HttpParser;
+import engine.android.util.AndroidUtil;
 import protocol.java.json.AppUpgradeInfo;
 
 /**
@@ -23,7 +22,7 @@ import protocol.java.json.AppUpgradeInfo;
  * 
  * @author Daimon
  */
-public class NavigationAction implements HttpBuilder {
+public class NavigationAction implements HttpBuilder, StringEntity {
     
     public final String action = Actions.NAVIGATION;
     
@@ -36,22 +35,24 @@ public class NavigationAction implements HttpBuilder {
     public final int device = 2;           // 客户端类型
     
     public final String version            // 客户端版本号
-    = AndroidUtil.getVersionName(AppContext.getContext());
+    = AndroidUtil.getVersionName(MyContext.getContext());
 
     @Override
-    public HttpConnector buildHttpConnector() {
-        return getHttpManager().buildHttpConnector(
-                NetworkConfig.HTTP_URL, 
-                action, 
-                GsonUtil.toJson(this), 
-                new Parser(action, getHttpManager()));
+    public HttpConnector buildConnector(HttpManager http) {
+        return http.buildHttpConnector(NetworkConfig.HTTP_URL, action, this);
+    }
+    
+    @Override
+    public String toString() {
+        return GsonUtil.toJson(this);
+    }
+
+    @Override
+    public HttpParser buildParser() {
+        return new Parser();
     }
     
     private class Parser extends HttpJsonParser {
-
-        public Parser(String action, EventCallback callback) {
-            super(action, callback);
-        }
         
         @Override
         protected Object process(JSONObject data) {

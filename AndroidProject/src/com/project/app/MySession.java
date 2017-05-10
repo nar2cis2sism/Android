@@ -1,12 +1,11 @@
 package com.project.app;
 
-import engine.android.core.ApplicationManager;
 import engine.android.core.Session;
 import protocol.java.json.AppUpgradeInfo;
 
 public class MySession {
 
-    private static final Session session = ApplicationManager.getSession();
+    private static final Session session = MyApp.getApp().getSession();
 
     /******************************* 初始化 *******************************/
     private static final String INITIALIZED = "INITIALIZED";

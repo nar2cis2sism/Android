@@ -27,7 +27,6 @@ import java.util.List;
 
 /**
  * @author Daimon
- * 
  * @version N
  * @since 6/6/2014
  * @see ArrayAdapter

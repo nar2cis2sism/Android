@@ -3,19 +3,19 @@ package com.project.storage;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.project.app.MyContext;
 import com.project.storage.db.Friend;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 import engine.android.dao.DAOTemplate;
 import engine.android.dao.DAOTemplate.DAOExpression;
 import engine.android.dao.DAOTemplate.DBUpdateListener;
-import engine.android.framework.app.AppContext;
 import engine.android.util.Singleton;
 import engine.android.util.file.FileManager;
 import engine.android.util.io.IOUtil;
 import engine.android.util.manager.SDCardManager;
-
-import java.io.File;
-import java.io.FileOutputStream;
 
 /**
  * 数据库管理器
@@ -34,7 +34,7 @@ public class MyDAOManager implements DBUpdateListener {
         
         @Override
         protected MyDAOManager create() {
-            return new MyDAOManager(AppContext.getContext());
+            return new MyDAOManager(MyContext.getContext());
         }
     };
     
@@ -44,9 +44,9 @@ public class MyDAOManager implements DBUpdateListener {
     
     /**
      * 加载第三方数据库
+     * 
      * @param assetsPath assets目录下的数据库路径
      */
-    
     public static SQLiteDatabase loadAssetsDB(Context context, String assetsPath) {
         File db_file = new File(SDCardManager.openSDCardAppDir(context), assetsPath);
         
@@ -92,7 +92,7 @@ public class MyDAOManager implements DBUpdateListener {
         
         protected static final DAOTemplate dao = getDAO();
         
-        public static <T> T findItemByProperty(Class<T> cls, String property, String value) {
+        public static <T> T findItemByProperty(Class<T> cls, String property, Object value) {
             return dao.find(cls).where(DAOExpression.create(property).equal(value)).get();
         }
     }

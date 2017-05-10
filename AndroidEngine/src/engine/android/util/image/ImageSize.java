@@ -5,9 +5,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 
-import engine.android.util.ViewSize;
-import engine.android.util.ViewSize.ViewHeightAdjuster;
-import engine.android.util.ViewSize.ViewWidthAdjuster;
+import engine.android.util.ui.ViewSize;
+import engine.android.util.ui.ViewSize.ViewHeightAdjuster;
+import engine.android.util.ui.ViewSize.ViewWidthAdjuster;
 
 /**
  * A convenient utility to manager image's size.

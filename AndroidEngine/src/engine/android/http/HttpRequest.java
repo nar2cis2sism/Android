@@ -1,6 +1,5 @@
 package engine.android.http;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,20 +21,20 @@ public class HttpRequest {
 
     private Map<String, String> headers;            // 请求头
 
-    private final byte[] postData;                  // 请求数据
+    private final ByteArray postData;               // 请求数据
 
-    HttpRequest(String url, Map<String, String> headers, byte[] entity) {
+    HttpRequest(String url, Map<String, String> headers, ByteArray postData) {
         this.url = url;
-        if (headers != null) this.headers = new HashMap<String, String>(headers);
-        method = (postData = entity) == null ? METHOD_GET : METHOD_POST;
+        this.headers = headers;
+        method = (this.postData = postData) == null ? METHOD_GET : METHOD_POST;
     }
     
     @Override
-    public HttpRequest clone() throws CloneNotSupportedException {
-        byte[] cloneData = null;
-        if (postData != null) cloneData = Arrays.copyOf(postData, postData.length);
+    protected HttpRequest clone() {
+        Map<String, String> headers = this.headers;
+        if (headers != null) headers = new HashMap<String, String>(headers);
         
-        return new HttpRequest(url, headers, cloneData);
+        return new HttpRequest(url, headers, postData);
     }
     
     public String getUrl() {
@@ -46,24 +45,19 @@ public class HttpRequest {
         return method;
     }
     
-    public byte[] getPostData() {
-        return postData;
-    }
-    
     public Map<String, String> getHeaders() {
         return headers;
+    }
+    
+    public byte[] getPostData() {
+        return postData == null ? null : postData.toByteArray();
     }
 
     /**
      * 设置头信息
      */
-
     public HttpRequest setHeader(String key, String value) {
-        if (headers == null)
-        {
-            headers = new HashMap<String, String>();
-        }
-
+        if (headers == null) headers = new HashMap<String, String>();
         headers.put(key, value);
         return this;
     }
@@ -74,5 +68,24 @@ public class HttpRequest {
     
     public void setUserAgent(String value) {
         setHeader("User-Agent", value);
+    }
+    
+    public interface ByteArray {
+        
+        byte[] toByteArray();
+    }
+    
+    public static class ByteArrayEntity implements ByteArray {
+        
+        private final byte[] data;
+        
+        public ByteArrayEntity(byte[] data) {
+            this.data = data;
+        }
+
+        @Override
+        public byte[] toByteArray() {
+            return data;
+        }
     }
 }

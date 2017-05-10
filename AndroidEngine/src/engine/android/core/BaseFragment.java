@@ -19,7 +19,6 @@ import android.view.ViewGroup;
  * @version N
  * @since 6/6/2014
  */
-
 public abstract class BaseFragment extends Fragment {
 
     // 自定义回调接口（与Activity进行交互）
@@ -79,7 +78,7 @@ public abstract class BaseFragment extends Fragment {
 
     public Context getContext() {
         if (getActivity() != null) return getActivity();
-        return ApplicationManager.getApplicationManager();
+        return ApplicationManager.getMainApplication();
     }
 
     public final Callbacks getCallbacks() {

@@ -21,10 +21,10 @@ public abstract class HttpXmlParser implements HttpParser {
     }
 
     @Override
-    public void parse(HttpResponse response) throws Exception {
+    public Object parse(HttpResponse response) throws Exception {
         SAXParser parser = initParser(factory);
         parser.parse(response.getInputStream());
-        parse(parser, parser.next());
+        return parse(parser, parser.next());
     }
 
     /**
@@ -33,7 +33,7 @@ public abstract class HttpXmlParser implements HttpParser {
      * @param parser Sax解析器
      * @param root 根节点
      */
-    protected abstract void parse(SAXParser parser, Node root) throws Exception;
+    protected abstract Object parse(SAXParser parser, Node root) throws Exception;
 
     protected static final void parseChildNode(SAXParser parser, Node node,
             HttpXmlNodeHandler childHandler) {
@@ -60,11 +60,11 @@ public abstract class HttpXmlParser implements HttpParser {
         }
     }
 
-    public static interface HttpXmlNodeHandler {
+    public interface HttpXmlNodeHandler {
 
         /**
-         * @return true 终止当前节点解析
+         * @return True表示终止当前节点解析
          */
-        public boolean handle(Node node);
+        boolean handle(Node node);
     }
 }

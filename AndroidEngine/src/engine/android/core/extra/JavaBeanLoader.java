@@ -13,11 +13,10 @@ import java.util.Collection;
  * 配合{@link JavaBeanAdapter}使用
  * 
  * @author Daimon
- * @version final
+ * @version N
  * @since 6/6/2014
  * @see CursorLoader
  */
-
 public abstract class JavaBeanLoader<D> extends AsyncTaskLoader<Collection<D>> {
 
     private ConfigChange config;

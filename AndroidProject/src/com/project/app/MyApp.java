@@ -1,55 +1,61 @@
 package com.project.app;
 
-import com.project.app.MyConfiguration.MyConfiguration_HTTP;
-import com.project.app.MyConfiguration.MyConfiguration_NETWORK;
-import com.project.app.MyConfiguration.MyConfiguration_SOCKET;
-import com.project.network.http.HttpInterceptor;
-import com.project.network.http.servlet.HttpServlet;
-import com.project.network.socket.SocketInterceptor;
-import com.project.network.socket.SocketServlet;
+import android.os.StrictMode;
 
-import engine.android.framework.app.App;
-import engine.android.plugin.Plugin;
+import com.project.util.LogUploader;
 
-public class MyApp extends App implements
-MyConfiguration_NETWORK, 
-MyConfiguration_HTTP, 
-MyConfiguration_SOCKET {
+import engine.android.core.util.LogFactory;
+import engine.android.core.util.LogFactory.LOG;
+import engine.android.framework.app.AppGlobal;
+import engine.android.util.AndroidUtil;
+
+public class MyApp extends engine.android.framework.app.App {
+    
+    private static MyApp instance;
+    
+    public static MyApp getApp() {
+        return instance;
+    }
+    
+    public MyApp() { instance = this; }
     
     @Override
     public void onCreate() {
-        super.onCreate();
+        // 配置环境变量
+        AppGlobal.config(new MyConfiguration(this));
+        // 设置调试模式
+        setupStrictMode();
+        // 开启日志
+        LogFactory.enableLOG(true);
         
-        Plugin.init();
+        LOG.log(getConfig().isOffline() ? "单机版" : "网络版");
     }
     
     @Override
-    protected AppConfig initAppConfig() {
-        return new AppConfig();
+    protected boolean handleException(Throwable ex) {
+        LogUploader.uploadLog();
+        return false;
     }
     
-    private static class AppConfig extends engine.android.framework.app.AppConfig {
-        
-        public AppConfig() {
-            configNetwork(configNetwork());
-            configHttp(configHttp());
-            configSocket(configSocket());
-        }
-        
-        private void configNetwork(NetworkConfig config) {
-            if (isDebuggable()) config.setOffline(NET_OFF).setProtocolLog(NET_LOG_PROTOCOL);
-        }
-        
-        private void configHttp(HttpConfig config) {
-            config.setServlet(new HttpServlet());
-            config.setInterceptor(new HttpInterceptor());
-            config.setTimeout(HTTP_TIMEOUT);
-        }
-        
-        private void configSocket(SocketConfig config) {
-            config.setServlet(new SocketServlet());
-            config.setInterceptor(new SocketInterceptor());
-            config.setTimeout(SOCKET_TIMEOUT);
+    private void setupStrictMode() {
+        if (isDebuggable(this) && AndroidUtil.getVersion() >= 11)
+        {
+            // StrictMode.enableDefaults()有bug
+            // (android.os.StrictMode$InstanceCountViolation:instance=2;limit=1)
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+            .detectCustomSlowCalls()
+            .detectDiskReads()
+            .detectDiskWrites()
+            .detectNetwork()
+            .penaltyLog()
+            .penaltyDeathOnNetwork()
+            .penaltyFlashScreen()
+            .build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+            .detectLeakedClosableObjects()
+            .detectLeakedSqlLiteObjects()
+            .penaltyLog()
+            .build());
         }
     }
 }

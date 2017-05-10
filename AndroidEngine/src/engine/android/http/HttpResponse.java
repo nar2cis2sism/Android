@@ -2,14 +2,14 @@ package engine.android.http;
 
 import android.text.TextUtils;
 
-import engine.android.util.io.IOUtil;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import engine.android.util.io.IOUtil;
 
 /**
  * Http响应体
@@ -54,16 +54,10 @@ public class HttpResponse {
     }
     
     String getHeaderField(String key) {
-        if (headers == null)
-        {
-            return null;
-        }
+        if (headers == null) return null;
         
         List<String> list = headers.get(key);
-        if (list == null)
-        {
-            return null;
-        }
+        if (list == null) return null;
         
         return TextUtils.join(",", list);
     }

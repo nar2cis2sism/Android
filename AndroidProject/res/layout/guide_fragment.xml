@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <engine.android.widget.FlingLayout
+    <engine.android.widget.common.FlingLayout
         android:id="@+id/fling_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
@@ -39,7 +39,7 @@
             
         </RelativeLayout>
         
-    </engine.android.widget.FlingLayout>
+    </engine.android.widget.common.FlingLayout>
 
     <ImageView
         android:id="@+id/skip"

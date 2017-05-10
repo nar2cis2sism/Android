@@ -3,8 +3,6 @@ package com.project.app;
 import com.project.storage.MyDAOManager;
 import com.project.storage.MySharedPreferences;
 
-import engine.android.plugin.Plugin;
-
 public class MyInitial {
 
     /**
@@ -30,11 +28,11 @@ public class MyInitial {
      * 加载身边插件
      */
     private static void initBesidePlugin() {
-        try {
-            Plugin.loadPluginFromAssets("AndroidBeside.apk", true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Plugin.loadPluginFromAssets("AndroidBeside.apk", true);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
     
     private static void reset() {

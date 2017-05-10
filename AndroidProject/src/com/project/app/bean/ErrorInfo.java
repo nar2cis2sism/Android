@@ -2,7 +2,9 @@ package com.project.app.bean;
 
 import org.json.JSONObject;
 
-public class ErrorInfo {
+import engine.android.framework.network.http.util.HttpParser.Failure;
+
+public class ErrorInfo implements Failure {
     
     private final int code;                    // 错误编码
     

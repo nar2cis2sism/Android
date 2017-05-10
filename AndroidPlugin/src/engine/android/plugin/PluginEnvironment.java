@@ -20,7 +20,6 @@ import android.util.Singleton;
 
 import java.io.File;
 
-import engine.android.core.ApplicationManager;
 import engine.android.core.util.LogFactory;
 import engine.android.core.util.LogFactory.LOG;
 import engine.android.plugin.proxy.ActivityManagerService;
@@ -274,10 +273,7 @@ public class PluginEnvironment {
     
     static
     {
-        if (!ApplicationManager.isDebuggable())
-        {
-            LogFactory.addLogFile(PluginEnvironment.class, "plugin.txt");
-        }
+        LogFactory.addLogFile(PluginEnvironment.class, "plugin.txt");
     }
     
     static boolean DEBUGGABLE = true;

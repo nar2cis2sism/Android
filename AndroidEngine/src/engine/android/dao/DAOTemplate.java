@@ -17,15 +17,6 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Pair;
 
-import engine.android.core.ApplicationManager;
-import engine.android.core.util.LogFactory;
-import engine.android.core.util.LogFactory.LogUtil;
-import engine.android.dao.annotation.DAOPrimaryKey;
-import engine.android.dao.annotation.DAOProperty;
-import engine.android.dao.annotation.DAOTable;
-import engine.android.dao.util.Page;
-import engine.android.util.file.FileManager;
-
 import java.io.File;
 import java.lang.reflect.Field;
 import java.sql.Date;
@@ -41,6 +32,14 @@ import java.util.ListIterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicReference;
+
+import engine.android.core.util.LogFactory;
+import engine.android.core.util.LogFactory.LogUtil;
+import engine.android.dao.annotation.DAOPrimaryKey;
+import engine.android.dao.annotation.DAOProperty;
+import engine.android.dao.annotation.DAOTable;
+import engine.android.dao.util.Page;
+import engine.android.util.file.FileManager;
 
 /**
  * 操作数据库的模板，尽量面向对象，以简化DAO层<br>
@@ -2059,10 +2058,7 @@ public class DAOTemplate {
 
     static
     {
-        if (!ApplicationManager.isDebuggable())
-        {
-            LogFactory.addLogFile(DAOTemplate.class, "dao.txt");
-        }
+        LogFactory.addLogFile(DAOTemplate.class, "dao.txt");
     }
 
     private static void LOG_DAOException(DAOException e) {
@@ -2790,10 +2786,7 @@ public class DAOTemplate {
 
         static
         {
-            if (!ApplicationManager.isDebuggable())
-            {
-                LogFactory.addLogFile(ProviderTemplate.class, DAOTemplate.class);
-            }
+            LogFactory.addLogFile(ProviderTemplate.class, DAOTemplate.class);
         }
 
         private static String SQL_WHERE_LOG(String sql, Object[] bindArgs) {

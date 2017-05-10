@@ -12,7 +12,9 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 
-import engine.android.core.ApplicationManager;
+import java.lang.ref.WeakReference;
+import java.util.WeakHashMap;
+
 import engine.android.core.util.LogFactory;
 import engine.android.framework.app.AppConfig;
 import engine.android.framework.app.AppGlobal;
@@ -23,23 +25,14 @@ import engine.android.util.image.AsyncImageLoader.ImageCallback;
 import engine.android.util.image.AsyncImageLoader.ImageDownloader;
 import engine.android.util.image.ImageStorage;
 
-import java.lang.ref.WeakReference;
-import java.util.WeakHashMap;
-
 /**
  * 图片统一管理
  * 
  * @author Daimon
+ * @version N
+ * @since 6/6/2014
  */
 public class ImageManager {
-    
-    static
-    {
-        if (!ApplicationManager.isDebuggable())
-        {
-            LogFactory.addLogFile(ImageManager.class, "image.txt");
-        }
-    }
     
     private final AppConfig config;
 
@@ -56,7 +49,7 @@ public class ImageManager {
     private boolean printLog = true;
     
     public ImageManager(Context context) {
-        config = AppGlobal.getConfig(context);
+        config = AppGlobal.get(context).getConfig();
         loader = new AsyncImageLoader();
         downloader = new MyImageDownloader(context);
         displayViewMap = new WeakHashMap<View, ImageUrl>();
@@ -151,7 +144,7 @@ public class ImageManager {
             {
                 if (config.isOffline())
                 {
-                    SystemClock.sleep(1500);
+                    SystemClock.sleep(1000);
                 }
                 else
                 {
@@ -170,7 +163,7 @@ public class ImageManager {
                                 "无图片" : image.getWidth() + "*" + image.getHeight());
                         }
                         
-                        if (transformer != null) image = transformer.transform(image);
+                        if (transformer != null) image = transformer.transform(imageUrl, image);
                         if (image != null && storage.put(fileKey, bs))
                         {
                             sp.edit().putString(getCrcKey(fileKey), crc).commit();
@@ -293,8 +286,16 @@ public class ImageManager {
         }
     }
     
+    /**
+     * 图片转换器
+     */
     public interface Transformer {
         
-        Bitmap transform(Bitmap image);
+        Bitmap transform(ImageUrl url, Bitmap image);
+    }
+    
+    static
+    {
+        LogFactory.addLogFile(ImageManager.class, "image.txt");
     }
 }

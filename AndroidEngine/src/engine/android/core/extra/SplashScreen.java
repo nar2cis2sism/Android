@@ -10,21 +10,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 闪屏机制
  * 
  * @author Daimon
- * @version final
+ * @version N
  * @since 6/6/2014
  */
 public final class SplashScreen {
 
-    public static interface SplashCallback {
+    public interface SplashCallback {
 
-        public void onSplashDisplayed();
+        void onSplashDisplayed();
 
-        public void onSplashFinished();
+        void onSplashFinished();
     }
 
-    public static interface SplashLoading {
+    public interface SplashLoading {
 
-        public void loadInBackground();
+        void loadInBackground();
     }
     
     private class SplashTask extends AsyncTask<Void, Void, Void> implements Runnable {

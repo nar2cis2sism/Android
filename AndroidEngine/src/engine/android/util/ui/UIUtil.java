@@ -212,6 +212,11 @@ public final class UIUtil {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
     
+    /**
+     * 软键盘弹出时自适应窗口尺寸
+     * 
+     * @param anchor 一般取第一个输入框
+     */
     public static void adjustResize(ScrollView scrollView, View anchor) {
         new AdjustResize(scrollView, anchor).adjustResize();
     }

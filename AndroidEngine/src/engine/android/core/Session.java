@@ -19,7 +19,7 @@ public final class Session {
 
     private static final Object NULL_VALUE = new Object();
 
-    private final long launchTime;                              // 程序启动时间
+    final long launchTime;                                      // 程序启动时间
 
     private final ConcurrentHashMap<String, Object> attributes; // 会话属性表
 
@@ -27,16 +27,11 @@ public final class Session {
 
     private boolean isMultiProcess;                             // 多进程模式
 
-    private static final byte STATUS_NONE   = 0;
-    private static final byte STATUS_UPDATE = 1;
-    private static final byte STATUS_REMOVE = 2;
-    private static final byte STATUS_SYNC   = 3;
+    private ConcurrentHashMap<String, SessionData> changeMap;   // 标识数据改变状态
 
-    private ConcurrentHashMap<String, Byte> changeMap;          // 标识数据改变状态
+    private SessionReceiver recevier;                           // 通过广播通讯方式实现数据共享
 
-    private SessionReceiver recevier;                           // 通过广播通讯方式
-
-    private SessionDataSource source;                           // 数据源
+    private SessionDataSerializable serialize;                  // 数据传输序列化机制
 
     Session() {
         launchTime = System.currentTimeMillis();
@@ -45,15 +40,12 @@ public final class Session {
 
     /**
      * 开启多进程模式（保证数据同步）
-     * 
-     * @param source 数据来源（同取一个地方的数据使数据一致）
      */
-
-    public void startMultiProcessMode(Context context, SessionDataSource source) {
+    public void startMultiProcessMode(Context context, SessionDataSerializable serialize) {
         isMultiProcess = true;
-        changeMap = new ConcurrentHashMap<String, Byte>();
+        changeMap = new ConcurrentHashMap<String, SessionData>();
         recevier = new SessionReceiver(context, changeMap);
-        this.source = source;
+        this.serialize = serialize;
         context.registerReceiver(recevier, new IntentFilter(SessionReceiver.ACTION));
     }
 
@@ -62,7 +54,6 @@ public final class Session {
      * 
      * @param name 属性名称
      */
-    
     public Session putAttribute(String name) {
         return setAttribute(name, null);
     }
@@ -72,7 +63,6 @@ public final class Session {
      * 
      * @param name 属性名称
      */
-
     public boolean hasAttribute(String name) {
         checkChange(name);
         return attributes.containsKey(name);
@@ -84,20 +74,13 @@ public final class Session {
      * @param name 属性名
      * @param value 属性值
      */
-
     public Session setAttribute(String name, Object value) {
-        if (value == null)
-        {
-            value = NULL_VALUE;
-        }
-        
-        attributes.put(name, value);
+        attributes.put(name, value == null ? NULL_VALUE : value);
 
         if (isMultiProcess)
         {
-            source.setAttribute(name, value);
-            changeMap.put(name, STATUS_SYNC);
-            recevier.sendBroadcast(name, STATUS_UPDATE);
+            changeMap.put(name, new SessionData(SessionData.STATUS_SYNC));
+            recevier.sendBroadcast(name, serialize.serialize(value), SessionData.STATUS_UPDATE);
         }
 
         return this;
@@ -109,15 +92,13 @@ public final class Session {
      * @param name 属性名称
      * @return 移除的属性值
      */
-
     public Object removeAttribute(String name) {
         Object value = attributes.remove(name);
 
         if (isMultiProcess)
         {
-            source.setAttribute(name, null);
-            changeMap.put(name, STATUS_SYNC);
-            recevier.sendBroadcast(name, STATUS_REMOVE);
+            changeMap.put(name, new SessionData(SessionData.STATUS_SYNC));
+            recevier.sendBroadcast(name, null, SessionData.STATUS_REMOVE);
         }
 
         return value;
@@ -128,7 +109,6 @@ public final class Session {
      * 
      * @param name 属性名称
      */
-
     public Object getAttribute(String name) {
         checkChange(name);
 
@@ -142,58 +122,39 @@ public final class Session {
      * @param name 属性名称
      * @param defaultValue 默认值
      */
-
     @SuppressWarnings("unchecked")
     public <T> T getAttribute(String name, T defaultValue) {
         checkChange(name);
 
         Object value = attributes.get(name);
-        return value == NULL_VALUE ? defaultValue
-                : (value == null ? defaultValue : (T) value);
+        if (value == null || value == NULL_VALUE)
+        {
+            return defaultValue;
+        }
+        
+        return (T) value;
     }
 
     /**
      * 同步更新
      */
-
     private void checkChange(String name) {
-        if (changeMap == null)
-        {
-            return;
-        }
-
-        Byte changeStatus = changeMap.get(name);
-        if (changeStatus == null)
-        {
-            return;
-        }
-
-        if (changeStatus == STATUS_REMOVE)
+        if (changeMap == null) return;
+        
+        SessionData data = changeMap.get(name);
+        if (data == null) return;
+        
+        if (data.status == SessionData.STATUS_REMOVE)
         {
             attributes.remove(name);
         }
-        else if (changeStatus == STATUS_UPDATE)
+        else if (data.status == SessionData.STATUS_UPDATE)
         {
-            Object value = source.getAttribute(name);
-            if (value == null)
-            {
-                attributes.remove(name);
-            }
-            else
-            {
-                attributes.put(name, value);
-            }
+            Object value = serialize.deserialize(data.data);
+            attributes.put(name, value == null ? NULL_VALUE : value);
         }
 
         changeMap.remove(name);
-    }
-
-    /**
-     * 获取会话创建时间
-     */
-
-    public long getCreationTime() {
-        return launchTime;
     }
 
     @Override
@@ -201,25 +162,46 @@ public final class Session {
         return attributes.toString();
     }
 
-    public static interface SessionDataSource {
+    /**
+     * 多进程传输数据系列化接口
+     */
+    public interface SessionDataSerializable {
 
-        public void setAttribute(String name, Object value);
+        byte[] serialize(Object value);
 
-        public Object getAttribute(String name);
+        Object deserialize(byte[] data);
+    }
+    
+    private static class SessionData {
+
+        public static final byte STATUS_NONE   = 0;
+        public static final byte STATUS_UPDATE = 1;
+        public static final byte STATUS_REMOVE = 2;
+        public static final byte STATUS_SYNC   = 3;
+        
+        public byte status;
+        public byte[] data;
+        
+        public SessionData() {}
+        
+        public SessionData(byte status) {
+            this.status = status;
+        }
     }
 
     public static final class SessionReceiver extends BroadcastReceiver {
 
-        public static final String ACTION = SessionReceiver.class.getName();
+        static final String ACTION = SessionReceiver.class.getName();
 
-        public static final String EXTRA_KEY    = "key";
-        public static final String EXTRA_STATUS = "status";
+        static final String EXTRA_KEY    = "key";
+        static final String EXTRA_VALUE  = "value";
+        static final String EXTRA_STATUS = "status";
 
         private final Context context;
 
-        private final ConcurrentHashMap<String, Byte> changeMap;
+        private final ConcurrentHashMap<String, SessionData> changeMap;
 
-        SessionReceiver(Context context, ConcurrentHashMap<String, Byte> changeMap) {
+        SessionReceiver(Context context, ConcurrentHashMap<String, SessionData> changeMap) {
             this.context = context.getApplicationContext();
             this.changeMap = changeMap;
         }
@@ -229,25 +211,27 @@ public final class Session {
             if (ACTION.equals(intent.getAction()))
             {
                 String key = intent.getStringExtra(EXTRA_KEY);
-                byte status = intent.getByteExtra(EXTRA_STATUS, STATUS_NONE);
-
-                Byte changeStatus = changeMap.get(key);
-                if (changeStatus == null || changeStatus != STATUS_SYNC)
+                byte[] value = intent.getByteArrayExtra(EXTRA_VALUE);
+                byte status = intent.getByteExtra(EXTRA_STATUS, SessionData.STATUS_NONE);
+                
+                SessionData data = changeMap.get(key);
+                if (data == null)
                 {
-                    changeStatus = status;
+                    changeMap.put(key, data = new SessionData());
                 }
-                else
+                
+                if (data.status != SessionData.STATUS_SYNC)
                 {
-                    changeStatus = STATUS_NONE;
+                    data.status = status;
+                    data.data = value;
                 }
-
-                changeMap.put(key, changeStatus);
             }
         }
 
-        public void sendBroadcast(String key, byte status) {
+        void sendBroadcast(String key, byte[] value, byte status) {
             Intent intent = new Intent(ACTION);
             intent.putExtra(EXTRA_KEY, key);
+            intent.putExtra(EXTRA_VALUE, value);
             intent.putExtra(EXTRA_STATUS, status);
             context.sendBroadcast(intent);
         }

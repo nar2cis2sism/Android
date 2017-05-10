@@ -13,6 +13,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -223,7 +224,8 @@ public final class Util {
         else
         {
             buffer.put(TIME2000MILLISECONDS, time2000Milliseconds =
-                    new Date(2000, 1, 1).getTime() - new Date(1970, 1, 1).getTime());
+                    new GregorianCalendar(2000, 0, 1).getTimeInMillis()
+                  - new GregorianCalendar(1970, 0, 1).getTimeInMillis());
         }
 
         return time2000Milliseconds;

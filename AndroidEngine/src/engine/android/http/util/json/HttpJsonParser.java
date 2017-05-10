@@ -21,8 +21,8 @@ import java.io.StringWriter;
 public abstract class HttpJsonParser implements HttpParser {
 
     @Override
-    public void parse(HttpResponse response) throws Exception {
-        parse(new JSONObject(read(response.getInputStream())));
+    public Object parse(HttpResponse response) throws Exception {
+        return parse(new JSONObject(read(response.getInputStream())));
     }
 
     protected String read(InputStream in) throws IOException {
@@ -34,6 +34,5 @@ public abstract class HttpJsonParser implements HttpParser {
     /**
      * 需要子类实现
      */
-
-    protected abstract void parse(JSONObject json) throws Exception;
+    protected abstract Object parse(JSONObject json) throws Exception;
 }

@@ -64,7 +64,7 @@ public class SocketProxy {
         }
     };
 
-    public SocketProxy(SocketServlet servlet) {
+    SocketProxy(SocketServlet servlet) {
         this.servlet = servlet;
 
         pisReader = new WrappedPipedInputStream();
@@ -100,9 +100,9 @@ public class SocketProxy {
         threadPool.execute(receive);
     }
 
-    public static interface SocketServlet {
+    public interface SocketServlet {
 
-        public void doServlet(InputStream in, OutputStream out);
+        void doServlet(InputStream in, OutputStream out);
     }
 
     /**

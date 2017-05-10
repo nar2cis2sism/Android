@@ -5,13 +5,22 @@ import static engine.android.core.util.LogFactory.LOG.log;
 import android.content.Context;
 import android.util.SparseArray;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import engine.android.core.ApplicationManager;
+import engine.android.core.extra.EventBus;
+import engine.android.core.extra.EventBus.Event;
 import engine.android.framework.app.AppConfig;
 import engine.android.framework.app.AppGlobal;
-import engine.android.framework.network.ConnectionInterceptor;
-import engine.android.framework.network.event.Event;
-import engine.android.framework.network.event.EventObserver;
-import engine.android.framework.network.event.EventObserver.EventCallback;
+import engine.android.framework.network.ConnectionStatus;
+import engine.android.framework.network.socket.SocketManager.SocketResponse.Callback;
 import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.socket.SocketConnectionListener;
@@ -28,21 +37,14 @@ import protocol.java.ProtocolWrapper;
 import protocol.java.ProtocolWrapper.ProtocolEntity;
 import protocol.java.ProtocolWrapper.ProtocolEntity.ProtocolData;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.net.SocketException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * Socket连接管理器<p>
  * 
  * @author Daimon
+ * @version N
+ * @since 6/6/2014
  */
-public class SocketManager implements SocketConnectionListener, SocketReceiver, EventCallback {
+public class SocketManager implements SocketConnectionListener {
 
     private final Context context;
 
@@ -52,11 +54,11 @@ public class SocketManager implements SocketConnectionListener, SocketReceiver, 
     
     private boolean isSocketConnected;
     
-    private final SparseArray<SocketResponse> pendingDatas
-    = new SparseArray<SocketResponse>();
+    private final SparseArray<SocketAction> pendingDatas
+    = new SparseArray<SocketAction>();
     
     public SocketManager(Context context) {
-        config = AppGlobal.getConfig(this.context = context.getApplicationContext());
+        this.context = (config = AppGlobal.get(context).getConfig()).getContext();
     }
 
     public void setup(String address, String token) {
@@ -114,26 +116,27 @@ public class SocketManager implements SocketConnectionListener, SocketReceiver, 
                 }
             }
         };
+        socket.setReceiver(new SocketReceiver() {
+            
+            @Override
+            public Object parseData(InputStream in) throws IOException {
+                ProtocolEntity entity = ProtocolWrapper.parse(in);
+                if (entity == null)
+                {
+                    throw new IOException("read bytes is -1.");
+                }
+                
+                return entity;
+            }
+        });
         socket.setProxy(context);
         socket.setListener(this);
-        socket.setReceiver(this);
         if (config.isOffline()) socket.setServlet(config.getSocketServlet());
         socket.connect();
     }
     
     public boolean isSocketConnected() {
         return isSocketConnected;
-    }
-
-    @Override
-    public Object parseData(InputStream in) throws IOException {
-        ProtocolEntity entity = ProtocolWrapper.parse(in);
-        if (entity == null)
-        {
-            throw new IOException("read bytes is -1.");
-        }
-        
-        return entity;
     }
 
     @Override
@@ -197,7 +200,7 @@ public class SocketManager implements SocketConnectionListener, SocketReceiver, 
             log(data.getClass().getSimpleName(), "服务器返回--" + GsonUtil.toJson(data));
         }
         
-        if (ApplicationManager.isDebuggable() && !config.isOffline())
+        if (ApplicationManager.isDebuggable(context) && !config.isOffline())
         {
             exportProtocolToFile(data);
         }
@@ -212,8 +215,8 @@ public class SocketManager implements SocketConnectionListener, SocketReceiver, 
         int index = pendingDatas.indexOfKey(msgId);
         if (index >= 0)
         {
-            SocketResponse response = pendingDatas.valueAt(index);
-            if (response != null && response.response(data, this))
+            SocketAction action = pendingDatas.valueAt(index);
+            if (action.response.response(data, action))
             {
                 pendingDatas.removeAt(index);
             }
@@ -233,7 +236,7 @@ public class SocketManager implements SocketConnectionListener, SocketReceiver, 
         FileManager.writeFile(file, GsonUtil.toJson(data).getBytes(), false);
     }
     
-    public static class SocketRequest implements SocketData {
+    private static class SocketRequest implements SocketData {
 
         private static final AtomicInteger generator = new AtomicInteger(1);
         
@@ -243,7 +246,7 @@ public class SocketManager implements SocketConnectionListener, SocketReceiver, 
 
         private final AtomicBoolean isInitialized = new AtomicBoolean();
         
-        SocketRequest(ProtocolData data) {
+        public SocketRequest(ProtocolData data) {
             entity = ProtocolEntity.newInstance(generator.getAndIncrement(), 0, data);
         }
         
@@ -273,64 +276,91 @@ public class SocketManager implements SocketConnectionListener, SocketReceiver, 
         }
     }
     
-    public static interface SocketResponse {
+    public interface SocketResponse {
         
         /**
-         * @return true不再继续接收后续事件
+         * @return True表示不再继续接收后续事件
          */
-        boolean response(ProtocolData data, EventCallback callback);
-    }
-    
-    @Override
-    public void call(String action, int status, Object param) {
-        log(action + "|" + status + "|" + param);
+        boolean response(ProtocolData data, Callback callback);
         
-        ConnectionInterceptor interceptor = config.getSocketInterceptor();
-        if (interceptor != null && interceptor.intercept(action, status, param))
-        {
-            return;
-        }
-    
-        EventObserver.getDefault().post(new Event(action, status, param));
-    }
+        public interface Callback extends ConnectionStatus {
 
-    public void sendSocketRequest(SocketRequest request, SocketResponse response) {
-        int msgId = request.getMsgId();
-        if (pendingDatas.indexOfKey(msgId) < 0)
-        {
-            pendingDatas.append(msgId, response);
+            void call(String action, int status, Object param);
+        }
+    }
+    
+    private class SocketAction implements Runnable, Callback {
+        
+        public final SocketRequest request;
+        public final SocketResponse response;
+        
+        public SocketAction(SocketRequest request, SocketResponse response) {
+            this.request = request;
+            this.response = response;
+        }
+
+        @Override
+        public void run() {
+            request.init();
             socket.send(request);
         }
-    }
-    
-    public void cancelSocketRequest(SocketRequest request) {
-        int msgId = request.getMsgId();
-        int index = pendingDatas.indexOfKey(msgId);
-        if (index >= 0)
-        {
-            pendingDatas.removeAt(index);
-            socket.cancel(request);
+
+        @Override
+        public void call(String action, int status, Object param) {
+            int index = pendingDatas.indexOfKey(request.getMsgId());
+            if (index < 0) return;
+            
+            log(action + "|" + status + "|" + param);
+            
+            ConnectionInterceptor interceptor = config.getSocketInterceptor();
+            if (interceptor != null && interceptor.intercept(action, status, param))
+            {
+                return;
+            }
+
+            EventBus.getDefault().post(new Event(action, status, param));
         }
     }
-
-    public SocketRequest buildSocketRequest(ProtocolData data) {
+    
+    public interface SocketBuilder {
+        
+        ProtocolData buildData();
+        
+        SocketResponse buildResponse();
+    }
+    
+    /**
+     * 发送socket请求
+     * 
+     * @return 可用于取消请求
+     */
+    public int sendSocketRequest(SocketBuilder socket) {
+        ProtocolData data = socket.buildData();
         if (config.isLogProtocol())
         {
             log(data.getClass().getSimpleName(), "发送请求--" + GsonUtil.toJson(data));
         }
+
+        SocketRequest request = new SocketRequest(data);
+        SocketResponse response = socket.buildResponse();
+        SocketAction action = new SocketAction(request, response);
         
-        return new SocketRequest(data);
+        int msgId = request.getMsgId();
+        if (response != null) pendingDatas.append(msgId, action);
+        
+        config.getSocketThreadPool().execute(action);
+        return msgId;
     }
     
-    public void sendSocketRequestAsync(final SocketRequest request, 
-            final SocketResponse response) {
-        config.getSocketThreadPool().execute(new Runnable() {
-            
-            @Override
-            public void run() {
-                request.init();
-                sendSocketRequest(request, response);
-            }
-        });
+    /**
+     * 取消socket请求
+     */
+    public void cancelSocketRequest(int id) {
+        int index = pendingDatas.indexOfKey(id);
+        if (index >= 0)
+        {
+            socket.cancel(pendingDatas.valueAt(index).request);
+            pendingDatas.removeAt(index);
+        }
     }
 }

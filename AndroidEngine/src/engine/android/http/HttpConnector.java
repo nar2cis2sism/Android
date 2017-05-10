@@ -4,10 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Proxy;
-
-import engine.android.core.ApplicationManager;
-import engine.android.core.util.LogFactory;
-import engine.android.core.util.LogFactory.LOG;
+import android.text.TextUtils;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -18,6 +15,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
+
+import engine.android.core.util.LogFactory;
+import engine.android.core.util.LogFactory.LOG;
+import engine.android.http.HttpRequest.ByteArray;
 
 /**
  * Http连接器<p>
@@ -76,7 +77,7 @@ public class HttpConnector {
      * @param url 请求URL地址
      * @param postData 请求消息数据
      */
-    public HttpConnector(String url, byte[] postData) {
+    public HttpConnector(String url, ByteArray postData) {
         this(url, null, postData);
     }
 
@@ -87,7 +88,7 @@ public class HttpConnector {
      * @param headers 请求头
      * @param postData 请求消息数据
      */
-    public HttpConnector(String url, Map<String, String> headers, byte[] postData) {
+    public HttpConnector(String url, Map<String, String> headers, ByteArray postData) {
         request = new HttpRequest(url, headers, postData);
     }
 
@@ -127,11 +128,7 @@ public class HttpConnector {
      * 设置连接参数
      */
     public HttpParams getParams() {
-        if (params == null)
-        {
-            params = new HttpParams();
-        }
-        
+        if (params == null) params = new HttpParams();
         return params;
     }
 
@@ -255,13 +252,10 @@ public class HttpConnector {
     
     protected HttpResponse doConnect(HttpRequest request) throws Exception {
         String url = request.getUrl();
-        String method = request.getMethod();
-        byte[] postData = request.getPostData();
-        Map<String, String> headers = request.getHeaders();
         
         lock.lock();
         try {
-            log("联网请求：" + request.getUrl());
+            log("联网请求：" + url);
             
             URL href = new URL(url);
             if (proxy != null)
@@ -276,6 +270,10 @@ public class HttpConnector {
         } finally {
             lock.unlock();
         }
+        
+        String method = request.getMethod();
+        byte[] postData = request.getPostData();
+        Map<String, String> headers = request.getHeaders();
         
         // 设置超时
         if (timeout > 0)
@@ -369,19 +367,19 @@ public class HttpConnector {
      * 日志输出
      */
     private void log(Object message) {
-        LOG.log(name, message);
+        if (!TextUtils.isEmpty(name)) LOG.log(name, message);
     }
 
     /**
      * HTTP连接监听器
      */
-    public static interface HttpConnectionListener {
+    public interface HttpConnectionListener {
 
-        public void connectBefore(HttpConnector conn, HttpRequest request);
+        void connectBefore(HttpConnector conn, HttpRequest request);
 
-        public void connectAfter(HttpConnector conn, HttpResponse response);
+        void connectAfter(HttpConnector conn, HttpResponse response);
 
-        public void connectError(HttpConnector conn, Exception e);
+        void connectError(HttpConnector conn, Exception e);
     }
 
     /**
@@ -427,9 +425,6 @@ public class HttpConnector {
 
     static
     {
-        if (!ApplicationManager.isDebuggable())
-        {
-            LogFactory.addLogFile(HttpConnector.class, "http.txt");
-        }
+        LogFactory.addLogFile(HttpConnector.class, "http.txt");
     }
 }

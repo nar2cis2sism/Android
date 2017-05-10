@@ -1,31 +1,61 @@
 package com.project.app;
 
+import android.content.Context;
+
+import com.project.network.http.HttpInterceptor;
+import com.project.network.http.servlet.HttpServlet;
+import com.project.network.socket.SocketInterceptor;
+import com.project.network.socket.SocketServlet;
+
+import engine.android.framework.app.AppConfig;
+
 /**
  * 全局配置
  * 
  * @author Daimon
  */
-public class MyConfiguration {
+interface IConfiguration {
     
-    public static interface MyConfiguration_NETWORK {
-        
-        /** 单机不联网 **/
-        public static final boolean NET_OFF = true;
+    /** 单机不联网 **/
+    boolean NET_OFF = true;
 
-        /** 打印协议 **/
-        public static final boolean NET_LOG_PROTOCOL = true;
-        
-        /** 测试服务器 **/
-        public static final boolean NET_TEST = true;
-    }
+    /** 打印协议 **/
+    boolean NET_LOG_PROTOCOL = true;
+    
+    /** 测试服务器 **/
+    boolean NET_TEST = true;
+    
+    int HTTP_TIMEOUT   = 5000; // (5s)
+    
+    int SOCKET_TIMEOUT = 5000; // (5s)
+}
 
-    public static interface MyConfiguration_HTTP {
+public class MyConfiguration extends AppConfig implements IConfiguration {
+
+    public MyConfiguration(Context context) {
+        super(context);
         
-        public static final int HTTP_TIMEOUT   = 5000; // (5s)
+        configNetwork(configNetwork());
+        configHttp(configHttp());
+        configSocket(configSocket());
     }
     
-    public static interface MyConfiguration_SOCKET {
-        
-        public static final int SOCKET_TIMEOUT = 5000; // (5s)
+    private void configNetwork(NetworkConfig config) {
+        if (MyApp.isDebuggable(getContext()))
+        {
+            config.setOffline(NET_OFF).setProtocolLog(NET_LOG_PROTOCOL);
+        }
+    }
+    
+    private void configHttp(HttpConfig config) {
+        config.setServlet(new HttpServlet());
+        config.setInterceptor(new HttpInterceptor());
+        config.setTimeout(HTTP_TIMEOUT);
+    }
+    
+    private void configSocket(SocketConfig config) {
+        config.setServlet(new SocketServlet());
+        config.setInterceptor(new SocketInterceptor());
+        config.setTimeout(SOCKET_TIMEOUT);
     }
 }

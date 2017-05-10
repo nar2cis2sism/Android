@@ -50,7 +50,7 @@ public class CheckableItem extends FrameLayout implements Checkable {
 
     @Override
     public void setChecked(boolean checked) {
-        if (isChecked != checked)
+        if (isChecked ^ checked)
         {
             isChecked = checked;
             ensureBackgroundDrawable();

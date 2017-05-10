@@ -6,24 +6,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Proxy;
-import android.text.TextUtils;
-
-import engine.android.core.ApplicationManager;
-import engine.android.framework.R;
-import engine.android.framework.app.AppConfig;
-import engine.android.framework.app.AppGlobal;
-import engine.android.framework.network.ConnectionInterceptor;
-import engine.android.framework.network.event.Event;
-import engine.android.framework.network.event.EventObserver;
-import engine.android.framework.network.event.EventObserver.EventCallback;
-import engine.android.http.HttpConnector;
-import engine.android.http.HttpConnector.HttpConnectionListener;
-import engine.android.http.HttpProxy;
-import engine.android.http.HttpRequest;
-import engine.android.http.HttpResponse;
-import engine.android.http.util.HttpParser;
-import engine.android.util.file.FileManager;
-import engine.android.util.manager.SDCardManager;
+import android.util.SparseArray;
 
 import java.io.File;
 import java.net.HttpURLConnection;
@@ -32,23 +15,49 @@ import java.net.Proxy.Type;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.Callable;
 
+import engine.android.core.ApplicationManager;
+import engine.android.core.extra.EventBus;
+import engine.android.core.extra.EventBus.Event;
+import engine.android.framework.R;
+import engine.android.framework.app.AppConfig;
+import engine.android.framework.app.AppGlobal;
+import engine.android.framework.network.ConnectionStatus;
+import engine.android.framework.network.http.util.EntityUtil;
+import engine.android.framework.network.http.util.HttpParser.Failure;
+import engine.android.http.HttpConnector;
+import engine.android.http.HttpConnector.HttpConnectionListener;
+import engine.android.http.HttpProxy;
+import engine.android.http.HttpRequest;
+import engine.android.http.HttpRequest.ByteArray;
+import engine.android.http.HttpResponse;
+import engine.android.http.util.HttpParser;
+import engine.android.util.file.FileManager;
+import engine.android.util.manager.SDCardManager;
+
 /**
  * Http连接管理器<p>
+ * 需要声明权限
+ * <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+ * <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
  * 
  * @author Daimon
+ * @version N
+ * @since 6/6/2014
  */
-public class HttpManager implements HttpConnectionListener, EventCallback {
+public class HttpManager implements HttpConnectionListener, ConnectionStatus {
 
     private final Context context;
 
-    private final ConnectivityManager cm;
-    
     private final AppConfig config;
     
+    private final ConnectivityManager cm;
+    
+    private final SparseArray<HttpAction> request
+    = new SparseArray<HttpAction>();
+    
     public HttpManager(Context context) {
-        cm = (ConnectivityManager) (this.context = context.getApplicationContext())
+        cm = (ConnectivityManager) (this.context = (config = AppGlobal.get(context).getConfig()).getContext())
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-        config = AppGlobal.getConfig(context);
     }
 
     @Override
@@ -62,8 +71,8 @@ public class HttpManager implements HttpConnectionListener, EventCallback {
         if (info == null || !info.isAvailable())
         {
             // 无可用网络
-            conn.cancel();
             receive(conn, DISCONNECTED, context.getString(R.string.connection_status_disconnected));
+            conn.cancel();
         }
         else if (info.getType() != ConnectivityManager.TYPE_WIFI)
         {
@@ -91,21 +100,29 @@ public class HttpManager implements HttpConnectionListener, EventCallback {
                             statusCode, EntityUtil.toString(response.getContent())));
                 }
                 
-                if (ApplicationManager.isDebuggable() && !config.isOffline())
+                if (ApplicationManager.isDebuggable(context) && !config.isOffline())
                 {
                     exportProtocolToFile(conn, response.getContent());
                 }
-                
-                Object tag = conn.getTag();
-                if (tag instanceof HttpParser)
+
+                Object param = null;
+                HttpAction action = request.get(conn.hashCode());
+                if (action != null && action.parser != null)
                 {
-                    ((HttpParser) tag).parse(response);
+                    param = action.parser.parse(response);
+                    if (param instanceof Failure)
+                    {
+                        receive(conn, FAIL, param);
+                        return;
+                    }
                 }
-                
+
+                receive(conn, SUCCESS, param);
                 return;
             }
 
-            log(conn.getName(), String.format("服务器返回%d--%s", statusCode, response.getReasonPhrase()));
+            log(conn.getName(), String.format("服务器返回%d--%s", 
+                    statusCode, response.getReasonPhrase()));
         } catch (Exception e) {
             log(conn.getName(), e);
         }
@@ -128,7 +145,8 @@ public class HttpManager implements HttpConnectionListener, EventCallback {
 
     @Override
     public void connectError(HttpConnector conn, Exception e) {
-        if (!isAccessible())
+        NetworkInfo info = cm.getActiveNetworkInfo();
+        if (info == null || !info.isAvailable())
         {
             receive(conn, DISCONNECTED, context.getString(R.string.connection_status_disconnected));
         }
@@ -143,17 +161,18 @@ public class HttpManager implements HttpConnectionListener, EventCallback {
         }
     }
 
-    private boolean isAccessible() {
-        NetworkInfo info = cm.getActiveNetworkInfo();
-        return info != null && info.isAvailable();
-    }
-
-    private void receive(HttpConnector conn, int status, Object param) {
-        call(conn.getName(), status, param);
-    }
-
-    @Override
-    public void call(String action, int status, Object param) {
+    /**
+     * 处理网络事件接收
+     * 
+     * @param conn 网络连接
+     * @param status 网络状态
+     * @param param 网络参数
+     */
+    protected void receive(HttpConnector conn, int status, Object param) {
+        request.remove(conn.hashCode());
+        if (conn.isCancelled()) return;
+        
+        String action = conn.getName();
         log(action + "|" + status + "|" + param);
         
         ConnectionInterceptor interceptor = config.getHttpInterceptor();
@@ -162,51 +181,112 @@ public class HttpManager implements HttpConnectionListener, EventCallback {
             return;
         }
 
-        EventObserver.getDefault().post(new Event(action, status, param));
+        EventBus.getDefault().post(new Event(action, status, param));
     }
     
-    public HttpConnector buildHttpConnector(String url, String name, String request, 
-            HttpParser parser) {
-        byte[] entity = null;
-        if (!TextUtils.isEmpty(request))
-        {
-            if (config.isLogProtocol())
-            {
-                log(name, "发送请求--" + request);
-            }
-            
-            entity = EntityUtil.toByteArray(request);
+    private static class StringEntiry implements ByteArray {
+        
+        private final StringEntity entity;
+        
+        public StringEntiry(StringEntity entity) {
+            this.entity = entity;
         }
 
-        HttpConnector conn;
+        @Override
+        public byte[] toByteArray() {
+            return EntityUtil.toByteArray(entity.toString());
+        }
+    }
+    
+    public interface StringEntity {
+        
+        String toString();
+    }
+    
+    /**
+     * 创建HTTP请求
+     * 
+     * @param url 请求地址
+     * @param action 请求标识
+     * @param entity 请求内容
+     */
+    public HttpConnector buildHttpConnector(String url, String action, StringEntity entity) {
+        if (config.isLogProtocol())
+        {
+            log(action, "发送请求--" + entity.toString());
+        }
+
+        HttpProxy conn = new HttpProxy(url, new StringEntiry(entity));
         if (config.isOffline())
         {
-            conn = new HttpProxy(url, entity).setServlet(config.getHttpServlet());
-        }
-        else
-        {
-            conn = new HttpConnector(url, entity);
+            conn.setServlet(config.getHttpServlet());
         }
         
         return conn
-        .setName(name)
+        .setName(action)
         .setTimeout(config.getHttpTimeout())
-        .setTag(parser)
         .setListener(this);
     }
     
-    public static interface HttpBuilder {
+    private class HttpAction implements Callable<HttpResponse> {
         
-        HttpConnector buildHttpConnector();
+        public final HttpConnector conn;
+        public final HttpParser parser;
+        
+        public HttpAction(HttpConnector conn, HttpParser parser) {
+            this.conn = conn;
+            this.parser = parser;
+        }
+
+        @Override
+        public HttpResponse call() throws Exception {
+            return conn.connect();
+        }
     }
     
-    public void sendHttpRequestAsync(final HttpBuilder builder) {
-        config.getHttpThreadPool().submit(new Callable<HttpResponse>() {
+    public interface HttpBuilder {
+        
+        HttpConnector buildConnector(HttpManager http);
+        
+        HttpParser buildParser();
+    }
 
-            @Override
-            public HttpResponse call() throws Exception {
-                return builder.buildHttpConnector().connect();
-            }
-        });
+    /**
+     * 发送HTTP请求
+     * 
+     * @return 可用于取消请求
+     */
+    public int sendHttpRequest(HttpBuilder http) {
+        HttpConnector conn = http.buildConnector(this);
+        int hash = conn.hashCode();
+        
+        int index = request.indexOfKey(hash);
+        if (index < 0)
+        {
+            HttpAction action = new HttpAction(conn, http.buildParser());
+            request.append(hash, action);
+            config.getHttpThreadPool().submit(action);
+        }
+        
+        return hash;
+    }
+    
+    /**
+     * 取消HTTP请求
+     */
+    public void cancelHttpRequest(int id) {
+        int index = request.indexOfKey(id);
+        if (index >= 0)
+        {
+            request.valueAt(index).conn.cancel();
+            request.removeAt(index);
+        }
+    }
+    
+    /**
+     * 发送异步HTTP请求
+     */
+    public void sendHttpRequestAsync(HttpConnector conn) {
+        config.getHttpThreadPool().submit(new HttpAction(conn, null));
     }
 }

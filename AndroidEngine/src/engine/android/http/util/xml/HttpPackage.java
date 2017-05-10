@@ -16,12 +16,12 @@ public interface HttpPackage {
      * 
      * @param map key为发包的字段,value为发包的值
      */
-    public void request(Map<String, String> map);
+    void request(Map<String, String> map);
 
     /**
      * 收包回应
      * 
      * @param map key为收包的字段,value为收包的值
      */
-    public void response(Map<String, String> map);
+    void response(Map<String, String> map);
 }

@@ -1,0 +1,6 @@
+﻿Android有两种类型的API是不能经由SDK访问的。
+第一种是位于com.android.internal包中的API。
+第二种API类型是一系列被标记为@hide属性的类和方法。从严格意义上来讲，这不是一个单一的API，而是一组小的被隐藏的API。
+1.运行时刻和Android SDK中android.jar等价的文件是framework.jar.该文件位于/system/framework/framework.jar（推荐用模拟器运行）
+2.解压得到的文件，转化classes.dex为.jar格式。替换所有的文件到原来的android.jar重命名为framework.jar
+3.create user library including framework.jar and add to build path prior to android API.

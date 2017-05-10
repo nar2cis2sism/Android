@@ -11,7 +11,7 @@ import engine.android.util.ui.ButtonGroup;
 import engine.android.util.ui.ButtonGroup.OnCheckedChangeListener;
 
 /**
- * 自定义页面指示器
+ * 页面指示器
  * 
  * @author Daimon
  * @version N

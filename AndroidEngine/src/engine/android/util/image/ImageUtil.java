@@ -1,6 +1,6 @@
 package engine.android.util.image;
 
-import static engine.android.util.ui.RectUtil.getRect;
+import static engine.android.util.RectUtil.getRect;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;

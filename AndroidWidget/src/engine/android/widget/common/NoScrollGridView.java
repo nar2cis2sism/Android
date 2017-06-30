@@ -1,4 +1,4 @@
-package engine.android.util.ui;
+package engine.android.widget.common;
 
 import android.content.Context;
 import android.util.AttributeSet;

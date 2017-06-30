@@ -1,4 +1,4 @@
-package engine.android.framework.app.service;
+package engine.android.util.service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -11,6 +11,8 @@ import android.os.Messenger;
  * 远程服务的抽象基类，方便子类自定义消息
  * 
  * @author Daimon
+ * @version N
+ * @since 6/6/2014
  */
 public abstract class RemoteService extends Service {
 	

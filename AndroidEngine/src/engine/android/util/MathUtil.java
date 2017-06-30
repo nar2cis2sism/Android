@@ -1,5 +1,10 @@
 package engine.android.util;
 
+/**
+ * @author Daimon
+ * @version N
+ * @since 6/6/2014
+ */
 public final class MathUtil {
 
     /**

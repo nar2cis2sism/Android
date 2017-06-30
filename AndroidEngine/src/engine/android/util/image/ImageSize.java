@@ -60,6 +60,7 @@ public final class ImageSize {
             setWidth(width);
         }
     }
+    
     public void clearAspectRatio() {
         aspect_ratio = null;
     }
@@ -89,7 +90,7 @@ public final class ImageSize {
     }
     
     /**
-     * 根据图片尺寸调整视图大小
+     * 根据图片尺寸调整视图大小（视图宽高必需有一个是确定的）
      */
     public static void adjustViewSize(View view, ImageSize size) {
         final ViewGroup.LayoutParams params = view.getLayoutParams();

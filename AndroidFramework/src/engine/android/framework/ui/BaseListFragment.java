@@ -25,6 +25,8 @@ import engine.android.framework.R;
  * 封装一个列表视图，copy from{@link ListFragment}，仔细比对会有少许改动
  * 
  * @author Daimon
+ * @version N
+ * @since 6/6/2014
  */
 public class BaseListFragment extends BaseFragment {
     
@@ -294,6 +296,8 @@ public class BaseListFragment extends BaseFragment {
         mList.post(mRequestFocus);
     }
 
+    /******************************* 华丽丽的分割线 *******************************/
+
     /**
      * 内嵌布局替换ListView<br>
      * 一般在{@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}里面调用
@@ -336,7 +340,7 @@ public class BaseListFragment extends BaseFragment {
         super.setDataSource(new CursorDataSource(adapter, loader));
     }
     
-    private abstract class ListDataSource<D, A extends ListAdapter> extends DataSource<D> {
+    protected abstract class ListDataSource<D, A extends ListAdapter> extends DataSource<D> {
         
         protected final A adapter;
         

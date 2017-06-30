@@ -2,9 +2,8 @@ package engine.android.util.image;
 
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
-
-import engine.android.util.MyThreadFactory;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,6 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import engine.android.util.extra.MyThreadFactory;
 
 /**
  * 异步图片加载器
@@ -87,30 +88,21 @@ public final class AsyncImageLoader {
     }
 
     /**
-     * 从缓存中取图片
+     * 更新缓存中图片
      * 
      * @param url 图片下载地址
-     */
-    public Bitmap getImage(Object url) {
-        return imageCache.get(url);
-    }
-
-    /**
-     * 更新缓存中图片
+     * @param image 如为Null表示重新下载图片
      */
     public void updateImage(Object url, Bitmap image) {
-        imageCache.put(url, image);
-    }
-
-    /**
-     * 释放图片（重新下载图片）
-     * 
-     * @param url 图片下载地址
-     */
-    public void releaseImage(Object url) {
         lockMap.remove(url);
-        imageCache.remove(url);
-        callbackMap.remove(url);
+        if (image == null)
+        {
+            imageCache.remove(url);
+        }
+        else
+        {
+            imageCache.put(url, image);
+        }
     }
 
     /**
@@ -151,15 +143,14 @@ public final class AsyncImageLoader {
 
                 if (request == null)
                 {
-                    request = lockMap.get(url);
-
                     Bitmap image = downloader.imageLoading(url);
 
-                    synchronized (request) {
-                        if (request != lockMap.get(url))
+                    synchronized (this) {
+                        if (this != lockMap.get(url))
                         {
                             // 以防止在此期间取消图片下载
-                            request.cancel();
+                            cancel();
+                            callbackMap.remove(url);
                             return;
                         }
 
@@ -226,6 +217,10 @@ public final class AsyncImageLoader {
     }
 
     private static class ImageHandler extends Handler {
+        
+        public ImageHandler() {
+            super(Looper.getMainLooper());
+        }
 
         @Override
         public void handleMessage(Message msg) {

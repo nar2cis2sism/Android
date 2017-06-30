@@ -4,7 +4,7 @@ import engine.android.http.HttpResponse;
 
 public interface HttpParser extends engine.android.http.util.HttpParser {
 
-    public ReturnData parse(HttpResponse response) throws Exception;
+    ReturnData parse(HttpResponse response) throws Exception;
     
     public interface ReturnData {}
     

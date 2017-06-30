@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 import com.project.app.MyContext;
 
-import engine.android.util.Singleton;
+import engine.android.util.extra.Singleton;
 
 /**
  * 轻量存储

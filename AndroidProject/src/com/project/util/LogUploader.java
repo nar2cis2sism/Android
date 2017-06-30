@@ -12,7 +12,7 @@ import java.util.Calendar;
 
 import engine.android.core.util.CalendarFormat;
 import engine.android.core.util.LogFactory;
-import engine.android.util.ReflectObject;
+import engine.android.util.extra.ReflectObject;
 import engine.android.util.file.FileManager;
 import engine.android.util.manager.SDCardManager;
 

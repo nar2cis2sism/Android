@@ -7,6 +7,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * @author Daimon
+ * @version N
+ * @since 6/6/2014
+ */
 public class RootUtil {
 
     /**

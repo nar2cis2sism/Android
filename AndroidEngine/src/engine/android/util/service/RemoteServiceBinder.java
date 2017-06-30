@@ -1,31 +1,33 @@
-package engine.android.framework.app.service;
+package engine.android.util.service;
 
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 
 import engine.android.core.util.LogFactory.LOG;
-import engine.android.framework.app.service.LocalService.LocalBinder;
 
 /**
- * 本地服务的调用实现
+ * 远程服务的调用实现
  * 
  * @author Daimon
+ * @version N
+ * @since 6/6/2014
  */
-public class LocalServiceBinder<Service extends LocalService> {
+public class RemoteServiceBinder<Service extends RemoteService> {
     
     private final Context context;
     
-    private Service service;
+    private Messenger messenger;
     private final ServiceConnection conn = new ServiceConnection() {
         
-        @SuppressWarnings("unchecked")
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             try {
-                service = (Service) ((LocalBinder) binder).getService();
+                messenger = new Messenger(binder);
                 LOG.log(name.flattenToShortString());
             } catch (Exception e) {
                 LOG.log(e);
@@ -34,13 +36,13 @@ public class LocalServiceBinder<Service extends LocalService> {
         
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            service = null;
+            messenger = null;
             LOG.log(name.flattenToShortString());
         }
     };
     private Intent serviceIntent;
     
-    public LocalServiceBinder(Context context) {
+    public RemoteServiceBinder(Context context) {
         this.context = context;
     }
     
@@ -78,7 +80,7 @@ public class LocalServiceBinder<Service extends LocalService> {
         }
     }
     
-    public final Service getService() {
-        return service;
+    public final void sendMessage(Message message) throws Exception {
+        messenger.send(message);
     }
 }

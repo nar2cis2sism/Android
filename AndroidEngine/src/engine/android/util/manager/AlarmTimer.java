@@ -1,4 +1,4 @@
-package engine.android.util;
+package engine.android.util.manager;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -147,9 +147,9 @@ public class AlarmTimer {
         timeoutTask.run();
     }
 
-    private static interface AlarmTimerDecorator {
+    private interface AlarmTimerDecorator {
 
-        public void handleTimeout();
+        void handleTimeout();
     }
 
     public static class IdleTimer implements AlarmTimerDecorator {
@@ -215,7 +215,7 @@ public class AlarmTimer {
             timer.am.set(AlarmManager.ELAPSED_REALTIME, getTimeoutTime(), timer.operation);
         }
 
-        private static final long getCurrentTime() {
+        private static long getCurrentTime() {
             return SystemClock.elapsedRealtime();
         }
 

@@ -78,12 +78,7 @@ public final class ImageCache<Identifier> {
             @Override
             protected boolean removeEldestEntry(
                     java.util.Map.Entry<Identifier, ImageReference> eldest) {
-                if (size() > cacheCapacity)
-                {
-                    return true;
-                }
-
-                return false;
+                return size() > cacheCapacity;
             }
         };
 

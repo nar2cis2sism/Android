@@ -5,11 +5,18 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.Collection;
+import java.util.LinkedList;
+
+import engine.android.core.util.PresentManager;
+import engine.android.core.util.PresentManager.BasePresenter;
 
 /**
  * Fragment基类<p>
@@ -29,7 +36,7 @@ public abstract class BaseFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public BaseFragment() { setRetainInstance(true); }
+    public BaseFragment() {}
 
     @Override
     public void onAttach(Activity activity) {
@@ -63,6 +70,50 @@ public abstract class BaseFragment extends Fragment {
         }
         
         if (dataSource != null) dataSource.restart();
+        getPresenters().onActivityCreated(savedInstanceState);
+    }
+    
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        getPresenters().onActivityResult(requestCode, resultCode, data);
+    }
+    
+    @Override
+    public void onStart() {
+        super.onStart();
+        getPresenters().onStart();
+    }
+    
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        getPresenters().onSaveInstanceState(outState);
+    }
+    
+    @Override
+    public void onStop() {
+        super.onStop();
+        getPresenters().onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        getPresenters().onDestroy();
+        listener = null;
+        if (dataSource != null)
+        {
+            dataSource.destroy();
+            dataSource = null;
+        }
+    
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    
+        // Reset the active callbacks interface.
+        mCallbacks = null;
     }
 
     protected void setupActionBar(ActionBar actionBar) {}
@@ -85,36 +136,13 @@ public abstract class BaseFragment extends Fragment {
         return mCallbacks;
     }
 
-    @Override
-    public void onDestroy() {
-        listener = null;
-        if (dataSource != null)
-        {
-            dataSource.destroy();
-            dataSource = null;
-        }
-
-        super.onDestroy();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-
-        // Reset the active callbacks interface.
-        mCallbacks = null;
-    }
-
     /**
      * @see Activity#finish()
      */
     public final void finish() {
-        if (!getFragmentManager().popBackStackImmediate())
+        if (!getFragmentManager().popBackStackImmediate() && getActivity() != null)
         {
-            if (getActivity() != null)
-            {
-                getActivity().finish();
-            }
+            getActivity().finish();
         }
     }
 
@@ -239,6 +267,126 @@ public abstract class BaseFragment extends Fragment {
         if (dataSource != null && isAdded())
         {
             dataSource.loadData();
+        }
+    }
+
+    /******************************* Presenter *******************************/
+    
+    private PresentManager presenterManager;
+    
+    private final Presenters presenters = new Presenters();
+    
+    private boolean addIsCalled;
+
+    /**
+     * Must keep empty constructor of presenterCls for the instantiation.
+     */
+    public <P extends Presenter<C>, C extends BaseFragment> P addPresenter(Class<P> presenterCls) {
+        if (presenterManager == null) presenterManager = new PresentManager();
+        P p = presenterManager.addPresenter(presenterCls);
+        p.setCallbacks(this).onCreate(getContext());
+        addIsCalled = true;
+        return p;
+    }
+    
+    public <P extends Presenter<C>, C extends BaseFragment> void addPresenter(P p) {
+        if (presenterManager == null) presenterManager = new PresentManager();
+        presenterManager.addPresenter(p);
+        p.setCallbacks(this).onCreate(getContext());
+        addIsCalled = true;
+    }
+    
+    public <P extends Presenter<C>, C extends BaseFragment> P getPresenter(Class<P> presenterCls) {
+        if (presenterManager == null) return null;
+        return presenterManager.getPresenter(presenterCls);
+    }
+    
+    private Presenters getPresenters() {
+        if (addIsCalled)
+        {
+            addIsCalled = false;
+            presenters.set(presenterManager.getPresenters());
+        }
+        
+        return presenters;
+    }
+    
+    public static abstract class Presenter<C extends BaseFragment> extends BasePresenter<C> {
+        
+        protected void onCreate(Context context) {}
+        
+        protected void onActivityCreated(Bundle savedInstanceState) {}
+        
+        protected void onActivityResult(int requestCode, int resultCode, Intent data) {}
+        
+        protected void onStart() {}
+        
+        protected void onSaveInstanceState(Bundle outState) {}
+        
+        protected void onStop() {}
+        
+        protected void onDestroy() {}
+        
+        @SuppressWarnings("unchecked")
+        @Override
+        protected final Presenter<C> setCallbacks(BaseFragment callbacks) {
+            super.setCallbacks((C) callbacks);
+            return this;
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static class Presenters {
+        
+        private LinkedList<Presenter> presenters;
+        
+        public void set(Collection<BasePresenter<?>> collection) {
+            if (presenters == null)
+            {
+                presenters = new LinkedList<Presenter>();
+            }
+            else
+            {
+                presenters.clear();
+            }
+            
+            for (BasePresenter<?> p : collection)
+            {
+                if (p instanceof Presenter)
+                {
+                    presenters.add((Presenter) p);
+                }
+            }
+        }
+        
+        public void onActivityCreated(Bundle savedInstanceState) {
+            if (presenters == null) return;
+            for (Presenter p : presenters) p.onActivityCreated(savedInstanceState);
+        }
+        
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if (presenters == null) return;
+            for (Presenter p : presenters) p.onActivityResult(requestCode, resultCode, data);
+        }
+        
+        public void onStart() {
+            if (presenters == null) return;
+            for (Presenter p : presenters) p.onStart();
+        }
+        
+        public void onSaveInstanceState(Bundle outState) {
+            if (presenters == null) return;
+            for (Presenter p : presenters) p.onSaveInstanceState(outState);
+        }
+        
+        public void onStop() {
+            if (presenters == null) return;
+            for (Presenter p : presenters) p.onStop();
+        }
+        
+        public void onDestroy() {
+            if (presenters == null) return;
+            for (Presenter p : presenters) p.onDestroy();
         }
     }
 }

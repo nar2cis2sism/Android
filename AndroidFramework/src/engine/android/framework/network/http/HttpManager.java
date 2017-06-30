@@ -105,19 +105,22 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
                     exportProtocolToFile(conn, response.getContent());
                 }
 
-                Object param = null;
                 HttpAction action = request.get(conn.hashCode());
-                if (action != null && action.parser != null)
+                if (action == null || conn.isCancelled())
                 {
-                    param = action.parser.parse(response);
-                    if (param instanceof Failure)
-                    {
-                        receive(conn, FAIL, param);
-                        return;
-                    }
+                    return;
                 }
 
-                receive(conn, SUCCESS, param);
+                Object param = action.response(response);
+                if (param instanceof Failure)
+                {
+                    receive(conn, FAIL, param);
+                }
+                else
+                {
+                    receive(conn, SUCCESS, param);
+                }
+                
                 return;
             }
 
@@ -131,10 +134,7 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
     }
     
     private void exportProtocolToFile(HttpConnector conn, byte[] content) {
-        if (!SDCardManager.isEnabled())
-        {
-            return;
-        }
+        if (!SDCardManager.isEnabled()) return;
         
         File desDir = new File(SDCardManager.openSDCardAppDir(context), 
                 "protocols/http");
@@ -169,9 +169,6 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
      * @param param 网络参数
      */
     protected void receive(HttpConnector conn, int status, Object param) {
-        request.remove(conn.hashCode());
-        if (conn.isCancelled()) return;
-        
         String action = conn.getName();
         log(action + "|" + status + "|" + param);
         
@@ -240,7 +237,15 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
 
         @Override
         public HttpResponse call() throws Exception {
-            return conn.connect();
+            try {
+                return conn.connect();
+            } finally {
+                request.remove(conn.hashCode());
+            }
+        }
+        
+        public Object response(HttpResponse response) throws Exception {
+            return parser != null ? parser.parse(response) : null;
         }
     }
     
@@ -257,13 +262,21 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
      * @return 可用于取消请求
      */
     public int sendHttpRequest(HttpBuilder http) {
-        HttpConnector conn = http.buildConnector(this);
+        return sendHttpRequest(http.buildConnector(this), http.buildParser());
+    }
+
+    /**
+     * 发送HTTP请求
+     * 
+     * @return 可用于取消请求
+     */
+    public int sendHttpRequest(HttpConnector conn, HttpParser parser) {
         int hash = conn.hashCode();
         
         int index = request.indexOfKey(hash);
         if (index < 0)
         {
-            HttpAction action = new HttpAction(conn, http.buildParser());
+            HttpAction action = new HttpAction(conn, parser);
             request.append(hash, action);
             config.getHttpThreadPool().submit(action);
         }
@@ -281,12 +294,5 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
             request.valueAt(index).conn.cancel();
             request.removeAt(index);
         }
-    }
-    
-    /**
-     * 发送异步HTTP请求
-     */
-    public void sendHttpRequestAsync(HttpConnector conn) {
-        config.getHttpThreadPool().submit(new HttpAction(conn, null));
     }
 }

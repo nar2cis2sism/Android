@@ -32,7 +32,7 @@ import engine.android.core.util.LogFactory.LOG;
  * @version N
  * @since 6/6/2014
  */
-public abstract class ApplicationManager extends Application implements UncaughtExceptionHandler {
+public class ApplicationManager extends Application implements UncaughtExceptionHandler {
     
     private static ApplicationManager instance;             // 应用主程序管理器实例
     

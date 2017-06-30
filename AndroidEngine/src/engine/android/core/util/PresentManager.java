@@ -1,4 +1,4 @@
-package engine.android.framework.ui.util;
+package engine.android.core.util;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;

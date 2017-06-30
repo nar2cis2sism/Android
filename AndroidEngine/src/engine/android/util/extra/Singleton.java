@@ -1,4 +1,4 @@
-package engine.android.util;
+package engine.android.util.extra;
 
 /**
  * Singleton helper class for lazily initialization.

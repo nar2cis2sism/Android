@@ -19,8 +19,9 @@ import engine.android.core.extra.EventBus;
 import engine.android.core.extra.EventBus.Event;
 import engine.android.framework.app.AppConfig;
 import engine.android.framework.app.AppGlobal;
-import engine.android.framework.network.ConnectionStatus;
-import engine.android.framework.network.socket.SocketManager.SocketResponse.Callback;
+import engine.android.framework.network.socket.util.SocketPushReceiver;
+import engine.android.framework.network.socket.util.SocketResponse;
+import engine.android.framework.network.socket.util.SocketResponse.Callback;
 import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.socket.SocketConnectionListener;
@@ -44,7 +45,7 @@ import protocol.java.ProtocolWrapper.ProtocolEntity.ProtocolData;
  * @version N
  * @since 6/6/2014
  */
-public class SocketManager implements SocketConnectionListener {
+public class SocketManager implements SocketConnectionListener, Callback {
 
     private final Context context;
 
@@ -57,11 +58,17 @@ public class SocketManager implements SocketConnectionListener {
     private final SparseArray<SocketAction> pendingDatas
     = new SparseArray<SocketAction>();
     
+    private String token;
+    
     public SocketManager(Context context) {
         this.context = (config = AppGlobal.get(context).getConfig()).getContext();
     }
+    
+    public void setToken(String token) {
+        this.token = token;
+    }
 
-    public void setup(String address, String token) {
+    public void setup(String address) {
         String host = HttpConnector.getHost(address);
         int port = 80;
         
@@ -72,10 +79,10 @@ public class SocketManager implements SocketConnectionListener {
             host = host.substring(0, index);
         }
         
-        setup(host, port, token);
+        setup(host, port);
     }
     
-    public void setup(String host, int port, final String token) {
+    public void setup(String host, int port) {
         if (socket != null) socket.close();
         socket = new SocketConnector(host, port, config.getSocketTimeout(), true) {
             
@@ -208,15 +215,16 @@ public class SocketManager implements SocketConnectionListener {
         if (msgId == 0)
         {
             // 推送消息
-//            SocketPushReceiver.push(cmd, data, this);
+            SocketPushReceiver receiver = config.getSocketPushReceiver();
+            if (receiver != null) receiver.receive(cmd, data, this);
             return;
         }
         
         int index = pendingDatas.indexOfKey(msgId);
         if (index >= 0)
         {
-            SocketAction action = pendingDatas.valueAt(index);
-            if (action.response.response(data, action))
+            SocketResponse response = pendingDatas.valueAt(index).response;
+            if (response != null && response.response(data, this))
             {
                 pendingDatas.removeAt(index);
             }
@@ -224,16 +232,26 @@ public class SocketManager implements SocketConnectionListener {
     }
     
     private void exportProtocolToFile(ProtocolData data) {
-        if (!SDCardManager.isEnabled())
-        {
-            return;
-        }
+        if (!SDCardManager.isEnabled()) return;
         
         File desDir = new File(SDCardManager.openSDCardAppDir(context), 
                 "protocols/socket");
         
         File file = new File(desDir, data.getClass().getSimpleName());
         FileManager.writeFile(file, GsonUtil.toJson(data).getBytes(), false);
+    }
+
+    @Override
+    public void call(String action, int status, Object param) {
+        log(action + "|" + status + "|" + param);
+        
+        ConnectionInterceptor interceptor = config.getSocketInterceptor();
+        if (interceptor != null && interceptor.intercept(action, status, param))
+        {
+            return;
+        }
+
+        EventBus.getDefault().post(new Event(action, status, param));
     }
     
     private static class SocketRequest implements SocketData {
@@ -276,23 +294,12 @@ public class SocketManager implements SocketConnectionListener {
         }
     }
     
-    public interface SocketResponse {
-        
-        /**
-         * @return True表示不再继续接收后续事件
-         */
-        boolean response(ProtocolData data, Callback callback);
-        
-        public interface Callback extends ConnectionStatus {
-
-            void call(String action, int status, Object param);
-        }
-    }
-    
-    private class SocketAction implements Runnable, Callback {
+    private class SocketAction implements Runnable {
         
         public final SocketRequest request;
         public final SocketResponse response;
+        
+        private final AtomicBoolean isCancelled = new AtomicBoolean();
         
         public SocketAction(SocketRequest request, SocketResponse response) {
             this.request = request;
@@ -302,23 +309,21 @@ public class SocketManager implements SocketConnectionListener {
         @Override
         public void run() {
             request.init();
-            socket.send(request);
+            if (!isCancelled.get())
+            {
+                socket.send(request);
+                if (response == null)
+                {
+                    pendingDatas.remove(request.getMsgId());
+                }
+            }
         }
 
-        @Override
-        public void call(String action, int status, Object param) {
-            int index = pendingDatas.indexOfKey(request.getMsgId());
-            if (index < 0) return;
-            
-            log(action + "|" + status + "|" + param);
-            
-            ConnectionInterceptor interceptor = config.getSocketInterceptor();
-            if (interceptor != null && interceptor.intercept(action, status, param))
+        public void cancel() {
+            if (isCancelled.compareAndSet(false, true))
             {
-                return;
+                socket.cancel(request);
             }
-
-            EventBus.getDefault().post(new Event(action, status, param));
         }
     }
     
@@ -335,18 +340,25 @@ public class SocketManager implements SocketConnectionListener {
      * @return 可用于取消请求
      */
     public int sendSocketRequest(SocketBuilder socket) {
-        ProtocolData data = socket.buildData();
+        return sendSocketRequest(socket.buildData(), socket.buildResponse());
+    }
+    
+    /**
+     * 发送socket请求
+     * 
+     * @return 可用于取消请求
+     */
+    public int sendSocketRequest(ProtocolData data, SocketResponse response) {
         if (config.isLogProtocol())
         {
             log(data.getClass().getSimpleName(), "发送请求--" + GsonUtil.toJson(data));
         }
 
         SocketRequest request = new SocketRequest(data);
-        SocketResponse response = socket.buildResponse();
         SocketAction action = new SocketAction(request, response);
         
         int msgId = request.getMsgId();
-        if (response != null) pendingDatas.append(msgId, action);
+        pendingDatas.append(msgId, action);
         
         config.getSocketThreadPool().execute(action);
         return msgId;
@@ -359,7 +371,7 @@ public class SocketManager implements SocketConnectionListener {
         int index = pendingDatas.indexOfKey(id);
         if (index >= 0)
         {
-            socket.cancel(pendingDatas.valueAt(index).request);
+            pendingDatas.valueAt(index).cancel();
             pendingDatas.removeAt(index);
         }
     }

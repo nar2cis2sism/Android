@@ -19,7 +19,7 @@ import engine.android.core.util.LogFactory;
 import engine.android.framework.app.AppConfig;
 import engine.android.framework.app.AppGlobal;
 import engine.android.http.HttpConnector;
-import engine.android.http.HttpResponse;
+import engine.android.util.Util;
 import engine.android.util.image.AsyncImageLoader;
 import engine.android.util.image.AsyncImageLoader.ImageCallback;
 import engine.android.util.image.AsyncImageLoader.ImageDownloader;
@@ -40,9 +40,9 @@ public class ImageManager {
     
     private final ImageDownloader downloader;
 
-    final WeakHashMap<View, ImageUrl> displayViewMap;
+    private final WeakHashMap<View, ImageUrl> displayViewMap;
     
-    final ImageStorage storage;
+    private final ImageStorage storage;
     
     private final Transformer transformer;
 
@@ -70,19 +70,14 @@ public class ImageManager {
             return;
         }
 
-        Bitmap image = loader.getImage(url);
+        Bitmap image = loader.loadImage(url, downloader, new ImageViewCallback(view));
         if (image != null)
         {
             view.setImageBitmap(image);
         }
-        else
+        else if (view.getDrawable() == null && defaultDrawable != null)
         {
-            if (view.getDrawable() == null && defaultDrawable != null)
-            {
-                view.setImageDrawable(defaultDrawable);
-            }
-
-            loader.loadImage(url, downloader, new ImageViewCallback(view));
+            view.setImageDrawable(defaultDrawable);
         }
     }
 
@@ -107,10 +102,6 @@ public class ImageManager {
             if (image != null)
             {
                 view.setImageBitmap(image);
-            }
-            else
-            {
-                // 下载出错
             }
         }
     }
@@ -154,8 +145,7 @@ public class ImageManager {
                     HttpConnector conn = new HttpConnector(downloadUrl);
                     conn.getRequest().setHeader("Accept", "*/*");
                     try {
-                        HttpResponse resp = conn.connect();
-                        byte[] bs = resp.getContent();
+                        byte[] bs = conn.connect().getContent();
                         image = BitmapFactory.decodeByteArray(bs, 0, bs.length);
                         if (printLog)
                         {
@@ -163,17 +153,18 @@ public class ImageManager {
                                 "无图片" : image.getWidth() + "*" + image.getHeight());
                         }
                         
-                        if (transformer != null) image = transformer.transform(imageUrl, image);
                         if (image != null && storage.put(fileKey, bs))
                         {
                             sp.edit().putString(getCrcKey(fileKey), crc).commit();
                         }
                     } catch (Exception e) {
+                        // 下载出错
                         if (printLog) log("图片下载-" + fileKey, e);
                     }
                 }
             }
             
+            if (transformer != null) image = transformer.transform(imageUrl, image);
             return image;
         }
 
@@ -196,7 +187,7 @@ public class ImageManager {
             }
 
             if (printLog)
-                log("图片版本校验-" + fileKey, nativeCrc + "->" + crc + "=change:" + change);
+                log("图片版本校验-" + fileKey, nativeCrc + "->" + Util.getString(crc, "") + "=change:" + change);
 
             return change;
         }

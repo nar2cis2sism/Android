@@ -72,12 +72,7 @@ public class ImageStorage {
     public Bitmap get(String key) {
         File file = getImageFile(key);
         synchronized (file) {
-            if (file.exists())
-            {
-                return readImage(file);
-            }
-
-            return null;
+            return file.exists() ? readImage(file) : null;
         }
     }
 

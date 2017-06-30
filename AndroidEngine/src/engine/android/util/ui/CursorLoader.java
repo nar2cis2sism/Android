@@ -1,4 +1,4 @@
-package engine.android.core.extra;
+package engine.android.util.ui;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;

@@ -8,10 +8,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import engine.android.framework.network.ConnectionStatus.ConnectionInterceptor;
+import engine.android.framework.network.socket.util.SocketPushReceiver;
 import engine.android.framework.ui.util.ImageManager.Transformer;
 import engine.android.http.HttpProxy.HttpServlet;
 import engine.android.socket.SocketProxy.SocketServlet;
-import engine.android.util.MyThreadFactory;
+import engine.android.util.extra.MyThreadFactory;
 
 /**
  * 配置应用程序公用的功能组件
@@ -80,6 +81,10 @@ public class AppConfig {
     
     public SocketServlet getSocketServlet() {
         return configSocket().servlet;
+    }
+    
+    public SocketPushReceiver getSocketPushReceiver() {
+        return configSocket().receiver;
     }
     
     public File getImageDir() {
@@ -180,11 +185,20 @@ public class AppConfig {
         
         SocketServlet servlet;
         
+        SocketPushReceiver receiver;
+        
         /**
          * 设置单机调试服务器
          */
         public void setServlet(SocketServlet servlet) {
             this.servlet = servlet;
+        }
+        
+        /**
+         * 设置推送消息接收器
+         */
+        public void setPushReceiver(SocketPushReceiver receiver) {
+            this.receiver = receiver;
         }
     }
     

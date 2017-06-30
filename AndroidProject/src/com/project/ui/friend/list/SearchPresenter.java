@@ -8,9 +8,9 @@ import android.widget.Filter.FilterListener;
 import com.project.R;
 import com.project.app.bean.FriendListItem;
 
+import engine.android.core.BaseFragment.Presenter;
 import engine.android.core.extra.JavaBeanAdapter;
 import engine.android.core.extra.JavaBeanAdapter.FilterMatcher;
-import engine.android.framework.ui.BaseFragment.Presenter;
 import engine.android.framework.ui.widget.AvatarImageView;
 
 public class SearchPresenter extends Presenter<FriendListFragment> implements FilterListener {

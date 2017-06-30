@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import engine.android.util.Singleton;
+import engine.android.util.extra.Singleton;
 
 /**
  * 事件总线<p>
@@ -17,7 +17,7 @@ import engine.android.util.Singleton;
  * @version N
  * @since 6/6/2014
  */
-public class EventBus {
+public final class EventBus {
     
     private static final Singleton<EventBus> instance
     = new Singleton<EventBus>() {

@@ -12,7 +12,7 @@ import java.io.FileOutputStream;
 import engine.android.dao.DAOTemplate;
 import engine.android.dao.DAOTemplate.DAOExpression;
 import engine.android.dao.DAOTemplate.DBUpdateListener;
-import engine.android.util.Singleton;
+import engine.android.util.extra.Singleton;
 import engine.android.util.file.FileManager;
 import engine.android.util.io.IOUtil;
 import engine.android.util.manager.SDCardManager;

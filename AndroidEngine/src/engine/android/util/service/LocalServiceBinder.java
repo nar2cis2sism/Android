@@ -1,31 +1,33 @@
-package engine.android.framework.app.service;
+package engine.android.util.service;
 
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
 
 import engine.android.core.util.LogFactory.LOG;
+import engine.android.util.service.LocalService.LocalBinder;
 
 /**
- * 远程服务的调用实现
+ * 本地服务的调用实现
  * 
  * @author Daimon
+ * @version N
+ * @since 6/6/2014
  */
-public class RemoteServiceBinder<Service extends RemoteService> {
+public class LocalServiceBinder<Service extends LocalService> {
     
     private final Context context;
     
-    private Messenger messenger;
+    private Service service;
     private final ServiceConnection conn = new ServiceConnection() {
         
+        @SuppressWarnings("unchecked")
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             try {
-                messenger = new Messenger(binder);
+                service = (Service) ((LocalBinder) binder).getService();
                 LOG.log(name.flattenToShortString());
             } catch (Exception e) {
                 LOG.log(e);
@@ -34,13 +36,13 @@ public class RemoteServiceBinder<Service extends RemoteService> {
         
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            messenger = null;
+            service = null;
             LOG.log(name.flattenToShortString());
         }
     };
     private Intent serviceIntent;
     
-    public RemoteServiceBinder(Context context) {
+    public LocalServiceBinder(Context context) {
         this.context = context;
     }
     
@@ -78,7 +80,7 @@ public class RemoteServiceBinder<Service extends RemoteService> {
         }
     }
     
-    public final void sendMessage(Message message) throws Exception {
-        messenger.send(message);
+    public final Service getService() {
+        return service;
     }
 }

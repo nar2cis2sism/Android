@@ -58,7 +58,6 @@ public class Forelet extends Activity implements TaskCallback {
             if ((mProgress = ProgressWrapper.class.cast(savedInstance.progress)) != null)
                  mProgress.setup(onCreateProgressDialog());
             mTransaction = savedInstance.transaction;
-
             Injector.restoreState(this, savedInstance.savedMap);
         }
     }
@@ -73,9 +72,9 @@ public class Forelet extends Activity implements TaskCallback {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        commitAllowed = false;
         super.onSaveInstanceState(outState);
 
-        commitAllowed = false;
         saveDialogs(outState);
         
         SavedInstance savedInstance = new SavedInstance();
@@ -89,20 +88,20 @@ public class Forelet extends Activity implements TaskCallback {
     }
 
     @Override
-    protected void onDestroy() {
+    protected final void onDestroy() {
         if (isChangingConfigurations() || !isFinishing())
         {
             if (mTask != null) mTask.setup(null);
             if (mProgress != null) mProgress.setup(null);
             
-            onFinish(false);
+            onDestroy(false);
         }
         else
         {
             cancelTask();
             hideProgress();
             
-            onFinish(true);
+            onDestroy(true);
         }
         
         mTask = null;
@@ -117,9 +116,9 @@ public class Forelet extends Activity implements TaskCallback {
     }
 
     /**
-     * @param realFinish True表示手动关闭Activity,Flase表示被系统杀掉
+     * @param finish True表示手动关闭Activity,Flase表示被系统杀掉
      */
-    protected void onFinish(boolean realFinish) {}
+    protected void onDestroy(boolean finish) {}
 
     @Override
     public void setContentView(int layoutResID) {
@@ -141,6 +140,40 @@ public class Forelet extends Activity implements TaskCallback {
 
     private void injectView() {
         Injector.inject(this);
+    }
+    
+    /******************************* 回退事件处理 *******************************/
+    
+    public interface OnBackListener {
+        
+        boolean onBackPressed();
+    }
+    
+    private LinkedList<OnBackListener> onBackListener;
+    
+    public void addOnBackListener(OnBackListener listener) {
+        if (onBackListener == null)
+        {
+            onBackListener = new LinkedList<OnBackListener>();
+        }
+        
+        onBackListener.addFirst(listener);
+    }
+    
+    @Override
+    public void onBackPressed() {
+        if (onBackListener != null)
+        {
+            for (OnBackListener listener : onBackListener)
+            {
+                if (listener.onBackPressed())
+                {
+                    return;
+                }
+            }
+        }
+        
+        super.onBackPressed();
     }
 
     /******************************* 对话框管理 *******************************/
@@ -428,7 +461,7 @@ public class Forelet extends Activity implements TaskCallback {
     }
 
     /**
-     * 取消任务
+     * 取消当前任务
      */
     public final void cancelTask() {
         if (mTask != null)
@@ -898,7 +931,7 @@ public class Forelet extends Activity implements TaskCallback {
 
 interface TaskCallback {
     
-    public void onTaskCallback(int taskId, Object result);
+    void onTaskCallback(int taskId, Object result);
 }
 
 class SavedInstance {

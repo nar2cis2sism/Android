@@ -16,9 +16,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import engine.android.core.BaseFragment.Presenter;
 import engine.android.core.extra.JavaBeanAdapter;
 import engine.android.dao.util.JavaBeanLoader;
-import engine.android.framework.ui.BaseFragment.Presenter;
 import engine.android.framework.ui.widget.AvatarImageView;
 
 public class FriendListPresenter extends Presenter<FriendListFragment> {

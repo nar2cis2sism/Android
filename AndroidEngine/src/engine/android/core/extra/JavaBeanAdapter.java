@@ -442,6 +442,10 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
             views.remove(viewId);
         }
         
+        public void setTextView(int viewId, int resid) {
+            ((TextView) retrieveView(viewId)).setText(resid);
+        }
+        
         public void setTextView(int viewId, CharSequence text) {
             ((TextView) retrieveView(viewId)).setText(text);
         }

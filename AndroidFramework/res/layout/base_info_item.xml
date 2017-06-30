@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ListItem" >
+
+    <!-- 左边标题 -->
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="8dp"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <!-- 右边箭头 -->
+    <ImageView
+        android:id="@+id/arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="8dp"
+        android:src="@drawable/arrow_right" />
+    
+    <FrameLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/title"
+        android:layout_toLeftOf="@id/arrow"
+        android:layout_centerVertical="true" >
+
+	    <!-- 中间文本 -->
+	    <TextView
+	        android:id="@+id/text"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="right"
+	        android:gravity="right"
+	        android:singleLine="true"
+	        android:textAppearance="?android:attr/textAppearanceSmall" />
+        
+    </FrameLayout>
+
+</RelativeLayout>

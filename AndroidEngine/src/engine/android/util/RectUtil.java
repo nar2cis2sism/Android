@@ -1,7 +1,12 @@
-package engine.android.util.ui;
+package engine.android.util;
 
 import android.graphics.Rect;
 
+/**
+ * @author Daimon
+ * @version N
+ * @since 6/6/2014
+ */
 public final class RectUtil {
 
     public static Rect getRect(int x, int y, int w, int h) {

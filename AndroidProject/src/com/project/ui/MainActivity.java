@@ -14,6 +14,7 @@ import android.widget.TabHost.TabSpec;
 
 import com.project.R;
 import com.project.ui.friend.list.FriendListFragment;
+import com.project.ui.more.MoreFragment;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseActivity;
@@ -103,7 +104,7 @@ public class MainActivity extends BaseActivity {
         // 更多
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_MORE)
                 .setIndicator(new TabView(this, R.drawable.tab_more))
-                .setContent(emptyContent), BaseListFragment.class, null));
+                .setContent(emptyContent), MoreFragment.class, null));
         
         pager.setSlidable(false);
         pager.setOffscreenPageLimit(adapter.getCount() - 1);

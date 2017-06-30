@@ -57,7 +57,7 @@ public class FriendListFragment extends BaseListFragment implements OnLetterChan
     @Override
     protected void setupTitleBar(TitleBar titleBar) {
         titleBar
-        .setTitle("搜索") // 搜索时显示
+        .setTitle(R.string.search) // 搜索时显示
         .setDisplayShowTitleEnabled(false)
         .setDisplayShowCustomEnabled(true)
         .setCustomView(onCreateTitleMiddleView())

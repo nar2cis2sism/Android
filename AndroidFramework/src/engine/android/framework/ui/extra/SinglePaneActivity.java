@@ -2,6 +2,7 @@ package engine.android.framework.ui.extra;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentManager.OnBackStackChangedListener;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,7 +20,7 @@ import engine.android.framework.ui.BaseActivity;
  * @version N
  * @since 6/6/2014
  */
-public class SinglePaneActivity extends BaseActivity {
+public class SinglePaneActivity extends BaseActivity implements OnBackStackChangedListener {
     
     private static final String EXTRA_FRAGMENT_CLASS_NAME = "fragmentClassName";
     
@@ -48,8 +49,15 @@ public class SinglePaneActivity extends BaseActivity {
                 getFragmentManager().beginTransaction()
                 .add(CONTENT_ID, fragment)
                 .commit();
+                
+                getFragmentManager().addOnBackStackChangedListener(this);
             }
         }
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        getContentFragment().setMenuVisibility(true);
     }
     
     private Fragment parseIntent(Intent intent) {
@@ -96,17 +104,8 @@ public class SinglePaneActivity extends BaseActivity {
         return intent;
     }
     
-    private void replaceFragment(FragmentManager fragmentManager, 
-            Fragment fragment, boolean addToBackStack) {
-        android.app.FragmentTransaction transaction = 
-                fragmentManager.beginTransaction()
-                .replace(CONTENT_ID, fragment);
-        if (addToBackStack)
-        {
-            transaction.addToBackStack(null);
-        }
-        
-        transaction.commit();
+    public Fragment getContentFragment() {
+        return getFragmentManager().findFragmentById(CONTENT_ID);
     }
     
     public void addFragment(final Fragment fragment) {
@@ -114,7 +113,11 @@ public class SinglePaneActivity extends BaseActivity {
             
             @Override
             public void commit(FragmentManager fragmentManager) {
-                replaceFragment(fragmentManager, fragment, true);
+                fragmentManager.beginTransaction()
+                .hide(getContentFragment())
+                .add(CONTENT_ID, fragment)
+                .addToBackStack(null)
+                .commit();
             }
         });
     }
@@ -124,7 +127,9 @@ public class SinglePaneActivity extends BaseActivity {
             
             @Override
             public void commit(FragmentManager fragmentManager) {
-                replaceFragment(fragmentManager, fragment, false);
+                fragmentManager.beginTransaction()
+                .replace(CONTENT_ID, fragment)
+                .commit();
             }
         });
     }

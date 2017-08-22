@@ -61,11 +61,10 @@ public abstract class BaseFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        setHasOptionsMenu(true);
-
         ActionBar actionBar = getActionBar();
         if (actionBar != null)
         {
+            setHasOptionsMenu(true);
             setupActionBar(actionBar);
         }
         
@@ -212,7 +211,7 @@ public abstract class BaseFragment extends Fragment {
     /**
      * 通知数据更新
      */
-    protected final void notifyDataChanged(Object data) {
+    protected void notifyDataChanged(Object data) {
         if (listener != null)
         {
             listener.update(data);

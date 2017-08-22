@@ -21,12 +21,20 @@
     <string name="login_password_validation_length">密码长度应为6-16位</string>
     <string name="login_progress">登录中,请稍候&#8230;</string>
     
+    <!-- Message -->
+    <string name="message_title">消息</string>
+    
     <!-- Friend -->
     <string name="friend_by_group">分组</string>
     <string name="friend_group">群</string>
     <string name="friend_discuss">讨论组</string>
     <string name="friend_public">公众好友</string>
     <string name="friend_recommend">好友推荐</string>
+    
+    <!-- Beside -->
+    <string name="beside_demo">Demo</string>
+    <string name="beside_effect">Effect</string>
+    <string name="beside_test">Test</string>
     
     <!-- More -->
     <string name="more_title">更多</string>

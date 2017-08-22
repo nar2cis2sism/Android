@@ -122,33 +122,40 @@ public class MyExpandableListView extends ExpandableListView {
     public static abstract class BaseExpandableListAdapter
     <Group extends ExpandableGroupItem<Child>, Child>
     extends android.widget.BaseExpandableListAdapter {
+        
+        private final Context mContext;
 
-        protected final ExpandableListView mListView;
-
-        protected final LayoutInflater mInflater;
+        private final LayoutInflater mInflater;
 
         private final List<Group> mObjects = new ArrayList<Group>();
 
-        public BaseExpandableListAdapter(ExpandableListView listView) {
-            mListView = listView;
-            mInflater = LayoutInflater.from(getContext());
+        public BaseExpandableListAdapter(Context context) {
+            mInflater = LayoutInflater.from(mContext = context);
+        }
+        
+        public Context getContext() {
+            return mContext;
         }
 
-        public Context getContext() {
-            return mListView.getContext();
+        public LayoutInflater getLayoutInflater() {
+            return mInflater;
         }
 
         public void update(Collection<? extends Group> collection) {
+            mObjects.clear();
+            if (collection != null) mObjects.addAll(collection);
+            notifyDataSetChanged();
+        }
+
+        public void update(ExpandableListView listView, Collection<? extends Group> collection) {
             // 系统bug:当有多个group展开时更新数据会出现item重复现象，故在此之前先折叠所有项
             int size = mObjects.size();
             for (int i = 0; i < size; i++)
             {
-                mListView.collapseGroup(i);
+                if (listView.isGroupExpanded(i)) listView.collapseGroup(i);
             }
-            //
-            mObjects.clear();
-            if (collection != null) mObjects.addAll(collection);
-            notifyDataSetChanged();
+            
+            update(collection);
         }
         
         public List<Group> getItems() {
@@ -171,7 +178,7 @@ public class MyExpandableListView extends ExpandableListView {
         }
 
         @Override
-        public Object getChild(int groupPosition, int childPosition) {
+        public Child getChild(int groupPosition, int childPosition) {
             return getGroup(groupPosition).getChild(childPosition);
         }
 

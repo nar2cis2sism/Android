@@ -13,7 +13,9 @@ import android.widget.TabHost.TabContentFactory;
 import android.widget.TabHost.TabSpec;
 
 import com.project.R;
+import com.project.ui.beside.BesideFragment;
 import com.project.ui.friend.list.FriendListFragment;
+import com.project.ui.message.MessageListFragment;
 import com.project.ui.more.MoreFragment;
 
 import engine.android.core.annotation.InjectView;
@@ -92,15 +94,15 @@ public class MainActivity extends BaseActivity {
         // 消息
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_MESSAGE)
                 .setIndicator(new TabView(this, R.drawable.tab_message))
-                .setContent(emptyContent), FriendListFragment.class, null));
+                .setContent(emptyContent), MessageListFragment.class, null));
         // 好友
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_FRIEND)
                 .setIndicator(new TabView(this, R.drawable.tab_friend))
-                .setContent(emptyContent), BaseListFragment.class, null));
+                .setContent(emptyContent), FriendListFragment.class, null));
         // 身边
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_BESIDE)
                 .setIndicator(new TabView(this, R.drawable.tab_beside))
-                .setContent(emptyContent), BaseListFragment.class, null));
+                .setContent(emptyContent), BesideFragment.class, null));
         // 更多
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(EXTRA_TAB_MORE)
                 .setIndicator(new TabView(this, R.drawable.tab_more))

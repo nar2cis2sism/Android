@@ -32,7 +32,7 @@ import engine.android.core.Forelet.Task.TaskExecutor;
 /**
  * 前台展现界面<p>
  * 功能：View注解，对话框管理，异步任务及进度条操作，
- * 数据验证，Fragment事务，Activity导航，横竖屏切换
+ * 数据验证，Fragment事务，Activity导航，横竖屏切换等
  * 
  * @author Daimon
  * @version N

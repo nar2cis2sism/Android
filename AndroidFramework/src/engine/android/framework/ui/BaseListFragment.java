@@ -219,6 +219,14 @@ public class BaseListFragment extends BaseFragment {
         }
     }
     
+    public void showProgress(boolean shown) {
+        ensureList();
+        if (mProgressContainer != null)
+        {
+            mProgressContainer.setVisibility(shown ? View.VISIBLE : View.GONE);
+        }
+    }
+    
     /**
      * Get the ListAdapter associated with this ListView.
      */

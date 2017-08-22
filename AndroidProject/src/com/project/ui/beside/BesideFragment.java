@@ -1,21 +1,18 @@
-package com.project.beside.ui;
+package com.project.ui.beside;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.project.beside.R;
+import com.project.R;
 
-import engine.android.core.ApplicationManager;
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseFragment;
-import engine.android.plugin.Plugin;
 import engine.android.util.AndroidUtil;
-import engine.android.widget.ActionContainer;
 import engine.android.widget.TitleBar;
+import engine.android.widget.common.ActionContainer;
 
 /**
  * 身边界面
@@ -23,20 +20,6 @@ import engine.android.widget.TitleBar;
  * @author Daimon
  */
 public class BesideFragment extends BaseFragment {
-    
-    /**
-     * 由于此界面是作为插件存在的，需注意绑定的Activity存在于宿主，故无法通过常规方法获取资源
-     */
-    private Context context;
-    @Override
-    public Context getContext() {
-        if (context == null)
-        {
-            context = Plugin.getPlugin("com.project.beside").getApplication();
-        }
-        
-        return context;
-    }
     
     @InjectView(R.id.action_container)
     ActionContainer action_container;
@@ -49,8 +32,7 @@ public class BesideFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        return LayoutInflater.from(getContext()).inflate(
-                R.layout.beside_fragment, container, false);
+        return inflater.inflate(R.layout.beside_fragment, container, false);
     }
     
     @Override

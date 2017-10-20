@@ -33,14 +33,8 @@ public class MySharedPreferences {
     
     private final SharedPreferences sp;
     
-    MySharedPreferences(Context context) {
+    private MySharedPreferences(Context context) {
         sp = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-    }
-    
-    public void reset() {
-        sp.edit()
-        .clear()
-        .commit();
     }
 
     /*************************** 是否已显示过引导页 ***************************/
@@ -53,6 +47,6 @@ public class MySharedPreferences {
     }
     
     public boolean isGuideShown() {
-        return sp.getBoolean(IS_GUIDE_SHOWN, false);
+        return sp.contains(IS_GUIDE_SHOWN);
     }
 }

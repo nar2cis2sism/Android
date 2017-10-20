@@ -1,7 +1,14 @@
 package engine.android.http;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+
+import engine.android.util.io.IOUtil;
 
 /**
  * Http请求体
@@ -21,12 +28,12 @@ public class HttpRequest {
 
     private Map<String, String> headers;            // 请求头
 
-    private final ByteArray postData;               // 请求数据
+    private final HttpEntity entity;                // 请求数据
 
-    HttpRequest(String url, Map<String, String> headers, ByteArray postData) {
+    HttpRequest(String url, Map<String, String> headers, HttpEntity entity) {
         this.url = url;
         this.headers = headers;
-        method = (this.postData = postData) == null ? METHOD_GET : METHOD_POST;
+        method = (this.entity = entity) == null ? METHOD_GET : METHOD_POST;
     }
     
     @Override
@@ -34,7 +41,7 @@ public class HttpRequest {
         Map<String, String> headers = this.headers;
         if (headers != null) headers = new HashMap<String, String>(headers);
         
-        return new HttpRequest(url, headers, postData);
+        return new HttpRequest(url, headers, entity);
     }
     
     public String getUrl() {
@@ -49,8 +56,8 @@ public class HttpRequest {
         return headers;
     }
     
-    public byte[] getPostData() {
-        return postData == null ? null : postData.toByteArray();
+    public HttpEntity getEntity() {
+        return entity;
     }
 
     /**
@@ -70,22 +77,64 @@ public class HttpRequest {
         setHeader("User-Agent", value);
     }
     
-    public interface ByteArray {
+    public interface HttpEntity {
         
-        byte[] toByteArray();
+        long getContentLength();
+        
+        void writeTo(OutputStream out) throws IOException;
     }
     
-    public static class ByteArrayEntity implements ByteArray {
+    public static class ByteArrayEntity implements HttpEntity {
         
-        private final byte[] data;
+        protected final byte[] content;
         
         public ByteArrayEntity(byte[] data) {
-            this.data = data;
+            content = data;
         }
 
         @Override
-        public byte[] toByteArray() {
-            return data;
+        public long getContentLength() {
+            return content.length;
+        }
+
+        @Override
+        public void writeTo(OutputStream out) throws IOException {
+            out.write(content);
+        }
+    }
+    
+    public static class StringEntity extends ByteArrayEntity {
+        
+        public StringEntity(String s) {
+            super(s.getBytes());
+        }
+        
+        public StringEntity(String s, String charset) throws UnsupportedEncodingException {
+            super(s.getBytes(charset));
+        }
+    }
+    
+    public static class FileEntity implements HttpEntity {
+        
+        protected final File file;
+        
+        public FileEntity(File file) {
+            this.file = file;
+        }
+
+        @Override
+        public long getContentLength() {
+            return file.length();
+        }
+
+        @Override
+        public void writeTo(OutputStream out) throws IOException {
+            FileInputStream fis = new FileInputStream(file);
+            try {
+                IOUtil.writeStream(fis, out);
+            } finally {
+                fis.close();
+            }
         }
     }
 }

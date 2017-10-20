@@ -77,6 +77,15 @@ public class ApplicationManager extends Application implements UncaughtException
      * background thread.
      */
     protected void doExit() {};
+    
+    /**
+     * 判断当前应用是否主程序
+     * 
+     * @return True表示以独立包方式运行,False表示以插件包方式运行
+     */
+    public final boolean isMainApp() {
+        return isMainApp;
+    }
 
     /**
      * 获取程序会话
@@ -93,7 +102,7 @@ public class ApplicationManager extends Application implements UncaughtException
     }
 
     /**
-     * 判断当前应用是否处于debug状态
+     * 判断应用是否处于debug状态
      */
     public static final boolean isDebuggable(Context context) {
         ApplicationInfo info = context.getApplicationInfo();

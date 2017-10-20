@@ -78,7 +78,8 @@ public class BaseActivity extends NetworkActivity implements EventHandler {
     }
     
     /**
-     * Provide a convenient way to start fragment wrapped in {@link SinglePaneActivity}.
+     * Provide a convenient way to start fragment wrapped in {@link SinglePaneActivity}
+     * (需要在Manifest中注册)
      */
     public void startFragment(Class<? extends Fragment> fragmentCls) {
         startActivity(SinglePaneActivity.buildIntent(this, fragmentCls, null));
@@ -166,7 +167,6 @@ public class BaseActivity extends NetworkActivity implements EventHandler {
     @Override
     protected void onDestroy(boolean finish) {
         if (isReceiveEventEnabled) EventBus.getDefault().unregister(this);
-        super.onDestroy(finish);
     }
 }
 

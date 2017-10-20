@@ -24,6 +24,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.StrictMode;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.util.DisplayMetrics;
@@ -559,5 +560,24 @@ public final class AndroidUtil {
         }
         
         return SQLiteDatabase.openOrCreateDatabase(db_file, null);
+    }
+    
+    public static void setupStrictMode() {
+        // StrictMode.enableDefaults()有bug
+        // (android.os.StrictMode$InstanceCountViolation:instance=2;limit=1)
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+        .detectCustomSlowCalls()
+        .detectDiskReads()
+        .detectDiskWrites()
+        .detectNetwork()
+        .penaltyLog()
+        .penaltyDeathOnNetwork()
+        .penaltyFlashScreen()
+        .build());
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+        .detectLeakedClosableObjects()
+        .detectLeakedSqlLiteObjects()
+        .penaltyLog()
+        .build());
     }
 }

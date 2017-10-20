@@ -34,7 +34,7 @@ public class GuideFragment extends BaseFragment implements OnViewChangeListener 
     ImageView skip;                         // 右上角的跳过按钮
 
     @InjectView(R.id.page_indicator)
-    PageIndicator page_indicator;           // 底部的页面指示
+    PageIndicator page_indicator;           // 底部的页面指示器
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 

@@ -4,7 +4,7 @@ import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
-import engine.android.http.HttpRequest.ByteArray;
+import engine.android.http.HttpRequest.HttpEntity;
 
 /**
  * Http代理（单机测试用）
@@ -21,12 +21,12 @@ public class HttpProxy extends HttpConnector {
         super(url);
     }
 
-    public HttpProxy(String url, ByteArray postData) {
-        super(url, postData);
+    public HttpProxy(String url, HttpEntity entity) {
+        super(url, entity);
     }
 
-    public HttpProxy(String url, Map<String, String> headers, ByteArray postData) {
-        super(url, headers, postData);
+    public HttpProxy(String url, Map<String, String> headers, HttpEntity entity) {
+        super(url, headers, entity);
     }
 
     public HttpProxy setServlet(HttpServlet servlet) {

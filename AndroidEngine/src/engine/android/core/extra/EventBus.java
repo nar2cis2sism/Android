@@ -40,7 +40,7 @@ public final class EventBus {
     private final Handler mainHandler;
     
     /**
-     * Creates a new EventObserver instance; each instance is a separate scope in which events are delivered. 
+     * Creates a new EventBus instance; each instance is a separate scope in which events are delivered. 
      * To use a central observer, consider {@link #getDefault()}.
      */
     public EventBus() {
@@ -99,7 +99,7 @@ public final class EventBus {
     }
     
     /**
-     * Posts the given event to the event observer.
+     * Posts the given event to the event bus.
      */
     public void post(Event event) {
         handleEvent(event, false);

@@ -23,7 +23,7 @@ public class HttpJsonParser extends engine.android.http.util.json.HttpJsonParser
         return data != null ? process(data) : null;
     }
     
-    protected Object process(JSONObject data) {
+    protected Object process(JSONObject data) throws Exception {
         return null;
     }
 }

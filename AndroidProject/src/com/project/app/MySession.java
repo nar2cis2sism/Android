@@ -1,5 +1,7 @@
 package com.project.app;
 
+import com.project.app.bean.ServerUrl;
+
 import engine.android.core.Session;
 import protocol.java.json.AppUpgradeInfo;
 
@@ -18,15 +20,15 @@ public class MySession {
         return session.hasAttribute(INITIALIZED);
     }
 
-    /******************************* socket服务器地址 *******************************/
-    private static final String SOCKET_ADDRESS = "SOCKET_ADDRESS";
+    /******************************* 服务器地址 *******************************/
+    private static final String SERVER_URL = "SERVER_URL";
 
-    public static void setSocketAddress(String address) {
-        session.setAttribute(SOCKET_ADDRESS, address);
+    public static void setServerUrl(ServerUrl url) {
+        session.setAttribute(SERVER_URL, url);
     }
     
-    public static String getSocketAddress() {
-        return session.getAttribute(SOCKET_ADDRESS, null);
+    public static ServerUrl getServerUrl() {
+        return session.getAttribute(SERVER_URL, null);
     }
 
     /******************************* 导航配置 *******************************/

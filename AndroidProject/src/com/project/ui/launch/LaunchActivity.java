@@ -87,6 +87,7 @@ public class LaunchActivity extends BaseActivity implements SplashCallback, Spla
     @Override
     public void loadInBackground() {
         MyInitial.init();
+        MySession.initialize();
     }
     
     @Override

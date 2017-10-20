@@ -21,8 +21,8 @@ import android.widget.TextView.OnEditorActionListener;
 import com.project.R;
 import com.project.app.MyApp;
 import com.project.app.MySession;
-import com.project.network.action.LoginAction;
-import com.project.network.action.NavigationAction;
+import com.project.network.action.Login;
+import com.project.network.action.Navigation;
 import com.project.ui.MainActivity;
 import com.project.util.MyValidator;
 
@@ -71,7 +71,7 @@ public class LoginFragment extends BaseFragment {
         ScrollView scrollView = new ScrollView(getContext());
         scrollView.setBackgroundResource(R.drawable.login_bg);
         
-        return inflater.inflate(R.layout.login_fragment, scrollView, true);
+        return inflater.inflate(R.layout.login_fragment, scrollView);
     }
     
     @Override
@@ -101,6 +101,7 @@ public class LoginFragment extends BaseFragment {
             
             @Override
             protected void changeToEmpty(String before) {
+                password.input().setText(null);
                 login.setEnabled(false);
             }
             
@@ -185,16 +186,16 @@ public class LoginFragment extends BaseFragment {
         }
     }
 
-    /******************************* 获取导航 *******************************/
+    /******************************* 获取导航配置 *******************************/
     
     private void sendNavigationAction() {
-        getBaseActivity().sendHttpRequest(new NavigationAction());
+        getBaseActivity().sendHttpRequest(new Navigation());
     }
 
     /******************************* 用户登录 *******************************/
     
     private void sendLoginAction() {
-        getBaseActivity().sendHttpRequest(new LoginAction(
+        getBaseActivity().sendHttpRequest(new Login(
                 username.input().getText().toString(), 
                 password.input().getText().toString()));
     }

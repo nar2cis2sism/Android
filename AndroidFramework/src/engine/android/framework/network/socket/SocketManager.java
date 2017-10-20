@@ -3,6 +3,7 @@ package engine.android.framework.network.socket;
 import static engine.android.core.util.LogFactory.LOG.log;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.SparseArray;
 
 import java.io.File;
@@ -83,6 +84,7 @@ public class SocketManager implements SocketConnectionListener, Callback {
     }
     
     public void setup(String host, int port) {
+        if (TextUtils.isEmpty(token)) throw new RuntimeException("需要设置Token值");
         if (socket != null) socket.close();
         socket = new SocketConnector(host, port, config.getSocketTimeout(), true) {
             
@@ -204,7 +206,7 @@ public class SocketManager implements SocketConnectionListener, Callback {
     private void receive(int cmd, int msgId, ProtocolData data) {
         if (config.isLogProtocol())
         {
-            log(data.getClass().getSimpleName(), "服务器返回--" + GsonUtil.toJson(data));
+            log("收到socket信令包", data.getClass().getSimpleName() + GsonUtil.toJson(data));
         }
         
         if (ApplicationManager.isDebuggable(context) && !config.isOffline())
@@ -265,7 +267,7 @@ public class SocketManager implements SocketConnectionListener, Callback {
         private final AtomicBoolean isInitialized = new AtomicBoolean();
         
         public SocketRequest(ProtocolData data) {
-            entity = ProtocolEntity.newInstance(generator.getAndIncrement(), 0, data);
+            entity = ProtocolEntity.newInstance(generator.getAndIncrement(), data);
         }
         
         public void init() {
@@ -351,7 +353,7 @@ public class SocketManager implements SocketConnectionListener, Callback {
     public int sendSocketRequest(ProtocolData data, SocketResponse response) {
         if (config.isLogProtocol())
         {
-            log(data.getClass().getSimpleName(), "发送请求--" + GsonUtil.toJson(data));
+            log("发送socket信令包", data.getClass().getSimpleName() + GsonUtil.toJson(data));
         }
 
         SocketRequest request = new SocketRequest(data);

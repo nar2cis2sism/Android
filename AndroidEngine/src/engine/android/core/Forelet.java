@@ -454,7 +454,7 @@ public class Forelet extends Activity implements TaskCallback {
     }
     
     /**
-     * 取消特定任务
+     * 取消指定任务
      */
     public final void cancelTask(Task task) {
         if (task != null) task.cancelTask();
@@ -531,7 +531,7 @@ public class Forelet extends Activity implements TaskCallback {
         }
         
         /**
-         * 提供一个默认的设置供重复利用
+         * 提供一个默认的设置供重复使用
          */
         public static ProgressSetting getDefault() {
             if (defaultSetting == null)

@@ -4,12 +4,14 @@ import android.os.SystemClock;
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import engine.android.core.util.LogFactory.LOG;
 import engine.android.framework.network.http.util.EntityUtil;
 import engine.android.http.HttpRequest;
+import engine.android.http.HttpRequest.HttpEntity;
 import engine.android.util.io.IOUtil;
 
 public class HttpServlet implements engine.android.http.HttpProxy.HttpServlet {
@@ -20,7 +22,12 @@ public class HttpServlet implements engine.android.http.HttpProxy.HttpServlet {
     public void doServlet(HttpRequest req, HttpResponse resp) {
         long time = System.currentTimeMillis();
         try {
-            String request = EntityUtil.toString(req.getPostData());
+            HttpEntity entity = req.getEntity();
+            long length = entity.getContentLength();
+            ByteArrayOutputStream baos = length > 0 ? 
+                    new ByteArrayOutputStream((int) length) : new ByteArrayOutputStream();
+            entity.writeTo(baos);
+            String request = EntityUtil.toString(baos.toByteArray());
             resp.setEntity(EntityUtil.toByteArray(process(req.getUrl(), request)));
         } catch (Exception e) {
             LOG.log(e);

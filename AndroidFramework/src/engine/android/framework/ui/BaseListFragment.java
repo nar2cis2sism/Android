@@ -315,7 +315,8 @@ public class BaseListFragment extends BaseFragment {
         ViewGroup listContainer = (ViewGroup) listView.getParent();
         listContainer.removeView(listView);
 
-        LayoutInflater.from(root.getContext()).inflate(layoutId, listContainer);
+        listView = LayoutInflater.from(root.getContext()).inflate(layoutId, listContainer, false);
+        listContainer.addView(listView, 0);
     }
 
     /**

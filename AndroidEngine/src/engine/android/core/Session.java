@@ -101,7 +101,7 @@ public final class Session {
             recevier.sendBroadcast(name, null, SessionData.STATUS_REMOVE);
         }
 
-        return value;
+        return value == NULL_VALUE ? null : value;
     }
 
     /**
@@ -191,11 +191,11 @@ public final class Session {
 
     public static final class SessionReceiver extends BroadcastReceiver {
 
-        static final String ACTION = SessionReceiver.class.getName();
+        private static final String ACTION = SessionReceiver.class.getName();
 
-        static final String EXTRA_KEY    = "key";
-        static final String EXTRA_VALUE  = "value";
-        static final String EXTRA_STATUS = "status";
+        private static final String EXTRA_KEY    = "key";
+        private static final String EXTRA_VALUE  = "value";
+        private static final String EXTRA_STATUS = "status";
 
         private final Context context;
 

@@ -308,7 +308,7 @@ public class SocketConnector {
 
     private AtomicBoolean isRunning;
 
-    private void recv(final AtomicBoolean isRunning) {
+    private void recv(AtomicBoolean isRunning) {
         while (isRunning.get())
         {
             try {
@@ -332,7 +332,7 @@ public class SocketConnector {
         }
     }
 
-    private void send(final AtomicBoolean isRunning) {
+    private void send(AtomicBoolean isRunning) {
         while (isRunning.get())
         {
             try {

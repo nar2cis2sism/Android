@@ -16,18 +16,18 @@ import engine.android.dao.DAOTemplate;
 import engine.android.dao.DAOTemplate.DAOTransaction;
 import engine.android.framework.network.http.HttpManager;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
-import engine.android.framework.network.http.HttpManager.StringEntity;
+import engine.android.framework.network.http.HttpManager.JsonEntity;
 import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.http.util.HttpParser;
-import protocol.java.json.FriendInfo;
+import protocol.java.json.FriendOp;
 
 /**
  * 查询好友列表
  * 
  * @author Daimon
  */
-public class QueryFriendList implements HttpBuilder, StringEntity {
+public class QueryFriendList implements HttpBuilder, JsonEntity {
     
     public final String action = Actions.QUERY_FRIEND_LIST;
     
@@ -44,15 +44,15 @@ public class QueryFriendList implements HttpBuilder, StringEntity {
     public HttpConnector buildConnector(HttpManager http) {
         return http.buildHttpConnector(NetworkConfig.HTTP_URL, action, this);
     }
-    
-    @Override
-    public String toString() {
-        return GsonUtil.toJson(this);
-    }
 
     @Override
     public HttpParser buildParser() {
         return new Parser();
+    }
+
+    @Override
+    public String toJson() {
+        return GsonUtil.toJson(this);
     }
     
     private class Parser extends HttpJsonParser {
@@ -63,15 +63,15 @@ public class QueryFriendList implements HttpBuilder, StringEntity {
         private long timestamp;
         private int sync_type;
         private int sync_status;
-        private List<FriendInfo> friendList;
+        private List<FriendOp> friendList;
         
         @Override
-        protected Object process(JSONObject data) {
+        protected Object process(JSONObject data) throws Exception {
             timestamp = data.optLong("timestamp");
             sync_type = data.optInt("sync_type");
             sync_status = data.optInt("sync_status");
             friendList = GsonUtil.parseJson(data.optString("list"), 
-                    new TypeToken<List<FriendInfo>>() {}.getType());
+                    new TypeToken<List<FriendOp>>() {}.getType());
             
             MyDAOManager.getDAO().execute(new DAOTransaction() {
                 
@@ -94,7 +94,7 @@ public class QueryFriendList implements HttpBuilder, StringEntity {
             
             if (friendList != null)
             {
-                for (FriendInfo info : friendList)
+                for (FriendOp info : friendList)
                 {
                     dao.save(new Friend(info));
                 }

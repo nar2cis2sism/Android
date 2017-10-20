@@ -24,32 +24,31 @@ public abstract class AppGlobal {
         getAppGlobal(config.getContext()).setConfig(config);
     }
     
-    public static AppGlobal get(Context context) {
+    public static final AppGlobal get(Context context) {
         return getAppGlobal(context.getApplicationContext());
     }
     
     private static AppGlobal getAppGlobal(Context appContext) {
-        AppGlobal base = getDefault();
-        
         AppGlobal app = map.get(appContext);
         if (app == null)
         {
-            map.put(appContext, app = new AppGlobalWrapper(base));
+            Context mainApp = ApplicationManager.getMainApplication();
+            if (appContext == mainApp)
+            {
+                app = new AppGlobalImpl(appContext);
+            }
+            else
+            {
+                app = new AppGlobalWrapper(getAppGlobal(mainApp));
+            }
+            
+            map.put(appContext, app);
         }
         
         return app;
     }
     
-    private static AppGlobal getDefault() {
-        Context context = ApplicationManager.getMainApplication();
-        AppGlobal app = map.get(context);
-        if (app == null)
-        {
-            map.put(context, app = new AppGlobalImpl(context));
-        }
-        
-        return app;
-    }
+    AppGlobal() {}
     
     abstract void setConfig(AppConfig config);
     

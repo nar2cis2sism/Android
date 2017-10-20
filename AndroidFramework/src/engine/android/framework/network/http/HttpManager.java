@@ -9,6 +9,8 @@ import android.net.Proxy;
 import android.util.SparseArray;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy.Type;
@@ -28,7 +30,7 @@ import engine.android.http.HttpConnector;
 import engine.android.http.HttpConnector.HttpConnectionListener;
 import engine.android.http.HttpProxy;
 import engine.android.http.HttpRequest;
-import engine.android.http.HttpRequest.ByteArray;
+import engine.android.http.HttpRequest.HttpEntity;
 import engine.android.http.HttpResponse;
 import engine.android.http.util.HttpParser;
 import engine.android.util.file.FileManager;
@@ -181,23 +183,34 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
         EventBus.getDefault().post(new Event(action, status, param));
     }
     
-    private static class StringEntiry implements ByteArray {
+    private static class StringEntiry implements HttpEntity {
         
-        private final StringEntity entity;
+        private final JsonEntity entity;
+        private byte[] content;
         
-        public StringEntiry(StringEntity entity) {
+        public StringEntiry(JsonEntity entity) {
             this.entity = entity;
+        }
+        
+        private byte[] getContent() {
+            if (content == null) content = EntityUtil.toByteArray(entity.toJson());
+            return content;
         }
 
         @Override
-        public byte[] toByteArray() {
-            return EntityUtil.toByteArray(entity.toString());
+        public long getContentLength() {
+            return getContent().length;
+        }
+
+        @Override
+        public void writeTo(OutputStream out) throws IOException {
+            out.write(getContent());
         }
     }
     
-    public interface StringEntity {
+    public interface JsonEntity {
         
-        String toString();
+        String toJson();
     }
     
     /**
@@ -207,10 +220,10 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
      * @param action 请求标识
      * @param entity 请求内容
      */
-    public HttpConnector buildHttpConnector(String url, String action, StringEntity entity) {
+    public HttpConnector buildHttpConnector(String url, String action, JsonEntity entity) {
         if (config.isLogProtocol())
         {
-            log(action, "发送请求--" + entity.toString());
+            log(action, "发送请求--" + entity.toJson());
         }
 
         HttpProxy conn = new HttpProxy(url, new StringEntiry(entity));

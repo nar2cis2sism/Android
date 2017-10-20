@@ -35,6 +35,45 @@ public final class ProviderContract {
          */
         public static final String SORT_ORDER = "sort_order";
     }
+
+    /**
+     * @see User
+     */
+    public interface UserColumns {
+
+        /**
+         * 用户存储在服务器上的ID，永远是唯一的
+         * <P>Type: INTEGER</P>
+         */
+        public static final String USER_ID = BaseColumns._ID;
+
+        public static final String NICK_NAME = "nickname";
+        public static final String IS_FEMALE = "isFemale";
+        public static final String BIRTHDAY = "birthday";
+        public static final String CITY = "city";
+        public static final String SIGNATURE = "signature";
+        public static final String PROFILE = "profile";
+        public static final String IS_AUTHENTICATED = "isAuthenticated";
+        public static final String VERSION = "version";
+        public static final String AVATAR_URL = "avatar_url";
+        public static final String AVATAR_VER = "avatar_ver";
+        
+    }
+
+    public static final class User implements UserColumns {
+
+        public static final String TABLE = "user";
+
+        /**
+         * The content:// style URI for this table
+         */
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, TABLE);
+
+        /**
+         * This utility class cannot be instantiated
+         */
+        private User() {}
+    }
     
     /**
      * @see Friend
@@ -46,41 +85,12 @@ public final class ProviderContract {
          * <P>Type: INTEGER</P>
          */
         public static final String USER_ID = BaseColumns._ID;
-
-        /**
-         * 备注
-         * <P>Type: TEXT</P>
-         */
         public static final String REMARK = "remark";
-
-        /**
-         * 昵称
-         * <P>Type: TEXT</P>
-         */
         public static final String NICK_NAME = "nick_name";
-
-        /**
-         * 签名
-         * <P>Type: TEXT</P>
-         */
         public static final String SIGNATURE = "signature";
-
-        /**
-         * 头像下载地址
-         * <P>Type: TEXT</P>
-         */
-        public static final String AVATAR_URL = "avatar_url";
-
-        /**
-         * 好友信息版本号
-         * <P>Type: TEXT</P>
-         */
         public static final String VERSION = "version";
-
-        /**
-         * 显示名称
-         * <P>Type: TEXT</P>
-         */
+        public static final String AVATAR_URL = "avatar_url";
+        public static final String AVATAR_VER = "avatar_ver";
         public static final String DISPLAY_NAME = "display_name";
     }
 

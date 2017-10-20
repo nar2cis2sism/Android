@@ -1,7 +1,7 @@
 package com.project.app;
 
 import com.project.storage.MyDAOManager;
-import com.project.storage.MySharedPreferences;
+
 
 public class MyInitial {
 
@@ -9,12 +9,8 @@ public class MyInitial {
      * Run in background thread.
      */
     public static void init() {
-//        reset();
-        
         initDatabase();
         initBesidePlugin();
-
-        MySession.initialize();
     }
 
     /**
@@ -33,10 +29,5 @@ public class MyInitial {
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-    }
-    
-    private static void reset() {
-        MyDAOManager.getDAO().deleteSelf();
-        MySharedPreferences.getInstance().reset();
     }
 }

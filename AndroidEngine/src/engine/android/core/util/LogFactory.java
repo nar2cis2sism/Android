@@ -49,7 +49,7 @@ public final class LogFactory {
     public static void enableLOG(boolean enable) {
         if (logEnabled.compareAndSet(!enable, enable) && logOpened.compareAndSet(false, true))
         {
-            LOG.log(null, null, "程序启动", ApplicationManager.getMainApplication().getLaunchTime());
+            LOG.log(null, null, "程序启动", getMainApplication().getLaunchTime());
             LOG.log();
         }
     }
@@ -447,7 +447,7 @@ public final class LogFactory {
         }
 
         /**
-         * Daimon:获取固定长度文本
+         * Daimon:获取固定字节长度文本，超过用省略号代替，不足用空格填充
          */
         public static String getFixedText(String text, int length) {
             StringBuilder sb = new StringBuilder();

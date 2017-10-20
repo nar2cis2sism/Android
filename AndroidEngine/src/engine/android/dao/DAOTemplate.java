@@ -1866,19 +1866,10 @@ public class DAOTemplate {
 
         /**
          * 使用分页技术
-         *
-         * @return 需设置分页参数
          */
-        public Page usePage() {
-            if (page == null) page = new Page(10);
-            return page;
-        }
-
-        /**
-         * 停止使用分页技术
-         */
-        public void stopPage() {
-            page = null;
+        public DAOQueryBuilder<T> usePage(Page page) {
+            this.page = page;
+            return this;
         }
 
         private static final int CONSTRAINT_COUNT = 1;
@@ -2011,9 +2002,9 @@ public class DAOTemplate {
         }
         
         /**
-         * 获取满足条件的数据集合
+         * 获取满足条件的数据列表
          */
-        public Collection<T> getAll() {
+        public List<T> getAll() {
             build(0);
             try {
                 Cursor cursor = rawQuery(getSql(), getArgs());
@@ -2071,12 +2062,14 @@ public class DAOTemplate {
             StringBuilder sb = new StringBuilder(sql);
             int i = 0, index = 0;
 
-            while ((index = sql.indexOf("?", index)) >= 0)
+            while ((index = sb.indexOf("?", index)) >= 0)
             {
                 String arg = String.valueOf(bindArgs[i++]);
                 sb.replace(index, index + 1, arg);
                 index += arg.length();
             }
+            
+            sql = sb.toString();
         }
 
         LOG_SQL(sql);
@@ -2496,19 +2489,10 @@ public class DAOTemplate {
 
             /**
              * 使用分页技术
-             *
-             * @return 需设置分页参数
              */
-            public Page usePage() {
-                if (page == null) page = new Page(10);
-                return page;
-            }
-
-            /**
-             * 停止使用分页技术
-             */
-            public void stopPage() {
-                page = null;
+            public ProviderQueryBuilder<T> usePage(Page page) {
+                this.page = page;
+                return this;
             }
 
             private static final int CONSTRAINT_COUNT = 1;
@@ -2645,9 +2629,9 @@ public class DAOTemplate {
             }
             
             /**
-             * 获取满足条件的数据集合
+             * 获取满足条件的数据列表
              */
-            public Collection<T> getAll() {
+            public List<T> getAll() {
                 build(0);
                 try {
                     Cursor cursor = queryCursor();
@@ -2796,12 +2780,14 @@ public class DAOTemplate {
                 StringBuilder sb = new StringBuilder(sql);
                 int i = 0, index = 0;
 
-                while ((index = sql.indexOf("?", index)) >= 0)
+                while ((index = sb.indexOf("?", index)) >= 0)
                 {
                     String arg = String.valueOf(bindArgs[i++]);
                     sb.replace(index, index + 1, arg);
                     index += arg.length();
                 }
+                
+                sql = sb.toString();
             }
 
             return " WHERE " + sql;

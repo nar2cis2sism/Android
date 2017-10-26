@@ -18,7 +18,7 @@ public class FriendListItem {
     public FriendListItem(Friend friend) {
         this.friend = friend;
         category = getCategory();
-        avatarUrl = new ImageUrl(0, friend.avatarUrl, friend.version);
+        avatarUrl = new ImageUrl(0, friend.avatar_url, String.valueOf(friend.avatar_ver));
     }
 
     private String getCategory() {

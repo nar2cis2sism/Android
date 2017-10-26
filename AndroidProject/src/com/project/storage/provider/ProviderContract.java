@@ -57,6 +57,7 @@ public final class ProviderContract {
         public static final String VERSION = "version";
         public static final String AVATAR_URL = "avatar_url";
         public static final String AVATAR_VER = "avatar_ver";
+        public static final String FRIEND_LIST_TIMESTAMP = "friend_list_timestamp";
         
     }
 

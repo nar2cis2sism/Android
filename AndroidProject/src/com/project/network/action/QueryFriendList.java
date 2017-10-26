@@ -7,13 +7,14 @@ import com.project.network.NetworkConfig;
 import com.project.network.http.HttpJsonParser;
 import com.project.storage.MyDAOManager;
 import com.project.storage.db.Friend;
+import com.project.storage.provider.ProviderContract.FriendColumns;
 
 import org.json.JSONObject;
 
 import java.util.List;
 
 import engine.android.dao.DAOTemplate;
-import engine.android.dao.DAOTemplate.DAOTransaction;
+import engine.android.dao.DAOTemplate.DAOExpression;
 import engine.android.framework.network.http.HttpManager;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
 import engine.android.framework.network.http.HttpManager.JsonEntity;
@@ -35,9 +36,9 @@ public class QueryFriendList implements HttpBuilder, JsonEntity {
     
     public final long timestamp;            // 上次更新的时间戳
     
-    public QueryFriendList() {
+    public QueryFriendList(long timestamp) {
         token = MySession.getToken();
-        timestamp = 0;
+        this.timestamp = timestamp;
     }
 
     @Override
@@ -57,50 +58,38 @@ public class QueryFriendList implements HttpBuilder, JsonEntity {
     
     private class Parser extends HttpJsonParser {
         
-        private static final int TYPE_TOTAL         = 0;    // 全量更新
-        private static final int TYPE_INCREMENT     = 1;    // 增量更新
-        
-        private long timestamp;
-        private int sync_type;
-        private int sync_status;
-        private List<FriendOp> friendList;
-        
         @Override
         protected Object process(JSONObject data) throws Exception {
-            timestamp = data.optLong("timestamp");
-            sync_type = data.optInt("sync_type");
-            sync_status = data.optInt("sync_status");
-            friendList = GsonUtil.parseJson(data.optString("list"), 
+            long timestamp = data.getLong("timestamp");
+            int sync_type = data.getInt("sync_type");
+            int sync_status = data.getInt("sync_status");
+            List<FriendOp> friendList = GsonUtil.parseJson(data.getString("list"), 
                     new TypeToken<List<FriendOp>>() {}.getType());
             
-            MyDAOManager.getDAO().execute(new DAOTransaction() {
-                
-                @Override
-                public boolean execute(DAOTemplate dao) throws Exception {
-                    return processDB(dao);
-                }
-            });
-            
-            return super.process(data);
-        }
-        
-        private boolean processDB(DAOTemplate dao) {
-            if (sync_type == TYPE_TOTAL)
+            DAOTemplate dao = MyDAOManager.getDAO();
+            if (sync_type == 0)
             {
-                // 清空数据
+                // 全量更新，清空历史数据
                 dao.resetTable(Friend.class);
-                dao.notifyChange(Friend.class);
             }
             
             if (friendList != null)
             {
-                for (FriendOp info : friendList)
+                for (FriendOp op : friendList)
                 {
-                    dao.save(new Friend(info));
+                    if (op.op == 1)
+                    {
+                        // 删除好友
+                        dao.edit(Friend.class).where(DAOExpression.create(FriendColumns.USER_ID).equal(op.uid)).delete();
+                    }
+                    else
+                    {
+                        dao.save(new Friend(op));
+                    }
                 }
             }
             
-            return true;
+            return super.process(data);
         }
     }
 }

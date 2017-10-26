@@ -23,16 +23,16 @@ import engine.android.framework.ui.widget.AvatarImageView;
 
 public class FriendListPresenter extends Presenter<FriendListFragment> {
     
-    FriendListLoader loader;
     FriendListAdapter adapter;
+    FriendListLoader loader;
     
     private final HashMap<String, Integer> letterMap
     = new HashMap<String, Integer>(CATEGORY.length);
     
     @Override
     protected void onCreate(Context context) {
-        loader = new FriendListLoader(context);
         adapter = new FriendListAdapter(context);
+        loader = new FriendListLoader(context);
         getCallbacks().setDataSource(adapter, loader);
     }
     
@@ -65,31 +65,6 @@ public class FriendListPresenter extends Presenter<FriendListFragment> {
         }
         
         getCallbacks().getListView().setSelection(position);
-    }
-}
-
-class FriendListLoader extends JavaBeanLoader<FriendListItem> implements FriendColumns {
-
-    public FriendListLoader(Context context) {
-        super(context, MyDAOManager.getDAO());
-        listen(Friend.class);
-    }
-
-    @Override
-    public Collection<FriendListItem> loadInBackground() {
-        Collection<Friend> friends = dao.find(Friend.class).orderBy(SORT_ORDER).getAll();
-        if (friends != null)
-        {
-            ArrayList<FriendListItem> list = new ArrayList<FriendListItem>(friends.size());
-            for (Friend friend : friends)
-            {
-                list.add(new FriendListItem(friend));
-            }
-            
-            return list;
-        }
-        
-        return null;
     }
 }
 
@@ -127,5 +102,30 @@ class FriendListAdapter extends JavaBeanAdapter<FriendListItem> {
         holder.setTextView(R.id.content, item.friend.signature);
         //
         holder.setVisible(R.id.note, false);
+    }
+}
+
+class FriendListLoader extends JavaBeanLoader<FriendListItem> implements FriendColumns {
+
+    public FriendListLoader(Context context) {
+        super(context, MyDAOManager.getDAO());
+        listen(Friend.class);
+    }
+
+    @Override
+    public Collection<FriendListItem> loadInBackground() {
+        List<Friend> friends = dao.find(Friend.class).orderBy(SORT_ORDER).getAll();
+        if (friends != null)
+        {
+            ArrayList<FriendListItem> list = new ArrayList<FriendListItem>(friends.size());
+            for (Friend friend : friends)
+            {
+                list.add(new FriendListItem(friend));
+            }
+            
+            return list;
+        }
+        
+        return null;
     }
 }

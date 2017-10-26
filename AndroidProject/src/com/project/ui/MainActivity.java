@@ -20,7 +20,6 @@ import com.project.ui.more.MoreFragment;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseActivity;
-import engine.android.framework.ui.BaseListFragment;
 import engine.android.widget.common.ViewPager;
 
 /**
@@ -128,16 +127,6 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
-    
-//    private Class<? extends Fragment> loadBesideClass() {
-//        try {
-//            return Plugin.getPlugin("com.project.beside").loadClass("com.project.beside.ui.BesideFragment");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        
-//        return null;
-//    }
     
     @Override
     protected void onSaveInstanceState(Bundle outState) {

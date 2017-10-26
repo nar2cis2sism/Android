@@ -34,13 +34,13 @@ public class Friend {
     public String signature;                    // 签名
 
     @DAOProperty(column=FriendColumns.VERSION)
-    public String version;                      // 好友信息版本号
+    public long version;                        // 好友信息版本号
 
     @DAOProperty(column=FriendColumns.AVATAR_URL)
-    public String avatarUrl;                    // 头像下载地址
+    public String avatar_url;                   // 头像下载地址
 
     @DAOProperty(column=FriendColumns.AVATAR_VER)
-    public String avatar_ver;                   // 头像版本号
+    public long avatar_ver;                     // 头像版本号
 
     @DAOProperty(column=FriendColumns.DISPLAY_NAME)
     public String displayName;                  // 显示名称
@@ -63,13 +63,13 @@ public class Friend {
 
     /******************************* 华丽丽的分割线 *******************************/
     
-    public Friend(FriendOp info) {
-        uid = info.uid;
-        remark = info.remark;
-        nickName = info.nickname;
-        signature = info.signature;
-        avatarUrl = info.avatar_url;
-        version = info.friend_info_ver;
+    public Friend(FriendOp op) {
+        uid = op.uid;
+        remark = op.remark;
+        nickName = op.nickname;
+        signature = op.signature;
+        avatar_url = op.avatar_url;
+//        version = op.friend_info_ver;
         displayName = getDisplayName();
         pinyin = PinyinHelper.getInstance().getPinyins(displayName, "").toLowerCase();
         sortOrder = sort(pinyin);

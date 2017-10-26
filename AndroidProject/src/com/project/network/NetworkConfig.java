@@ -16,5 +16,5 @@ interface URLConfig {
     
     String URL_PRODUCT  = "http://123.56.120.144:8080/ysService/BaseServlet";
     
-    String URL_TEST     = "http://192.168.1.102:8080/AppServer/app";
+    String URL_TEST     = "http://10.57.145.170:8080/AppServer/app";
 }

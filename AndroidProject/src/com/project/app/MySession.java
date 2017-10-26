@@ -1,6 +1,7 @@
 package com.project.app;
 
 import com.project.app.bean.ServerUrl;
+import com.project.storage.db.User;
 
 import engine.android.core.Session;
 import protocol.java.json.AppUpgradeInfo;
@@ -62,5 +63,16 @@ public class MySession {
     
     public static String getToken() {
         return session.getAttribute(TOKEN, null);
+    }
+
+    /******************************* 当前登录用户 *******************************/
+    private static final String USER = "USER";
+    
+    public static void setUser(User user) {
+        session.setAttribute(USER, user);
+    }
+    
+    public static User getUser() {
+        return session.getAttribute(USER, null);
     }
 }

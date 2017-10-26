@@ -5,6 +5,7 @@ import com.project.storage.provider.ProviderContract.UserColumns;
 import engine.android.dao.annotation.DAOPrimaryKey;
 import engine.android.dao.annotation.DAOProperty;
 import engine.android.dao.annotation.DAOTable;
+import protocol.java.json.UserInfo;
 
 /**
  * 用户资料
@@ -37,13 +38,16 @@ public class User {
     public boolean isAuthenticated;         // 实名认证
 
     @DAOProperty(column=UserColumns.VERSION)
-    public String version;                  // 用户信息的版本号
+    public long version;                    // 用户信息的版本号
 
     @DAOProperty(column=UserColumns.AVATAR_URL)
     public String avatar_url;               // 头像下载地址
 
     @DAOProperty(column=UserColumns.AVATAR_VER)
-    public String avatar_ver;               // 头像版本号
+    public long avatar_ver;                 // 头像版本号
+
+    @DAOProperty(column=UserColumns.FRIEND_LIST_TIMESTAMP)
+    public long friend_list_timestamp;      // 好友列表同步时间戳
 
     /**
      * Mandatory empty constructor for the {@link DAOTemplate}
@@ -65,5 +69,16 @@ public class User {
      */
     public String getVersion() {
         return version + ":" + avatar_ver;
+    }
+    
+    public void setUserInfo(UserInfo info) {
+        nickname = info.nickname;
+        isFemale = info.gender == 1;
+        birthday = info.birthday;
+        city = info.city;
+        signature = info.signature;
+        profile = info.profile;
+        isAuthenticated = info.authentication == 1;
+        avatar_url = info.avatar_url;
     }
 }

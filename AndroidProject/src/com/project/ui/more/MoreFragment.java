@@ -10,6 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.project.R;
+import com.project.app.MySession;
+import com.project.storage.db.User;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
@@ -31,19 +33,10 @@ public class MoreFragment extends BaseInfoFragment {
     @InjectView(R.id.signature)
     TextView signature;
     
-    // 我的二维码
     ViewHolder qrcode;
-    
-    // 我的钱包
     ViewHolder wallet;
-    
-    // 订单管理
     ViewHolder order;
-    
-    // 我的评价
     ViewHolder evaluation;
-    
-    // 群发消息
     ViewHolder message;
     
     @Override
@@ -59,38 +52,40 @@ public class MoreFragment extends BaseInfoFragment {
             Bundle savedInstanceState) {
         LinearLayout root = (LinearLayout) inflater.inflate(
                 R.layout.more_fragment, container, false);
-
-//        // 个人信息
-//        layout.findViewById(R.id.header).setOnClickListener(this);
-        
         addCategory(root);
         
         // 我的二维码
         qrcode = addComponent(root, inflater, 
                 R.drawable.more_qrcode, R.string.more_qrcode);
-//        qrcode.getConvertView().setOnClickListener(this);
-        
         // 我的钱包
         wallet = addComponent(root, inflater, 
                 R.drawable.more_wallet, R.string.more_wallet);
-//        wallet.getConvertView().setOnClickListener(this);
-        
-        // 订单管理
+        // 订单状态
         order = addComponent(root, inflater, 
                 R.drawable.more_order, R.string.more_order);
-//        order.getConvertView().setOnClickListener(this);
-        
         // 我的评价
         evaluation = addComponent(root, inflater, 
                 R.drawable.more_evaluation, R.string.more_evaluation);
-//        evaluation.getConvertView().setOnClickListener(this);
-        
-        // 群发消息
+        // 消息中心
         message = addComponent(root, inflater, 
                 R.drawable.more_message, R.string.more_message);
-//        message.getConvertView().setOnClickListener(this);
         
         return root;
+    }
+    
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // 个人信息
+        setupHeader();
+    }
+    
+    private void setupHeader() {
+        User user = MySession.getUser();
+        
+        name.setText(user.nickname);
+        certification.setText(user.isAuthenticated ? "已认证" : "未认证");
+        signature.setText(user.signature);
     }
     
     private ViewHolder addComponent(ViewGroup root, LayoutInflater inflater, 

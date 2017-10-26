@@ -1,7 +1,5 @@
 package com.project.network.action;
 
-import android.text.TextUtils;
-
 import com.project.app.MyApp;
 import com.project.app.MyContext;
 import com.project.app.MySession;
@@ -68,8 +66,11 @@ public class Login implements HttpBuilder, JsonEntity {
         protected Object process(JSONObject data) throws Exception {
             String token = data.getString("token");
             long uid = data.getLong("uid");
-            String user_info_ver = data.getString("user_info_crc");
+            String user_info_ver = data.getString("user_info_ver");
             long friend_list_timestamp = data.optLong("friend_list_timestamp");
+            String[] strs = user_info_ver.split(":");
+            long version = Long.parseLong(strs[0]);
+            long avatar_ver = Long.parseLong(strs[1]);
             
             MySession.setToken(token);
             // 启动socket连接
@@ -77,23 +78,21 @@ public class Login implements HttpBuilder, JsonEntity {
             sm.setToken(token);
             sm.setup(MySession.getServerUrl().socket_server_url);
             // 更新用户资料
-            updateUser(uid, user_info_ver);
-            
-            
-            
-            // 查询好友列表
-//            MyApp.getHttpManager().sendHttpRequest(new QueryFriendList());
+            User user = processUser(uid, avatar_ver);
+            if (version != user.version)
+            {
+                MyApp.global().getHttpManager().sendHttpRequest(new GetUserInfo(user.version));
+            }
+            // 同步好友列表
+            if (friend_list_timestamp != user.friend_list_timestamp)
+            {
+                MyApp.global().getHttpManager().sendHttpRequest(new QueryFriendList(user.friend_list_timestamp));
+            }
             
             return super.process(data);
         }
         
-        private void updateUser(long uid, String user_info_ver) {
-            boolean updateUser = true;
-
-            String[] strs = user_info_ver.split(":");
-            String version = strs[0];
-            String avatar_ver = strs[1];
-            
+        private User processUser(long uid, long avatar_ver) {
             User user = UserDAO.getUserById(uid);
             if (user == null)
             {
@@ -102,15 +101,14 @@ public class Login implements HttpBuilder, JsonEntity {
                 user.avatar_ver = avatar_ver;
                 MyDAOManager.getDAO().save(user);
             }
-            else
+            else if (avatar_ver != user.avatar_ver)
             {
-                updateUser = !TextUtils.equals(version, user.version);
-                if (!TextUtils.equals(avatar_ver, user.avatar_ver))
-                {
-                    user.avatar_ver = avatar_ver;
-                    MyDAOManager.getDAO().update(user, UserColumns.AVATAR_VER);
-                }
+                user.avatar_ver = avatar_ver;
+                MyDAOManager.getDAO().update(user, UserColumns.AVATAR_VER);
             }
+            
+            MySession.setUser(user);
+            return user;
         }
     }
 }

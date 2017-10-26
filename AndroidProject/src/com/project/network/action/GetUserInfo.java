@@ -4,6 +4,8 @@ import com.project.app.MySession;
 import com.project.network.Actions;
 import com.project.network.NetworkConfig;
 import com.project.network.http.HttpJsonParser;
+import com.project.storage.MyDAOManager;
+import com.project.storage.db.User;
 
 import org.json.JSONObject;
 
@@ -28,9 +30,9 @@ public class GetUserInfo implements HttpBuilder, JsonEntity {
     
     public final long version;              // 用户信息版本
     
-    public GetUserInfo() {
+    public GetUserInfo(long version) {
         token = MySession.getToken();
-        version = 0;
+        this.version = version;
     }
 
     @Override
@@ -52,7 +54,13 @@ public class GetUserInfo implements HttpBuilder, JsonEntity {
         
         @Override
         protected Object process(JSONObject data) throws Exception {
+            long version = data.getLong("version");
             UserInfo info = GsonUtil.parseJson(data.toString(), UserInfo.class);
+            
+            User user = MySession.getUser();
+            user.setUserInfo(info);
+            user.version = version;
+            MyDAOManager.getDAO().update(user);
             
             return super.process(data);
         }

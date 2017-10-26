@@ -13,7 +13,7 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
     
     private BaseActivity baseActivity;
     
-    private Boolean menuVisible;
+    private boolean menuVisible = true;
     
     @Override
     public void onAttach(Activity activity) {
@@ -27,18 +27,14 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
     
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        if (menuVisible == null) setupTitleBar();
+        if (menuVisible) setupTitleBar();
         super.onActivityCreated(savedInstanceState);
     }
     
     @Override
     public void setMenuVisibility(boolean menuVisible) {
+        if (this.menuVisible = menuVisible) setupTitleBar();
         super.setMenuVisibility(menuVisible);
-        
-        if ((this.menuVisible = menuVisible))
-        {
-            setupTitleBar();
-        }
     }
     
     private void setupTitleBar() {

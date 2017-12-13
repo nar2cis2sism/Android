@@ -10,18 +10,18 @@ package engine.android.dao.util;
 public final class Page {
 
     private int firstPage = 1;
-    private int lastPage;
+    private int lastPage = -1;
     private boolean startFromZero;
 
-    private int totalPage;						// 总页数
-    private int currentPage;					// 当前页数(default start from 1)
+    private int totalPage;                      // 总页数
+    private int currentPage;                    // 当前页数(default start from 1)
 
     private int totalRecord;                    // 总记录条数
 
-    private int beginRecord;					// 起始记录索引(included)
-    private int endRecord;					    // 结束记录索引(excluded)
+    private int beginRecord;                    // 起始记录索引(included)
+    private int endRecord;                      // 结束记录索引(excluded)
 
-    private int pageSize;						// 每页显示的记录数
+    private int pageSize;                       // 每页显示的记录数
 
     /**
      * @param pageSize Must be > 0
@@ -33,7 +33,6 @@ public final class Page {
     public Page(int pageSize, int totalRecord) {
         checkPageSize(pageSize);
         this.pageSize = pageSize;
-        switchStartFromZero(!startFromZero);
         setTotalRecord(totalRecord);
     }
 
@@ -74,6 +73,9 @@ public final class Page {
         return pageSize;
     }
 
+    /**
+     * @param startFromZero True:起始页从0开始 False:起始页从1开始
+     */
     public void switchStartFromZero(boolean startFromZero) {
         if (this.startFromZero != startFromZero)
         {
@@ -126,9 +128,9 @@ public final class Page {
     }
 
     public void setPageSize(int pageSize) {
-        checkPageSize(pageSize);
         if (this.pageSize != pageSize)
         {
+            checkPageSize(pageSize);
             setTotalPage(totalRecord, this.pageSize = pageSize);
         }
     }
@@ -141,7 +143,7 @@ public final class Page {
      * 上翻页
      */
     public void previousPage() {
-        if (hasPreviousPage()) setCurrentPage(currentPage - 1, pageSize);
+        setCurrentPage(currentPage - 1);
     }
 
     public boolean hasNextPage() {
@@ -152,7 +154,7 @@ public final class Page {
      * 下翻页
      */
     public void nextPage() {
-        if (hasNextPage()) setCurrentPage(currentPage + 1, pageSize);
+        setCurrentPage(currentPage + 1);
     }
 
     public boolean isFirstPage() {
@@ -160,8 +162,7 @@ public final class Page {
     }
 
     public void jumpToFirstPage() {
-        if (!isFirstPage() && hasPreviousPage())
-            setCurrentPage(firstPage, pageSize);
+        setCurrentPage(firstPage, pageSize);
     }
 
     public boolean isLastPage() {
@@ -169,8 +170,7 @@ public final class Page {
     }
 
     public void jumpToLastPage() {
-        if (!isLastPage() && hasNextPage())
-            setCurrentPage(lastPage, pageSize);
+        setCurrentPage(lastPage, pageSize);
     }
 
     public boolean hasRecord() {

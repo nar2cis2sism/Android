@@ -1898,9 +1898,9 @@ public class DAOTemplate {
             {
                 sql
                 .append(" LIMIT ")
-                .append(page.getPageSize())
+                .append(page.getBeginRecord())
                 .append(",")
-                .append(page.getBeginRecord());
+                .append(page.getPageSize());
             }
         }
 
@@ -2523,9 +2523,9 @@ public class DAOTemplate {
                 {
                     sql
                     .append(" LIMIT ")
-                    .append(page.getPageSize())
+                    .append(page.getBeginRecord())
                     .append(",")
-                    .append(page.getBeginRecord());
+                    .append(page.getPageSize());
                 }
             }
 

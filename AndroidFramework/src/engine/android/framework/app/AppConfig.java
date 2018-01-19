@@ -8,8 +8,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import engine.android.framework.network.ConnectionStatus.ConnectionInterceptor;
-import engine.android.framework.network.socket.util.SocketPushReceiver;
-import engine.android.framework.ui.util.ImageManager.Transformer;
+import engine.android.framework.network.socket.SocketPushReceiver;
+import engine.android.framework.util.ImageManager.Transformer;
 import engine.android.http.HttpProxy.HttpServlet;
 import engine.android.socket.SocketProxy.SocketServlet;
 import engine.android.util.extra.MyThreadFactory;
@@ -18,6 +18,8 @@ import engine.android.util.extra.MyThreadFactory;
  * 配置应用程序公用的功能组件
  * 
  * @author Daimon
+ * @version N
+ * @since 6/6/2016
  */
 public class AppConfig {
     
@@ -97,7 +99,7 @@ public class AppConfig {
         return imageDir;
     }
     
-    public Transformer getTransformer() {
+    public Transformer getImageTransformer() {
         return configImage().transformer;
     }
     

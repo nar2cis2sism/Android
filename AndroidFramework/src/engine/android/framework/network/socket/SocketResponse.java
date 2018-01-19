@@ -1,4 +1,4 @@
-package engine.android.framework.network.socket.util;
+package engine.android.framework.network.socket;
 
 import engine.android.framework.network.ConnectionStatus;
 import protocol.java.ProtocolWrapper.ProtocolEntity.ProtocolData;
@@ -10,7 +10,7 @@ public interface SocketResponse {
      */
     boolean response(ProtocolData data, Callback callback);
     
-    public interface Callback extends ConnectionStatus {
+    interface Callback extends ConnectionStatus {
 
         void call(String action, int status, Object param);
     }

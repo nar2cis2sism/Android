@@ -4,9 +4,10 @@ import android.text.TextUtils;
 
 import engine.android.util.secure.Blowfish;
 
-public class EntityUtil {
+public final class EntityUtil {
     
     private static final boolean encrypt = true;
+    private static final String encryptKey = "I'm super man";
     
     private static final Blowfish encryptor;
     
@@ -15,7 +16,7 @@ public class EntityUtil {
         if (encrypt)
         {
             encryptor = new Blowfish();
-            encryptor.setKey("I'm super man".getBytes());
+            encryptor.setKey(encryptKey.getBytes());
         }
     }
     

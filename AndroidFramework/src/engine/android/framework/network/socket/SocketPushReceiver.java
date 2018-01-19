@@ -1,6 +1,6 @@
-package engine.android.framework.network.socket.util;
+package engine.android.framework.network.socket;
 
-import engine.android.framework.network.socket.util.SocketResponse.Callback;
+import engine.android.framework.network.socket.SocketResponse.Callback;
 import protocol.java.ProtocolWrapper.ProtocolEntity.ProtocolData;
 
 /**

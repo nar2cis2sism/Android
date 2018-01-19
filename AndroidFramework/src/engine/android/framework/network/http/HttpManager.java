@@ -8,15 +8,6 @@ import android.net.NetworkInfo;
 import android.net.Proxy;
 import android.util.SparseArray;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy.Type;
-import java.net.SocketTimeoutException;
-import java.util.concurrent.Callable;
-
 import engine.android.core.ApplicationManager;
 import engine.android.core.extra.EventBus;
 import engine.android.core.extra.EventBus.Event;
@@ -24,8 +15,8 @@ import engine.android.framework.R;
 import engine.android.framework.app.AppConfig;
 import engine.android.framework.app.AppGlobal;
 import engine.android.framework.network.ConnectionStatus;
+import engine.android.framework.network.http.HttpParser.Failure;
 import engine.android.framework.network.http.util.EntityUtil;
-import engine.android.framework.network.http.util.HttpParser.Failure;
 import engine.android.http.HttpConnector;
 import engine.android.http.HttpConnector.HttpConnectionListener;
 import engine.android.http.HttpProxy;
@@ -35,6 +26,13 @@ import engine.android.http.HttpResponse;
 import engine.android.http.util.HttpParser;
 import engine.android.util.file.FileManager;
 import engine.android.util.manager.SDCardManager;
+
+import java.io.File;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy.Type;
+import java.net.SocketTimeoutException;
+import java.util.concurrent.Callable;
 
 /**
  * Http连接管理器<p>
@@ -183,36 +181,6 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
         EventBus.getDefault().post(new Event(action, status, param));
     }
     
-    private static class StringEntiry implements HttpEntity {
-        
-        private final JsonEntity entity;
-        private byte[] content;
-        
-        public StringEntiry(JsonEntity entity) {
-            this.entity = entity;
-        }
-        
-        private byte[] getContent() {
-            if (content == null) content = EntityUtil.toByteArray(entity.toJson());
-            return content;
-        }
-
-        @Override
-        public long getContentLength() {
-            return getContent().length;
-        }
-
-        @Override
-        public void writeTo(OutputStream out) throws IOException {
-            out.write(getContent());
-        }
-    }
-    
-    public interface JsonEntity {
-        
-        String toJson();
-    }
-    
     /**
      * 创建HTTP请求
      * 
@@ -220,13 +188,8 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
      * @param action 请求标识
      * @param entity 请求内容
      */
-    public HttpConnector buildHttpConnector(String url, String action, JsonEntity entity) {
-        if (config.isLogProtocol())
-        {
-            log(action, "发送请求--" + entity.toJson());
-        }
-
-        HttpProxy conn = new HttpProxy(url, new StringEntiry(entity));
+    public HttpConnector buildHttpConnector(String url, String action, HttpEntity entity) {
+        HttpProxy conn = new HttpProxy(url, entity);
         if (config.isOffline())
         {
             conn.setServlet(config.getHttpServlet());
@@ -261,22 +224,6 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
             return parser != null ? parser.parse(response) : null;
         }
     }
-    
-    public interface HttpBuilder {
-        
-        HttpConnector buildConnector(HttpManager http);
-        
-        HttpParser buildParser();
-    }
-
-    /**
-     * 发送HTTP请求
-     * 
-     * @return 可用于取消请求
-     */
-    public int sendHttpRequest(HttpBuilder http) {
-        return sendHttpRequest(http.buildConnector(this), http.buildParser());
-    }
 
     /**
      * 发送HTTP请求
@@ -284,10 +231,13 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
      * @return 可用于取消请求
      */
     public int sendHttpRequest(HttpConnector conn, HttpParser parser) {
-        int hash = conn.hashCode();
+        if (config.isLogProtocol())
+        {
+            log(conn.getName(), "发送请求--" + conn.getRequest().getEntity());
+        }
         
-        int index = request.indexOfKey(hash);
-        if (index < 0)
+        int hash = conn.hashCode();
+        if (request.indexOfKey(hash) < 0)
         {
             HttpAction action = new HttpAction(conn, parser);
             request.append(hash, action);
@@ -308,4 +258,25 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
             request.removeAt(index);
         }
     }
+
+    /**
+     * Implement this interface for individual logic of HTTP action.
+     */
+    public interface HttpBuilder {
+        
+        HttpConnector buildConnector(HttpConnectorBuilder builder);
+        
+        HttpParser buildParser();
+    }
+    
+    /**
+     * 发送HTTP请求
+     * 
+     * @return 可用于取消请求
+     */
+    public int sendHttpRequest(HttpBuilder http) {
+        return sendHttpRequest(http.buildConnector(builder), http.buildParser());
+    }
+    
+    private final HttpConnectorBuilder builder = new HttpConnectorBuilder(this);
 }

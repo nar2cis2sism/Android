@@ -7,13 +7,15 @@ import java.util.HashMap;
 import engine.android.core.ApplicationManager;
 import engine.android.framework.network.http.HttpManager;
 import engine.android.framework.network.socket.SocketManager;
-import engine.android.framework.ui.util.ImageManager;
+import engine.android.framework.util.ImageManager;
 import engine.android.util.StringUtil;
 
 /**
  * 提供应用程序公用的功能组件
  * 
  * @author Daimon
+ * @version N
+ * @since 6/6/2016
  */
 public abstract class AppGlobal {
     
@@ -72,14 +74,14 @@ class AppGlobalWrapper extends AppGlobal {
 
     @Override
     void setConfig(AppConfig config) {
-        if (real == mBase)
+        if (real != mBase)
         {
-            real = new AppGlobalImpl(config.getContext());
-            real.setConfig(config);
+            throw new RuntimeException(StringUtil.format(
+                    "App Config of %s is exist.", real.getConfig().getContext().getPackageName()));
         }
         
-        throw new RuntimeException(StringUtil.format(
-                "App Config of %s is exist.", real.getConfig().getContext().getPackageName()));
+        real = new AppGlobalImpl(config.getContext());
+        real.setConfig(config);
     }
 
     @Override

@@ -189,12 +189,7 @@ class NetworkActivity extends Forelet {
      * @param showTip 网络不可用时是否提示用户
      */
     public boolean checkNetworkStatus(boolean showTip) {
-        if (app.getConfig().isOffline())
-        {
-            return true;
-        }
-        
-        if (HttpConnector.isAccessible(this))
+        if (app.getConfig().isOffline() || HttpConnector.isAccessible(this))
         {
             return true;
         }
@@ -208,23 +203,23 @@ class NetworkActivity extends Forelet {
     }
 
     public void sendHttpRequest(HttpBuilder builder) {
-        executeTask(new Request(app.getHttpManager(), builder), false);
+        executeTask(new NetworkTask(app.getHttpManager(), builder), false);
     }
     
     public void sendSocketRequest(SocketBuilder builder) {
-        executeTask(new Request(app.getSocketManager(), builder), false);
+        executeTask(new NetworkTask(app.getSocketManager(), builder), false);
     }
     
     /**
      * 网络请求
      */
-    private static class Request extends Task {
+    private static class NetworkTask extends Task {
 
-        public Request(HttpManager http, HttpBuilder builder) {
+        public NetworkTask(HttpManager http, HttpBuilder builder) {
             super(new HttpTaskExecutor(http, builder));
         }
         
-        public Request(SocketManager socket, SocketBuilder builder) {
+        public NetworkTask(SocketManager socket, SocketBuilder builder) {
             super(new SocketTaskExecutor(socket, builder));
         }
         

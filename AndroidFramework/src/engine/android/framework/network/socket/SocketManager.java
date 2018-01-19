@@ -20,9 +20,7 @@ import engine.android.core.extra.EventBus;
 import engine.android.core.extra.EventBus.Event;
 import engine.android.framework.app.AppConfig;
 import engine.android.framework.app.AppGlobal;
-import engine.android.framework.network.socket.util.SocketPushReceiver;
-import engine.android.framework.network.socket.util.SocketResponse;
-import engine.android.framework.network.socket.util.SocketResponse.Callback;
+import engine.android.framework.network.socket.SocketResponse.Callback;
 import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.socket.SocketConnectionListener;
@@ -329,22 +327,6 @@ public class SocketManager implements SocketConnectionListener, Callback {
         }
     }
     
-    public interface SocketBuilder {
-        
-        ProtocolData buildData();
-        
-        SocketResponse buildResponse();
-    }
-    
-    /**
-     * 发送socket请求
-     * 
-     * @return 可用于取消请求
-     */
-    public int sendSocketRequest(SocketBuilder socket) {
-        return sendSocketRequest(socket.buildData(), socket.buildResponse());
-    }
-    
     /**
      * 发送socket请求
      * 
@@ -376,5 +358,24 @@ public class SocketManager implements SocketConnectionListener, Callback {
             pendingDatas.valueAt(index).cancel();
             pendingDatas.removeAt(index);
         }
+    }
+    
+    /**
+     * Implement this interface for individual logic of socket action.
+     */
+    public interface SocketBuilder {
+        
+        ProtocolData buildData();
+        
+        SocketResponse buildResponse();
+    }
+    
+    /**
+     * 发送socket请求
+     * 
+     * @return 可用于取消请求
+     */
+    public int sendSocketRequest(SocketBuilder socket) {
+        return sendSocketRequest(socket.buildData(), socket.buildResponse());
     }
 }

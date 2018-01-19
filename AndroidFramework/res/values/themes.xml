@@ -12,6 +12,15 @@
             backward-compatibility can go here.
         -->
     </style>
+    
+    <style name="AppTheme.NoTitleBar" parent="AppTheme">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    
+    <style name="AppTheme.NoTitleBar.Fullscreen" parent="AppTheme.NoTitleBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
@@ -23,15 +32,6 @@
         
         <item name="android:listViewStyle">@style/Widget.ListView</item>
         <item name="android:buttonStyle">@style/Widget.Button</item>
-    </style>
-    
-    <style name="AppTheme.NoTitleBar" parent="AppTheme">
-        <item name="android:windowNoTitle">true</item>
-    </style>
-    
-    <style name="AppTheme.NoTitleBar.Fullscreen" parent="AppTheme.NoTitleBar">
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
     </style>
     
 </resources>

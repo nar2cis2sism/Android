@@ -1,5 +1,7 @@
 package engine.android.framework.ui.widget;
 
+import static engine.android.widget.base.CustomView.getDesiredSize;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -8,9 +10,8 @@ import android.widget.ImageView;
 import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
 import engine.android.framework.R;
 import engine.android.framework.app.AppGlobal;
-import engine.android.framework.ui.util.ImageManager.ImageUrl;
+import engine.android.framework.util.ImageManager.ImageUrl;
 import engine.android.util.ui.UIUtil;
-import engine.android.widget.base.CustomView;
 
 public class AvatarImageView extends ImageView {
 
@@ -25,8 +26,8 @@ public class AvatarImageView extends ImageView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int size = getResources().getDimensionPixelSize(R.dimen.avatar_size);
-        setMeasuredDimension(CustomView.getDesiredSize(size, widthMeasureSpec), 
-                CustomView.getDesiredSize(size, heightMeasureSpec));
+        setMeasuredDimension(getDesiredSize(size, widthMeasureSpec), 
+                getDesiredSize(size, heightMeasureSpec));
     }
 
     /**

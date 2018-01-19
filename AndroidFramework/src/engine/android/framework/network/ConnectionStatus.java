@@ -19,7 +19,7 @@ public interface ConnectionStatus {
     /**
      * 网络拦截器
      */
-    public interface ConnectionInterceptor extends ConnectionStatus {
+    interface ConnectionInterceptor extends ConnectionStatus {
         
         /**
          * 网络拦截

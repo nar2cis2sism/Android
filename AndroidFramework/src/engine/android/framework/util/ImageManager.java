@@ -1,4 +1,4 @@
-package engine.android.framework.ui.util;
+package engine.android.framework.util;
 
 import static engine.android.core.util.LogFactory.LOG.log;
 
@@ -54,7 +54,7 @@ public class ImageManager {
         downloader = new MyImageDownloader(context);
         displayViewMap = new WeakHashMap<View, ImageUrl>();
         storage = new ImageStorage(config.getImageDir());
-        transformer = config.getTransformer();
+        transformer = config.getImageTransformer();
     }
     
     /**

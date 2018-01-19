@@ -12,10 +12,5 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
     </style>
-    
-    <style name="AppTheme.NoTitleBar.Fullscreen" parent="AppTheme.NoTitleBar">
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-    </style>
 
 </resources>

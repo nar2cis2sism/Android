@@ -1,4 +1,4 @@
-package engine.android.framework.network.http.util;
+package engine.android.framework.network.http;
 
 import engine.android.http.HttpResponse;
 
@@ -6,10 +6,10 @@ public interface HttpParser extends engine.android.http.util.HttpParser {
 
     ReturnData parse(HttpResponse response) throws Exception;
     
-    public interface ReturnData {}
+    interface ReturnData {}
     
     /**
      * 表示请求失败时返回的数据
      */
-    public interface Failure extends ReturnData {}
+    interface Failure extends ReturnData {}
 }

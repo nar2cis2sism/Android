@@ -31,7 +31,7 @@ public class HttpParams {
 
     private Integer readTimeout;
     
-    private Boolean supportHttps;
+    private boolean supportHttps;
 
     HttpParams() {}
 
@@ -47,8 +47,6 @@ public class HttpParams {
     
     /**
      * 设置是否使用缓存
-     * 
-     * @param value 默认为true
      */
     public HttpParams setUseCaches(boolean value) {
         useCaches = value;
@@ -91,8 +89,9 @@ public class HttpParams {
     /**
      * 对HTTPS连接进行设置
      */
-    public void setupHttps(Boolean supportHttps) {
+    public HttpParams setupHttps(boolean supportHttps) {
         this.supportHttps = supportHttps;
+        return this;
     }
     
     void setup(HttpURLConnection conn) throws Exception {
@@ -108,7 +107,7 @@ public class HttpParams {
             conn.setConnectTimeout(connectTimeout);
         if (readTimeout != null)
             conn.setReadTimeout(readTimeout);
-        if (supportHttps != null && conn instanceof HttpsURLConnection)
+        if (supportHttps && conn instanceof HttpsURLConnection)
         {
             HttpsURLConnection conns = (HttpsURLConnection) conn;
             SSLContext ssl = SSLContext.getInstance("SSL");

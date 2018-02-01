@@ -69,12 +69,12 @@ public class HttpRequest {
         return this;
     }
     
-    public void setContentType(String value) {
-        setHeader("Content-Type", value);
+    public HttpRequest setContentType(String value) {
+        return setHeader("Content-Type", value);
     }
     
-    public void setUserAgent(String value) {
-        setHeader("User-Agent", value);
+    public HttpRequest setUserAgent(String value) {
+        return setHeader("User-Agent", value);
     }
     
     public interface HttpEntity {

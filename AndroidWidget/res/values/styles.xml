@@ -21,7 +21,7 @@
 
     <style name="LetterBar">
         <item name="background">#40222222</item>
-        <item name="textSize">13dp</item>
+        <item name="textSize">12sp</item>
         <item name="textColor">#666666</item>
         <item name="textColorHighlight">#3399ff</item>
     </style>

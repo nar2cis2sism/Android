@@ -1,5 +1,7 @@
 package engine.android.core;
 
+import static engine.android.core.Injector.inject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -18,16 +20,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import engine.android.core.Forelet.FragmentTransaction;
+import engine.android.core.Forelet.Task;
+import engine.android.core.Forelet.Task.TaskExecutor;
+
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.WeakHashMap;
-
-import engine.android.core.Forelet.FragmentTransaction;
-import engine.android.core.Forelet.Task;
-import engine.android.core.Forelet.Task.TaskExecutor;
 
 /**
  * 前台展现界面<p>
@@ -58,7 +60,8 @@ public class Forelet extends Activity implements TaskCallback {
             if ((mProgress = ProgressWrapper.class.cast(savedInstance.progress)) != null)
                  mProgress.setup(onCreateProgressDialog());
             mTransaction = savedInstance.transaction;
-            Injector.restoreState(this, savedInstance.savedMap);
+            if (!savedInstance.savedMap.isEmpty())
+                Injector.restoreState(this, savedInstance.savedMap);
         }
     }
 
@@ -77,14 +80,24 @@ public class Forelet extends Activity implements TaskCallback {
 
         saveDialogs(outState);
         
-        SavedInstance savedInstance = new SavedInstance();
+        if (allowSaveInstanceState())
+        {
+            SavedInstance savedInstance = new SavedInstance();
 
-        savedInstance.task = mTask;
-        savedInstance.progress = mProgress;
-        savedInstance.transaction = mTransaction;
-        Injector.saveState(this, savedInstance.savedMap);
-        
-        SavedInstance.save(outState, savedInstance);
+            savedInstance.task = mTask;
+            savedInstance.progress = mProgress;
+            savedInstance.transaction = mTransaction;
+            Injector.saveState(this, savedInstance.savedMap);
+            
+            SavedInstance.save(outState, savedInstance);
+        }
+    }
+    
+    /**
+     * 为了提高性能，默认不保存状态
+     */
+    protected boolean allowSaveInstanceState() {
+        return false;
     }
 
     @Override
@@ -116,30 +129,26 @@ public class Forelet extends Activity implements TaskCallback {
     }
 
     /**
-     * @param finish True表示手动关闭Activity,Flase表示被系统杀掉
+     * @param finish True表示手动关闭Activity,False表示被系统杀掉
      */
     protected void onDestroy(boolean finish) {}
 
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
-        injectView();
+        inject(this);
     }
 
     @Override
     public void setContentView(View view) {
         super.setContentView(view);
-        injectView();
+        inject(this);
     }
 
     @Override
     public void setContentView(View view, ViewGroup.LayoutParams params) {
         super.setContentView(view, params);
-        injectView();
-    }
-
-    private void injectView() {
-        Injector.inject(this);
+        inject(this);
     }
     
     /******************************* 回退事件处理 *******************************/
@@ -443,7 +452,7 @@ public class Forelet extends Activity implements TaskCallback {
     /**
      * 执行任务
      * 
-     * @param task 并发执行多个回调任务会损坏之前的任务回调
+     * @param task 并发执行多个任务会覆盖当前任务
      * @param hasCallback 是否需要处理回调，通过{@link #onTaskCallback}接收回调
      * 
      * @return taskId 用于任务回调
@@ -489,9 +498,9 @@ public class Forelet extends Activity implements TaskCallback {
         private static ProgressSetting defaultSetting;
     
         private int mTitleResourceId;
+        private CharSequence mTitle;
         private Boolean useTitleResource;
     
-        private CharSequence mTitle;
         private CharSequence mMessage;
     
         private boolean mCancelable = true;
@@ -523,8 +532,8 @@ public class Forelet extends Activity implements TaskCallback {
          */
         public ProgressSetting reset() {
             mTitleResourceId = 0;
-            useTitleResource = null;
             mTitle = null;
+            useTitleResource = null;
             mMessage = null;
             mCancelable = true;
             return this;
@@ -826,13 +835,13 @@ public class Forelet extends Activity implements TaskCallback {
             implements Validation<T> {
 
         @Override
-        public boolean isValid(T view) {
+        public final boolean isValid(T view) {
             return isValid(getValue(view));
         }
 
         public abstract S getValue(T view);
 
-        public abstract boolean isValid(S s);
+        public abstract boolean isValid(S value);
     }
 
     /**

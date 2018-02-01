@@ -111,7 +111,7 @@ public abstract class BaseFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
     
-        // Reset the active callbacks interface.
+        // Reset the active callback interface.
         mCallbacks = null;
     }
 

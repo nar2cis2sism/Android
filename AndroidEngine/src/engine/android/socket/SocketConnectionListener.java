@@ -37,24 +37,24 @@ public interface SocketConnectionListener {
     /**
      * 连接已建立
      */
-    public void onConnected(Socket socket);
+    void onConnected(Socket socket);
 
     /**
      * 联网数据接收
      * 
      * @param data 数据包
      */
-    public void onReceive(Object data);
+    void onReceive(Object data);
 
     /**
      * 联网发生错误
      * 
      * @param e 错误异常
      */
-    public void onError(Exception e);
+    void onError(Exception e);
 
     /**
      * 连接已断开
      */
-    public void onClosed();
+    void onClosed();
 }

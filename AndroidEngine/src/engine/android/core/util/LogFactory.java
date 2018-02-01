@@ -50,7 +50,8 @@ public final class LogFactory {
         if (logEnabled.compareAndSet(!enable, enable) && logOpened.compareAndSet(false, true))
         {
             LOG.log(null, null, "程序启动", getMainApplication().getLaunchTime());
-            LOG.log();
+            // 输出空行
+            LOG.log("", null);
         }
     }
 
@@ -311,13 +312,6 @@ public final class LogFactory {
     public static final class LOG {
         
         /**
-         * 输出日志（空行）
-         */
-        public static void log() {
-            log("", null);
-        }
-
-        /**
          * 输出日志（取调用函数的类名+方法名作为标签）
          * 
          * @param message 日志内容
@@ -350,11 +344,6 @@ public final class LogFactory {
          * @param message 日志内容
          */
         public static void log(StackTraceElement stack, Object message) {
-            if (!isLogEnabled() && !isDebuggable())
-            {
-                return;
-            }
-            
             String className = null;
             String tag = null;
             if (stack != null)
@@ -377,7 +366,7 @@ public final class LogFactory {
                 }
             }
 
-            if (isDebuggable())
+            if (getMainApplication().isDebuggable())
             {
                 Log.d(tag, msg);
             }
@@ -392,10 +381,6 @@ public final class LogFactory {
             {
                 return message == null ? "" : message.toString();
             }
-        }
-        
-        private static boolean isDebuggable() {
-            return ApplicationManager.isDebuggable(getMainApplication());
         }
     }
     

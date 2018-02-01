@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import engine.android.util.extra.Singleton;
-
 /**
  * 事件总线<p>
  * 功能：事件监听及发送机制
@@ -19,17 +17,10 @@ import engine.android.util.extra.Singleton;
  */
 public final class EventBus {
     
-    private static final Singleton<EventBus> instance
-    = new Singleton<EventBus>() {
-        
-        @Override
-        protected EventBus create() {
-            return new EventBus();
-        }
-    };
+    private static final EventBus instance = new EventBus();
     
     public static final EventBus getDefault() {
-        return instance.get();
+        return instance;
     }
 
     /******************************* 华丽丽的分割线 *******************************/

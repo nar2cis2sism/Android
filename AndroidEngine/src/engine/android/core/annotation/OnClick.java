@@ -17,5 +17,5 @@ import java.lang.annotation.Target;
 public @interface OnClick {
 
     /** View的ID（可设置多个） */
-    public int[] value();
+    int[] value();
 }

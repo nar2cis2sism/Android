@@ -18,5 +18,5 @@ import java.lang.annotation.Target;
 public @interface BindDialog {
 
     /** 对话框名称 */
-    public String value();
+    String value();
 }

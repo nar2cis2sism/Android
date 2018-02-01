@@ -2,14 +2,14 @@ package engine.android.http;
 
 import android.text.TextUtils;
 
+import engine.android.util.io.IOUtil;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import engine.android.util.io.IOUtil;
 
 /**
  * Http响应体
@@ -103,6 +103,10 @@ public class HttpResponse {
         return getHeaderField("Content-Type");
     }
     
+    public String getUserAgent() {
+        return getHeaderField("User-Agent");
+    }
+    
     public long getDate() {
         return getHeaderFieldDate("Date", 0);
     }
@@ -117,5 +121,9 @@ public class HttpResponse {
     
     public String getLocation() {
         return getHeaderField("Location");
+    }
+    
+    public String getHost() {
+        return getHeaderField("Host");
     }
 }

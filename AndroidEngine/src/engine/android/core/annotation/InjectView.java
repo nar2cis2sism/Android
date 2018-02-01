@@ -17,5 +17,5 @@ import java.lang.annotation.Target;
 public @interface InjectView {
 
     /** View的ID */
-    public int value();
+    int value();
 }

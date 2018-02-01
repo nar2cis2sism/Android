@@ -43,6 +43,8 @@ public class ApplicationManager extends Application implements UncaughtException
     private final ActivityStack stack;                      // 活动堆栈管理
     
     private boolean isMainApp;                              // 我们以第一次加载此类作为主程序根据
+    
+    private boolean isDebuggable;
 
     public ApplicationManager() {
         session = new Session();
@@ -56,12 +58,19 @@ public class ApplicationManager extends Application implements UncaughtException
         }
     }
     
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        isDebuggable = isDebuggable(base);
+    }
+    
     /**
      * 供三方调用初始化
      */
     public final void init(Application app) {
         attachBaseContext(app.getBaseContext());
         app.registerActivityLifecycleCallbacks(stack);
+        onCreate();
     }
     
     /**
@@ -107,6 +116,10 @@ public class ApplicationManager extends Application implements UncaughtException
     public static final boolean isDebuggable(Context context) {
         ApplicationInfo info = context.getApplicationInfo();
         return (info.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+    }
+    
+    public final boolean isDebuggable() {
+        return isDebuggable;
     }
 
     /**

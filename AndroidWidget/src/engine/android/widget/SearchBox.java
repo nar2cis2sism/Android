@@ -89,7 +89,7 @@ public class SearchBox extends LinearLayout implements OnClickListener {
     
     public interface SearchProvider {
         
-        void search(CharSequence constraint);
+        void search(String key);
     }
     
     private class ClearAction extends MyTextWatcher implements OnClickListener {

@@ -1,8 +1,6 @@
 package engine.android.framework.ui;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -13,22 +11,17 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import engine.android.core.Forelet;
-import engine.android.core.extra.EventBus;
-import engine.android.core.extra.EventBus.Event;
-import engine.android.core.extra.EventBus.EventHandler;
 import engine.android.framework.R;
 import engine.android.framework.app.AppGlobal;
-import engine.android.framework.network.ConnectionStatus;
 import engine.android.framework.network.http.HttpManager;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
 import engine.android.framework.network.socket.SocketManager;
 import engine.android.framework.network.socket.SocketManager.SocketBuilder;
 import engine.android.framework.ui.extra.SinglePaneActivity;
 import engine.android.http.HttpConnector;
-import engine.android.util.Util;
 import engine.android.widget.TitleBar;
 
-public class BaseActivity extends NetworkActivity implements EventHandler {
+public class BaseActivity extends NetworkActivity {
     
     private LinearLayout root;
     
@@ -111,62 +104,6 @@ public class BaseActivity extends NetworkActivity implements EventHandler {
     @Override
     protected Class<? extends Activity> parentActivity() {
         return super.parentActivity();
-    }
-
-    /******************************* EventBus *******************************/
-    
-    private boolean isReceiveEventEnabled;
-    
-    /**
-     * 允许接收事件回调<br>
-     * Call it in {@link #onCreate(android.os.Bundle)}
-     */
-    protected final void enableReceiveEvent(String... actions) {
-        if (isReceiveEventEnabled = true)
-        {
-            for (String action : actions)
-            {
-                EventBus.getDefault().register(action, this);
-            }
-        }
-    }
-
-    @Override
-    public void handleEvent(Event event) {
-        onReceive(event.action, event.status, event.param);
-    }
-    
-    protected void onReceive(String action, int status, Object param) {
-        if (status == ConnectionStatus.SUCCESS)
-        {
-            onReceiveSuccess(action, param);
-        }
-        else
-        {
-            onReceiveFailure(action, status, param);
-        }
-    }
-    
-    protected void onReceiveSuccess(String action, Object param) {}
-    
-    protected void onReceiveFailure(String action, int status, Object param) {
-        hideProgress();
-        showErrorDialog(param);
-    }
-    
-    protected void showErrorDialog(Object error) {
-        Dialog dialog = new AlertDialog.Builder(this)
-        .setTitle(R.string.dialog_error_title)
-        .setMessage(Util.getString(error, null))
-        .setPositiveButton(R.string.ok, null)
-        .create();
-    
-        showDialog("dialog_error", dialog);
-    }
-    
-    @Override
-    protected void onDestroy(boolean finish) {
-        if (isReceiveEventEnabled) EventBus.getDefault().unregister(this);
     }
 }
 

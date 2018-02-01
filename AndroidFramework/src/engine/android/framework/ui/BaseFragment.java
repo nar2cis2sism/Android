@@ -1,12 +1,16 @@
 package engine.android.framework.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 
 import engine.android.core.extra.EventBus;
 import engine.android.core.extra.EventBus.Event;
 import engine.android.core.extra.EventBus.EventHandler;
+import engine.android.framework.R;
 import engine.android.framework.network.ConnectionStatus;
+import engine.android.util.Util;
 import engine.android.widget.TitleBar;
 
 public abstract class BaseFragment extends engine.android.core.BaseFragment implements EventHandler {
@@ -64,12 +68,10 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
      * Call it in {@link #onCreate(android.os.Bundle)}
      */
     protected final void enableReceiveEvent(String... actions) {
-        if (isReceiveEventEnabled = true)
+        isReceiveEventEnabled = true;
+        for (String action : actions)
         {
-            for (String action : actions)
-            {
-                EventBus.getDefault().register(action, this);
-            }
+            EventBus.getDefault().register(action, this);
         }
     }
 
@@ -92,7 +94,21 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
     protected void onReceiveSuccess(String action, Object param) {}
     
     protected void onReceiveFailure(String action, int status, Object param) {
-        if (baseActivity != null) baseActivity.onReceiveFailure(action, status, param);
+        if (baseActivity != null)
+        {
+            baseActivity.hideProgress();
+            showErrorDialog(baseActivity, param);
+        }
+    }
+    
+    protected void showErrorDialog(BaseActivity baseActivity, Object error) {
+        Dialog dialog = new AlertDialog.Builder(baseActivity)
+        .setTitle(R.string.dialog_error_title)
+        .setMessage(Util.getString(error, null))
+        .setPositiveButton(R.string.ok, null)
+        .create();
+    
+        baseActivity.showDialog("dialog_error", dialog);
     }
     
     @Override

@@ -21,7 +21,7 @@ public interface IInjector<T> {
      */
     void inject(T target, ViewFinder<T> finder);
     
-    public interface ViewFinder<S> {
+    interface ViewFinder<S> {
         
         Object findViewById(S source, int id);
     }

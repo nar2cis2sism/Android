@@ -7,7 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 
 import engine.android.plugin.PluginEnvironment;
-import engine.android.util.ReflectObject;
+import engine.android.util.extra.ReflectObject;
 
 public class PluginHandlerCallback implements Handler.Callback {
     
@@ -26,7 +26,7 @@ public class PluginHandlerCallback implements Handler.Callback {
                     break;
             }
         } catch (Exception e) {
-            PluginEnvironment.log(e);
+            environment.log(e);
         }
         
         return false;

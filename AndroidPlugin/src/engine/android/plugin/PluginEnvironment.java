@@ -18,8 +18,6 @@ import android.os.Process;
 import android.os.UserHandle;
 import android.util.Singleton;
 
-import java.io.File;
-
 import engine.android.core.util.LogFactory;
 import engine.android.core.util.LogFactory.LOG;
 import engine.android.plugin.proxy.ActivityManagerService;
@@ -29,7 +27,9 @@ import engine.android.plugin.proxy.component.PluginActivity;
 import engine.android.plugin.proxy.component.PluginService;
 import engine.android.plugin.util.ApkLoader;
 import engine.android.plugin.util.PluginProxy;
-import engine.android.util.ReflectObject;
+import engine.android.util.extra.ReflectObject;
+
+import java.io.File;
 
 /**
  * Provide global environment for entire framework.
@@ -278,7 +278,7 @@ public class PluginEnvironment {
     
     static boolean DEBUGGABLE = true;
     
-    public static void log(Object message) {
+    public void log(Object message) {
         if (DEBUGGABLE) LOG.log("插件化", message);
     }
 }

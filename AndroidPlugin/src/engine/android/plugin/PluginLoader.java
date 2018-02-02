@@ -9,14 +9,14 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageParser;
 import android.content.pm.ProviderInfo;
 
+import engine.android.plugin.proxy.PackageManagerService;
+import engine.android.plugin.util.ApkLoader;
+import engine.android.util.extra.ReflectObject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import engine.android.plugin.proxy.PackageManagerService;
-import engine.android.plugin.util.ApkLoader;
-import engine.android.util.ReflectObject;
 
 /**
  * Provide a mechanism to load plugin.
@@ -42,7 +42,7 @@ public class PluginLoader extends ApkLoader {
     /**
      * 装载插件
      */
-    void plugin() throws Exception {
+    public void plugin() throws Exception {
         injectPackage();
         initApplication();
         registerReceiver();

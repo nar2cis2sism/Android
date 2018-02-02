@@ -1,7 +1,5 @@
 package engine.android.plugin.proxy;
 
-import static engine.android.plugin.PluginEnvironment.log;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +25,10 @@ import android.view.WindowManager;
 
 import com.android.internal.app.ResolverActivity;
 
+import engine.android.plugin.PluginEnvironment;
+import engine.android.plugin.util.IntentResolver;
+import engine.android.plugin.util.PluginProxy;
+
 import java.io.File;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
@@ -37,10 +39,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
-import engine.android.plugin.PluginEnvironment;
-import engine.android.plugin.util.IntentResolver;
-import engine.android.plugin.util.PluginProxy;
 
 public class PackageManagerService extends PluginProxy<IPackageManager> {
     
@@ -251,7 +249,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
                         else
                         {
                             PackageParser.Provider other = mProviders.get(names[j]);
-                            log("Skipping provider name " + names[j] +
+                            environment.log("Skipping provider name " + names[j] +
                                     " (in package " + pkg.applicationInfo.packageName +
                                     "): name already used by "
                                     + ((other != null && other.getComponentName() != null)
@@ -291,7 +289,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
                 }
                 else
                 {
-                    log("Permission group " + pg.info.name + " from package "
+                    environment.log("Permission group " + pg.info.name + " from package "
                             + pg.info.packageName + " ignored: original from "
                             + cur.info.packageName);
                 }
@@ -307,7 +305,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
                 }
                 else
                 {
-                    log("Permission " + p.info.name + " from package "
+                    environment.log("Permission " + p.info.name + " from package "
                             + p.info.packageName + " ignored: original from "
                             + cur.info.packageName);
                 }

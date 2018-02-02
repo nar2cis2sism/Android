@@ -10,12 +10,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
-import java.lang.ref.WeakReference;
-import java.util.HashMap;
-
 import engine.android.plugin.Plugin;
 import engine.android.plugin.PluginEnvironment;
-import engine.android.util.ReflectObject;
+import engine.android.util.extra.ReflectObject;
+
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
 
 /**
  * 插件代理，需要在Manifest文件中注册

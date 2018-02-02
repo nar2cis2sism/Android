@@ -25,14 +25,14 @@ public class PluginManager {
         this.environment = environment;
     }
     
-    public String loadPlugin(File apkFile) throws Exception {
+    public Plugin loadPlugin(File apkFile) throws Exception {
         environment.prepare();
         
         String apkName = apkFile.getName();
         Plugin plugin = pluginsByFile.get(apkName);
         if (plugin != null)
         {
-            return plugin.getApplication().getPackageName();
+            return plugin;
         }
         
         try {
@@ -42,7 +42,7 @@ public class PluginManager {
             plugin = pluginsByPackage.get(packageName);
             if (plugin != null)
             {
-                return packageName;
+                return plugin;
             }
             
             PluginLoader loader = new PluginLoader(environment, apkFile, pkg);
@@ -52,7 +52,7 @@ public class PluginManager {
             pluginsByFile.put(apkName, plugin);
             pluginsByPackage.put(packageName, plugin);
             
-            return packageName;
+            return plugin;
         } catch (Exception e) {
             throw new Exception("Failed to load plugin:" + apkFile.getPath(), e);
         }

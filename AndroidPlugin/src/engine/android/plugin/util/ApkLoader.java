@@ -11,13 +11,13 @@ import android.text.TextUtils;
 import dalvik.system.DexClassLoader;
 import dalvik.system.DexFile;
 
+import engine.android.util.extra.ReflectObject;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import engine.android.util.ReflectObject;
 
 /**
  * Provide a mechanism to access Apk file.
@@ -52,7 +52,7 @@ public class ApkLoader {
         String path = apkFile.getPath();
         if (!path.endsWith(APK_SUFFIX))
         {
-            throw new IllegalArgumentException("Only Apk file is allowed.");
+            throw new IllegalAccessError("Only Apk file is allowed.");
         }
         
         this.apkFile = apkFile;

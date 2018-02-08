@@ -1,4 +1,6 @@
-package engine.android.game;
+package engine.android.game.layer;
+
+import static engine.android.util.RectUtil.setRect;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -8,10 +10,9 @@ import android.graphics.Rect;
  * 游戏精灵（逐帧动画）
  * 
  * @author Daimon
- * @version 3.0
+ * @version N
  * @since 7/9/2012
  */
-
 public class FrameSprite extends Sprite {
 
     private int numberFrames;                                   // 帧数量
@@ -35,7 +36,7 @@ public class FrameSprite extends Sprite {
             throw new IllegalArgumentException();
         }
 
-        initFrames(image, frameWidth, frameHeight, false);
+        initFrames(image, frameWidth, frameHeight, true);
     }
 
     /**
@@ -45,7 +46,6 @@ public class FrameSprite extends Sprite {
      * @param fWidth,fHeight 每帧大小
      * @param maintainCurFrame 是否维持当前显示帧（无需重置为第一帧）
      */
-
     private void initFrames(Bitmap image, int fWidth, int fHeight, boolean maintainCurFrame) {
         // 获取图片大小
         int imageW = image.getWidth();
@@ -124,7 +124,6 @@ public class FrameSprite extends Sprite {
      * 
      * @param sequenceIndex 帧的顺序索引
      */
-
     public void setFrame(int sequenceIndex) {
         if (sequenceIndex < 0 || sequenceIndex >= frameSequence.length)
         {
@@ -137,7 +136,6 @@ public class FrameSprite extends Sprite {
     /**
      * 获取当前帧的顺序索引
      */
-
     public final int getFrame() {
         return sequenceIndex;
     }
@@ -145,7 +143,6 @@ public class FrameSprite extends Sprite {
     /**
      * 获取帧数量
      */
-
     public final int getRawFrameCount() {
         return numberFrames;
     }
@@ -153,7 +150,6 @@ public class FrameSprite extends Sprite {
     /**
      * 获取帧显示序列的长度
      */
-
     public final int getFrameSequenceLength() {
         return frameSequence.length;
     }
@@ -161,7 +157,6 @@ public class FrameSprite extends Sprite {
     /**
      * 切换到下一帧
      */
-
     public void nextFrame() {
         sequenceIndex = (sequenceIndex + 1) % frameSequence.length;
     }
@@ -169,7 +164,6 @@ public class FrameSprite extends Sprite {
     /**
      * 切换到前一帧
      */
-
     public void prevFrame() {
         sequenceIndex = (sequenceIndex + frameSequence.length - 1) % frameSequence.length;
     }
@@ -177,7 +171,6 @@ public class FrameSprite extends Sprite {
     /**
      * 设置帧序列
      */
-
     public void setFrameSequence(int[] sequence) {
         if (sequence == null)
         {
@@ -218,7 +211,6 @@ public class FrameSprite extends Sprite {
      * @param image
      * @param frameWidth,frameHeight 帧大小
      */
-
     public void setImage(Bitmap image, int frameWidth, int frameHeight) {
         if (frameWidth < 1 || frameHeight < 1
         || (image.getWidth() % frameWidth != 0)

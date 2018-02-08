@@ -1,4 +1,4 @@
-package engine.android.game;
+package engine.android.game.layer;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -6,17 +6,15 @@ import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.text.TextUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 /**
  * 游戏标签
  * 
  * @author Daimon
- * @version 3.0
+ * @version N
  * @since 9/4/2012
  */
-
 public class Label extends Sprite {
 
     public static final int CENTER  = 0;            // 居中对齐
@@ -26,11 +24,9 @@ public class Label extends Sprite {
     public static final int RIGHT   = 4;            // 居右对齐
 
     int horizontalAlignment = CENTER;               // 水平对齐方式，默认居中
-
     int verticalAlignment = CENTER;                 // 垂直对齐方式，默认居中
 
     int horizontalTextPosition = CENTER;            // 水平文本位置，默认文本和图像水平重叠
-
     int verticalTextPosition = BOTTOM;              // 垂直文本位置，默认文本在图像的下面
 
     int iconTextGap = 4;                            // 文本与图像的间距
@@ -73,7 +69,6 @@ public class Label extends Sprite {
     /**
      * 更换文本
      */
-
     public void setText(String text) {
         if (!TextUtils.isEmpty(this.text))
         {
@@ -95,8 +90,7 @@ public class Label extends Sprite {
 
     @Override
     public void setImage(Bitmap image) {
-        this.image = image;
-        if (image != null)
+        if ((this.image = image) != null)
         {
             iconW = image.getWidth();
             iconH = image.getHeight();
@@ -157,7 +151,6 @@ public class Label extends Sprite {
     /**
      * 计算文本大小
      */
-
     private void calculateTextSize() {
         if (!TextUtils.isEmpty(text))
         {
@@ -207,10 +200,9 @@ public class Label extends Sprite {
      * @param paint 画笔，用来根据字体测量宽度用
      * @return 分割好的字符串数组
      */
-
     private static String[] split(String text, float width, Paint paint) {
         float count = 0;
-        List<String> list = new ArrayList<String>();
+        LinkedList<String> list = new LinkedList<String>();
         int len = text.length();
         char c;
         for (int i = 0; i < len;)
@@ -264,7 +256,6 @@ public class Label extends Sprite {
     /**
      * 调整标签尺寸以及确定文本图片位置
      */
-
     private void adjust() {
         int width, height;
         if (!TextUtils.isEmpty(text) && image != null)
@@ -371,7 +362,6 @@ public class Label extends Sprite {
     /**
      * 判断画笔是否改变
      */
-
     private boolean isPaintChanged(Paint p1, Paint p2) {
         FontMetrics src = p1.getFontMetrics();
         FontMetrics dst = p2.getFontMetrics();
@@ -390,7 +380,6 @@ public class Label extends Sprite {
     /**
      * 标签属性
      */
-
     public static final class Attribute {
 
         private final Label label;
@@ -429,7 +418,6 @@ public class Label extends Sprite {
          * 
          * @param top,left,bottom,right 上，左，下，右边距
          */
-
         public Attribute setMargin(int top, int left, int bottom, int right) {
             label.top = top;
             label.left = left;
@@ -441,7 +429,6 @@ public class Label extends Sprite {
         /**
          * 设置文本行间距
          */
-
         public Attribute setTextGap(int textGap) {
             label.textGap = textGap;
             return this;
@@ -455,7 +442,6 @@ public class Label extends Sprite {
         /**
          * 更新属性生效
          */
-
         public void invalidateAttribute() {
             label.invalidate();
         }

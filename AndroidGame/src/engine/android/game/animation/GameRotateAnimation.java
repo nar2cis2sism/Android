@@ -1,22 +1,20 @@
 package engine.android.game.animation;
 
-import engine.android.game.GameAnimation;
+import engine.android.game.AnimationManager.GameAnimation;
 
 /**
  * 旋转控制动画
  * 
  * @author Daimon
- * @version 3.0
+ * @version N
  * @since 6/7/2012
  */
-
 public class GameRotateAnimation extends GameAnimation {
 
     private final float fromDegrees;                    // 起始角度
     private final float toDegrees;                      // 结束角度
 
     private float rotateDegrees;                        // 旋转角度
-
     private float degrees;                              // 当前角度
 
     public GameRotateAnimation(float fromDegrees, float toDegrees) {
@@ -25,7 +23,7 @@ public class GameRotateAnimation extends GameAnimation {
     }
 
     @Override
-    protected long getPeriod() {
+    protected long getPeriod(long duration, long interval) {
         long baseTime = getBaseAnimationTime();
         float degrees = toDegrees - fromDegrees;
         if (interval == 0)
@@ -91,6 +89,11 @@ public class GameRotateAnimation extends GameAnimation {
     }
 
     @Override
+    protected void onAnimationBefore() {
+        degrees = Float.MIN_VALUE;
+    }
+
+    @Override
     protected void onAnimationAfter() {
         if (fillEnabled)
         {
@@ -105,15 +108,9 @@ public class GameRotateAnimation extends GameAnimation {
         }
     }
 
-    @Override
-    protected void onAnimationBefore() {
-        degrees = Float.MIN_VALUE;
-    }
-
     /**
      * 获取旋转角度
      */
-
     public float getRotateDegrees() {
         return rotateDegrees;
     }
@@ -121,7 +118,6 @@ public class GameRotateAnimation extends GameAnimation {
     /**
      * 获取当前角度
      */
-
     public float getDegrees() {
         return degrees;
     }

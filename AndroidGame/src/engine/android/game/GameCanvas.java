@@ -2,7 +2,6 @@ package engine.android.game;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -24,64 +23,58 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewConfiguration;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import engine.android.core.extra.SplashScreen;
-import engine.android.core.extra.SplashScreen.SplashLoading;
 import engine.android.core.extra.SplashScreen.SplashCallback;
+import engine.android.core.extra.SplashScreen.SplashLoading;
 import engine.android.util.image.ImageCache;
 import engine.android.util.image.ImageUtil;
 import engine.android.util.image.ImageUtil.ImageDecoder;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 游戏画布
  * 
  * @author Daimon
- * @version 3.0
+ * @version N
  * @since 5/15/2012
  */
-
 public abstract class GameCanvas extends SurfaceView implements Callback, OnTouchListener {
 
-    protected static final int FULLSCREEN   = 1;
-                                            // 全屏拉伸
-    protected static final int CROP         = 2;
-                                            // 按比例扩大画布的size，使得画布长(宽)等于或大于View的长(宽)
-    protected static final int INSIDE       = 3;
-                                            // 按比例缩小画布的size，使得画布长(宽)等于或小于View的长(宽)
+    public static final int FULLSCREEN   = 1;                   // 全屏拉伸
+    public static final int CROP         = 2;                   // 按比例扩大画布的size，使得画布长(宽)等于或大于View的长(宽)
+    public static final int INSIDE       = 3;                   // 按比例缩小画布的size，使得画布长(宽)等于或小于View的长(宽)
+
+    private static GameCanvas instance;                         // 自身实例
+    
+    private final GameSettings settings = new GameSettings();   // 游戏设置
 
     private static final long DEFAULT_REFRESH_TIME = 50;        // 默认刷新时间
+    private long refresh_time = DEFAULT_REFRESH_TIME;           // 界面刷新时间
 
-    long REFRESH_TIME = DEFAULT_REFRESH_TIME;                   // 界面刷新时间
-
-    int backgroundColor = Color.TRANSPARENT;                    // 背景颜色
+    private int backgroundColor;                                // 背景颜色
 
     private RenderEngine render;                                // 游戏渲染引擎
-
-    LayerManager buffer;                                        // 缓冲界面（输出到画布）
+    
+    private LayerManager buffer;                                // 缓冲界面（输出到画布）
     private LayerManager game;                                  // 游戏界面
-    private volatile Splash splash;                             // 闪屏界面
+    private Splash splash;                                      // 闪屏界面
 
-    private GestureDetector detector;                           // 手势解析
-
-    private boolean isSupportAutoAdapt;                         // 是否支持屏幕自适配
-    private boolean isFixScreenSize;                            // 是否固定屏幕尺寸
+    boolean isSupportAutoAdapt;                                 // 是否支持屏幕自适配
+    boolean isFixScreenSize;                                    // 是否固定屏幕尺寸
     boolean isScreenAutoAdapt;                                  // 屏幕自适配开关
     int width, height;                                          // 屏幕自适配尺寸
-
-    private int scaleType;                                      // 画布缩放类型
+    int scaleType;                                              // 画布缩放类型
     float scaleX, scaleY;                                       // 画布缩放比例
 
-    private int keyState = -1;// 按键状态（-1为无任何按键按下）
-    final TouchEvent touchEvent = new TouchEvent();             // 触屏事件
+    private GestureDetector detector;                           // 手势解析
+    private final TouchEvent touchEvent = new TouchEvent();     // 触屏事件
+
+    private int keyState = -1;                                  // 按键状态（-1为无任何按键按下）
     
     private ImageCache<String> cache;                           // 图片缓存
-
-    static GameCanvas instance;                                 // 自身实例
-
-    private Resources res;                                      // 本地资源
 
     public GameCanvas(Context context) {
         super(context);
@@ -98,16 +91,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         _();
     }
 
-    /**
-     * 用于第三方程序启动
-     * 
-     * @param resource 本地资源
-     */
-    
-    public final void setResources(Resources resource) {
-        res = resource;
-    }
-
     private void _() {
         instance = this;
 
@@ -118,53 +101,60 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         render = new RenderEngine();
     }
 
-    /**
-     * 支持高级触屏事件捕获
-     */
-
-    protected final void supportAdvancedTouchEvents() {
-        detector = new GestureDetector(getContext(), new EventAction());
-        setLongClickable(true);
-        setOnTouchListener(this);
-    }
-
-    /**
-     * 支持屏幕自适配
-     * 
-     * @param autoAdapte 是否根据屏幕尺寸自动拉伸画布
-     * @param scaleType 画布缩放类型
-     * @param width,height 自适配尺寸
-     */
-
-    protected final void supportScreenAutoAdapt(boolean autoAdapte, 
-            int scaleType, int width, int height) {
-        isFixScreenSize = true;
-        isSupportAutoAdapt = autoAdapte;
-        this.scaleType = scaleType;
-        this.width = width;
-        this.height = height;
-    }
-
-    /**
-     * 是否显示帧速率（调试用）
-     */
-
-    protected final void showFPS(boolean show) {
-        render.showFPS(show);
-    }
-
-    /**
-     * 设置帧速率
-     * 
-     * @param fps 每秒绘制帧数（初始为20）
-     */
-
-    protected final void setFPS(double fps) {
-        REFRESH_TIME = (long) (1000 / fps);
-        if (render.isRunning())
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        if (buffer == null)
         {
-            render.start();
+            sizeChanged(getWidth(), getHeight());
+            buffer = game = new LayerManager(this);
+            onSplashCreate(splash = new Splash(this));
+            if (splash.getSize() == 0)
+            {
+                // 无闪屏界面
+                splash = null;
+                onCreate();
+            }
+            else
+            {
+                // 显示闪屏界面
+                buffer = splash;
+            }
         }
+    
+        pause(false);
+    }
+
+    public void surfaceChanged(SurfaceHolder holder, 
+            int format, int width, int height) {
+        sizeChanged(width, height);
+    }
+
+    /**
+     * 屏幕尺寸改变（计算自适配属性）
+     */
+    private void sizeChanged(int width, int height) {
+        isScreenAutoAdapt = false;
+        if (isSupportAutoAdapt)
+        {
+            scaleX = width * 1.0f / this.width;
+            scaleY = height * 1.0f / this.height;
+            isScreenAutoAdapt = !(scaleX == 1 && scaleY == 1);
+            if (isScreenAutoAdapt && scaleType != FULLSCREEN)
+            {
+                scaleX = scaleY = scaleType == CROP 
+                        ? Math.max(scaleX, scaleY)
+                        : Math.min(scaleX, scaleY);
+            }
+        }
+        else if (!isFixScreenSize)
+        {
+            this.width = width;
+            this.height = height;
+        }
+    }
+
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        pause(true);
     }
 
     @Override
@@ -175,9 +165,8 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
     /**
      * 返回界面刷新时间
      */
-
     public final long getRefreshTime() {
-        return REFRESH_TIME;
+        return refresh_time;
     }
 
     /**
@@ -185,15 +174,13 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
      * 
      * @return 游戏刷新时间的5倍
      */
-
     public long getAnimationInterval() {
-        return REFRESH_TIME * 5;
+        return refresh_time * 5;
     }
 
     /**
      * 获取图层管理器（往里添加显示图层）
      */
-
     public final LayerManager getContentPane() {
         return game;
     }
@@ -203,7 +190,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
      * 
      * @param name 图片名称
      */
-
     public Bitmap load(String name) {
         Bitmap image = cache.get(name);
         if (image != null)
@@ -231,7 +217,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
      * @param name 图片名称
      * @param width,height 图片显示尺寸
      */
-
     public Bitmap load(String name, int width, int height) {
         Bitmap image = cache.get(name);
         if (image != null)
@@ -245,10 +230,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
             return b;
         }
 
-        BitmapFactory.Options opts = new BitmapFactory.Options();
-        opts.inPurgeable = true;
-        opts.inInputShareable = true;
-        
         try {
             image = ImageDecoder.decodeStream(getResources().getAssets().open(name), 
                     width, height, true);
@@ -266,7 +247,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
      * @param name 图片名称
      * @param image 图片
      */
-
     public void cache(String name, Bitmap image) {
         cache.put(name, image);
     }
@@ -295,7 +275,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
      * 
      * @param name 图片名称
      */
-
     public void release(String name) {
         cache.remove(name);
     }
@@ -303,133 +282,67 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
     /**
      * 回收所有图片
      */
-
     public void releaseAll() {
         cache.clear();
-    }
-
-    public void surfaceChanged(SurfaceHolder holder, 
-            int format, int width, int height) {
-        sizeChanged(width, height);
-    }
-
-    /**
-     * 屏幕尺寸改变（计算自适配属性）
-     * 
-     * @param width
-     * @param height
-     */
-
-    private void sizeChanged(int width, int height) {
-        isScreenAutoAdapt = false;
-        if (isSupportAutoAdapt)
-        {
-            scaleX = width * 1.0f / this.width;
-            scaleY = height * 1.0f / this.height;
-            isScreenAutoAdapt = !(scaleX == 1 && scaleY == 1);
-            if (isScreenAutoAdapt && scaleType != FULLSCREEN)
-            {
-                scaleX = scaleY = scaleType == CROP 
-                        ? Math.max(scaleX, scaleY)
-                        : Math.min(scaleX, scaleY);
-            }
-        }
-        else if (!isFixScreenSize)
-        {
-            this.width = width;
-            this.height = height;
-        }
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        if (buffer == null)
-        {
-            sizeChanged(getWidth(), getHeight());
-            buffer = game = new LayerManager(this);
-            onSplashCreate(splash = new Splash(this));
-            if (splash.getSize() == 0)
-            {
-                // 无闪屏界面
-                splash = null;
-                onCreate();
-            }
-            else
-            {
-                // 显示闪屏界面
-                buffer = splash;
-            }
-        }
-
-        pause(false);
     }
 
     /**
      * 创建闪屏界面
      */
-
     protected void onSplashCreate(Splash splash) {};
 
     /**
      * 销毁闪屏界面
      */
-
     protected void onSplashDestroy() {};
 
     /**
      * 创建游戏界面
      */
-
     protected abstract void onCreate();
 
     /**
      * @see {@link Activity#onResume()}
      */
-
     protected void onResume() {}
 
     /**
      * @see {@link Activity#onPause()}
      */
-
     protected void onPause() {};
 
     /**
      * 销毁游戏界面
      */
-
     protected void onDestroy() {};
 
     /**
      * 逻辑运算处理（子类可重载）
      */
-
     protected void onLogic() {};
 
     /**
      * 游戏退出（需手动调用）
      */
-
     public final void exit() {
         Splash splash = this.splash;
-        this.splash = null;
         if (splash != null)
         {
-            splash.cancel();
+            splash.splash.cancel();
+            this.splash = null;
         }
         
         render.stop();
         onDestroy();
         buffer = game = null;
         releaseAll();
-        instance = null;
         GameResource.releaseResource();
+        instance = null;
     }
 
     /**
      * 闪屏完毕（显示游戏界面）
      */
-
     void splashOver() {
         buffer = game;
         splash = null;
@@ -439,7 +352,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
     /**
      * 是否正显示闪屏界面
      */
-
     public final boolean isLoading() {
         return buffer != game;
     }
@@ -447,33 +359,24 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
     /**
      * 结束闪屏界面
      */
-
     public final void finishLoading() {
         Splash splash = this.splash;
         if (splash != null)
         {
-            splash.finish();
+            splash.splash.finish();
         }
-    }
-
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        pause(true);
     }
 
     /**
      * 注册游戏引擎
-     * 
-     * @param engine
      */
-
     public final void register(GameEngine engine) {
-        render.startManagingGameEngine(engine);
+        render.startManagingEngine(engine);
     }
 
     /**
      * 游戏暂停/恢复
      */
-
     public final void pause(boolean pause) {
         if (pause)
         {
@@ -490,7 +393,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
     /**
      * 返回按键状态
      */
-
     public final int getKeyStates() {
         return keyState;
     }
@@ -517,15 +419,9 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         return detector.onTouchEvent(event);
     }
 
-    @Override
-    public final Resources getResources() {
-        return res != null ? res : super.getResources();
-    }
-
     /**
      * 当前画布拍照
      */
-
     public Bitmap takePicture() {
         if (buffer == null)
         {
@@ -537,41 +433,97 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         render.render(c);
         return bitmap;
     }
+    
+    public GameSettings getSettings() {
+        return settings;
+    }
+    
+    public final class GameSettings {
+        
+        GameSettings() {}
+
+        /**
+         * 支持高级触屏事件捕获
+         */
+        public GameSettings supportAdvancedTouchEvents() {
+            detector = new GestureDetector(getContext(), new EventAction());
+            setLongClickable(true);
+            setOnTouchListener(GameCanvas.this);
+            return this;
+        }
+
+        /**
+         * 支持屏幕自适配
+         * 
+         * @param autoAdapt 是否根据屏幕尺寸自动拉伸画布
+         * @param scaleType 画布缩放类型
+         * @param width,height 自适配尺寸
+         */
+        public GameSettings supportScreenAutoAdapt(boolean autoAdapt, 
+                int scaleType, int width, int height) {
+            isFixScreenSize = true;
+            isSupportAutoAdapt = autoAdapt;
+            GameCanvas.this.scaleType = scaleType;
+            GameCanvas.this.width = width;
+            GameCanvas.this.height = height;
+            return this;
+        }
+
+        /**
+         * 设置帧速率
+         * 
+         * @param fps 每秒绘制帧数（初始为20）
+         */
+        public GameSettings setFPS(double fps) {
+            render.setPeriod(refresh_time = (long) (1000 / fps));
+            return this;
+        }
+
+        /**
+         * 是否显示帧速率（调试用）
+         */
+        public GameSettings showFPS(boolean show) {
+            render.showFPS(show);
+            return this;
+        }
+    }
 
     /**
      * 游戏闪屏
      */
-    
     public final class Splash extends LayerManager {
         
-        private final SplashScreen splash;
-        
-        public Splash(final GameCanvas gc) {
-            super(gc);
-            splash = new SplashScreen(new SplashCallback() {
-                
-                @Override
-                public void onSplashFinished() {
-                    gc.splashOver();
-                }
-                
-                @Override
-                public void onSplashDisplayed() {
-                    // Do nothing.
-                }
-            }, new SplashLoading() {
-                
-                @Override
-                public void loadInBackground() {
-                    onCreate();
-                }
-            });
+        private class Helper implements SplashCallback, SplashLoading {
+
+            @Override
+            public void loadInBackground() {
+                onCreate();
+            }
+
+            @Override
+            public void onSplashDisplayed() {
+                // Do nothing.
+            }
+
+            @Override
+            public void onSplashFinished() {
+                splashOver();
+            }
         }
         
+        private final Helper helper = new Helper();
+        
+        final SplashScreen splash;
+
+        Splash(GameCanvas gc) {
+            super(gc);
+            splash = new SplashScreen(helper, helper);
+        }
+
         @Override
         void render(Canvas canvas) {
-            super.render(canvas);
             splash.start();
+            super.render(canvas);
         }
 
         /**
@@ -579,24 +531,14 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
          * 
          * @param duration 如小于0则一直显示
          */
-
         public void setDuration(long duration) {
             splash.setDuration(duration);
-        }
-
-        void finish() {
-            splash.finish();
-        }
-
-        void cancel() {
-            splash.cancel();
         }
     }
 
     /**
      * 游戏渲染引擎
      */
-
     private class RenderEngine extends GameEngine {
 
         private Canvas canvas;                                      // 绘制画布
@@ -625,16 +567,17 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
 
             // 添加回调函数
             (holder = getHolder()).addCallback(GameCanvas.this);
+            setPeriod(refresh_time);
         }
 
         @Override
         public void start() {
-            if (isPause())
+            if (isPaused())
             {
                 onStart();
             }
 
-            start(0, REFRESH_TIME);
+            super.start();
         }
 
         @Override
@@ -642,15 +585,14 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
             FPS = 0;
             fps_time = System.nanoTime();
             fps_count = 0;
-            FPS_default = Math.round(100.0 * 1000 / REFRESH_TIME) / 100.0;
+            FPS_default = Math.round(100.0 * 1000 / refresh_time) / 100.0;
         }
 
         @Override
         protected void doEngine() {
             try {
                 // 锁住画布
-                canvas = holder.lockCanvas();
-                if (canvas != null)
+                if ((canvas = holder.lockCanvas()) != null)
                 {
                     onLogic();
                     render(canvas);
@@ -668,10 +610,10 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
 
             if (++fps_count == 20)
             {
-                fps_count = 0;
                 long l = System.nanoTime(); // 纳秒计时
-                FPS = Math.round(100000000000.0 * 20 / (l - fps_time)) / 100.0; // 计算帧速率
+                FPS = Math.round(100000000000.0 * fps_count / (l - fps_time)) / 100.0; // 计算帧速率
                 fps_time = l;
+                fps_count = 0;
             }
         }
 
@@ -680,8 +622,7 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
          * 
          * @param canvas 绘制画布
          */
-
-        void render(Canvas canvas) {
+        private void render(Canvas canvas) {
             canvas.drawPaint(clear_paint);
             canvas.drawColor(backgroundColor);
             buffer.render(canvas);
@@ -694,7 +635,7 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
             }
         }
 
-        void showFPS(boolean show) {
+        public void showFPS(boolean show) {
             if (show)
             {
                 fps_paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -711,7 +652,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
     /**
      * 触屏事件
      */
-
     public final class TouchEvent {
 
         private int action;
@@ -725,6 +665,8 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
 
         float flingVelocityX;
         float flingVelocityY;
+        
+        TouchEvent() {}
 
         TouchEvent setAction(int action) {
             this.action = action;
@@ -757,7 +699,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         /**
          * 自适配水平坐标转换
          */
-
         private float changeX(float x) {
             if (isScreenAutoAdapt)
             {
@@ -770,7 +711,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         /**
          * 自适配垂直坐标转换
          */
-
         private float changeY(float y) {
             if (isScreenAutoAdapt)
             {
@@ -822,9 +762,9 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
     }
 
     /**
-     * 高级触屏事件处理
+     * 高级触屏事件处理<br>
+     * Daimon:GestureDetector
      */
-
     private class EventAction implements OnGestureListener, OnDoubleTapListener, EventConstants {
 
         private static final float FLING_MIN_DISTANCE = 50.0f;      // 滑动最小距离
@@ -836,7 +776,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         /**
          * 用户轻触触摸屏，由1个MotionEvent.ACTION_DOWN触发
          */
-
         @Override
         public boolean onDown(MotionEvent e) {
             return false;
@@ -846,7 +785,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
          * 用户按下触摸屏，快速移动后松开，由1个MotionEvent.ACTION_DOWN，
          * 多个ACTION_MOVE，1个ACTION_UP触发
          */
-
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, 
                 float velocityX, float velocityY) {
@@ -855,7 +793,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
 			 * velocityX:X轴上的移动速度，像素/秒
 			 * velocityY:Y轴上的移动速度，像素/秒
              */
-
             boolean isFlingHorizontal = false;
             boolean isFlingVertical = false;
 
@@ -899,7 +836,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         /**
          * 用户长按触摸屏，由多个MotionEvent.ACTION_DOWN触发
          */
-
         @Override
         public void onLongPress(MotionEvent e) {
             buffer.touchAction(touchEvent.setAction(ACTION_LONG_PRESS)
@@ -909,7 +845,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         /**
          * 用户按下触摸屏，并拖动，由1个MotionEvent.ACTION_DOWN，多个ACTION_MOVE触发
          */
-
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2,
                 float distanceX, float distanceY) {
@@ -921,7 +856,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         /**
          * 用户轻触触摸屏，尚未松开或拖动，由1个MotionEvent.ACTION_DOWN触发
          */
-
         @Override
         public void onShowPress(MotionEvent e) {
             // Ignored.
@@ -930,7 +864,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         /**
          * 用户（轻触触摸屏后）松开，由1个MotionEvent.ACTION_UP触发
          */
-
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             return false;
@@ -939,7 +872,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         /**
          * 用户双击触摸屏（双击的第2下MotionEvent.ACTION_DOWN时触发）
          */
-
         @Override
         public boolean onDoubleTap(MotionEvent e) {
             touchEvent.setAction(ACTION_DOUBLE_CLICK).setDownPosition(e);
@@ -949,7 +881,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         /**
          * 用户双击触摸屏（双击的第2下MotionEvent.ACTION_DOWN，ACTION_MOVE，ACTION_UP时都会触发）
          */
-
         @Override
         public boolean onDoubleTapEvent(MotionEvent e) {
             if (e.getAction() == MotionEvent.ACTION_DOWN)
@@ -963,7 +894,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         /**
          * 用户快速单击触摸屏
          */
-
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             buffer.touchAction(touchEvent.setAction(ACTION_CLICK)
@@ -975,7 +905,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
     /**
      * 游戏资源
      */
-
     public static class GameResource {
 
         private final static Map<String, Object> map                // 资源查询表
@@ -984,7 +913,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         /**
          * 获取游戏实例
          */
-
         public static GameCanvas getGame() {
             return instance;
         }
@@ -992,7 +920,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         /**
          * 加载游戏资源
          */
-
         public static void loadResource(GameResourceLoader loader)  {
             loader.load(map);
         }
@@ -1000,7 +927,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         /**
          * 释放游戏资源
          */
-
         public static void releaseResource() {
             map.clear();
         }
@@ -1008,7 +934,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         /**
          * 获取游戏资源
          */
-
         public static Object getResource(String key) {
             return map.get(key);
         }
@@ -1016,7 +941,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         /**
          * 获取游戏文本
          */
-
         public static String getText(String key) {
             Object obj = map.get(key);
             if (obj instanceof String)
@@ -1030,11 +954,9 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         /**
          * 游戏资源加载器
          */
+        public interface GameResourceLoader {
 
-        public static interface GameResourceLoader {
-
-            public void load(Map<String, Object> map);
-
+            void load(Map<String, Object> map);
         }
     }
 }
@@ -1042,14 +964,16 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
 /**
  * 触屏事件常量
  */
-
 interface EventConstants {
 
-    /***** 高级事件 *****/
-    public static final int ACTION_SCROLL           = 3;            // 滚动事件
-    public static final int ACTION_CLICK            = 4;            // 单击事件
-    public static final int ACTION_DOUBLE_CLICK     = 5;            // 双击事件
-    public static final int ACTION_LONG_PRESS       = 6;            // 长按事件
-    public static final int ACTION_FLING            = 7;            // 滑动事件
+    int ACTION_DOWN             = MotionEvent.ACTION_DOWN;
+    int ACTION_UP               = MotionEvent.ACTION_UP;
+    int ACTION_MOVE             = MotionEvent.ACTION_MOVE;
 
+    /***** 高级事件 *****/
+    int ACTION_SCROLL           = -1;            // 滚动事件
+    int ACTION_CLICK            = -2;            // 单击事件
+    int ACTION_DOUBLE_CLICK     = -3;            // 双击事件
+    int ACTION_LONG_PRESS       = -4;            // 长按事件
+    int ACTION_FLING            = -5;            // 滑动事件
 }

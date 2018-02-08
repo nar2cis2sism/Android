@@ -1,15 +1,14 @@
 package engine.android.game.animation;
 
-import engine.android.game.GameAnimation;
+import engine.android.game.AnimationManager.GameAnimation;
 
 /**
  * 位移控制动画
  * 
  * @author Daimon
- * @version 3.0
+ * @version N
  * @since 6/7/2012
  */
-
 public class GameTranslateAnimation extends GameAnimation {
 
     private final int fromX, fromY;                     // 起始位置
@@ -28,7 +27,7 @@ public class GameTranslateAnimation extends GameAnimation {
     }
 
     @Override
-    protected long getPeriod() {
+    protected long getPeriod(long duration, long interval) {
         long baseTime = getBaseAnimationTime();
         int x = toX - fromX;
         int y = toY - fromY;
@@ -155,6 +154,11 @@ public class GameTranslateAnimation extends GameAnimation {
     }
 
     @Override
+    protected void onAnimationBefore() {
+        x = y = Integer.MIN_VALUE;
+    }
+
+    @Override
     protected void onAnimationAfter() {
         if (fillEnabled)
         {
@@ -171,15 +175,9 @@ public class GameTranslateAnimation extends GameAnimation {
         }
     }
 
-    @Override
-    protected void onAnimationBefore() {
-        x = y = Integer.MIN_VALUE;
-    }
-
     /**
      * 获取当前水平坐标
      */
-
     public int getX() {
         return x;
     }
@@ -187,7 +185,6 @@ public class GameTranslateAnimation extends GameAnimation {
     /**
      * 获取水平移动距离
      */
-
     public int getDistanceX() {
         return distanceX;
     }
@@ -195,7 +192,6 @@ public class GameTranslateAnimation extends GameAnimation {
     /**
      * 获取当前垂直坐标
      */
-
     public int getY() {
         return y;
     }
@@ -203,7 +199,6 @@ public class GameTranslateAnimation extends GameAnimation {
     /**
      * 获取垂直移动距离
      */
-
     public int getDistanceY() {
         return distanceY;
     }

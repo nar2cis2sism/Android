@@ -1,17 +1,20 @@
-package engine.android.game;
+package engine.android.game.layer;
+
+import static engine.android.util.RectUtil.setRect;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
+import engine.android.game.LayerManager.Layer;
+
 /**
  * 游戏地图（砖块拼接类）
  * 
  * @author Daimon
- * @version 3.0
+ * @version N
  * @since 9/11/2012
  */
-
 public class TiledLayer extends Layer {
 
     private Bitmap sourceImage;                                 // 源图片
@@ -35,7 +38,6 @@ public class TiledLayer extends Layer {
      * @param image 源图片
      * @param tileWidth,tileHeight 砖块大小
      */
-
     public TiledLayer(int rows, int cols, Bitmap image, int tileWidth, int tileHeight) {
         super(cols < 1 || tileWidth < 1 ? -1 : cols * tileWidth,
               rows < 1 || tileHeight < 1 ? -1 : rows * tileHeight);
@@ -59,7 +61,6 @@ public class TiledLayer extends Layer {
      * @param staticTileIndex 静态砖块索引
      * @return 动画砖块映射
      */
-
     public int createAnimatedTile(int staticTileIndex) {
         if (staticTileIndex < 0 || staticTileIndex >= numberOfTiles)
         {
@@ -89,7 +90,6 @@ public class TiledLayer extends Layer {
      * @param animatedTileIndex 动画砖块映射
      * @param staticTileIndex 静态砖块索引
      */
-
     public void setAnimatedTile(int animatedTileIndex, int staticTileIndex) {
         if (staticTileIndex < 0 || staticTileIndex >= numberOfTiles)
         {
@@ -112,7 +112,6 @@ public class TiledLayer extends Layer {
      * 
      * @param animatedTileIndex 动画砖块映射
      */
-
     public int getAnimatedTile(int animatedTileIndex) {
         animatedTileIndex = -animatedTileIndex;
         if (anim_to_static == null
@@ -131,7 +130,6 @@ public class TiledLayer extends Layer {
      * @param col,row 行列定位
      * @param tileIndex 砖块索引（0为空白）
      */
-
     public void setCell(int col, int row, int tileIndex) {
         if (col < 0 || col >= cols || row < 0 || row >= rows)
         {
@@ -164,7 +162,6 @@ public class TiledLayer extends Layer {
      * @param col,row 行列定位
      * @return 砖块索引（0为空白）
      */
-
     public int getCell(int col, int row) {
         if (col < 0 || col >= cols || row < 0 || row >= rows)
         {
@@ -181,7 +178,6 @@ public class TiledLayer extends Layer {
      * @param numCols,numRows 填充行列数
      * @param tileIndex 砖块索引（0为空白）
      */
-
     public void fillCells(int col, int row, int numCols, int numRows, int tileIndex) {
         if (col < 0 || col >= cols || row < 0 || row >= rows
         ||  numCols < 0 || col + numCols > cols
@@ -237,7 +233,6 @@ public class TiledLayer extends Layer {
      * 
      * @return 超出地图范围则返回-1
      */
-
     public final int getRow(int y) {
         y -= this.y;
         if (y < 0 || y >= height)
@@ -253,7 +248,6 @@ public class TiledLayer extends Layer {
      * 
      * @return 超出地图范围则返回-1
      */
-
     public final int getCol(int x) {
         x -= this.x;
         if (x < 0 || x >= width)
@@ -267,7 +261,6 @@ public class TiledLayer extends Layer {
     /**
      * 返回所在列的X坐标
      */
-
     public final int getCellX(int col) {
         if (col < 0 || col >= cols)
         {
@@ -280,7 +273,6 @@ public class TiledLayer extends Layer {
     /**
      * 返回所在行的Y坐标
      */
-
     public final int getCellY(int row) {
         if (row < 0 || row >= rows)
         {
@@ -296,7 +288,6 @@ public class TiledLayer extends Layer {
      * @param image 源图片
      * @param tileWidth,tileHeight 砖块大小
      */
-
     public void setStaticTileSet(Bitmap image, int tileWidth, int tileHeight) {
         if (tileWidth < 1 || tileHeight < 1
         || (image.getWidth() % tileWidth != 0)
@@ -308,14 +299,7 @@ public class TiledLayer extends Layer {
         sizeChanged(cols * tileWidth, rows * tileHeight);
         // 计算砖块数量
         int num = (image.getWidth() / tileWidth) * (image.getHeight() / tileHeight);
-        if (num >= numberOfTiles - 1)
-        {
-            createStaticSet(image, num + 1, tileWidth, tileHeight, true);
-        }
-        else
-        {
-            createStaticSet(image, num + 1, tileWidth, tileHeight, false);
-        }
+        createStaticSet(image, num + 1, tileWidth, tileHeight, num >= numberOfTiles - 1);
     }
 
     /**
@@ -326,7 +310,6 @@ public class TiledLayer extends Layer {
      * @param tileWidth,tileHeight 砖块大小
      * @param maintainIndices 是否维持砖块矩阵（无需重置为空白）
      */
-
     private void createStaticSet(Bitmap image, int num, int tileWidth, int tileHeight,
             boolean maintainIndices) {
         // 获取图片大小
@@ -410,7 +393,6 @@ public class TiledLayer extends Layer {
      * @param x,y 相对于砖块的坐标
      * @param tileIndex 砖块索引
      */
-
     boolean doPixelCollision(int x, int y, int tileIndex) {
         x += tileSetX[tileIndex];
         y += tileSetY[tileIndex];

@@ -6,10 +6,9 @@ import android.util.FloatMath;
  * 游戏路径
  * 
  * @author Daimon
- * @version 3.0
+ * @version N
  * @since 7/10/2012
  */
-
 public class GamePath {
 
     private float[] coordsX, coordsY;               // 存储路径节点坐标
@@ -22,7 +21,6 @@ public class GamePath {
     /**
      * @param num 路径节点数
      */
-
     public GamePath(int num) {
         coordsX = new float[num];
         coordsY = new float[num];
@@ -63,7 +61,6 @@ public class GamePath {
     /**
      * 添加路径节点
      */
-
     public GamePath to(float x, float y) {
         int len = coordsX.length;
         if (index >= len)
@@ -102,7 +99,6 @@ public class GamePath {
     /**
      * 返回路径节点的实际数量
      */
-
     public int getSize() {
         return index;
     }
@@ -110,7 +106,6 @@ public class GamePath {
     /**
      * 返回路径的长度
      */
-
     public float getLength() {
         if (lengthChanged)
         {
@@ -137,7 +132,6 @@ public class GamePath {
      * 
      * @param segmentIndex1,segmentIndex2 节点索引
      */
-
     public final float getSegmentLength(int segmentIndex1, int segmentIndex2) {
         if (segmentIndex1 < 0 || segmentIndex1 >= coordsX.length
         ||  segmentIndex2 < 0 || segmentIndex2 >= coordsX.length)
@@ -168,7 +162,6 @@ public class GamePath {
     /**
      * 返回与下一个节点间的段落长度
      */
-
     private float withNextSegmentLength(int segmentIndex) {
         float dx = coordsX[segmentIndex + 1] - coordsX[segmentIndex];
         float dy = coordsY[segmentIndex + 1] - coordsY[segmentIndex];

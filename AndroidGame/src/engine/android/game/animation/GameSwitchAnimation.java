@@ -2,16 +2,15 @@ package engine.android.game.animation;
 
 import android.graphics.Bitmap;
 
-import engine.android.game.GameAnimation;
+import engine.android.game.AnimationManager.GameAnimation;
 
 /**
  * 图片切换动画
  * 
  * @author Daimon
- * @version 3.0
+ * @version N
  * @since 6/7/2012
  */
-
 public class GameSwitchAnimation extends GameAnimation {
 
     private final Bitmap[] images;                      // 图片帧数组
@@ -35,10 +34,7 @@ public class GameSwitchAnimation extends GameAnimation {
 
     /**
      * 设置帧序列（需在动画启动前调用）
-     * 
-     * @param sequence
      */
-
     public void setFrameSequence(int[] sequence) {
         if (isRunning())
         {
@@ -74,6 +70,18 @@ public class GameSwitchAnimation extends GameAnimation {
         sequenceIndex = 0;
         frameSequence = new int[sequence.length];
         System.arraycopy(sequence, 0, frameSequence, 0, sequence.length);
+    }
+
+    @Override
+    protected long getPeriod(long duration, long interval) {
+        if (interval == 0)
+        {
+            return duration / frameSequence.length;
+        }
+        else
+        {
+            return interval;
+        }
     }
 
     @Override
@@ -121,6 +129,11 @@ public class GameSwitchAnimation extends GameAnimation {
     }
 
     @Override
+    protected void onAnimationBefore() {
+        sequenceIndex = -1;
+    }
+
+    @Override
     protected void onAnimationAfter() {
         if (fillEnabled)
         {
@@ -135,27 +148,9 @@ public class GameSwitchAnimation extends GameAnimation {
         }
     }
 
-    @Override
-    protected void onAnimationBefore() {
-        sequenceIndex = -1;
-    }
-
-    @Override
-    protected long getPeriod() {
-        if (interval == 0)
-        {
-            return duration / frameSequence.length;
-        }
-        else
-        {
-            return interval;
-        }
-    }
-
     /**
      * 获取当前帧的顺序索引
      */
-
     public int getFrame() {
         return sequenceIndex;
     }
@@ -163,7 +158,6 @@ public class GameSwitchAnimation extends GameAnimation {
     /**
      * 获取当前帧图片
      */
-
     public Bitmap getImage() {
         return images[frameSequence[sequenceIndex]];
     }
@@ -171,7 +165,6 @@ public class GameSwitchAnimation extends GameAnimation {
     /**
      * 获取帧数量
      */
-
     public int getRawFrameCount() {
         return numberFrames;
     }
@@ -179,7 +172,6 @@ public class GameSwitchAnimation extends GameAnimation {
     /**
      * 获取帧显示序列的长度
      */
-
     public int getFrameSequenceLength() {
         return frameSequence.length;
     }

@@ -1,8 +1,9 @@
-package engine.android.game;
+package engine.android.game.layer;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
+import engine.android.game.Box;
 import engine.android.game.GameCanvas.TouchEvent;
 
 import java.util.List;
@@ -12,10 +13,9 @@ import java.util.ListIterator;
  * 游戏区域
  * 
  * @author Daimon
- * @version 3.0
+ * @version N
  * @since 5/11/2012
  */
-
 public class Area extends Sprite {
 
     private final List<Sprite> sprites = new Box<Sprite>();     // 精灵容器
@@ -53,7 +53,6 @@ public class Area extends Sprite {
     /**
      * 添加精灵
      */
-
     public void addSprite(Sprite sprite) {
         removeSprite(sprite);
         sprites.add(sprite);
@@ -64,7 +63,6 @@ public class Area extends Sprite {
      * 
      * @param index 精灵添加位置
      */
-
     public void addSprite(int index, Sprite sprite) {
         removeSprite(sprite);
         sprites.add(index, sprite);
@@ -75,7 +73,6 @@ public class Area extends Sprite {
      * 
      * @return 如无此精灵则返回-1
      */
-
     public int findSpriteIndex(Sprite sprite) {
         return sprites.indexOf(sprite);
     }
@@ -86,7 +83,6 @@ public class Area extends Sprite {
      * @param name 精灵名称
      * @return 查找到的精灵，如没找到则返回Null
      */
-
     public Sprite getSpriteByName(String name) {
         if (name != null)
         {
@@ -108,7 +104,6 @@ public class Area extends Sprite {
      * @param tag 精灵属性
      * @return 查找到的精灵，如没找到则返回Null
      */
-
     public Sprite getSpriteByTag(Object tag) {
         if (tag != null)
         {
@@ -130,7 +125,6 @@ public class Area extends Sprite {
      * @param index 精灵索引
      * @return 查找到的精灵，如没找到则返回Null
      */
-
     public Sprite getSpriteByIndex(int index) {
         if (index < 0 || index >= sprites.size())
         {
@@ -146,7 +140,6 @@ public class Area extends Sprite {
      * @param name 精灵名称
      * @return 被移除的精灵
      */
-
     public Sprite removeSprite(String name) {
         Sprite sprite = getSpriteByName(name);
         if (sprite != null)
@@ -162,7 +155,6 @@ public class Area extends Sprite {
      * 
      * @param sprite 需移除的精灵
      */
-
     public void removeSprite(Sprite sprite) {
         if (sprite == null)
         {
@@ -175,7 +167,6 @@ public class Area extends Sprite {
     /**
      * 获取精灵的数量
      */
-
     public int getSpriteNum() {
         return sprites.size();
     }
@@ -183,7 +174,6 @@ public class Area extends Sprite {
     /**
      * 清空区域内的所有精灵
      */
-
     public void clear() {
         sprites.clear();
     }

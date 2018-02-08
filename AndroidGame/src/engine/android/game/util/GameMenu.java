@@ -1,20 +1,21 @@
 package engine.android.game.util;
 
+import static engine.android.util.RectUtil.setRect;
+
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
-import engine.android.game.Area;
 import engine.android.game.GameCanvas.TouchEvent;
-import engine.android.game.Sprite;
+import engine.android.game.layer.Area;
+import engine.android.game.layer.Sprite;
 
 /**
  * 游戏菜单
  * 
  * @author Daimon
- * @version 3.0
+ * @version N
  * @since 9/4/2012
  */
-
 public abstract class GameMenu extends Area {
 
     private Paint backgroundPaint;                      // 背景绘制
@@ -42,7 +43,6 @@ public abstract class GameMenu extends Area {
      * 
      * @param enable 是否允许拖曳菜单
      */
-
     public void enableDrag(boolean enable) {
         enableDrag = enable;
     }
@@ -60,8 +60,12 @@ public abstract class GameMenu extends Area {
     public void onDraw(Canvas canvas) {
         if (backgroundPaint != null)
         {
-            canvas.drawRect(setRect(null, getX(), getY(), getWidth(), getHeight()), 
-                    backgroundPaint);
+            canvas.drawRect(setRect(null, x, y, width, height), backgroundPaint);
+        }
+        
+        if (image != null)
+        {
+            canvas.drawBitmap(image, x, y, paint);
         }
 
         for (int i = 0, size = getSpriteNum(); i < size; i++)
@@ -75,7 +79,6 @@ public abstract class GameMenu extends Area {
      * 
      * @param selected 是否选中
      */
-
     protected abstract void drawMenuItem(Canvas canvas, Sprite menuItem, boolean selected);
 
     @Override
@@ -184,7 +187,6 @@ public abstract class GameMenu extends Area {
     /**
      * 选取菜单项
      */
-
     public void selectMenuItem(int index) {
         if (index < 0 || index >= getSpriteNum())
         {
@@ -216,18 +218,16 @@ public abstract class GameMenu extends Area {
     /**
      * 菜单项选择监听器
      */
+    public interface OnMenuItemSelectListener {
 
-    public static interface OnMenuItemSelectListener {
-
-        public void onMenuItemSelecte(Sprite menuItem);
+        void onMenuItemSelecte(Sprite menuItem);
     }
 
     /**
      * 菜单项点击监听器
      */
+    public interface OnMenuItemClickListener {
 
-    public static interface OnMenuItemClickListener {
-
-        public void onMenuItemClick(Sprite menuItem);
+        void onMenuItemClick(Sprite menuItem);
     }
 }

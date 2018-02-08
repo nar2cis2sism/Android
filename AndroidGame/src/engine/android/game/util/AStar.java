@@ -2,7 +2,7 @@ package engine.android.game.util;
 
 import android.graphics.Point;
 
-import engine.android.game.TiledLayer;
+import engine.android.game.layer.TiledLayer;
 
 import java.util.LinkedList;
 
@@ -10,10 +10,9 @@ import java.util.LinkedList;
  * A*寻路算法
  * 
  * @author Daimon
- * @version 3.0
+ * @version N
  * @since 9/12/2012
  */
-
 public class AStar {
 
     private static class AStarNode {
@@ -25,8 +24,8 @@ public class AStar {
         int F;                              // 上面两者之和
 
         AStarNode parent;                   // 此节点的父节点
-        AStarNode prev;                     // 在open或者next链表中的上一个节点
-        AStarNode next;                     // 在open或者next链表中的下一个节点
+        AStarNode prev;                     // 在open或者close链表中的上一个节点
+        AStarNode next;                     // 在open或者close链表中的下一个节点
 
         int modified;                       // 记录该节点是否被修改过，1:空|2:open|4:close
     }
@@ -61,7 +60,7 @@ public class AStar {
 
     private int endX, endY;                 // 终点坐标
 
-    protected final TiledLayer map;         // 游戏地图
+    private final TiledLayer map;           // 游戏地图
 
     public AStar(TiledLayer map) {
         this.map = map;
@@ -100,7 +99,6 @@ public class AStar {
      * 
      * @param directionMask 0-7位为从上开始顺时针八个方向
      */
-
     public void setDirectionMask(int directionMask) {
         this.directionMask = directionMask;
     }
@@ -108,7 +106,6 @@ public class AStar {
     /**
      * 待处理节点入open队列，根据F值插入排序（升序）
      */
-
     private void addToOpenQueue(AStarNode node) {
         node.modified |= 2; // 记录open标志
         int F = node.F;
@@ -149,7 +146,6 @@ public class AStar {
     /**
      * 选择F值最小的节点出open队列
      */
-
     private boolean getFromOpenQueue() {
         if (open == null)
         {
@@ -188,7 +184,6 @@ public class AStar {
     /**
      * 释放close队列栈顶节点
      */
-
     private boolean getFromCloseQueue() {
         if (close != null)
         {
@@ -209,7 +204,6 @@ public class AStar {
     /**
      * 还原修改过的所有节点
      */
-
     private void clearModifiedNodes() {
         for (int i = 0; i < modified_; i++)
         {
@@ -227,9 +221,8 @@ public class AStar {
      * 
      * @return 是否可行
      */
-
     private boolean tryMove(int x, int y, AStarNode parent) {
-        if (!isMoveAble(x, y))
+        if (!isMoveAble(map, x, y))
         {
             // 如果地图无法通过则退出
             return false;
@@ -295,8 +288,7 @@ public class AStar {
      * 检查地图是否可以移动到此位置<br>
      * 可自行修改算法
      */
-
-    protected boolean isMoveAble(int x, int y) {
+    protected boolean isMoveAble(TiledLayer map, int x, int y) {
         if (x < 0 || y < 0 || x >= width || y >= height)
         {
             return false;
@@ -309,7 +301,6 @@ public class AStar {
      * 计算某一点向各方向移动的代价<br>
      * 可自行修改算法
      */
-
     protected int getG(int x1, int y1, int x2, int y2) {
         return 1;
     }
@@ -318,7 +309,6 @@ public class AStar {
      * 计算两点之间移动的估算成本<br>
      * 可自行修改算法
      */
-
     protected int getH(int x1, int y1, int x2, int y2) {
         int dx = Math.abs(x1 - x2);
         int dy = Math.abs(y1 - y2);
@@ -332,7 +322,6 @@ public class AStar {
      * @param endX,endY 终点坐标
      * @return 是否成功寻到路径
      */
-
     public final boolean findPath(int startX, int startY, int endX, int endY) {
         AStarNode root;
         int minH;
@@ -414,7 +403,6 @@ public class AStar {
     /**
      * 返回从起点移动到终点所需的步数
      */
-
     public int getStep() {
         return nodes[minPos.y][minPos.x].G;
     }
@@ -422,7 +410,6 @@ public class AStar {
     /**
      * 返回从起点移动到终点经过的路径，包含起点和终点（也可能是最接近终点的点）
      */
-
     public Point[] getPath() {
         LinkedList<Point> list = new LinkedList<Point>();
         AStarNode p;
@@ -440,7 +427,6 @@ public class AStar {
      * 
      * @return 0-7为从上开始顺时针八个方向，8代表无方向
      */
-
     public static int[] getDirection(Point... pos) {
         if (pos == null || pos.length == 0)
         {

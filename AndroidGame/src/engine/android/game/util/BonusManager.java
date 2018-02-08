@@ -8,40 +8,30 @@ import java.util.List;
  * Bonus管理器
  * 
  * @author Daimon
- * @version 3.0
+ * @version N
  * @since 6/6/2012
  */
-
 public final class BonusManager {
 
     private final List<Bonus> bonus = new Box<Bonus>();     // 奖励物品清单
 
     /**
      * 添加Bonus
-     * 
-     * @param b
      */
-
     public void add(Bonus b) {
         bonus.add(b.setStatus(Bonus.LIVE));
     }
 
     /**
      * 触发Bonus
-     * 
-     * @param b
      */
-
     public void trigger(Bonus b) {
         b.setStatus(Bonus.EFFECTIVE);
     }
 
     /**
      * 移除Bonus
-     * 
-     * @param b
      */
-
     public void remove(Bonus b) {
         bonus.remove(b.setStatus(Bonus.DEAD));
     }
@@ -49,7 +39,6 @@ public final class BonusManager {
     /**
      * 奖励物品
      */
-
     public abstract class Bonus {
 
         public static final int LIVE        = 0;        // 活动态（可以被触发）
@@ -61,7 +50,6 @@ public final class BonusManager {
         /**
          * 设置状态
          */
-
         Bonus setStatus(int status) {
             if (status == EFFECTIVE && this.status == LIVE)
             {
@@ -83,14 +71,11 @@ public final class BonusManager {
         /**
          * 奖励生效
          */
-
         protected abstract void valid();
 
         /**
          * 奖励失效
          */
-
         protected abstract void invalid();
-
     }
 }

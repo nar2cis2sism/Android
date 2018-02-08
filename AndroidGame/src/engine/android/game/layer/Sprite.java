@@ -1,23 +1,27 @@
-package engine.android.game;
+package engine.android.game.layer;
+
+import static engine.android.util.RectUtil.copyRect;
+import static engine.android.util.RectUtil.setRect;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.View;
 
+import engine.android.game.LayerManager.Layer;
+
 /**
  * 游戏精灵
  * 
  * @author Daimon
- * @version 3.0
+ * @version N
  * @since 5/11/2012
  */
-
 public class Sprite extends Layer {
 
     private String name;                            // 名称标识，可以没有
 
-    Bitmap image;                                   // 精灵图片
+    protected Bitmap image;                         // 精灵图片
 
     private Rect collisionRect;                     // 碰撞判定区域（相对坐标）
     private Rect collisionRect_abs;                 // 碰撞判定区域（绝对坐标）
@@ -49,7 +53,6 @@ public class Sprite extends Layer {
     /**
      * 更换图片
      */
-
     public void setImage(Bitmap image) {
         sizeChanged(image.getWidth(), image.getHeight());
         this.image = image;
@@ -72,17 +75,13 @@ public class Sprite extends Layer {
     /**
      * 初始化碰撞区域
      */
-
     private void initCollisionRectBounds() {
         collisionRect = setRect(collisionRect, 0, 0, width, height);
     }
 
     /**
      * 定义碰撞区域（相对坐标）
-     * 
-     * @param x,y,width,height
      */
-
     public void defineCollisionRectangle(int x, int y, int width, int height) {
         if (width < 0 || height < 0)
         {
@@ -94,10 +93,7 @@ public class Sprite extends Layer {
 
     /**
      * 返回碰撞区域（绝对坐标）
-     * 
-     * @return
      */
-
     private Rect getCollisionRect() {
         collisionRect_abs = copyRect(collisionRect_abs, collisionRect);
         collisionRect_abs.offset(x, y);
@@ -108,9 +104,8 @@ public class Sprite extends Layer {
      * 碰撞检测
      * 
      * @param x,y 碰撞位置
-     * @param pixelLevel true为像素检测,false为矩形检测
+     * @param pixelLevel True为像素检测,False为矩形检测
      */
-
     public final boolean collidesWith(int x, int y, boolean pixelLevel) {
         if (visibility == View.GONE)
         {
@@ -130,9 +125,8 @@ public class Sprite extends Layer {
      * 碰撞检测
      * 
      * @param s 碰撞精灵
-     * @param pixelLevel true为像素检测,false为矩形检测
+     * @param pixelLevel True为像素检测,False为矩形检测
      */
-
     public final boolean collidesWith(Sprite s, boolean pixelLevel) {
         if (visibility == View.GONE || s.visibility == View.GONE)
         {
@@ -169,17 +163,17 @@ public class Sprite extends Layer {
      * 碰撞检测
      * 
      * @param t 碰撞地图
-     * @param pixelLevel true为像素检测,false为矩形检测
+     * @param pixelLevel True为像素检测,False为矩形检测
      */
-
     public final boolean collidesWith(TiledLayer t, boolean pixelLevel) {
-        if (visibility == View.GONE || t.visibility == View.GONE)
+        if (visibility == View.GONE || t.getVisibility() == View.GONE)
         {
             return false;
         }
 
+        int tx = t.getX(), ty = t.getY();
         Rect sr = getCollisionRect();
-        Rect tr = setRect(null, t.x, t.y, t.width, t.height);
+        Rect tr = setRect(null, tx, ty, t.getWidth(), t.getHeight());
 
         // 判断是否有交集
         if (!Rect.intersects(sr, tr))
@@ -209,15 +203,15 @@ public class Sprite extends Layer {
                     if (pixelLevel)
                     {
                         Rect rect = new Rect();
-                        Rect cr = setRect(null, t.x + startCol * tW, t.y + startRow * tH, tW, tH);
+                        Rect cr = setRect(null, tx + startCol * tW, ty + startRow * tH, tW, tH);
                         // 判断是否有交集（必须有）
                         boolean collides = rect.setIntersect(sr, cr);
                         if (collides)
                         {
                             int x1 = rect.left - x;
                             int y1 = rect.top - y;
-                            int x2 = rect.left - t.x;
-                            int y2 = rect.top - t.y;
+                            int x2 = rect.left - tx;
+                            int y2 = rect.top - ty;
                             for (int i = 0, w = rect.width(); i <= w; i++)
                             {
                                 for (int j = 0, h = rect.height(); j <= h; j++)
@@ -249,7 +243,6 @@ public class Sprite extends Layer {
      * 
      * @param x,y 相对坐标
      */
-
     protected boolean doPixelCollision(int x, int y) {
         return image != null
             && x >= 0

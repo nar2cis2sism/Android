@@ -1,15 +1,14 @@
 package engine.android.game.animation;
 
-import engine.android.game.GameAnimation;
+import engine.android.game.AnimationManager.GameAnimation;
 
 /**
  * 透明控制动画
  * 
  * @author Daimon
- * @version 3.0
+ * @version N
  * @since 6/7/2012
  */
-
 public class GameAlphaAnimation extends GameAnimation {
 
     private final float fromAlpha;                      // 起始alpha
@@ -25,10 +24,15 @@ public class GameAlphaAnimation extends GameAnimation {
     }
 
     @Override
-    protected long getPeriod() {
+    protected long getPeriod(long duration, long interval) {
         long baseTime = getBaseAnimationTime();
         float alpha = toAlpha - fromAlpha;
-        if (interval == 0)
+        if (interval != 0)
+        {
+            changeAlpha = alpha > 0 ? 0.1f : -0.1f;
+            return interval;
+        }
+        else
         {
             long time = (long) (duration / Math.abs(alpha));
 
@@ -42,11 +46,6 @@ public class GameAlphaAnimation extends GameAnimation {
             }
 
             return time;
-        }
-        else
-        {
-            changeAlpha = alpha > 0 ? 0.1f : -0.1f;
-            return interval;
         }
     }
 
@@ -91,6 +90,11 @@ public class GameAlphaAnimation extends GameAnimation {
     }
 
     @Override
+    protected void onAnimationBefore() {
+        alpha = Float.MIN_VALUE;
+    }
+
+    @Override
     protected void onAnimationAfter() {
         if (fillEnabled)
         {
@@ -105,15 +109,9 @@ public class GameAlphaAnimation extends GameAnimation {
         }
     }
 
-    @Override
-    protected void onAnimationBefore() {
-        alpha = Float.MIN_VALUE;
-    }
-
     /**
      * 获取变换alpha值
      */
-
     public float getChangeAlpha() {
         return changeAlpha;
     }
@@ -121,7 +119,6 @@ public class GameAlphaAnimation extends GameAnimation {
     /**
      * 获取当前alpha值
      */
-
     public float getAlpha() {
         return alpha;
     }

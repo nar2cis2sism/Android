@@ -1,4 +1,4 @@
-package engine.android.game;
+package engine.android.game.layer;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -10,20 +10,17 @@ import engine.android.game.GameCanvas.TouchEvent;
  * 游戏按钮
  * 
  * @author Daimon
- * @version 3.0
+ * @version N
  * @since 5/12/2012
  */
-
 public class GameButton extends Area {
 
     /***** 按钮样式 *****/
-
     public static final int ALPHA       = 0;                // 透明样式
     public static final int NONE        = 1;                // 普通样式
     public static final int IMAGE       = 2;                // 图片样式
 
     /***** 按钮状态 *****/
-
     private static final int NORMAL     = 0;                // 正常状态
     private static final int PRESSED    = 1;                // 按下状态
     private static final int DISABLED   = 2;                // 无效状态
@@ -49,18 +46,7 @@ public class GameButton extends Area {
 
     @Override
     public void onDraw(Canvas canvas) {
-        if (state == NORMAL)
-        {
-            if (style == ALPHA)
-            {
-                setAlpha(0xff);
-            }
-            else if (style == IMAGE && normalImage != null)
-            {
-                setImage(normalImage);
-            }
-        }
-        else if (state == PRESSED)
+        if (state == PRESSED)
         {
             if (style == ALPHA)
             {
@@ -82,6 +68,17 @@ public class GameButton extends Area {
                 setImage(disabledImage);
             }
         }
+        else
+        {
+            if (style == ALPHA)
+            {
+                setAlpha(0xff);
+            }
+            else if (style == IMAGE && normalImage != null)
+            {
+                setImage(normalImage);
+            }
+        }
 
         super.onDraw(canvas);
     }
@@ -89,7 +86,6 @@ public class GameButton extends Area {
     /**
      * 设置画笔透明度
      */
-
     private void setAlpha(int alpha) {
         Paint paint = getPaint();
         paint.setAlpha(alpha);
@@ -149,7 +145,6 @@ public class GameButton extends Area {
     /**
      * 模拟按钮单击（可供用户调用）
      */
-
     public void click() {
         if (listener != null)
         {
@@ -158,30 +153,15 @@ public class GameButton extends Area {
     }
 
     /**
-     * 添加动作事件监听器
+     * 设置动作事件监听器
      */
-
-    public void addActionListener(ActionListener listener) {
-        if (listener == null)
-        {
-            throw new NullPointerException();
-        }
-
+    public void setActionListener(ActionListener listener) {
         this.listener = listener;
-    }
-
-    /**
-     * 移除动作事件监听器
-     */
-
-    public void removeActionListener() {
-        listener = null;
     }
 
     /**
      * 判断按钮是否有效
      */
-
     public boolean isEnabled() {
         return state != DISABLED;
     }
@@ -191,7 +171,6 @@ public class GameButton extends Area {
      * 
      * @param isEnabled 是否有效
      */
-
     public void setEnabled(boolean isEnabled) {
         if (isEnabled)
         {
@@ -238,16 +217,13 @@ public class GameButton extends Area {
     /**
      * 按钮动作事件监听器
      */
-
-    public static interface ActionListener {
+    public interface ActionListener {
 
         /**
          * 动作事件处理
          * 
          * @param source 事件发生源
          */
-
-        public void actionPerformed(GameButton source);
-
+        void actionPerformed(GameButton source);
     }
 }

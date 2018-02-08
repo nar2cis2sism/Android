@@ -1,15 +1,14 @@
 package engine.android.game.animation;
 
-import engine.android.game.GameAnimation;
+import engine.android.game.AnimationManager.GameAnimation;
 
 /**
  * 缩放控制动画
  * 
  * @author Daimon
- * @version 3.0
+ * @version N
  * @since 6/7/2012
  */
-
 public class GameScaleAnimation extends GameAnimation {
 
     private final float fromX, fromY;                   // 缩放起始值
@@ -28,7 +27,7 @@ public class GameScaleAnimation extends GameAnimation {
     }
 
     @Override
-    protected long getPeriod() {
+    protected long getPeriod(long duration, long interval) {
         long baseTime = getBaseAnimationTime();
         float x = toX - fromX;
         float y = toY - fromY;
@@ -147,6 +146,11 @@ public class GameScaleAnimation extends GameAnimation {
     }
 
     @Override
+    protected void onAnimationBefore() {
+        x = y = Float.MIN_VALUE;
+    }
+
+    @Override
     protected void onAnimationAfter() {
         if (fillEnabled)
         {
@@ -161,11 +165,6 @@ public class GameScaleAnimation extends GameAnimation {
                 y = fromY;
             }
         }
-    }
-
-    @Override
-    protected void onAnimationBefore() {
-        x = y = Float.MIN_VALUE;
     }
 
     public float getX() {

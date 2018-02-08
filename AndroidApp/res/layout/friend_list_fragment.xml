@@ -1,0 +1,29 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:widget="http://schemas.android.com/apk/res-auto" >
+            
+    <ListView android:id="@android:id/list"
+        android:layout_width="match_parent" 
+        android:layout_height="match_parent"
+        android:drawSelectorOnTop="false" />
+   
+    <engine.android.widget.common.LetterBar 
+        android:id="@+id/letter_bar"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        
+        widget:textSize="10px" />
+		            
+    <ImageView 
+        android:id="@+id/search_empty"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/friend_search_empty" />
+
+</merge>

@@ -84,7 +84,7 @@ public class SocketManager implements SocketConnectionListener, Callback {
     public void setup(String host, int port) {
         if (TextUtils.isEmpty(token)) throw new RuntimeException("需要设置Token值");
         if (socket != null) socket.close();
-        socket = new SocketConnector(host, port, config.getSocketTimeout(), true) {
+        socket = new SocketConnector(host, port, config.getSocketTimeout(), !config.isOffline()) {
             
             @Override
             protected void handshake(InputStream in, OutputStream out) throws IOException {
@@ -149,15 +149,21 @@ public class SocketManager implements SocketConnectionListener, Callback {
     @Override
     public void onConnected(Socket socket) {
         isSocketConnected = true;
-        log("Socket连接已建立:" + socket.getInetAddress());
-
-        try {
-            socket.setSendBufferSize(64 * 1024);
-            socket.setReceiveBufferSize(64 * 1024);
-            socket.setTcpNoDelay(true);
-            socket.setSoLinger(true, 0);
-        } catch (SocketException e) {
-            log(e);
+        if (socket == null)
+        {
+            log("Socket连接已建立");
+        }
+        else
+        {
+            log("Socket连接已建立:" + socket.getInetAddress());
+            try {
+                socket.setSendBufferSize(64 * 1024);
+                socket.setReceiveBufferSize(64 * 1024);
+                socket.setTcpNoDelay(true);
+                socket.setSoLinger(true, 0);
+            } catch (SocketException e) {
+                log(e);
+            }
         }
     }
 

@@ -62,14 +62,14 @@ class SearchAdapter extends JavaBeanAdapter<FriendListItem> implements FilterMat
         // 好友头像
         holder.setImageView(R.id.icon, R.drawable.avatar_default);
         // 名称
-        holder.setTextView(R.id.subject, item.name);
+        holder.setTextView(R.id.subject, item.getName());
         //
         holder.setVisible(R.id.note, false);
     }
 
     @Override
     public boolean match(FriendListItem item, CharSequence constraint) {
-        return match(item.pinyin, constraint) || match(item.name, constraint);
+        return match(item.getPinyin(), constraint) || match(item.getName(), constraint);
     }
     
     private boolean match(String text, CharSequence constraint) {

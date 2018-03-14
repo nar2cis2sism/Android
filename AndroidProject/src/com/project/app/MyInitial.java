@@ -17,6 +17,7 @@ public class MyInitial {
      * 这里通过第一次访问SQLiteDatabase创建或更新数据库
      */
     private static void initDatabase() {
+        MyDAOManager.getDAO().deleteSelf();
         MyDAOManager.getDAO().getDataBase();
     }
     

@@ -17,6 +17,11 @@ import engine.android.framework.ui.extra.BaseInfoFragment;
 import engine.android.util.ui.UIUtil;
 import engine.android.widget.TitleBar;
 
+/**
+ * 更多界面
+ * 
+ * @author Daimon
+ */
 public class MoreFragment extends BaseInfoFragment {
 
     @InjectView(R.id.avatar)

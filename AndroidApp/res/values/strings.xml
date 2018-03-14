@@ -3,6 +3,11 @@
 
     <string name="app_name">AndroidApp</string>
     
+    <!-- Dialog -->
+    <string name="dialog_upgrade_title">升级</string>
+    <string name="dialog_upgrade_now">立即升级</string>
+    <string name="dialog_upgrade_later">稍后提醒</string>
+    
     <!-- Login -->
     <string name="login_login">登&#160;&#160;&#160;&#160;录</string>
     <string name="login_register">用户注册</string>
@@ -25,6 +30,11 @@
     <string name="friend_discuss">讨论组</string>
     <string name="friend_public">公众好友</string>
     <string name="friend_recommend">好友推荐</string>
+    
+    <!-- Beside -->
+    <string name="beside_demo">Demo</string>
+    <string name="beside_effect">Effect</string>
+    <string name="beside_test">Test</string>
     
     <!-- More -->
     <string name="more_title">更多</string>

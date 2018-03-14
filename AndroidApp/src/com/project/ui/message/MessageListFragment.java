@@ -1,6 +1,8 @@
 package com.project.ui.message;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ListView;
 
 import com.daimon.yueba.R;
 
@@ -28,5 +30,10 @@ public class MessageListFragment extends BaseListFragment {
         .setTitle(R.string.message_title)
         .addAction(R.drawable.message_add)
         .show();
+    }
+    
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        getBaseActivity().startFragment(MessageFragment.class);
     }
 }

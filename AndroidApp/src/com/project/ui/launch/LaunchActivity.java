@@ -1,5 +1,6 @@
 package com.project.ui.launch;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -10,6 +11,7 @@ import com.daimon.yueba.R;
 import com.project.app.MyInitial;
 import com.project.app.MySession;
 import com.project.storage.MySharedPreferences;
+import com.project.ui.MainActivity;
 import com.project.ui.login.LoginFragment;
 
 import engine.android.core.extra.SplashScreen;
@@ -69,7 +71,15 @@ public class LaunchActivity extends BaseActivity implements SplashCallback, Spla
     public void onSplashFinished() {
         if (MySharedPreferences.getInstance().isGuideShown())
         {
-            startFragment(LoginFragment.class);
+            if (MySession.getUser() != null)
+            {
+                // 有缓存
+                startActivity(new Intent(this, MainActivity.class));
+            }
+            else
+            {
+                startFragment(LoginFragment.class);
+            }
         }
         else
         {

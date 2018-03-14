@@ -1,7 +1,9 @@
 package com.project.app;
 
 import engine.android.core.ApplicationManager;
+import engine.android.core.util.LogFactory;
 import engine.android.framework.app.AppGlobal;
+import engine.android.util.AndroidUtil;
 
 /**
  * 应用程序入口
@@ -24,17 +26,17 @@ public class MyApp extends ApplicationManager {
     
     public MyApp() { instance = this; }
     
-//    @Override
-//    public void onCreate() {
-//        // 配置环境变量
-//        AppGlobal.config(new MyConfiguration(this));
-//        // 设置调试模式
-//        if (isDebuggable(this) && AndroidUtil.getVersion() >= 11) AndroidUtil.setupStrictMode();
-//        // 开启日志
-//        LogFactory.enableLOG(true);
-//        
-////        LOG.log(getConfig().isOffline() ? "单机版" : "网络版");
-//    }
+    @Override
+    public void onCreate() {
+        // 配置环境变量
+        AppGlobal.config(new MyConfiguration(this));
+        // 设置调试模式
+        if (isDebuggable()) AndroidUtil.setupStrictMode();
+        // 开启日志
+        LogFactory.enableLOG(true);
+        
+//        LOG.log(getConfig().isOffline() ? "单机版" : "网络版");
+    }
 //    
 //    @Override
 //    protected boolean handleException(Throwable ex) {

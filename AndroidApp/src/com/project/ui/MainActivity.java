@@ -13,14 +13,17 @@ import android.widget.TabHost.TabContentFactory;
 import android.widget.TabHost.TabSpec;
 
 import com.daimon.yueba.R;
+import com.project.app.MySession;
+import com.project.ui.beside.BesideFragment;
 import com.project.ui.friend.FriendListFragment;
 import com.project.ui.message.MessageListFragment;
 import com.project.ui.more.MoreFragment;
+import com.project.util.AppUpgradeUtil;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseActivity;
-import engine.android.framework.ui.BaseListFragment;
 import engine.android.widget.common.ViewPager;
+import protocol.java.json.AppUpgradeInfo;
 
 /**
  * 主界面
@@ -66,24 +69,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.main_activity);
         
         setupView();
-        
-        String tag = null;
-        
-        if (savedInstanceState != null)
-        {
-            tag = savedInstanceState.getString(SAVED_TAB_TAG);
-        }
-        else
-        {
-            tag = getIntent().getStringExtra(EXTRA_TAB_TAG);
-        }
-        
-        if (tag == null)
-        {
-            tag = DEFAULT_TAB_TAG;
-        }
-        
-        tabHost.setCurrentTabByTag(tag);
+        setupTag(savedInstanceState);
     }
     
     private void setupView() {
@@ -101,7 +87,7 @@ public class MainActivity extends BaseActivity {
         // 身边
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(TAB_TAG_BESIDE)
                 .setIndicator(new TabView(this, R.drawable.main_tab_beside))
-                .setContent(emptyContent), BaseListFragment.class, null));
+                .setContent(emptyContent), BesideFragment.class, null));
         // 更多
         tabHost.addTab(adapter.addTab(tabHost.newTabSpec(TAB_TAG_MORE)
                 .setIndicator(new TabView(this, R.drawable.main_tab_more))
@@ -125,6 +111,26 @@ public class MainActivity extends BaseActivity {
                 pager.setCurrentItem(tabHost.getCurrentTab());
             }
         });
+    }
+    
+    private void setupTag(Bundle savedInstanceState) {
+        String tag = null;
+        
+        if (savedInstanceState != null)
+        {
+            tag = savedInstanceState.getString(SAVED_TAB_TAG);
+        }
+        else
+        {
+            tag = getIntent().getStringExtra(EXTRA_TAB_TAG);
+        }
+        
+        if (tag == null)
+        {
+            tag = DEFAULT_TAB_TAG;
+        }
+        
+        tabHost.setCurrentTabByTag(tag);
     }
     
     @Override
@@ -158,6 +164,17 @@ public class MainActivity extends BaseActivity {
         public TabSpec addTab(TabSpec tabSpec, Class<? extends Fragment> c, Bundle args) {
             addPage(tabSpec.getTag(), c, args);
             return tabSpec;
+        }
+    }
+    
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        AppUpgradeInfo info = MySession.getUpgradeInfo();
+        if (info != null)
+        {
+            AppUpgradeUtil.upgradeApp(this, info, false);
+            MySession.setUpgradeInfo(null);
         }
     }
 }

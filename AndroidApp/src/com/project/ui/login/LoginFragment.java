@@ -1,5 +1,8 @@
 package com.project.ui.login;
 
+import static com.project.network.Actions.LOGIN;
+import static com.project.network.Actions.NAVIGATION;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -15,7 +18,11 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.daimon.yueba.R;
 import com.project.app.MyApp;
+import com.project.app.MySession;
+import com.project.network.action.Login;
+import com.project.network.action.Navigation;
 import com.project.ui.MainActivity;
+import com.project.util.AppUpgradeUtil;
 import com.project.util.MyValidator;
 
 import engine.android.core.Forelet.ProgressSetting;
@@ -26,6 +33,7 @@ import engine.android.util.listener.MyTextWatcher;
 import engine.android.util.ui.MyValidator.PatternValidation;
 import engine.android.util.ui.UIUtil;
 import engine.android.widget.InputBox;
+import protocol.java.json.AppUpgradeInfo;
 
 /**
  * 登录界面
@@ -48,6 +56,13 @@ public class LoginFragment extends BaseFragment {
 
     @InjectView(R.id.find_password)
     TextView find_password;
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        enableReceiveEvent(NAVIGATION, LOGIN);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,7 +84,7 @@ public class LoginFragment extends BaseFragment {
         if (MyApp.getApp().isDebuggable())
         {
             username.input().setText("18311287987");
-            password.input().setText("yanhao");
+            password.input().setText("18311287987");
         }
     }
     
@@ -152,6 +167,57 @@ public class LoginFragment extends BaseFragment {
             getBaseActivity().showProgress(ProgressSetting.getDefault()
             .setMessage(getString(R.string.login_progress)));
             
+            if (MySession.hasNavigation())
+            {
+                // 已有导航配置
+                sendLoginAction();
+            }
+            else
+            {
+                sendNavigationAction();
+            }
+        }
+    }
+
+    /******************************* 获取导航配置 *******************************/
+    
+    private void sendNavigationAction() {
+        getBaseActivity().sendHttpRequest(new Navigation());
+    }
+
+    /******************************* 用户登录 *******************************/
+    
+    private void sendLoginAction() {
+        getBaseActivity().sendHttpRequest(new Login(
+                username.input().getText().toString(), 
+                password.input().getText().toString()));
+    }
+    
+    @Override
+    protected void onReceiveSuccess(String action, Object param) {
+        if (NAVIGATION.equals(action))
+        {
+            AppUpgradeInfo info = MySession.getUpgradeInfo();
+            if (info != null)
+            {
+                if (info.type == 1)
+                {
+                    // 强制升级，弹窗提醒
+                    AppUpgradeUtil.upgradeApp(getBaseActivity(), info, true);
+                    getBaseActivity().hideProgress();
+                    return;
+                }
+                else
+                {
+                    // 建议升级，进入主界面后弹窗提醒
+                }
+            }
+            
+            MySession.getNavigation();
+            sendLoginAction();
+        }
+        else if (LOGIN.equals(action))
+        {
             startActivity(new Intent(getContext(), MainActivity.class));
             finish();
         }

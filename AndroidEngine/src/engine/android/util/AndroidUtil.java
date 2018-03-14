@@ -563,6 +563,8 @@ public final class AndroidUtil {
     }
     
     public static void setupStrictMode() {
+        if (getVersion() < 11) return;
+        
         // StrictMode.enableDefaults()有bug
         // (android.os.StrictMode$InstanceCountViolation:instance=2;limit=1)
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()

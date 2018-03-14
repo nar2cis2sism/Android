@@ -6,16 +6,17 @@ import android.widget.ListView;
 
 import com.daimon.yueba.R;
 import com.project.app.bean.FriendListItem;
+import com.project.storage.MyDAOManager;
+import com.project.storage.db.Friend;
+import com.project.storage.provider.ProviderContract.FriendColumns;
 
 import engine.android.core.BaseFragment.Presenter;
 import engine.android.core.extra.JavaBeanAdapter;
-import engine.android.core.extra.JavaBeanLoader;
-import engine.android.util.StringUtil.AlphaComparator;
+import engine.android.dao.util.JavaBeanLoader;
 import engine.android.widget.helper.LetterBarHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class FriendListPresenter extends Presenter<FriendListFragment> {
@@ -79,9 +80,9 @@ class FriendListAdapter extends JavaBeanAdapter<FriendListItem> {
         // 好友头像
         holder.setImageView(R.id.icon, R.drawable.avatar_default);
         // 名称
-        holder.setTextView(R.id.title, item.name);
+        holder.setTextView(R.id.title, item.getName());
         // 签名
-        holder.setTextView(R.id.content, item.signature);
+        holder.setTextView(R.id.content, item.getSignature());
         //
         holder.setVisible(R.id.note, false);
     }
@@ -90,36 +91,24 @@ class FriendListAdapter extends JavaBeanAdapter<FriendListItem> {
 class FriendListLoader extends JavaBeanLoader<FriendListItem> {
 
     public FriendListLoader(Context context) {
-        super(context);
+        super(context, MyDAOManager.getDAO());
+        listen(Friend.class);
     }
 
     @Override
     public Collection<FriendListItem> loadInBackground() {
-        List<FriendListItem> list = new ArrayList<FriendListItem>();
-        
-        // 1
-        list.add(new FriendListItem("闫昊", null));
-        list.add(new FriendListItem("王晓庆", "一切都会好起来"));
-        list.add(new FriendListItem("Jane", "加油哦"));
-        list.add(new FriendListItem("范永利", null));
-        list.add(new FriendListItem("李冰涛", "fire in the hole"));
-        list.add(new FriendListItem("*658了*", "分享图片"));
-        list.add(new FriendListItem("Num2", "stranger"));
-        list.add(new FriendListItem("于美珍", ""));
-        list.add(new FriendListItem("陶生", ""));
-        list.add(new FriendListItem("乌托邦", ""));
-        list.add(new FriendListItem("Jess 杨姐", null));
-        // 11
-        
-        Collections.sort(list, new FriendComparator());
-        return list;
-    }
-    
-    private static class FriendComparator extends AlphaComparator<FriendListItem> {
-
-        @Override
-        public String toString(FriendListItem item) {
-            return item.sortOrder;
+        List<Friend> friends = dao.find(Friend.class).orderBy(FriendColumns.SORTING).getAll();
+        if (friends != null)
+        {
+            List<FriendListItem> list = new ArrayList<FriendListItem>(friends.size());
+            for (Friend friend : friends)
+            {
+                list.add(new FriendListItem(friend));
+            }
+            
+            return list;
         }
+        
+        return null;
     }
 }

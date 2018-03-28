@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.project.app.MyContext;
 import com.project.storage.db.Friend;
+import com.project.storage.db.Message;
 import com.project.storage.db.User;
 
 import engine.android.dao.DAOTemplate;
@@ -52,6 +53,7 @@ public class MyDAOManager implements DBUpdateListener {
     public void onCreate(DAOTemplate dao) {
         dao.createTable(User.class);
         dao.createTable(Friend.class);
+        dao.createTable(Message.class);
     }
 
     @Override

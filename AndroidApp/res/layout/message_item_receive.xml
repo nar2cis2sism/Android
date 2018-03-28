@@ -1,0 +1,36 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+    
+	<!-- 时间 -->
+    <include 
+    	android:id="@+id/time"
+        layout="@layout/message_item_top" />
+    
+    <!-- 左边头像 -->
+	<ImageView
+        android:id="@+id/avatar"
+	    android:layout_width="39dp"
+	    android:layout_height="39dp"
+	    android:layout_alignTop="@+id/content"
+	    android:layout_marginLeft="8dp"
+	    android:layout_marginRight="8dp" />
+	
+	<!-- 消息内容 -->
+	<TextView
+    	android:id="@+id/content"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:background="@drawable/message_bg_left"
+	    android:layout_below="@+id/time"
+	    android:layout_toRightOf="@+id/avatar"
+	    android:layout_marginRight="40dp"
+	    android:layout_marginTop="12dp"
+	    android:layout_marginBottom="12dp"
+	    android:gravity="center_vertical"
+	    android:paddingLeft="14dp"
+	    android:paddingRight="12dp"
+	    android:textColor="?android:attr/textColorPrimary"
+	    android:textSize="16sp" />
+
+</RelativeLayout>

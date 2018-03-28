@@ -5,11 +5,11 @@ import android.widget.TextView;
 
 import com.daimon.yueba.R;
 import com.project.app.bean.MessageListItem;
-import com.project.app.bean.MessageListItem.DateRange;
 
 import engine.android.core.BaseFragment.Presenter;
 import engine.android.core.extra.JavaBeanAdapter;
 import engine.android.core.extra.JavaBeanLoader;
+import engine.android.framework.ui.util.DateRange;
 
 import java.util.ArrayList;
 import java.util.Calendar;

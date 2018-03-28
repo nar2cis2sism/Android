@@ -78,4 +78,32 @@ public final class ProviderContract {
          */
         private Friend() {}
     }
+
+    /**
+     * @see Message
+     */
+    public interface MessageColumns extends BaseColumns {
+
+        public static final String IS_RECEIVED = "isReceived";
+        public static final String ACCOUNT = "account";
+        public static final String CONTENT = "content";
+        public static final String TYPE = "type";
+        public static final String EVENT = "event";
+        public static final String CREATION_TIME = "creationTime";
+    }
+
+    public static final class Message implements MessageColumns {
+
+        public static final String TABLE = "message";
+
+        /**
+         * The content:// style URI for this table
+         */
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, TABLE);
+
+        /**
+         * This utility class cannot be instantiated
+         */
+        private Message() {}
+    }
 }

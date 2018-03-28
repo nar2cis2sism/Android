@@ -5,6 +5,7 @@ import android.content.Context;
 import com.project.network.http.HttpInterceptor;
 import com.project.network.http.servlet.HttpServlet;
 import com.project.network.socket.SocketInterceptor;
+import com.project.network.socket.SocketPushReceiver;
 import com.project.network.socket.servlet.SocketServlet;
 
 import engine.android.framework.app.AppConfig;
@@ -17,7 +18,7 @@ import engine.android.framework.app.AppConfig;
 interface IConfiguration {
     
     /** 单机不联网 **/
-    boolean NET_OFF = true;
+    boolean NET_OFF = false;
 
     /** 打印协议 **/
     boolean NET_LOG_PROTOCOL = true;
@@ -56,6 +57,7 @@ public class MyConfiguration extends AppConfig implements IConfiguration {
     private void configSocket(SocketConfig config) {
         config.setServlet(new SocketServlet());
         config.setInterceptor(new SocketInterceptor());
+        config.setPushReceiver(new SocketPushReceiver());
         config.setTimeout(SOCKET_TIMEOUT);
     }
 }

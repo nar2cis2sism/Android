@@ -1,17 +1,18 @@
-package com.project.widget;
+package engine.android.widget.component;
 
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.daimon.yueba.R;
-
 import engine.android.util.listener.MyTextWatcher;
+import engine.android.widget.R;
 
 public class ConversationBar extends LinearLayout {
     
@@ -20,28 +21,35 @@ public class ConversationBar extends LinearLayout {
     private static final int MODE_EMOTION = 2;
     private static final int MODE_MORE = 3;
     
-    ImageView voice;
+    private ImageView voice;
+    private EditText input;
+    private Button record;
+    private ImageView emotion;
+    private ImageView more;
+    private Button send;
     
-    EditText input;
-    
-    Button record;
-    
-    ImageView emotion;
-    
-    ImageView more;
-    
-    Button send;
-    
-    int mode;
-    
+    private int mode;
     private Callback callback;
+
+    public ConversationBar(Context context) {
+        super(context);
+        init(context);
+    }
 
     public ConversationBar(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init(context);
+    }
+
+    public ConversationBar(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context);
     }
     
-    public void setCallback(Callback callback) {
-        this.callback = callback;
+    private void init(Context context) {
+        LayoutInflater.from(context).inflate(R.layout.conversation_bar, this);
+        setBackgroundResource(R.drawable.conversation_bar_bg);
+        setGravity(Gravity.BOTTOM);
     }
     
     @Override
@@ -53,54 +61,18 @@ public class ConversationBar extends LinearLayout {
         more = (ImageView) findViewById(R.id.more);
         send = (Button) findViewById(R.id.send);
         
-        voice.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                switchMode(MODE_VOICE);
-            }
-        });
-        
-        input.addTextChangedListener(new MyTextWatcher() {
-            
-            @Override
-            protected void changeToEmpty(String before) {
-                showSend(false);
-            }
-            
-            @Override
-            protected void changeFromEmpty(String after) {
-                showSend(true);
-            }
-        });
-        
-        emotion.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                switchMode(MODE_EMOTION);
-            }
-        });
-        
-        more.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                switchMode(MODE_MORE);
-                input.clearFocus();
-            }
-        });
-        
-        send.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                if (callback != null) callback.onSendMessage(input.getText());
-                input.setText(null);
-            }
-        });
+        Interaction listener = new Interaction();
+        voice.setOnClickListener(listener);
+        input.addTextChangedListener(listener);
+        emotion.setOnClickListener(listener);
+        more.setOnClickListener(listener);
+        send.setOnClickListener(listener);
     }
     
+    public void setCallback(Callback callback) {
+        this.callback = callback;
+    }
+
     private void switchMode(int mode) {
         if (this.mode == mode)
         {
@@ -130,6 +102,41 @@ public class ConversationBar extends LinearLayout {
     private void showSend(boolean shown) {
         more.setVisibility(shown ? GONE : VISIBLE);
         send.setVisibility(shown ? VISIBLE : GONE);
+    }
+    
+    private class Interaction extends MyTextWatcher implements OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            if (v == voice)
+            {
+                switchMode(MODE_VOICE);
+            }
+            else if (v == emotion)
+            {
+                switchMode(MODE_EMOTION);
+            }
+            else if (v == more)
+            {
+                switchMode(MODE_MORE);
+                input.clearFocus();
+            }
+            else if (v == send)
+            {
+                if (callback != null) callback.onSendMessage(input.getText());
+                input.setText(null);
+            }
+        }
+
+        @Override
+        protected void changeFromEmpty(String after) {
+            showSend(true);
+        }
+
+        @Override
+        protected void changeToEmpty(String before) {
+            showSend(false);
+        }
     }
     
     public interface Callback {

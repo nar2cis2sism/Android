@@ -1,0 +1,67 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 语音/键盘切换 -->
+    <ImageView
+        android:id="@+id/voice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/conversation_voice"
+        android:focusableInTouchMode="true" />
+
+    <!-- 输入框 -->
+    <EditText
+        android:id="@+id/input"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginBottom="2dp"
+        android:textSize="16sp" />
+
+    <!-- 录音按钮 -->
+    <Button
+        android:id="@+id/record"
+        android:visibility="gone"
+        android:layout_width="0px"
+        android:layout_height="30dp"
+        android:layout_weight="1"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="3dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:text="按住 说话"
+        android:textSize="12sp" />
+
+    <!-- 表情/键盘切换 -->
+    <ImageView
+        android:id="@+id/emotion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/conversation_emotion" />
+
+    <!-- 更多按钮 -->
+    <ImageView
+        android:id="@+id/more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/conversation_more" />
+
+    <!-- 发送按钮 -->
+    <Button
+        android:id="@+id/send"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:layout_marginLeft="-2dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="3dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:text="发送"
+        android:textSize="12sp" />
+
+</merge>

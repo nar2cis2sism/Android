@@ -11,7 +11,7 @@ import com.project.app.bean.FriendListItem;
 import engine.android.core.BaseFragment.Presenter;
 import engine.android.core.extra.JavaBeanAdapter;
 import engine.android.core.extra.JavaBeanAdapter.FilterMatcher;
-import engine.android.widget.SearchBox.SearchProvider;
+import engine.android.widget.component.SearchBox.SearchProvider;
 
 public class SearchPresenter extends Presenter<FriendListFragment> implements SearchProvider, FilterListener {
     

@@ -14,6 +14,14 @@ import android.widget.LinearLayout;
 import engine.android.util.listener.MyTextWatcher;
 import engine.android.widget.R;
 
+/**
+ * 会话栏<p>
+ * PS:默认布局样式conversation_bar
+ * 
+ * @author Daimon
+ * @version N
+ * @since 6/6/2014
+ */
 public class ConversationBar extends LinearLayout {
     
     private static final int MODE_NONE = 0;
@@ -40,20 +48,11 @@ public class ConversationBar extends LinearLayout {
         super(context, attrs);
         init(context);
     }
-
-    public ConversationBar(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context);
-    }
     
     private void init(Context context) {
-        LayoutInflater.from(context).inflate(R.layout.conversation_bar, this);
-        setBackgroundResource(R.drawable.conversation_bar_bg);
         setGravity(Gravity.BOTTOM);
-    }
-    
-    @Override
-    protected void onFinishInflate() {
+        LayoutInflater.from(context).inflate(R.layout.conversation_bar_content, this);
+
         voice = (ImageView) findViewById(R.id.voice);
         input = (EditText) findViewById(R.id.input);
         record = (Button) findViewById(R.id.record);
@@ -61,7 +60,7 @@ public class ConversationBar extends LinearLayout {
         more = (ImageView) findViewById(R.id.more);
         send = (Button) findViewById(R.id.send);
         
-        Interaction listener = new Interaction();
+        Listener listener = new Listener();
         voice.setOnClickListener(listener);
         input.addTextChangedListener(listener);
         emotion.setOnClickListener(listener);
@@ -104,7 +103,7 @@ public class ConversationBar extends LinearLayout {
         send.setVisibility(shown ? VISIBLE : GONE);
     }
     
-    private class Interaction extends MyTextWatcher implements OnClickListener {
+    private class Listener extends MyTextWatcher implements OnClickListener {
 
         @Override
         public void onClick(View v) {

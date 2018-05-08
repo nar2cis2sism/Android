@@ -21,11 +21,11 @@ import engine.android.framework.ui.BaseListFragment;
 import engine.android.util.AndroidUtil;
 import engine.android.util.ui.ViewSize;
 import engine.android.util.ui.ViewSize.ViewSizeObserver;
-import engine.android.widget.ChooseButton;
-import engine.android.widget.SearchBox;
-import engine.android.widget.TitleBar;
 import engine.android.widget.common.ActionContainer;
 import engine.android.widget.common.LetterBar;
+import engine.android.widget.component.ChooseButton;
+import engine.android.widget.component.SearchBox;
+import engine.android.widget.component.TitleBar;
 import engine.android.widget.helper.LetterBarHelper;
 
 /**

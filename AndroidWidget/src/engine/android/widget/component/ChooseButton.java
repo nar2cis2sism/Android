@@ -1,4 +1,4 @@
-package engine.android.widget;
+package engine.android.widget.component;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import engine.android.widget.R;
 
 /**
  * 按钮切换控件
@@ -17,10 +19,12 @@ import android.widget.RadioGroup;
  */
 public class ChooseButton extends RadioGroup {
     
+    private static final int INDEX_FIRST = 1;
+    
     private RadioButton button_positive;
     private RadioButton button_negative;
     
-    private int neutralIndex = 1;
+    private int neutralIndex = INDEX_FIRST;
     
     public ChooseButton(Context context) {
         super(context);
@@ -34,8 +38,8 @@ public class ChooseButton extends RadioGroup {
     
     private void init(Context context) {
         setOrientation(HORIZONTAL);
-        LayoutInflater.from(context).inflate(R.layout.choose_button, this, true);
-        
+        LayoutInflater.from(context).inflate(R.layout.choose_button_content, this);
+
         button_positive = (RadioButton) findViewById(R.id.button_positive);
         button_negative = (RadioButton) findViewById(R.id.button_negative);
     }
@@ -70,7 +74,7 @@ public class ChooseButton extends RadioGroup {
 
     public RadioButton addNeutralButton(int textId, 
             CompoundButton.OnCheckedChangeListener listener) {
-        if (neutralIndex == 1)
+        if (neutralIndex == INDEX_FIRST)
         {
             addDivider();
         }
@@ -88,7 +92,7 @@ public class ChooseButton extends RadioGroup {
 
     public RadioButton addNeutralButton(CharSequence text, 
             CompoundButton.OnCheckedChangeListener listener) {
-        if (neutralIndex == 1)
+        if (neutralIndex == INDEX_FIRST)
         {
             addDivider();
         }

@@ -1,4 +1,4 @@
-package engine.android.widget;
+package engine.android.widget.component;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -6,10 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import engine.android.util.listener.MyTextWatcher;
 import engine.android.util.ui.UIUtil;
+import engine.android.widget.R;
 
 /**
  * 输入框
@@ -18,10 +19,9 @@ import engine.android.util.ui.UIUtil;
  * @version N
  * @since 6/6/2014
  */
-public class InputBox extends LinearLayout {
+public class InputBox extends RelativeLayout {
     
     private EditText input;
-    
     private View placeholder;
     
     public InputBox(Context context) {
@@ -35,8 +35,7 @@ public class InputBox extends LinearLayout {
     }
     
     private void init(Context context) {
-        setOrientation(VERTICAL);
-        LayoutInflater.from(context).inflate(R.layout.input_box, this, true);
+        LayoutInflater.from(context).inflate(R.layout.input_box_content, this);
         
         input = (EditText) findViewById(R.id.input);
         placeholder = findViewById(R.id.placeholder);

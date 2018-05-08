@@ -28,6 +28,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="#a2a2a2" />
+        android:background="#a2a2a2"
+        android:layout_alignParentBottom="true" />
     
 </merge>

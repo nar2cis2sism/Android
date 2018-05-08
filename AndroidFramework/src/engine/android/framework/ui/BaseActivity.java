@@ -19,7 +19,7 @@ import engine.android.framework.network.socket.SocketManager;
 import engine.android.framework.network.socket.SocketManager.SocketBuilder;
 import engine.android.framework.ui.extra.SinglePaneActivity;
 import engine.android.http.HttpConnector;
-import engine.android.widget.TitleBar;
+import engine.android.widget.component.TitleBar;
 
 public class BaseActivity extends NetworkActivity {
     
@@ -39,8 +39,7 @@ public class BaseActivity extends NetworkActivity {
     }
     
     private void setupTitleBar(TitleBar title_bar) {
-        title_bar.findViewById(R.id.navigation_up).setOnClickListener(
-                new OnClickListener() {
+        title_bar.setUpListener(new OnClickListener() {
             
             @Override
             public void onClick(View v) {

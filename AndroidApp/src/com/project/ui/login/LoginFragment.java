@@ -32,7 +32,7 @@ import engine.android.framework.ui.BaseFragment;
 import engine.android.util.listener.MyTextWatcher;
 import engine.android.util.ui.MyValidator.PatternValidation;
 import engine.android.util.ui.UIUtil;
-import engine.android.widget.InputBox;
+import engine.android.widget.component.InputBox;
 import protocol.java.json.AppUpgradeInfo;
 
 /**

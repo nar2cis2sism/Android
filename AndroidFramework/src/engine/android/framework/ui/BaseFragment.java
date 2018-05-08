@@ -11,7 +11,7 @@ import engine.android.core.extra.EventBus.EventHandler;
 import engine.android.framework.R;
 import engine.android.framework.network.ConnectionStatus;
 import engine.android.util.Util;
-import engine.android.widget.TitleBar;
+import engine.android.widget.component.TitleBar;
 
 public abstract class BaseFragment extends engine.android.core.BaseFragment implements EventHandler {
     

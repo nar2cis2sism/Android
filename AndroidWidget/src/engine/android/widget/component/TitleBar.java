@@ -1,4 +1,4 @@
-package engine.android.widget;
+package engine.android.widget.component;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -11,8 +11,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import engine.android.widget.R;
+
 /**
- * 标题栏
+ * 标题栏<p>
+ * PS:默认布局样式title_bar
  * 
  * @author Daimon
  * @version N
@@ -21,19 +24,24 @@ import android.widget.TextView;
 public class TitleBar extends RelativeLayout {
 
     private ImageView navigation_up;
-
     private TextView title;
-
     private FrameLayout content;
-
     private LinearLayout actions;
     
-    public TitleBar(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    public TitleBar(Context context) {
+        super(context);
+        init(context);
     }
 
-    @Override
-    protected void onFinishInflate() {
+    public TitleBar(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(context);
+    }
+
+    private void init(Context context) {
+        hide();
+        LayoutInflater.from(context).inflate(R.layout.title_bar_content, this);
+
         navigation_up = (ImageView) findViewById(R.id.navigation_up);
         title = (TextView) findViewById(R.id.title);
         content = (FrameLayout) findViewById(R.id.content);
@@ -47,6 +55,11 @@ public class TitleBar extends RelativeLayout {
     
     public TitleBar setUpIndicator(int resId) {
         navigation_up.setImageResource(resId);
+        return this;
+    }
+    
+    public TitleBar setUpListener(OnClickListener listener) {
+        navigation_up.setOnClickListener(listener);
         return this;
     }
     
@@ -137,7 +150,6 @@ public class TitleBar extends RelativeLayout {
     public TitleBar reset() {
         if (isShowing())
         {
-            navigation_up.setImageResource(R.drawable.navigation_up);
             setDisplayUpEnabled(false);
             setTitle(null);
             setDisplayShowTitleEnabled(true);

@@ -17,13 +17,13 @@
         android:layout_marginBottom="50dp" />
     
     <!-- 账号输入 -->
-    <engine.android.widget.InputBox
+    <engine.android.widget.component.InputBox
         android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     
     <!-- 密码输入 -->
-    <engine.android.widget.InputBox
+    <engine.android.widget.component.InputBox
         android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

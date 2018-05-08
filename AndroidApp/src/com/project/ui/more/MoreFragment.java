@@ -15,7 +15,7 @@ import engine.android.core.annotation.InjectView;
 import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
 import engine.android.framework.ui.extra.BaseInfoFragment;
 import engine.android.util.ui.UIUtil;
-import engine.android.widget.TitleBar;
+import engine.android.widget.component.TitleBar;
 
 /**
  * 更多界面

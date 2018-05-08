@@ -7,7 +7,7 @@ import android.widget.ListView;
 import com.daimon.yueba.R;
 
 import engine.android.framework.ui.BaseListFragment;
-import engine.android.widget.TitleBar;
+import engine.android.widget.component.TitleBar;
 
 /**
  * 消息列表界面

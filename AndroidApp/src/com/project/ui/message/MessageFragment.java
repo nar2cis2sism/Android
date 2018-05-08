@@ -11,11 +11,11 @@ import com.project.app.MySession;
 import com.project.network.action.socket.SendMessage;
 import com.project.storage.MyDAOManager;
 import com.project.storage.db.Message;
-import com.project.widget.ConversationBar;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseListFragment;
-import engine.android.widget.TitleBar;
+import engine.android.widget.component.ConversationBar;
+import engine.android.widget.component.TitleBar;
 
 /**
  * 聊天界面

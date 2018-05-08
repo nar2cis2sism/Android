@@ -1,9 +1,10 @@
-package engine.android.widget;
+package engine.android.widget.component;
 
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
@@ -11,9 +12,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import engine.android.util.listener.MyTextWatcher;
+import engine.android.widget.R;
 
 /**
- * 搜索框
+ * 搜索框<p>
+ * PS:默认布局样式search_box
  * 
  * @author Daimon
  * @version N
@@ -22,32 +25,32 @@ import engine.android.util.listener.MyTextWatcher;
 public class SearchBox extends LinearLayout implements OnClickListener {
 
     private ImageView search_icon;
-    
     private EditText search_text;
-
     private ImageView search_voice;
-
     private ImageView search_clear;
     
     private boolean showVoiceIcon = true;
     
-    public SearchBox(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    public SearchBox(Context context) {
+        super(context);
+        init(context);
     }
 
-    @Override
-    protected void onFinishInflate() {
+    public SearchBox(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(context);
+    }
+    
+    private void init(Context context) {
+        LayoutInflater.from(context).inflate(R.layout.search_box_content, this);
+        
         search_icon = (ImageView) findViewById(R.id.search_icon);
         search_text = (EditText) findViewById(R.id.search_text);
         search_voice = (ImageView) findViewById(R.id.search_voice);
         search_clear = (ImageView) findViewById(R.id.search_clear);
         
-        setupView();
-    }
-    
-    private void setupView() {
-        new ClearAction();
         search_voice.setOnClickListener(this);
+        new ClearAction();
     }
 
     @Override

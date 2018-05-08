@@ -9,7 +9,7 @@
         android:layout_height="0px"
         android:layout_weight="1" />
     
-    <include 
+    <include
         android:id="@+id/conversation_bar"
         layout="@layout/conversation_bar" />
 

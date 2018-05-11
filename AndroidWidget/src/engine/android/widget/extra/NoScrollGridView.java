@@ -1,4 +1,4 @@
-package engine.android.widget.common;
+package engine.android.widget.extra;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -9,7 +9,7 @@ import android.widget.GridView;
  * 
  * @author Daimon
  * @version N
- * @since 3/26/2012
+ * @since 6/6/2014
  */
 public class NoScrollGridView extends GridView {
     
@@ -21,10 +21,6 @@ public class NoScrollGridView extends GridView {
 
     public NoScrollGridView(Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
-
-    public NoScrollGridView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
     }
     
     public void setScrollable(boolean isScrollable) {

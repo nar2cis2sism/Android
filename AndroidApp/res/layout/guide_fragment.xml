@@ -4,7 +4,7 @@
     android:layout_height="match_parent" >
 
     <!-- 引导页 -->
-    <engine.android.widget.common.FlingLayout
+    <engine.android.widget.common.layout.FlingLayout
         android:id="@+id/fling_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
@@ -41,7 +41,7 @@
             
         </RelativeLayout>
         
-    </engine.android.widget.common.FlingLayout>
+    </engine.android.widget.common.layout.FlingLayout>
 
     <!-- 右上角的跳过 -->
     <ImageView
@@ -52,13 +52,13 @@
         android:layout_gravity="right|top" />
     
     <!-- 底部的页面指示器 -->
-    <engine.android.widget.PageIndicator
+    <engine.android.widget.common.layout.PageIndicator
         android:id="@+id/page_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
         android:layout_marginBottom="8dp"
         
-        widget:indicator_count="4" />
+        widget:count="4" />
 
 </FrameLayout>

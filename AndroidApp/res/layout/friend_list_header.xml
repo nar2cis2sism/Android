@@ -5,7 +5,7 @@
     
     <include layout="@layout/search_container" />
     
-    <engine.android.widget.common.ActionContainer
+    <engine.android.widget.common.layout.ActionContainer
         android:id="@+id/action_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

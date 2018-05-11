@@ -24,8 +24,8 @@ public class CustomView extends View {
         init(context);
     }
 
-    public CustomView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+    public CustomView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         init(context);
     }
     

@@ -35,7 +35,7 @@ public class InputBox extends RelativeLayout {
     }
     
     private void init(Context context) {
-        LayoutInflater.from(context).inflate(R.layout.input_box_content, this);
+        LayoutInflater.from(context).inflate(R.layout.input_box, this);
         
         input = (EditText) findViewById(R.id.input);
         placeholder = findViewById(R.id.placeholder);

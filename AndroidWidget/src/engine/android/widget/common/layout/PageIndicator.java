@@ -1,14 +1,15 @@
-package engine.android.widget;
+package engine.android.widget.common.layout;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 
 import engine.android.util.ui.ButtonGroup;
 import engine.android.util.ui.ButtonGroup.OnCheckedChangeListener;
+import engine.android.widget.R;
 
 /**
  * 页面指示器
@@ -22,27 +23,30 @@ public class PageIndicator extends LinearLayout {
     private LayoutInflater inflater;
     
     private ButtonGroup group;
+    
+    private int layoutRes;
 
     public PageIndicator(Context context) {
-        super(context);
-        init(context);
+        this(context, null);
     }
     
     public PageIndicator(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
-        
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PageIndicator);
-        int indicator_count = a.getInteger(R.styleable.PageIndicator_indicator_count, 0);
+
+        final TypedArray a = context.obtainStyledAttributes(
+                attrs, R.styleable.PageIndicator);
+
+        int count = a.getInteger(R.styleable.PageIndicator_count, 0);
+        layoutRes = a.getResourceId(R.styleable.PageIndicator_layout, R.layout.page_indicator_item);
         
         a.recycle();
         
-        if (indicator_count > 0)
+        if (count > 0)
         {
-            for (int i = 0; i < indicator_count; i++)
+            for (int i = 0; i < count; i++)
             {
-                RadioButton indicator = (RadioButton) inflater.inflate(
-                        R.layout.page_indicator_item, this, false);
+                CompoundButton indicator = (CompoundButton) inflater.inflate(layoutRes, this, false);
                 addViewInLayout(indicator, -1, indicator.getLayoutParams(), true);
                 group.add(indicator);
             }
@@ -54,17 +58,22 @@ public class PageIndicator extends LinearLayout {
         group = new ButtonGroup();
     }
 
-    public void setIndicatorCount(int count) {
-        if (count == getChildCount())
+    public void setCount(int count) {
+        int childCount = getChildCount();
+        if (count == childCount)
         {
             return;
         }
         
-        removeAllViews();
+        if (childCount != 0)
+        {
+            removeAllViews();
+            group = new ButtonGroup();
+        }
+        
         for (int i = 0; i < count; i++)
         {
-            RadioButton indicator = (RadioButton) inflater.inflate(
-                    R.layout.page_indicator_item, this, false);
+            CompoundButton indicator = (CompoundButton) inflater.inflate(layoutRes, this, false);
             addView(indicator);
             group.add(indicator);
         }

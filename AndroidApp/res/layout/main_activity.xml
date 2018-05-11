@@ -13,7 +13,7 @@
             android:layout_width="0px"
             android:layout_height="0px" />
 
-        <engine.android.widget.common.ViewPager
+        <engine.android.widget.extra.ViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="0px"

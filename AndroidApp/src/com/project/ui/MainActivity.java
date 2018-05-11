@@ -22,7 +22,7 @@ import com.project.util.AppUpgradeUtil;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseActivity;
-import engine.android.widget.common.ViewPager;
+import engine.android.widget.extra.ViewPager;
 import protocol.java.json.AppUpgradeInfo;
 
 /**
@@ -155,7 +155,7 @@ public class MainActivity extends BaseActivity {
         }
     }
     
-    private static class ViewPagerAdapter extends engine.android.widget.common.ViewPager.ViewPagerAdapter {
+    private static class ViewPagerAdapter extends engine.android.widget.extra.ViewPager.ViewPagerAdapter {
 
         public ViewPagerAdapter(FragmentManager fm, int count) {
             super(fm, count);

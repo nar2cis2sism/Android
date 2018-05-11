@@ -1,4 +1,4 @@
-package engine.android.widget.common;
+package engine.android.widget.extra;
 
 import android.app.Fragment;
 import android.app.Fragment.InstantiationException;

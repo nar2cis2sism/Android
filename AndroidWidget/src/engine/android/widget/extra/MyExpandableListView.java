@@ -1,4 +1,4 @@
-package engine.android.widget.common.list;
+package engine.android.widget.extra;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -38,10 +38,6 @@ public class MyExpandableListView extends ExpandableListView {
 
     public MyExpandableListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
-
-    public MyExpandableListView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
     }
     
     public void setFlags(int flags) {

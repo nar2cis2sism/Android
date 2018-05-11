@@ -38,7 +38,7 @@ public class ChooseButton extends RadioGroup {
     
     private void init(Context context) {
         setOrientation(HORIZONTAL);
-        LayoutInflater.from(context).inflate(R.layout.choose_button_content, this);
+        LayoutInflater.from(context).inflate(R.layout.choose_button, this);
 
         button_positive = (RadioButton) findViewById(R.id.button_positive);
         button_negative = (RadioButton) findViewById(R.id.button_negative);

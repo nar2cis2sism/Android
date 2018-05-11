@@ -1,4 +1,4 @@
-package engine.android.widget.common;
+package engine.android.widget.common.layout;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -45,17 +45,17 @@ public class ActionContainer extends LinearLayout {
         if (textRes != 0) action.setText(textRes);
         action.setGravity(Gravity.CENTER_HORIZONTAL);
         
-        addView(action, params);
+        addAction(action);
         return action;
     }
     
     public TextView addAction(Drawable icon, CharSequence text) {
         TextView action = new TextView(getContext());
-        if (icon != null) action.setCompoundDrawables(null, icon, null, null);
+        if (icon != null) action.setCompoundDrawablesWithIntrinsicBounds(null, icon, null, null);
         if (!TextUtils.isEmpty(text)) action.setText(text);
         action.setGravity(Gravity.CENTER_HORIZONTAL);
         
-        addView(action, params);
+        addAction(action);
         return action;
     }
 }

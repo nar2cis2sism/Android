@@ -30,8 +30,8 @@ public class CustomViewGroup extends ViewGroup {
 		init(context);
 	}
 
-	public CustomViewGroup(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
+	public CustomViewGroup(Context context, AttributeSet attrs, int defStyleAttr) {
+		super(context, attrs, defStyleAttr);
 		init(context);
 	}
     

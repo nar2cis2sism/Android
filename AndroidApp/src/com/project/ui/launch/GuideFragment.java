@@ -14,9 +14,9 @@ import engine.android.core.annotation.InjectView;
 import engine.android.core.annotation.OnClick;
 import engine.android.framework.ui.BaseFragment;
 import engine.android.framework.ui.extra.SinglePaneActivity;
-import engine.android.widget.PageIndicator;
-import engine.android.widget.common.FlingLayout;
-import engine.android.widget.common.FlingLayout.OnViewChangeListener;
+import engine.android.widget.common.layout.FlingLayout;
+import engine.android.widget.common.layout.FlingLayout.OnViewChangeListener;
+import engine.android.widget.common.layout.PageIndicator;
 
 /**
  * 引导界面

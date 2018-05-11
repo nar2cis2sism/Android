@@ -11,6 +11,8 @@ import java.util.HashMap;
  * 字母搜索控件辅助类
  * 
  * @author Daimon
+ * @version N
+ * @since 6/6/2014
  */
 public class LetterBarHelper implements OnLetterChangedListener {
 

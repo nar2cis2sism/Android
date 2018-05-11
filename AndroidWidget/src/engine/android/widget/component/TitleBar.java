@@ -15,7 +15,7 @@ import engine.android.widget.R;
 
 /**
  * 标题栏<p>
- * PS:默认布局样式title_bar
+ * PS:使用布局title_bar解析
  * 
  * @author Daimon
  * @version N
@@ -27,21 +27,13 @@ public class TitleBar extends RelativeLayout {
     private TextView title;
     private FrameLayout content;
     private LinearLayout actions;
-    
-    public TitleBar(Context context) {
-        super(context);
-        init(context);
-    }
 
     public TitleBar(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
     }
-
-    private void init(Context context) {
-        hide();
-        LayoutInflater.from(context).inflate(R.layout.title_bar_content, this);
-
+    
+    @Override
+    protected void onFinishInflate() {
         navigation_up = (ImageView) findViewById(R.id.navigation_up);
         title = (TextView) findViewById(R.id.title);
         content = (FrameLayout) findViewById(R.id.content);

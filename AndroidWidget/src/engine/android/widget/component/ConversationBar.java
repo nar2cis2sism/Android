@@ -3,8 +3,6 @@ package engine.android.widget.component;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,8 +13,8 @@ import engine.android.util.listener.MyTextWatcher;
 import engine.android.widget.R;
 
 /**
- * 会话栏<p>
- * PS:默认布局样式conversation_bar
+ * 会话栏
+ * PS:使用布局conversation_bar解析
  * 
  * @author Daimon
  * @version N
@@ -39,20 +37,12 @@ public class ConversationBar extends LinearLayout {
     private int mode;
     private Callback callback;
 
-    public ConversationBar(Context context) {
-        super(context);
-        init(context);
-    }
-
     public ConversationBar(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
     }
     
-    private void init(Context context) {
-        setGravity(Gravity.BOTTOM);
-        LayoutInflater.from(context).inflate(R.layout.conversation_bar_content, this);
-
+    @Override
+    protected void onFinishInflate() {
         voice = (ImageView) findViewById(R.id.voice);
         input = (EditText) findViewById(R.id.input);
         record = (Button) findViewById(R.id.record);

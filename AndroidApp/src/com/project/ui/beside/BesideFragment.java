@@ -11,7 +11,7 @@ import com.daimon.yueba.R;
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseFragment;
 import engine.android.util.AndroidUtil;
-import engine.android.widget.common.ActionContainer;
+import engine.android.widget.common.layout.ActionContainer;
 import engine.android.widget.component.TitleBar;
 
 /**

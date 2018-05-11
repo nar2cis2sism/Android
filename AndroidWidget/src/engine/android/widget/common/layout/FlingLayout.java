@@ -1,4 +1,4 @@
-package engine.android.widget.common;
+package engine.android.widget.common.layout;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -21,7 +21,7 @@ public class FlingLayout extends CustomViewGroup {
 
     private int touchSlop;
 
-    private int itemCount;
+    private int itemCount = -1;
 
     private int currentItem = 0;
 
@@ -34,10 +34,6 @@ public class FlingLayout extends CustomViewGroup {
     public FlingLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
-
-    public FlingLayout(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
     
     @Override
     protected void init(Context context) {
@@ -49,35 +45,19 @@ public class FlingLayout extends CustomViewGroup {
         listener = onViewChangeListener;
     }
 
-    public int getItemCount() {
-        return itemCount;
-    }
-
-    public View getItem(int index) {
-        if (index < 0 || index >= itemCount)
-        {
-            return null;
-        }
-
-        int visibleIndex = 0;
-        for (int i = 0, childCount = getChildCount(); i < childCount; i++)
-        {
-            View child = getChildAt(i);
-            if (child.getVisibility() != GONE && visibleIndex++ == index)
-            {
-                return child;
-            }
-        }
-
-        return null;
-    }
-
     public void setCurrentItem(int item) {
-        item = getValidItem(item);
-        if (currentItem != item)
+        if (itemCount == -1)
         {
-            scrollTo((currentItem = item) * getWidth(), 0);
-            invalidate();
+            currentItem = item;
+        }
+        else
+        {
+            item = getValidItem(item);
+            if (currentItem != item)
+            {
+                scrollTo((currentItem = item) * getWidth(), 0);
+                invalidate();
+            }
         }
     }
     
@@ -104,7 +84,10 @@ public class FlingLayout extends CustomViewGroup {
             }
         }
 
-        if (changed) scrollTo(currentItem * width, 0);
+        if (changed)
+        {
+            scrollTo((currentItem = getValidItem(currentItem)) * width, 0);
+        }
     }
     
     @Override

@@ -1,7 +1,6 @@
 package engine.android.widget.common;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -16,11 +15,11 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-import java.util.Arrays;
-
 import engine.android.util.ui.FloatingWindow;
 import engine.android.widget.R;
 import engine.android.widget.base.CustomView;
+
+import java.util.Arrays;
 
 /**
  * 字母搜索控件
@@ -63,11 +62,12 @@ public class LetterBar extends CustomView {
         this(context, attrs, R.attr.LetterBar);
     }
 
-    public LetterBar(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+    public LetterBar(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+
+        final TypedArray a = context.obtainStyledAttributes(
+                attrs, R.styleable.LetterBar, defStyleAttr, R.style.LetterBar);
         
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.LetterBar, 
-                defStyle, R.style.LetterBar);
         background = a.getDrawable(R.styleable.LetterBar_background);
         int textSize = a.getDimensionPixelSize(R.styleable.LetterBar_textSize, 0);
         int textColor = a.getColor(R.styleable.LetterBar_textColor, 0);
@@ -87,16 +87,8 @@ public class LetterBar extends CustomView {
     }
 
     public void setTextSize(int unit, float size) {
-        Context c = getContext();
-        Resources r;
-
-        if (c == null)
-            r = Resources.getSystem();
-        else
-            r = c.getResources();
-
         setRawTextSize(TypedValue.applyDimension(
-                unit, size, r.getDisplayMetrics()));
+                unit, size, getResources().getDisplayMetrics()));
     }
 
     private void setRawTextSize(float size) {
@@ -166,10 +158,8 @@ public class LetterBar extends CustomView {
     }
     
     public void setOverlay(TextView overlay) {
-        if (overlayWindow == null)
-        {
-            overlayWindow = new FloatingWindow(this.overlay = overlay);
-        }
+        if (overlayWindow != null) overlayWindow.hide();
+        overlayWindow = new FloatingWindow(this.overlay = overlay);
     }
     
     private void initOverlay() {

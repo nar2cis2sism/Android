@@ -1,10 +1,12 @@
-package engine.android.widget;
+package engine.android.widget.common.layout;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.Checkable;
 import android.widget.FrameLayout;
+
+import engine.android.widget.R;
 
 /**
  * 可多选的控件
@@ -29,10 +31,6 @@ public class CheckableItem extends FrameLayout implements Checkable {
     public CheckableItem(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
-
-    public CheckableItem(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
     
     @Override
     public void setBackgroundDrawable(Drawable background) {
@@ -44,7 +42,6 @@ public class CheckableItem extends FrameLayout implements Checkable {
         if (!isBackgroundSet)
         {
             setBackgroundResource(R.drawable.checkable_item);
-            isBackgroundSet = true;
         }
     }
 

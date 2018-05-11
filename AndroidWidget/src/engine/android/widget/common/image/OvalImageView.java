@@ -25,10 +25,6 @@ public class OvalImageView extends MaskImageView {
         super(context, attrs);
     }
 
-    public OvalImageView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
-
     @Override
     public Bitmap createMaskBitmap() {
         int width = getWidth();
@@ -37,14 +33,12 @@ public class OvalImageView extends MaskImageView {
         Bitmap b = Bitmap.createBitmap(width, height, Config.ARGB_8888);
         Canvas c = new Canvas(b);
 
-        final int color = 0xff424242;
-        final Paint p = new Paint();
-        final RectF rf = new RectF(0, 0, width, height);
-
+        Paint p = new Paint();
         p.setAntiAlias(true);
+        p.setColor(0xff424242);
+        
         c.drawARGB(0, 0, 0, 0);
-        p.setColor(color);
-        c.drawOval(rf, p);
+        c.drawOval(new RectF(0, 0, width, height), p);
 
         return b;
     }

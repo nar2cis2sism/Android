@@ -16,7 +16,7 @@ import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * Android系统提供的各种算法工具
+ * 操作系统提供的各种算法工具
  * 
  * @author Daimon
  * @version N

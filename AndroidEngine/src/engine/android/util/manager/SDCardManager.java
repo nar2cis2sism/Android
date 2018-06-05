@@ -48,16 +48,13 @@ public class SDCardManager {
                 this.receiver = null;
             }
         }
-        else
+        else if (this.receiver == null)
         {
-            if (this.receiver == null)
-            {
-                IntentFilter filter = new IntentFilter();
-                filter.addAction(Intent.ACTION_MEDIA_MOUNTED);
-                filter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
-                filter.addDataScheme("file");
-                context.registerReceiver(this.receiver = receiver, filter);
-            }
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(Intent.ACTION_MEDIA_MOUNTED);
+            filter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
+            filter.addDataScheme("file");
+            context.registerReceiver(this.receiver = receiver, filter);
         }
     }
 
@@ -69,7 +66,6 @@ public class SDCardManager {
          * Environment.getExternalStorageState()方法用于获取SDCard的状态，
          * 如果手机装有SDCard，并且可以进行读写，那么方法返回的状态等于Environment.MEDIA_MOUNTED
          */
-
         return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
@@ -83,7 +79,6 @@ public class SDCardManager {
          * Environment.getExternalStorageDirectory()方法用于获取SDCard的目录
          * 2.2的时候为:/mnt/sdcard 2.1的时候为:/sdcard ...
          */
-
         return new File(Environment.getExternalStorageDirectory(), path);
     }
 
@@ -130,7 +125,7 @@ public class SDCardManager {
 
     public static final class SDCardInfo {
 
-        private String path;
+        private final String path;
 
         private String type;                // 类型
         private String name;                // 厂商

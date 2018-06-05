@@ -18,6 +18,7 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.sql.Date;
 import java.sql.Time;
@@ -40,6 +41,8 @@ import engine.android.dao.annotation.DAOProperty;
 import engine.android.dao.annotation.DAOTable;
 import engine.android.dao.util.Page;
 import engine.android.util.file.FileManager;
+import engine.android.util.io.IOUtil;
+import engine.android.util.manager.SDCardManager;
 
 /**
  * 操作数据库的模板，尽量面向对象，以简化DAO层<br>
@@ -55,6 +58,32 @@ import engine.android.util.file.FileManager;
  * @see http://www.w3cschool.cc/sqlite
  */
 public class DAOTemplate {
+    
+    /**
+     * 加载第三方数据库
+     * 
+     * @param assetsPath assets目录下的数据库路径
+     */
+    public static SQLiteDatabase loadAssetsDB(Context context, String assetsPath) {
+        File db_file = new File(SDCardManager.openSDCardAppDir(context), assetsPath);
+        
+        if (!db_file.exists())
+        {
+            FileManager.createFileIfNecessary(db_file);
+
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(db_file);
+                IOUtil.writeStream(context.getAssets().open(assetsPath), fos);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                IOUtil.closeSilently(fos);
+            }
+        }
+        
+        return SQLiteDatabase.openOrCreateDatabase(db_file, null);
+    }
 
     /**
      * 数据库更新监听器

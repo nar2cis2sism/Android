@@ -55,11 +55,11 @@ public class HomeWatcher {
         }
     }
 
-    public static interface HomeListener {
+    public interface HomeListener {
 
-        public void onHomePressed();
+        void onHomePressed();
 
-        public void onHomeLongPressed();
+        void onHomeLongPressed();
     }
 
     private class HomeReceiver extends BroadcastReceiver {
@@ -79,7 +79,6 @@ public class HomeWatcher {
                 String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
                 if (reason != null && mListener != null)
                 {
-                    System.out.println("reason:" + reason);
                     if (reason.equals(SYSTEM_DIALOG_REASON_KEY_HOME))
                     {
                         // 点击Home键

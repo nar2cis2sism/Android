@@ -53,10 +53,9 @@ public class MyKeyboardManager implements OnGlobalLayoutListener {
         return outRect.top + outRect.height() < displayHeight;
     }
 
-    public static interface KeyboardListener {
+    public interface KeyboardListener {
 
-        public void keyboardChanged(boolean isKeyboardShown);
-
+        void keyboardChanged(boolean isKeyboardShown);
     }
 
     @Override

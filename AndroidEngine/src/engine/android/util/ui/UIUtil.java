@@ -193,7 +193,7 @@ public final class UIUtil {
         }
         else
         {
-            view.getHandler().postDelayed(new Runnable() {
+            view.postDelayed(new Runnable() {
 
                 @Override
                 public void run() {

@@ -30,7 +30,6 @@ import android.widget.ImageView.ScaleType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileDescriptor;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Random;
@@ -146,9 +145,6 @@ public final class ImageUtil {
      * 视图转换成图片（截屏）
      */
     public static Bitmap view2Bitmap(View v) {
-        v.clearFocus();
-        v.setPressed(false);
-
         boolean willNotCache = v.willNotCacheDrawing();
         v.setWillNotCacheDrawing(false);
 
@@ -291,12 +287,6 @@ public final class ImageUtil {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         image.compress(CompressFormat.PNG, 100, baos);
-        try {
-            baos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         return baos.toByteArray();
     }
 
@@ -834,6 +824,7 @@ public final class ImageUtil {
 
      /**
      * 绘制渐变色
+     * 
      * @param x,y,w,h 绘制区域
      * @param startColor,endColor 渐变起始和结束颜色
      * @param horizontal 是否水平渐变
@@ -906,6 +897,17 @@ public final class ImageUtil {
     }
 
     /**
+     * 下载图片
+     * 
+     * @param url 图片下载地址
+     */
+    public static Bitmap downloadImage(String url) throws Exception {
+        // android3.0版本开始就强制不能在主线程中访问网络，要把访问网络放在独立的线程中，
+        // 否则会抛出android.os.NetworkOnMainThreadException
+        return BitmapFactory.decodeStream(new URL(url).openStream());
+    }
+
+    /**
      * 图片解码（为了节约内存，做了一些处理）
      */
     public static final class ImageDecoder {
@@ -932,7 +934,7 @@ public final class ImageUtil {
             Bitmap image = BitmapFactory.decodeFile(pathName, opts);
             if (fitXY)
             {
-                image = ImageUtil.zoom(image, width, height);
+                image = zoom(image, width, height);
             }
 
             return image;
@@ -957,7 +959,7 @@ public final class ImageUtil {
             Bitmap image = BitmapFactory.decodeResource(res, id, opts);
             if (fitXY)
             {
-                image = ImageUtil.zoom(image, width, height);
+                image = zoom(image, width, height);
             }
 
             return image;
@@ -982,7 +984,7 @@ public final class ImageUtil {
             Bitmap image = BitmapFactory.decodeByteArray(data, offset, length, opts);
             if (fitXY)
             {
-                image = ImageUtil.zoom(image, width, height);
+                image = zoom(image, width, height);
             }
 
             return image;
@@ -1006,7 +1008,7 @@ public final class ImageUtil {
             Bitmap image = BitmapFactory.decodeStream(is, null, opts);
             if (fitXY)
             {
-                image = ImageUtil.zoom(image, width, height);
+                image = zoom(image, width, height);
             }
 
             return image;
@@ -1031,7 +1033,7 @@ public final class ImageUtil {
             Bitmap image = BitmapFactory.decodeFileDescriptor(fd, null, opts);
             if (fitXY)
             {
-                image = ImageUtil.zoom(image, width, height);
+                image = zoom(image, width, height);
             }
 
             return image;

@@ -59,8 +59,7 @@ public class AlarmTimer {
         this.name = name;
         am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         ACTION = context.getPackageName() + getClass().getName() + name;
-        Intent intent = new Intent(ACTION);
-        intent.putExtra(NAME, name);
+        Intent intent = new Intent(ACTION).putExtra(NAME, name);
         operation = PendingIntent.getBroadcast(context, 0, intent,
                 PendingIntent.FLAG_CANCEL_CURRENT);
     }

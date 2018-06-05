@@ -16,7 +16,7 @@ import engine.android.util.ui.ViewSize.ViewWidthAdjuster;
  * @version N
  * @since 5/28/2016
  */
-public final class ImageSize {
+public class ImageSize {
     
     private Pair<Integer, Integer> aspect_ratio;
     

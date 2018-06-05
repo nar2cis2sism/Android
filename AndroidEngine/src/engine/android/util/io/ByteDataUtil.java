@@ -45,11 +45,11 @@ public final class ByteDataUtil {
     /**
      * 用于存取的字节数据接口
      */
-    public static interface ByteData {
+    public interface ByteData {
 
-        public void write(DataOutputStream dos) throws IOException;
+        void write(DataOutputStream dos) throws IOException;
 
-        public void read(DataInputStream dis) throws IOException;
+        void read(DataInputStream dis) throws IOException;
     }
 
     /**

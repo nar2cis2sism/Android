@@ -4,7 +4,6 @@ import android.text.TextUtils;
 
 import engine.android.http.util.xml.SAXParserFactory.SAXParser.Node;
 import engine.android.util.StringUtil;
-import engine.android.util.Util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,7 +55,7 @@ public final class SAXParserFactory {
         StringBuilder sb = new StringBuilder(map.size() * 10);
         for (Entry<String, String> entry : map.entrySet())
         {
-            sb.append(Util.getXMLString(entry.getKey(), entry.getValue()));
+            sb.append(StringUtil.getXMLString(entry.getKey(), entry.getValue()));
         }
 
         return sb.toString();

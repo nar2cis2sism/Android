@@ -226,14 +226,14 @@ public final class FileManager {
             throw new FileException(String.format("%s is directory.", file));
         }
 
-        File parent = file.getParentFile();
-        if (!parent.exists() && !parent.mkdirs())
-        {
-            throw new FileException(String.format("Cannot create parent dir[%s]", parent));
-        }
-
         if (!file.exists())
         {
+            File parent = file.getParentFile();
+            if (!parent.exists() && !parent.mkdirs())
+            {
+                throw new FileException(String.format("Cannot create parent dir[%s]", parent));
+            }
+            
             try {
                 file.createNewFile();
             } catch (IOException e) {
@@ -352,7 +352,6 @@ public final class FileManager {
      * @return 是否成功写入
      */
     public static boolean writeFile(File file, byte[] content, boolean append) {
-        createFileIfNecessary(file);
         try {
             FileOutputStream fos = null;
             try {
@@ -536,17 +535,20 @@ public final class FileManager {
         if (sdcard)
         {
             File dir = context.getExternalCacheDir();
-            if (dir == null)
+            if (dir != null)
             {
-                dir = context.getCacheDir();
+                return dir;
             }
+        }
+        
+        return context.getCacheDir();
+    }
 
-            return dir;
-        }
-        else
-        {
-            return context.getCacheDir();
-        }
+    /**
+     * Do not allow media scan
+     */
+    public static void disableMediaScan(File file) {
+        createFileIfNecessary(new File(file.getParentFile(), ".nomedia"));
     }
 
     private static class FileException extends RuntimeException {

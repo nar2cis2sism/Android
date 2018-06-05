@@ -146,36 +146,13 @@ public final class ZipUtil {
                 }
 
                 try {
-                    is = zf.getInputStream(entry);
-
                     File file = new File(dir + File.separator + entry.getName());
                     FileManager.createFileIfNecessary(file);
-
-                    os = new FileOutputStream(file);
-
-                    IOUtil.writeStream(is, os);
-                } finally {
-                    if (is != null)
-                    {
-                        try {
-                            is.close();
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
-                        
-                        is = null;
-                    }
                     
-                    if (os != null)
-                    {
-                        try {
-                            os.close();
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
-                        
-                        os = null;
-                    }
+                    IOUtil.writeStream(is = zf.getInputStream(entry), os = new FileOutputStream(file));
+                } finally {
+                    IOUtil.closeSilently(is);
+                    IOUtil.closeSilently(os);
                 }
             }
         } finally {

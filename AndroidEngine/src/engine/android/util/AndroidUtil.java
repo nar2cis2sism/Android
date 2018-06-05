@@ -18,7 +18,6 @@ import android.content.pm.ResolveInfo;
 import android.content.pm.Signature;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -33,21 +32,18 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import engine.android.util.file.FileManager;
+import engine.android.util.file.FileUtils;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.Callable;
-
-import engine.android.util.file.FileManager;
-import engine.android.util.file.FileUtils;
-import engine.android.util.io.IOUtil;
-import engine.android.util.manager.SDCardManager;
 
 /**
  * Android系统工具类
@@ -321,6 +317,22 @@ public final class AndroidUtil {
     }
 
     /**
+     * 我们认为长宽比大于4:3的就为宽屏
+     */
+    public static boolean isWideScreen(int width, int height) {
+        int max = width;
+        int min = height;
+        if (max < min)
+        {
+            max = max ^ min;
+            min = max ^ min;
+            max = max ^ min;
+        }
+        
+        return max * 3 > min * 4;
+    }
+
+    /**
      * 根据包名启动已安装APK
      */
     public static void startApp(Context context, String packageName) throws Exception {
@@ -336,8 +348,9 @@ public final class AndroidUtil {
         {
             ResolveInfo ri = list.get(0);
             intent.setComponent(new ComponentName(pi.packageName, ri.activityInfo.name));
-            context.startActivity(intent);
         }
+        
+        context.startActivity(intent);
     }
 
     /**
@@ -472,6 +485,7 @@ public final class AndroidUtil {
 
     /**
      * 通过反射获取到sdk隐藏的服务
+     * 
      * @param name 服务名称
      */
     public static IBinder getServiceIBinder(String name) throws Exception {
@@ -534,32 +548,6 @@ public final class AndroidUtil {
         }
 
         return null;
-    }
-    
-    /**
-     * 加载第三方数据库
-     * 
-     * @param assetsPath assets目录下的数据库路径
-     */
-    public static SQLiteDatabase loadAssetsDB(Context context, String assetsPath) {
-        File db_file = new File(SDCardManager.openSDCardAppDir(context), assetsPath);
-        
-        if (!db_file.exists())
-        {
-            FileManager.createFileIfNecessary(db_file);
-
-            FileOutputStream fos = null;
-            try {
-                fos = new FileOutputStream(db_file);
-                IOUtil.writeStream(context.getAssets().open(assetsPath), fos);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                IOUtil.closeSilently(fos);
-            }
-        }
-        
-        return SQLiteDatabase.openOrCreateDatabase(db_file, null);
     }
     
     public static void setupStrictMode() {

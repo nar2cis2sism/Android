@@ -54,7 +54,6 @@ public class MySensorManager implements SensorEventListener {
         if (aSensor == null)
         {
             // 没有重力感应装置
-            System.out.println("no sensor");
             return false;
         }
 
@@ -111,9 +110,9 @@ public class MySensorManager implements SensorEventListener {
     /**
      * 我的手机动作感应监听器
      */
-    public static interface MySensorListener {
+    public interface MySensorListener {
 
-        public void notifyUpdate(SensorEvent event);
+        void notifyUpdate(SensorEvent event);
     }
 
     /**
@@ -141,13 +140,13 @@ public class MySensorManager implements SensorEventListener {
      */
     public static abstract class RotateSensorListener extends AccelerometerSensorListener {
 
-        protected static int UPDATE_INTERVAL    = 100;     // 感应检测时间间隔（最小值：60）
+        protected static int UPDATE_INTERVAL    = 100;        // 感应检测时间间隔（最小值：60）
 
-        public static final int ROTATE_NONE     = 0;       // 手机没有翻转
-        public static final int ROTATEX_LEFT    = 1;       // 手机向左翻转
-        public static final int ROTATEX_RIGHT   = 2;       // 手机向右翻转
-        public static final int ROTATEY_UP      = 3;       // 手机向上翻转
-        public static final int ROTATEY_DOWN    = 4;       // 手机向下翻转
+        protected static final int ROTATE_NONE     = 0;       // 手机没有翻转
+        protected static final int ROTATEX_LEFT    = 1;       // 手机向左翻转
+        protected static final int ROTATEX_RIGHT   = 2;       // 手机向右翻转
+        protected static final int ROTATEY_UP      = 3;       // 手机向上翻转
+        protected static final int ROTATEY_DOWN    = 4;       // 手机向下翻转
 
         private Point3D lastUpdate;
 
@@ -281,7 +280,7 @@ public class MySensorManager implements SensorEventListener {
             return timestamp;
         }
 
-        float getAxis(int axis) {
+        private float getAxis(int axis) {
             return new float[] { x, y, z }[axis];
         }
 

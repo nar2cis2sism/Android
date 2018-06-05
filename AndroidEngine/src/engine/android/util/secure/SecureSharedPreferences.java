@@ -164,6 +164,11 @@ public class SecureSharedPreferences implements SharedPreferences {
             return this;
         }
 
+        public android.content.SharedPreferences.Editor putStringSet(String key, Set<String> values) {
+            list.add(new Put(key, values));
+            return this;
+        }
+
         @Override
         public android.content.SharedPreferences.Editor putInt(String key, int value) {
             list.add(new Put(key, value));
@@ -233,12 +238,6 @@ public class SecureSharedPreferences implements SharedPreferences {
 
         public void apply() {
             commit();
-        }
-
-        public android.content.SharedPreferences.Editor putStringSet(
-                String arg0, Set<String> arg1) {
-            list.add(new Put(arg0, arg1));
-            return this;
         }
     }
 

@@ -113,8 +113,7 @@ public class MyPowerManager {
     public void unlock() {
         if (lock != null)
         {
-            if (lock.isHeld())
-                lock.release();
+            if (lock.isHeld()) lock.release();
             lock = null;
         }
     }
@@ -122,10 +121,10 @@ public class MyPowerManager {
     /**
      * 屏幕监测器
      */
-    public static interface ScreenObserver {
+    public interface ScreenObserver {
 
-        public void screenOn();
+        void screenOn();
 
-        public void screenOff();
+        void screenOff();
     }
 }

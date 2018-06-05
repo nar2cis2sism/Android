@@ -133,12 +133,11 @@ public abstract class MyOrientationEventListener extends OrientationEventListene
         return (screenOrientation.ordinal() - 1) * 90;
     }
 
-    protected abstract void onOrientationChanged(int orientation,
-            ScreenOrientation screenOrientation);
+    protected abstract void onOrientationChanged(int orientation, ScreenOrientation screenOrientation);
 
-    private static interface OrientationCompensation {
+    private interface OrientationCompensation {
 
-        public int compensateOrientation(int orientation);
+        int compensateOrientation(int orientation);
     }
 
     @Override

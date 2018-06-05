@@ -1,15 +1,9 @@
 package engine.android.util;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 
-import engine.android.util.file.FileManager;
-
-import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Date;
@@ -28,42 +22,6 @@ public final class Util {
 
     private static final HashMap<String, Object> buffer
     = new HashMap<String, Object>();   // 变量缓存表
-
-    /**
-     * 将键值对拼装成XML格式的字符串
-     */
-    public static String getXMLString(String key, String value) {
-        if (value != null)
-        {
-            if (value.length() == 0)
-            {
-                return String.format("<%s />", key);
-            }
-            else
-            {
-                return String.format("<%s>%s</%s>", key, value, key);
-            }
-        }
-
-        return "";
-    }
-
-    /**
-     * 下载图片
-     * 
-     * @param url 图片下载地址
-     */
-    public static Bitmap downloadImage(String url) {
-        // android3.0版本开始就强制不能在主线程中访问网络，要把访问网络放在独立的线程中，
-        // 否则会抛出android.os.NetworkOnMainThreadException
-        try {
-            return BitmapFactory.decodeStream(new URL(url).openStream());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
 
     /**
      * 从字符串中取boolean型值
@@ -206,7 +164,7 @@ public final class Util {
     }
 
     /**
-     * 基准为2000年的时间转换为基准为1970年的时间
+     * 基准为1970年的时间转换为基准为2000年的时间
      * 
      * @return 单位：秒
      */
@@ -232,13 +190,6 @@ public final class Util {
     }
 
     /**
-     * Do not allow media scan
-     */
-    public static void disableMediaScan(File file) {
-        FileManager.createFileIfNecessary(new File(file.getParentFile(), ".nomedia"));
-    }
-
-    /**
      * 打印对象信息
      */
     public static String toString(Object obj) {
@@ -248,7 +199,7 @@ public final class Util {
         }
 
         try {
-            StringBuilder sb = new StringBuilder("[").append(obj.getClass().getSimpleName()).append("]");
+            StringBuilder sb = new StringBuilder().append(obj.getClass().getSimpleName()).append("[");
             for (Class<?> c = obj.getClass(); c != Object.class; c = c.getSuperclass())
             {
                 for (Field field : c.getDeclaredFields())
@@ -259,11 +210,11 @@ public final class Util {
                     }
                     
                     field.setAccessible(true);
-                    sb.append(",").append(field.getName()).append("=").append(field.get(obj));
+                    sb.append(field.getName()).append("=").append(field.get(obj)).append(",");
                 }
             }
 
-            return sb.toString();
+            return sb.deleteCharAt(sb.length() - 1).append("]").toString();
         } catch (Exception e) {
             return obj.toString();
         }
@@ -294,28 +245,5 @@ public final class Util {
         }
 
         return null;
-    }
-
-    /**
-     * 我们认为长宽比大于4:3的就为宽屏
-     */
-    public static boolean isWideScreen(int width, int height) {
-        int max = width;
-        int min = height;
-        if (max < min)
-        {
-            max = max ^ min;
-            min = max ^ min;
-            max = max ^ min;
-        }
-        
-        return max * 3 > min * 4;
-    }
-
-    /**
-     * 根据百分比值计算透明度
-     */
-    public static int computeAlpha(float percent) {
-        return Math.round((Byte.MAX_VALUE - Byte.MIN_VALUE) * percent / 100);
     }
 }

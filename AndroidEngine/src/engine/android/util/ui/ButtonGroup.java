@@ -33,14 +33,14 @@ public class ButtonGroup {
     }
     
     public void check(int index) {
-        if (index == -1)
+        if (index >= 0 && index < group.size())
+        {
+            group.get(index).setChecked(true);
+        }
+        else if (checked != null)
         {
             checked.setChecked(false);
             checked = null;
-        }
-        else if (index >= 0 && index < group.size())
-        {
-            group.get(index).setChecked(true);
         }
     }
 
@@ -57,7 +57,7 @@ public class ButtonGroup {
 
     public interface OnCheckedChangeListener {
         
-        public void onCheckedChanged(ButtonGroup group, int checkedIndex);
+        void onCheckedChanged(ButtonGroup group, int checkedIndex);
     }
     
     private class CheckedStateTracker implements CompoundButton.OnCheckedChangeListener {

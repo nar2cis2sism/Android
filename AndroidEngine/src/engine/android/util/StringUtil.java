@@ -187,21 +187,25 @@ public final class StringUtil {
     }
     
     /**
-     * Alphabetical comparison of object.
+     * 将键值对拼装成XML格式的字符串
      */
-    public static abstract class AlphaComparator<T> implements Comparator<T> {
-        
-        private final Collator collator = Collator.getInstance();
-
-        @Override
-        public int compare(T lhs, T rhs) {
-            return collator.compare(toString(lhs), toString(rhs));
+    public static String getXMLString(String key, String value) {
+        if (value != null)
+        {
+            if (value.length() == 0)
+            {
+                return String.format("<%s />", key);
+            }
+            else
+            {
+                return String.format("<%s>%s</%s>", key, value, key);
+            }
         }
-        
-        public abstract String toString(T obj);
+    
+        return "";
     }
 
-    public static String UrlEncode(String url, String charsetName) {
+    public static String urlEncode(String url, String charsetName) {
         try {
             if (TextUtils.isEmpty(charsetName))
             {
@@ -216,7 +220,7 @@ public final class StringUtil {
         }
     }
 
-    public static String UrlDecode(String url, String charsetName) {
+    public static String urlDecode(String url, String charsetName) {
         try {
             if (TextUtils.isEmpty(charsetName))
             {
@@ -281,4 +285,18 @@ public final class StringUtil {
         return sb.toString();
     }
 
+    /**
+     * Alphabetical comparison of object.
+     */
+    public static abstract class AlphaComparator<T> implements Comparator<T> {
+        
+        private final Collator collator = Collator.getInstance();
+    
+        @Override
+        public int compare(T lhs, T rhs) {
+            return collator.compare(toString(lhs), toString(rhs));
+        }
+        
+        public abstract String toString(T obj);
+    }
 }

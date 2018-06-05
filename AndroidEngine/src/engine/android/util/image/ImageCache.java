@@ -17,17 +17,17 @@ import java.util.Map;
  * @version N
  * @since 6/6/2014
  */
-public final class ImageCache<Identifier> {
+public class ImageCache<Identifier> {
 
     private static final int DEFAULT_CACHE_SIZE = (int) (Runtime.getRuntime().maxMemory() / 8);
 
     private static final int DEFAULT_CACHE_CAPACITY = 16;
 
-    final LruCache<Identifier, Bitmap> imageHardCache;              // 图片硬缓存
+    private final LruCache<Identifier, Bitmap> imageHardCache;              // 图片硬缓存
 
-    final Map<Identifier, ImageReference> imageSoftCache;           // 图片软缓存
+    private final Map<Identifier, ImageReference> imageSoftCache;           // 图片软缓存
 
-    final ReferenceQueue<Bitmap> queue;                             // 垃圾回收队列
+    private final ReferenceQueue<Bitmap> queue;                             // 垃圾回收队列
 
     public ImageCache() {
         this(DEFAULT_CACHE_SIZE, DEFAULT_CACHE_CAPACITY);
@@ -101,7 +101,7 @@ public final class ImageCache<Identifier> {
 
     @SuppressWarnings("unchecked")
     private void gc() {
-        ImageReference r = null;
+        ImageReference r;
         while ((r = (ImageReference) queue.poll()) != null)
         {
             imageSoftCache.remove(r.key);
@@ -124,7 +124,7 @@ public final class ImageCache<Identifier> {
 
     private class ImageReference extends SoftReference<Bitmap> {
 
-        Identifier key;
+        public Identifier key;
 
         public ImageReference(Identifier key, Bitmap image) {
             // （所引用的对象已经被回收，则将该引用存入队列中）

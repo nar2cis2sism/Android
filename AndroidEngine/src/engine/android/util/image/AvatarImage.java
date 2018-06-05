@@ -18,7 +18,7 @@ import android.graphics.RectF;
  * @version N
  * @since 6/6/2014
  */
-public final class AvatarImage {
+public class AvatarImage {
 
     private static final int DEFAULT_BG_COLOR = 0xff424242;
 

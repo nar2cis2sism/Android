@@ -273,8 +273,7 @@ public class MyValidator {
             throw new IllegalArgumentException();
         }
 
-        String regex = "^[+-]?\\d*\\.\\d{" + n + "}$";
-        return Pattern.compile(regex);
+        return Pattern.compile(String.format("^[+-]?\\d*\\.\\d{%d}$", n));
     }
 
     /**
@@ -286,9 +285,7 @@ public class MyValidator {
             throw new IllegalArgumentException();
         }
 
-        String regex = "^[a-zA-Z][a-zA-Z0-9_]{" + (min - 1)
-                + "," + (max - 1) + "}$";
-        return Pattern.compile(regex);
+        return Pattern.compile(String.format("^[a-zA-Z][a-zA-Z0-9_]{%d,%d}$", min - 1, max - 1));
     }
 
     /**
@@ -301,21 +298,34 @@ public class MyValidator {
     /**
      * 解析文本样式
      */
-    public static List<Map<String, Object>> parse(String s, Pattern p) {
-        ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+    public static List<PatternText> parse(String s, Pattern p) {
         Matcher m = p.matcher(s);
         boolean flag = m.find();
-        while (flag)
+        if (flag)
         {
-            HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put("start", m.start());
-            map.put("end", m.end());
-            map.put("text", m.group());
-            list.add(map);
-            flag = m.find(m.end());
+            List<PatternText> list = new ArrayList<PatternText>();
+            do
+            {
+                list.add(new PatternText(m.start(), m.end(), m.group()));
+            } while (flag = m.find(m.end()));
+            
+            return list;
         }
 
-        return list;
+        return null;
+    }
+    
+    public static final class PatternText {
+        
+        public final int start;
+        public final int end;
+        public final String text;
+        
+        public PatternText(int start, int end, String text) {
+            this.start = start;
+            this.end = end;
+            this.text = text;
+        }
     }
 
     public static class PatternValidation<T extends TextView> extends TextValidation<T> {
@@ -337,8 +347,7 @@ public class MyValidator {
         private final LinkedList<Pair<Forelet.Validation<T>, String>> validations
         = new LinkedList<Pair<Forelet.Validation<T>, String>>();
 
-        public final Validation<T> addValidation(Forelet.Validation<T> validation,
-                String invalidText) {
+        public final Validation<T> addValidation(Forelet.Validation<T> validation, String invalidText) {
             validations.add(new Pair<Forelet.Validation<T>, String>(validation, invalidText));
             return this;
         }

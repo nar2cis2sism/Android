@@ -51,7 +51,7 @@ public class SoundPlayer {
      * @param raw 声音文件引用
      */
     public void load(int id, int raw) {
-        map.put(id, pool.load(context, raw, 1));
+        map.append(id, pool.load(context, raw, 1));
     }
 
     /**
@@ -79,7 +79,7 @@ public class SoundPlayer {
             volume = maxVolume;
         }
 
-        setVolume();
+        setupVolume();
     }
 
     /**
@@ -97,18 +97,11 @@ public class SoundPlayer {
             volume = 0;
         }
 
-        setVolume();
+        setupVolume();
     }
 
     public int getVolume() {
         return volume;
-    }
-
-    /**
-     * 设置音量
-     */
-    private void setVolume() {
-        am.setStreamVolume(AudioManager.STREAM_MUSIC, volume, AudioManager.FLAG_PLAY_SOUND);
     }
 
     public int getMaxVolume() {
@@ -117,6 +110,13 @@ public class SoundPlayer {
 
     public void setVolume(int volume) {
         this.volume = volume;
-        setVolume();
+        setupVolume();
+    }
+
+    /**
+     * 设置音量
+     */
+    private void setupVolume() {
+        am.setStreamVolume(AudioManager.STREAM_MUSIC, volume, AudioManager.FLAG_PLAY_SOUND);
     }
 }

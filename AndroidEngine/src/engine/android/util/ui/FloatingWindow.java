@@ -33,19 +33,19 @@ public class FloatingWindow {
      * <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
      */
     public FloatingWindow(View view, boolean system) {
-        content = view;
+        Context context = (content = view).getContext();
         
+        wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         wl = new WindowManager.LayoutParams();
-        wl.type = LayoutParams.TYPE_APPLICATION;
-        
-        Context context = view.getContext();
         if (system)
         {
             context = context.getApplicationContext();
             wl.type = LayoutParams.TYPE_SYSTEM_ALERT;
         }
-        
-        wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        else
+        {
+            wl.type = LayoutParams.TYPE_APPLICATION;
+        }
         
         wl.flags = LayoutParams.FLAG_NOT_FOCUSABLE;
         wl.format = PixelFormat.TRANSLUCENT;

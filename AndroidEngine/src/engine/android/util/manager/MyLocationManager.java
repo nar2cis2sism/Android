@@ -146,7 +146,7 @@ public class MyLocationManager {
 
             HttpEntity entity = resp.getEntity();
             BufferedReader br = new BufferedReader(new InputStreamReader(entity.getContent()));
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
             String s;
             while ((s = br.readLine()) != null)

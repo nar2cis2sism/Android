@@ -11,7 +11,7 @@ import java.lang.reflect.Modifier;
  * @version N
  * @since 10/17/2012
  */
-public final class ReflectObject {
+public class ReflectObject {
 
     private final Object obj;
 

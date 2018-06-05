@@ -36,6 +36,13 @@ public final class MathUtil {
     }
 
     /**
+     * 根据百分比值计算透明度
+     */
+    public static int computeAlpha(float percent) {
+        return Math.round((Byte.MAX_VALUE - Byte.MIN_VALUE) * percent / 100);
+    }
+
+    /**
      * 获取序列数组（依次从最小值排列至最大值）
      */
     public static int[] getSequence(int min, int max) {

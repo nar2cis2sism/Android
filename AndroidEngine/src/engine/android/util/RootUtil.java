@@ -56,8 +56,7 @@ public class RootUtil {
                     continue;
                 }
 
-                // Do not use dos.writeBytes(commmand), avoid chinese charset
-                // error
+                // Do not use dos.writeBytes(commmand), avoid chinese charset error
                 dos.write(command.getBytes());
                 dos.writeBytes("\n");
                 dos.flush();

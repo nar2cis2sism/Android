@@ -15,11 +15,11 @@ import android.widget.AbsListView.MultiChoiceModeListener;
  */
 public class ContextualMode implements MultiChoiceModeListener {
 
-    protected ActionMode actionMode;
-
     protected final AbsListView listView;
 
     private final int menuResource;
+
+    protected ActionMode actionMode;
 
     public ContextualMode(AbsListView listView, int menuResource) {
         this.listView = listView;

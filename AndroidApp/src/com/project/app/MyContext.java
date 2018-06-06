@@ -14,8 +14,7 @@ import android.os.Looper;
  */
 public class MyContext {
 
-    private static final Context context
-    = MyApp.getApp();
+    private static final Context context = MyApp.getApp();
 
     public static Context getContext() {
         return context;

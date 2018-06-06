@@ -64,7 +64,7 @@ public class MyDAOManager implements DBUpdateListener {
         protected static final DAOTemplate dao = getDAO();
         
         public static <T> T findItemByProperty(Class<T> cls, String property, Object value) {
-            return dao.find(cls).where(DAOExpression.create(property).equal(value)).get();
+            return dao.find(cls).where(DAOExpression.create(property).eq(value)).get();
         }
     }
 }

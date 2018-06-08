@@ -24,11 +24,11 @@ public class HttpRequest {
 
     private final String url;                       // 请求的链接地址
 
-    private final String method;                    // 请求的方式
-
     private Map<String, String> headers;            // 请求头
 
     private final HttpEntity entity;                // 请求数据
+
+    private final String method;                    // 请求的方式
 
     HttpRequest(String url, Map<String, String> headers, HttpEntity entity) {
         this.url = url;
@@ -48,16 +48,16 @@ public class HttpRequest {
         return url;
     }
     
-    public String getMethod() {
-        return method;
-    }
-    
     public Map<String, String> getHeaders() {
         return headers;
     }
     
     public HttpEntity getEntity() {
         return entity;
+    }
+    
+    public String getMethod() {
+        return method;
     }
 
     /**
@@ -86,10 +86,14 @@ public class HttpRequest {
     
     public static class ByteArrayEntity implements HttpEntity {
         
-        protected final byte[] content;
+        private final byte[] content;
         
         public ByteArrayEntity(byte[] data) {
             content = data;
+        }
+        
+        public final byte[] getContent() {
+            return content;
         }
 
         @Override

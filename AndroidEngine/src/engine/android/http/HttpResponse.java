@@ -53,11 +53,22 @@ public class HttpResponse {
         return new ByteArrayInputStream(content);
     }
     
-    String getHeaderField(String key) {
-        if (headers == null) return null;
+    private String getHeaderField(String key) {
+        if (headers == null)
+        {
+            return null;
+        }
         
         List<String> list = headers.get(key);
-        if (list == null) return null;
+        if (list == null || list.isEmpty())
+        {
+            return null;
+        }
+        
+        if (list.size() == 1)
+        {
+            return list.get(0);
+        }
         
         return TextUtils.join(",", list);
     }
@@ -70,6 +81,7 @@ public class HttpResponse {
         }
     }
     
+    @SuppressWarnings("deprecation")
     private long getHeaderFieldDate(String field, long defaultValue) {
         String date = getHeaderField(field);
         if (date == null)

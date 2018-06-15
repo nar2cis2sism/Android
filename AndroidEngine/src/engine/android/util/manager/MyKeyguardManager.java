@@ -12,6 +12,7 @@ import android.content.Context;
  * @version N
  * @since 6/6/2012
  */
+@SuppressWarnings("deprecation")
 public class MyKeyguardManager {
 
     private final KeyguardManager km;                   // 锁屏管理器

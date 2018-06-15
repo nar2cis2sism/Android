@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
@@ -315,10 +316,28 @@ public final class FileManager {
             mbb.order(ByteOrder.nativeOrder());
             return mbb;
         } finally {
-            if (raf != null)
+            if (raf != null) raf.close();
+        }
+    }
+    
+    /**
+     * 读取文件内容
+     * 
+     * @param cls 与文件平级的类
+     * @param fileName 文件名
+     */
+    public static byte[] readFile(Class<?> cls, String fileName) throws IOException {
+        InputStream is = null;
+        try {
+            is = cls.getResourceAsStream(fileName);
+            if (is == null)
             {
-                raf.close();
+                throw new IOException("No resource:" + fileName);
             }
+            
+            return IOUtil.readStream(is);
+        } finally {
+            if (is != null) is.close();
         }
     }
 
@@ -331,10 +350,7 @@ public final class FileManager {
             try {
                 return IOUtil.readStream(fis = new FileInputStream(file));
             } finally {
-                if (fis != null)
-                {
-                    fis.close();
-                }
+                if (fis != null) fis.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -360,10 +376,7 @@ public final class FileManager {
                 fos.write(content);
                 return true;
             } finally {
-                if (fos != null)
-                {
-                    fos.close();
-                }
+                if (fos != null) fos.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -388,10 +401,7 @@ public final class FileManager {
                     list.add(s);
                 }
             } finally {
-                if (br != null)
-                {
-                    br.close();
-                }
+                if (br != null) br.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -411,10 +421,7 @@ public final class FileManager {
                 br = new BufferedReader(new FileReader(file));
                 s = br.readLine();
             } finally {
-                if (br != null)
-                {
-                    br.close();
-                }
+                if (br != null) br.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -451,10 +458,7 @@ public final class FileManager {
                     return true;
                 }
             } finally {
-                if (ois != null)
-                {
-                    ois.close();
-                }
+                if (ois != null) ois.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -487,10 +491,7 @@ public final class FileManager {
                         return false;
                     }
                 } finally {
-                    if (ois != null)
-                    {
-                        ois.close();
-                    }
+                    if (ois != null) ois.close();
                 }
             } catch (FileNotFoundException e) {
                 // Ignore.
@@ -514,10 +515,7 @@ public final class FileManager {
 
                 return true;
             } finally {
-                if (oos != null)
-                {
-                    oos.close();
-                }
+                if (oos != null) oos.close();
             }
         } catch (IOException e) {
             e.printStackTrace();

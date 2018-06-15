@@ -53,7 +53,7 @@ public class HttpResponse {
         return new ByteArrayInputStream(content);
     }
     
-    private String getHeaderField(String key) {
+    String getHeaderField(String key) {
         if (headers == null)
         {
             return null;

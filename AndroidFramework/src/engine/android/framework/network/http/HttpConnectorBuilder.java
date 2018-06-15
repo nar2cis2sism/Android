@@ -1,8 +1,8 @@
 package engine.android.framework.network.http;
 
-import engine.android.framework.network.http.util.EntityUtil;
 import engine.android.http.HttpConnector;
 import engine.android.http.HttpRequest.HttpEntity;
+import protocol.java.EntityUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -102,15 +102,14 @@ public class HttpConnectorBuilder {
         String toJson();
     }
     
-    private static class JsonConverter implements StringConverter<JsonEntity> {
+    private static final StringConverter<JsonEntity> jsonConverter
+    = new StringConverter<JsonEntity>() {
 
         @Override
         public String convert(JsonEntity entity) {
             return entity.toJson();
         }
-    }
-    
-    private static final JsonConverter jsonConverter = new JsonConverter();
+    };
     
     public HttpConnectorBuilder setEntity(JsonEntity entity) {
         return setEntity(entity, jsonConverter);

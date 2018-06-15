@@ -1,6 +1,7 @@
 package engine.android.dao;
 
 import static engine.android.core.util.LogFactory.LOG.log;
+import static engine.android.core.util.LogFactory.LogUtil.getCallerStackFrame;
 import static engine.android.dao.DAOUtil.checkNull;
 import static engine.android.dao.DAOUtil.extractFromCursor;
 
@@ -243,7 +244,7 @@ public class DAOTemplate {
      * 删除自身数据库
      */
     public void deleteSelf() {
-        log(LogUtil.getCallerStackFrame(), "删除数据库:" + dao.getDatabaseName());
+        log(getCallerStackFrame(), "删除数据库:" + dao.getDatabaseName());
         context.deleteDatabase(dao.getDatabaseName());
     }
 
@@ -470,7 +471,7 @@ public class DAOTemplate {
 
         SQLiteDatabase db = getDataBase();
         db.beginTransaction();
-        if (printLog) log(LogUtil.getCallerStackFrame(), "事务开始");
+        if (printLog) log(LogUtil.getClassAndMethod(getCallerStackFrame()), "事务开始");
         try {
             if (transaction.execute(this))
             {
@@ -483,7 +484,7 @@ public class DAOTemplate {
             LOG_DAOException(new DAOException(e));
         } finally {
             db.endTransaction();
-            if (printLog) log(LogUtil.getCallerStackFrame(), "事务结束:success=" + success);
+            if (printLog) log(LogUtil.getClassAndMethod(getCallerStackFrame()), "事务结束:success=" + success);
             dispatchChange(success);
         }
 
@@ -1921,8 +1922,8 @@ class Table {
             }
         }
 
-        // 当没有注解的时候默认用类的名称作为表名,并把点(.)替换为下划线(_)
-        return c.getName().replace('.', '_');
+        // 当没有注解的时候默认用类的名称作为表名
+        return c.getSimpleName();
     }
 
     public static Table getTable(Class<?> c) {
@@ -2019,7 +2020,7 @@ class DAOUtil {
         if (obj != null) return;
         
         String message;
-        StackTraceElement stack = LogUtil.getCallerStackFrame();
+        StackTraceElement stack = getCallerStackFrame();
         if (stack != null)
         {
             message = String.format("Argument passed to %s[%d] cannot be null",

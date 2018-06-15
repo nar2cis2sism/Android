@@ -111,6 +111,7 @@ public class SocketConnector {
      * 根据手机设置自动选择代理<br>
      * 需要声明权限<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
      */
+    @SuppressWarnings("deprecation")
     public SocketConnector setProxy(Context context) {
         NetworkInfo info = ((ConnectivityManager) context.getSystemService
                 (Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();// 获取当前网络连接信息
@@ -174,6 +175,7 @@ public class SocketConnector {
                     int length = in.read();
                     byte[] data = new byte[length];
                     in.read(data);
+                    SocketUtil.crypt(data);
                     return data;
                 }
             };

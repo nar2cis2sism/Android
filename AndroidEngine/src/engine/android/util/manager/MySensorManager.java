@@ -121,6 +121,7 @@ public class MySensorManager implements SensorEventListener {
     public static abstract class AccelerometerSensorListener implements MySensorListener {
 
         @Override
+        @SuppressWarnings("deprecation")
         public final void notifyUpdate(SensorEvent event) {
             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
             {

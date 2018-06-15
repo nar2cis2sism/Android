@@ -205,6 +205,7 @@ public final class StringUtil {
         return "";
     }
 
+    @SuppressWarnings("deprecation")
     public static String urlEncode(String url, String charsetName) {
         try {
             if (TextUtils.isEmpty(charsetName))
@@ -220,6 +221,7 @@ public final class StringUtil {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public static String urlDecode(String url, String charsetName) {
         try {
             if (TextUtils.isEmpty(charsetName))

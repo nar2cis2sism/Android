@@ -6,6 +6,10 @@ import android.net.NetworkInfo;
 import android.net.Proxy;
 import android.text.TextUtils;
 
+import engine.android.core.util.LogFactory;
+import engine.android.core.util.LogFactory.LOG;
+import engine.android.http.HttpRequest.HttpEntity;
+
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
@@ -15,10 +19,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
-
-import engine.android.core.util.LogFactory;
-import engine.android.core.util.LogFactory.LOG;
-import engine.android.http.HttpRequest.HttpEntity;
 
 /**
  * Http连接器<p>
@@ -134,6 +134,7 @@ public class HttpConnector {
      * 根据手机设置自动选择代理<br>
      * 需要声明权限<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
      */
+    @SuppressWarnings("deprecation")
     public HttpConnector setProxy(Context context) {
         NetworkInfo info = ((ConnectivityManager) context.getSystemService
                 (Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo(); // 获取当前网络连接信息
@@ -214,6 +215,7 @@ public class HttpConnector {
             }
         }
 
+        log("联网请求：" + request.getUrl());
         long time = System.currentTimeMillis();
         try {
             HttpResponse response = doConnect(r);
@@ -249,13 +251,9 @@ public class HttpConnector {
     }
     
     protected HttpResponse doConnect(HttpRequest request) throws Exception {
-        String url = request.getUrl();
-        
         lock.lock();
         try {
-            log("联网请求：" + url);
-            
-            URL href = new URL(url);
+            URL href = new URL(request.getUrl());
             if (proxy != null)
             {
                 log("使用代理网关：" + proxy);
@@ -290,7 +288,7 @@ public class HttpConnector {
                     String.valueOf(entity.getContentLength()));
         }
 
-        conn.addRequestProperty("Host", getHost(url));
+        conn.addRequestProperty("Host", getHost(request.getUrl()));
         conn.setRequestMethod(method);
 
         if (params != null)

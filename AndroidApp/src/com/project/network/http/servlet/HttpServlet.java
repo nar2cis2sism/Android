@@ -2,17 +2,18 @@ package com.project.network.http.servlet;
 
 import android.os.SystemClock;
 
+import engine.android.core.util.LogFactory.LOG;
+import engine.android.http.HttpRequest;
+import engine.android.http.HttpRequest.HttpEntity;
+import engine.android.util.io.IOUtil;
+
 import org.json.JSONObject;
+
+import protocol.java.EntityUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import engine.android.core.util.LogFactory.LOG;
-import engine.android.framework.network.http.util.EntityUtil;
-import engine.android.http.HttpRequest;
-import engine.android.http.HttpRequest.HttpEntity;
-import engine.android.util.io.IOUtil;
 
 public class HttpServlet implements engine.android.http.HttpProxy.HttpServlet {
     

@@ -6,18 +6,10 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.net.SocketException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import engine.android.core.ApplicationManager;
 import engine.android.core.extra.EventBus;
 import engine.android.core.extra.EventBus.Event;
+import engine.android.core.util.LogFactory;
 import engine.android.framework.app.AppConfig;
 import engine.android.framework.app.AppGlobal;
 import engine.android.framework.network.socket.SocketResponse.Callback;
@@ -27,15 +19,24 @@ import engine.android.socket.SocketConnectionListener;
 import engine.android.socket.SocketConnector;
 import engine.android.socket.SocketConnector.SocketData;
 import engine.android.socket.SocketConnector.SocketReceiver;
-import engine.android.socket.util.CRCUtility;
 import engine.android.util.Util;
 import engine.android.util.file.FileManager;
 import engine.android.util.manager.SDCardManager;
+import engine.android.util.secure.CRCUtil;
 import engine.android.util.secure.HexUtil;
 import engine.android.util.secure.Obfuscate;
 import protocol.java.ProtocolWrapper;
 import protocol.java.ProtocolWrapper.ProtocolEntity;
 import protocol.java.ProtocolWrapper.ProtocolEntity.ProtocolData;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Socket连接管理器<p>
@@ -95,7 +96,7 @@ public class SocketManager implements SocketConnectionListener, Callback {
                 in.read(bs);
                 
                 byte[] crypt_key = Obfuscate.clarify(bs);
-                int crc = CRCUtility.calculate(crypt_key, crypt_key.length);
+                int crc = CRCUtil.calculate(crypt_key, crypt_key.length);
                 
                 out.write(crc);
                 int resp = in.read();
@@ -165,6 +166,10 @@ public class SocketManager implements SocketConnectionListener, Callback {
                 log(e);
             }
         }
+    }
+    
+    private static void onSend(ProtocolEntity entity) {
+        log("发送socket信令包", entity);
     }
 
     @Override
@@ -249,8 +254,6 @@ public class SocketManager implements SocketConnectionListener, Callback {
 
     @Override
     public void call(String action, int status, Object param) {
-        log(action + "|" + status + "|" + param);
-        
         ConnectionInterceptor interceptor = config.getSocketInterceptor();
         if (interceptor != null && interceptor.intercept(action, status, param))
         {
@@ -294,8 +297,7 @@ public class SocketManager implements SocketConnectionListener, Callback {
         @Override
         public void wrapData(OutputStream out) throws IOException {
             init();
-            
-            log("发送socket信令包", entity);
+            onSend(entity);
             out.write(byteArray);
         }
     }
@@ -383,5 +385,10 @@ public class SocketManager implements SocketConnectionListener, Callback {
      */
     public int sendSocketRequest(SocketBuilder socket) {
         return sendSocketRequest(socket.buildData(), socket.buildResponse());
+    }
+    
+    static
+    {
+        LogFactory.addLogFile(SocketManager.class, "socket.txt");
     }
 }

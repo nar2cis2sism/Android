@@ -89,6 +89,7 @@ public class MyPhoneStateListener extends PhoneStateListener {
     /**
      * 设置代理
      */
+    @SuppressWarnings("deprecation")
     protected void setProxy() {
         NetworkInfo info = cm.getActiveNetworkInfo(); // 获取当前网络连接信息
         if (info != null && info.getType() == ConnectivityManager.TYPE_WIFI)

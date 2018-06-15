@@ -12,12 +12,12 @@ import java.io.InputStreamReader;
  * @version N
  * @since 6/6/2014
  */
-public class RootUtil {
+public final class ShellUtil {
 
     /**
      * 执行Root命令
      */
-    public static boolean runRootCommand(String command) {
+    public static boolean exeRootCommand(String command) {
         return exeCommand(new String[] { command }, true, null);
     }
 

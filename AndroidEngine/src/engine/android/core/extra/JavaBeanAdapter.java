@@ -297,7 +297,7 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
         ViewHolder holder;
         if (convertView == null)
         {
-            (convertView = newView(position, parent))
+            (convertView = newView(position, mInflater, parent))
             .setTag(holder = new ViewHolder(convertView));
         }
         else
@@ -313,8 +313,8 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
         return convertView;
     }
     
-    protected View newView(int position, ViewGroup parent) {
-        return mInflater.inflate(mResource, parent, false);
+    protected View newView(int position, LayoutInflater inflater, ViewGroup parent) {
+        return inflater.inflate(mResource, parent, false);
     }
 
     protected abstract void bindView(int position, ViewHolder holder, T item);

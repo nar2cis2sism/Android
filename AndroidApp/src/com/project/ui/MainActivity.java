@@ -166,6 +166,8 @@ public class MainActivity extends BaseActivity {
             return tabSpec;
         }
     }
+
+    /******************************* 华丽丽的分割线 *******************************/
     
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

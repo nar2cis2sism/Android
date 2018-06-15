@@ -1,21 +1,15 @@
-package engine.android.socket.util;
+package engine.android.util.secure;
 
 /**
- * =============================================================================<br>
- * 类型名称: CRCUtility<br>
- * 类型版本: V1.0<br>
- * 类型描述: CRC校验生成工具类 <br>
- * 类型作者: Dennis <br>
- * 创建日期: 2010-08-12 <br>
- * 类型备注: <br>
- * =============================================================================<br>
- * 修改日期 修改前版本 修改后版本 修改人 备注<br>
- * =============================================================================
+ * CRC校验生成工具
+ * 
+ * @author Daimon
+ * @version N
+ * @since 8/12/2010
  */
+public final class CRCUtil {
 
-public final class CRCUtility {
-
-    public static int[] CRC16table = { 0xf1c0, 0xf248, 0x553e, 0xae68, 0xc753, 0x6269, 0x9a19,
+    private static final int[] CRC16table = { 0xf1c0, 0xf248, 0x553e, 0xae68, 0xc753, 0x6269, 0x9a19,
             0x7fed, 0xb010, 0x4d44, 0x6d07, 0x9ec0, 0x578c, 0xbb57, 0x07f1, 0x3d1f, 0x6944, 0x1f29,
             0x014d, 0xce4a, 0x08b5, 0x6f29, 0xdb33, 0x0c96, 0x1e8b, 0x2045, 0x90b0, 0x676f, 0xb3c1,
             0x9316, 0xcc1f, 0x8e54, 0xc1ea, 0x65a2, 0xa28b, 0xe271, 0x5801, 0x9c97, 0x636e, 0x31f1,

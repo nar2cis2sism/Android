@@ -53,7 +53,7 @@ class MessageAdapter extends JavaBeanAdapter<MessageItem> {
     }
     
     @Override
-    protected View newView(int position, ViewGroup parent) {
+    protected View newView(int position, LayoutInflater inflater, ViewGroup parent) {
         int resource = 0;
         switch (getItemViewType(position)) {
             case VIEW_TYPE_RECEIVE:
@@ -64,7 +64,7 @@ class MessageAdapter extends JavaBeanAdapter<MessageItem> {
                 break;
         }
         
-        return LayoutInflater.from(getContext()).inflate(resource, parent, false);
+        return inflater.inflate(resource, parent, false);
     }
 
     @Override

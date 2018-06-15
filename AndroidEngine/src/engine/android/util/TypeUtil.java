@@ -12,6 +12,7 @@ import java.lang.reflect.TypeVariable;
  * @version N
  * @since 2/2/2015
  */
+@SuppressWarnings("rawtypes")
 public final class TypeUtil {
 
     /**
@@ -20,7 +21,6 @@ public final class TypeUtil {
      * @param type 泛型类
      * @param i 表示第几个参数
      */
-    @SuppressWarnings("rawtypes")
     public static Class getClass(Type type, int i) {
         if (type instanceof ParameterizedType)
         {
@@ -39,7 +39,6 @@ public final class TypeUtil {
         }
     }
 
-    @SuppressWarnings("rawtypes")
     private static Class getGenericClass(ParameterizedType parameterizedType, int i) {
         Type genericClass = parameterizedType.getActualTypeArguments()[i];
         if (genericClass instanceof ParameterizedType)

@@ -11,12 +11,12 @@ import android.util.SparseArray;
 import engine.android.core.ApplicationManager;
 import engine.android.core.extra.EventBus;
 import engine.android.core.extra.EventBus.Event;
+import engine.android.core.util.LogFactory;
 import engine.android.framework.R;
 import engine.android.framework.app.AppConfig;
 import engine.android.framework.app.AppGlobal;
 import engine.android.framework.network.ConnectionStatus;
 import engine.android.framework.network.http.HttpParser.Failure;
-import engine.android.framework.network.http.util.EntityUtil;
 import engine.android.http.HttpConnector;
 import engine.android.http.HttpConnector.HttpConnectionListener;
 import engine.android.http.HttpProxy;
@@ -26,6 +26,7 @@ import engine.android.http.HttpResponse;
 import engine.android.http.util.HttpParser;
 import engine.android.util.file.FileManager;
 import engine.android.util.manager.SDCardManager;
+import protocol.java.EntityUtil;
 
 import java.io.File;
 import java.net.HttpURLConnection;
@@ -52,14 +53,14 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
     
     private final ConnectivityManager cm;
     
-    private final SparseArray<HttpAction> request
-    = new SparseArray<HttpAction>();
+    private final SparseArray<HttpAction> request = new SparseArray<HttpAction>();
     
     public HttpManager(Context context) {
         cm = (ConnectivityManager) (this.context = (config = AppGlobal.get(context).getConfig()).getContext())
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void connectBefore(HttpConnector conn, HttpRequest request) {
         if (config.isOffline())
@@ -170,8 +171,6 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
      */
     protected void receive(HttpConnector conn, int status, Object param) {
         String action = conn.getName();
-        log(action + "|" + status + "|" + param);
-        
         ConnectionInterceptor interceptor = config.getHttpInterceptor();
         if (interceptor != null && interceptor.intercept(action, status, param))
         {
@@ -279,4 +278,9 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
     }
     
     private final HttpConnectorBuilder builder = new HttpConnectorBuilder(this);
+    
+    static
+    {
+        LogFactory.addLogFile(HttpManager.class, HttpConnector.class);
+    }
 }

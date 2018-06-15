@@ -1,5 +1,6 @@
 package engine.android.util;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
@@ -52,6 +53,7 @@ import java.util.concurrent.Callable;
  * @version N
  * @since 3/26/2012
  */
+@SuppressLint("InlinedApi")
 public final class AndroidUtil {
 
     /**
@@ -207,7 +209,7 @@ public final class AndroidUtil {
      * 获取系统权限
      */
     public static boolean getRootPermission(ContextWrapper cw) throws Exception {
-        return RootUtil.runRootCommand("chmod 777 " + cw.getPackageCodePath());
+        return ShellUtil.exeRootCommand("chmod 777 " + cw.getPackageCodePath());
     }
 
     /**

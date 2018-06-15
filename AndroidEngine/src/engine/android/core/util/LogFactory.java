@@ -14,8 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import engine.android.core.ApplicationManager;
-
 /**
  * 日志管理工厂<p>
  * 功能：日志文件映射关系，开关与导出
@@ -36,6 +34,7 @@ public final class LogFactory {
 
     private static final ConcurrentHashMap<String, String> map
     = new ConcurrentHashMap<String, String>();                  // [类名-日志文件]映射表
+    private static final String MAPPING_PREFIX = "mapping:";
 
     private static final ConcurrentHashMap<String, LogFile> logs
     = new ConcurrentHashMap<String, LogFile>();                 // 日志文件查询表
@@ -65,18 +64,10 @@ public final class LogFactory {
     /**
      * 获取日志输出目录
      */
-    private static synchronized File getLogDir() {
+    private static synchronized File _getLogDir() {
         if (logDir == null)
         {
-            String logDirName = "log";
-            // 其它进程加后缀，与主进程Log区分开
-            String processName = ApplicationManager.getProcessName();
-            if (!TextUtils.equals(processName, getMainApplication().getApplicationInfo().processName))
-            {
-                logDirName += "-" + processName;
-            }
-            
-            logDir = getMainApplication().getDir(logDirName, 0);
+            logDir = getMainApplication().getDir("log", 0);
             purge();
         }
 
@@ -95,27 +86,25 @@ public final class LogFactory {
      */
     public static void addLogFile(Class<?> logClass, Class<?> mapClass) {
         String logFile = map.get(mapClass.getName());
-        if (logFile != null)
+        if (logFile == null)
         {
-            map.putIfAbsent(logClass.getName(), logFile);
+            logFile = MAPPING_PREFIX + mapClass.getName();
         }
+        
+        map.putIfAbsent(logClass.getName(), logFile);
     }
 
     /**
      * 操作日志文件
      */
     private static LogFile getLogFile(String className) {
-        String logFile;
-        if (TextUtils.isEmpty(className))
-        {
-            logFile = DEFAULT_LOG_FILE;
-        }
-        else
+        String logFile = null;
+        if (!TextUtils.isEmpty(className))
         {
             logFile = map.get(className);
-            if (logFile == null)
+            if (logFile != null && logFile.startsWith(MAPPING_PREFIX))
             {
-                logFile = DEFAULT_LOG_FILE;
+                map.put(className, logFile = map.get(logFile.substring(MAPPING_PREFIX.length())));
             }
         }
 
@@ -126,10 +115,15 @@ public final class LogFactory {
      * @param logFile 日志文件名称
      */
     private static LogFile getOrCreateLogFile(String logFile) {
+        if (logFile == null)
+        {
+            logFile = DEFAULT_LOG_FILE;
+        }
+        
         LogFile log = logs.get(logFile);
         if (log == null)
         {
-            logs.putIfAbsent(logFile, new LogFile(new File(getLogDir(), logFile)));
+            logs.putIfAbsent(logFile, new LogFile(new File(_getLogDir(), logFile)));
             log = logs.get(logFile);
         }
         
@@ -176,7 +170,7 @@ public final class LogFactory {
     /**
      * 需要导出日志时调用此方法获取日志目录（会阻塞当前线程）
      */
-    public static File flush() {
+    public static File getLogDir() {
         for (LogFile log : logs.values())
         {
             try {
@@ -187,7 +181,7 @@ public final class LogFactory {
             }
         }
         
-        return getLogDir();
+        return _getLogDir();
     }
 
     /**
@@ -197,7 +191,7 @@ public final class LogFactory {
 
         private static final int CAPACITY = 10;
 
-        private static final ConcurrentLinkedQueue<LogRecord> logs
+        private final ConcurrentLinkedQueue<LogRecord> logs
         = new ConcurrentLinkedQueue<LogRecord>();
 
         private final File logFile;

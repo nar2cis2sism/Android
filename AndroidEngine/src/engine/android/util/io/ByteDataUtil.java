@@ -7,7 +7,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
- * 字节数据存取工具
+ * 字节数据操作工具
  * 
  * @author Daimon
  * @version N

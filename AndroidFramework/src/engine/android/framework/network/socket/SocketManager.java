@@ -6,7 +6,6 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
-import engine.android.core.ApplicationManager;
 import engine.android.core.extra.EventBus;
 import engine.android.core.extra.EventBus.Event;
 import engine.android.core.util.LogFactory;
@@ -20,8 +19,6 @@ import engine.android.socket.SocketConnector;
 import engine.android.socket.SocketConnector.SocketData;
 import engine.android.socket.SocketConnector.SocketReceiver;
 import engine.android.util.Util;
-import engine.android.util.file.FileManager;
-import engine.android.util.manager.SDCardManager;
 import engine.android.util.secure.CRCUtil;
 import engine.android.util.secure.HexUtil;
 import engine.android.util.secure.Obfuscate;
@@ -29,7 +26,6 @@ import protocol.java.ProtocolWrapper;
 import protocol.java.ProtocolWrapper.ProtocolEntity;
 import protocol.java.ProtocolWrapper.ProtocolEntity.ProtocolData;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -218,11 +214,6 @@ public class SocketManager implements SocketConnectionListener, Callback {
             log("收到socket信令包", data.getClass().getSimpleName() + GsonUtil.toJson(data));
         }
         
-        if (ApplicationManager.isDebuggable(context) && !config.isOffline())
-        {
-            exportProtocolToFile(data);
-        }
-        
         if (msgId == 0)
         {
             // 推送消息
@@ -240,16 +231,6 @@ public class SocketManager implements SocketConnectionListener, Callback {
                 pendingDatas.removeAt(index);
             }
         }
-    }
-    
-    private void exportProtocolToFile(ProtocolData data) {
-        if (!SDCardManager.isEnabled()) return;
-        
-        File desDir = new File(SDCardManager.openSDCardAppDir(context), 
-                "protocols/socket");
-        
-        File file = new File(desDir, data.getClass().getSimpleName());
-        FileManager.writeFile(file, GsonUtil.toJson(data).getBytes(), false);
     }
 
     @Override

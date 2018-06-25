@@ -25,7 +25,7 @@ public class SocketServlet implements engine.android.socket.SocketProxy.SocketSe
 
             entity.parseBody();
             
-            ProtocolData[] ack = process(entity.getCmd(), entity.getData(), out);
+            ProtocolData[] ack = new Process(out).process(entity.getCmd(), entity.getData());
             if (ack != null)
             {
                 for (ProtocolData d : ack)
@@ -40,50 +40,59 @@ public class SocketServlet implements engine.android.socket.SocketProxy.SocketSe
         }
     }
     
-    /**
-     * 模拟服务器处理
-     * 
-     * @param cmd 收包指令码
-     * @param data 收包数据
-     * @param out 推送给客户端
-     * @return 响应客户端
-     */
-    private ProtocolData[] process(int cmd, ProtocolData data, OutputStream out) throws Exception {
-        if (data instanceof Message)
-        {
-            return processMessage((Message) data, out);
+    private static class Process {
+        
+        private final OutputStream out;
+        
+        public Process(OutputStream out) {
+            this.out = out;
         }
         
-        return null;
-    }
-    
-    /**
-     * 推送消息给客户端
-     */
-    private void push(OutputStream out, ProtocolData data) throws Exception {
-        ProtocolEntity entity = ProtocolEntity.newInstance(0, data);
-        entity.generateBody();
-        out.write(ProtocolWrapper.wrap(entity));
-    }
-    
-    private ProtocolData[] processMessage(Message msg, OutputStream out) throws Exception {
-        // 消息返还给发送者
-        String receiver = msg.to;
-        msg.to = msg.from;
-        msg.from = receiver;
-        // 重新设置时间
-        MessageBody[] body = msg.body;
-        if (body != null)
-        {
-            for (MessageBody b : body)
+        /**
+         * 推送消息给客户端
+         */
+        public void push(ProtocolData data) throws Exception {
+            ProtocolEntity entity = ProtocolEntity.newInstance(0, data);
+            entity.generateBody();
+            out.write(ProtocolWrapper.wrap(entity));
+        }
+        
+        /**
+         * 模拟服务器处理
+         * 
+         * @param cmd 收包指令码
+         * @param data 收包数据
+         * @param push 推送给客户端
+         * @return 响应客户端
+         */
+        public ProtocolData[] process(int cmd, ProtocolData data) throws Exception {
+            if (data instanceof Message)
             {
-                b.creationTime = System.currentTimeMillis();
-                b.content = "收到：" + b.content;
+                return processMessage((Message) data);
             }
+            
+            return null;
         }
         
-        push(out, msg);
-        
-        return new ProtocolData[]{ new MessageACK() };
+        private ProtocolData[] processMessage(Message msg) throws Exception {
+            // 消息返还给发送者
+            String receiver = msg.to;
+            msg.to = msg.from;
+            msg.from = receiver;
+            // 重新设置时间
+            MessageBody[] body = msg.body;
+            if (body != null)
+            {
+                for (MessageBody b : body)
+                {
+                    b.creationTime = System.currentTimeMillis();
+                    b.content = "收到：" + b.content;
+                }
+            }
+            
+            push(msg);
+            
+            return new ProtocolData[]{ new MessageACK() };
+        }
     }
 }

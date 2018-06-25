@@ -5,15 +5,13 @@ import android.os.SystemClock;
 import engine.android.core.util.LogFactory.LOG;
 import engine.android.http.HttpRequest;
 import engine.android.http.HttpRequest.HttpEntity;
-import engine.android.util.io.IOUtil;
+import engine.android.util.file.FileManager;
 
 import org.json.JSONObject;
 
 import protocol.java.EntityUtil;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class HttpServlet implements engine.android.http.HttpProxy.HttpServlet {
     
@@ -24,9 +22,7 @@ public class HttpServlet implements engine.android.http.HttpProxy.HttpServlet {
         long time = System.currentTimeMillis();
         try {
             HttpEntity entity = req.getEntity();
-            long length = entity.getContentLength();
-            ByteArrayOutputStream baos = length > 0 ? 
-                    new ByteArrayOutputStream((int) length) : new ByteArrayOutputStream();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream((int) entity.getContentLength());
             entity.writeTo(baos);
             String request = EntityUtil.toString(baos.toByteArray());
             resp.setEntity(EntityUtil.toByteArray(process(req.getUrl(), request)));
@@ -42,21 +38,6 @@ public class HttpServlet implements engine.android.http.HttpProxy.HttpServlet {
         JSONObject json = new JSONObject(request);
         String action = json.getString("action");
 
-        return new String(getFileContent(action));
-    }
-    
-    private static byte[] getFileContent(String fileName) throws IOException {
-        InputStream is = null;
-        try {
-            is = HttpServlet.class.getResourceAsStream(fileName);
-            if (is == null)
-            {
-                throw new IOException("No resource:" + fileName);
-            }
-            
-            return IOUtil.readStream(is);
-        } finally {
-            if (is != null) is.close();
-        }
+        return new String(FileManager.readFile(getClass(), action));
     }
 }

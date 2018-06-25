@@ -14,7 +14,7 @@ import android.widget.TextView;
 import engine.android.widget.R;
 
 /**
- * 标题栏<p>
+ * 标题栏<br>
  * PS:使用布局title_bar解析
  * 
  * @author Daimon

@@ -13,7 +13,7 @@ import engine.android.util.listener.MyTextWatcher;
 import engine.android.widget.R;
 
 /**
- * 会话栏
+ * 会话栏<br>
  * PS:使用布局conversation_bar解析
  * 
  * @author Daimon

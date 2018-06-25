@@ -14,7 +14,7 @@ import engine.android.util.listener.MyTextWatcher;
 import engine.android.widget.R;
 
 /**
- * 搜索框
+ * 搜索框<br>
  * PS:使用布局search_box解析
  * 
  * @author Daimon

@@ -1,0 +1,5 @@
+<resources>
+
+    <item name="main_tab_widget_bg" type="drawable">@drawable/conversation_bar_bg</item>
+
+</resources>

@@ -34,8 +34,7 @@ public class PageIndicator extends LinearLayout {
         super(context, attrs);
         init(context);
 
-        final TypedArray a = context.obtainStyledAttributes(
-                attrs, R.styleable.PageIndicator);
+        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PageIndicator);
 
         int count = a.getInteger(R.styleable.PageIndicator_count, 0);
         layoutRes = a.getResourceId(R.styleable.PageIndicator_layout, R.layout.page_indicator_item);

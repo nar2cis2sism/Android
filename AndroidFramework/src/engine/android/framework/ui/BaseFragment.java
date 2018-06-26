@@ -105,7 +105,7 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
         Dialog dialog = new AlertDialog.Builder(baseActivity)
         .setTitle(R.string.dialog_error_title)
         .setMessage(Util.getString(error, null))
-        .setPositiveButton(R.string.ok, null)
+        .setPositiveButton(android.R.string.ok, null)
         .create();
     
         baseActivity.showDialog("dialog_error", dialog);

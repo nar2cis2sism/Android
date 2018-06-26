@@ -29,7 +29,8 @@
         
         <activity
             android:name="com.project.ui.launch.LaunchActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoTitleBar.Fullscreen">
             
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

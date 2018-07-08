@@ -13,9 +13,14 @@ import engine.android.dao.DAOTemplate.DAOTransaction;
 
 public class MessageDAO extends BaseDAO implements MessageColumns {
     
-    public static Message sendMessage(String message) {
+    /**
+     * 发送一条消息
+     * 
+     * @param receiver 接收方账号
+     */
+    public static Message sendMessage(String receiver, String message) {
         Message msg = new Message();
-        msg.account = MySession.getUser().username;
+        msg.account = receiver;
         msg.content = message;
         msg.creationTime = System.currentTimeMillis();
         dao.save(msg);

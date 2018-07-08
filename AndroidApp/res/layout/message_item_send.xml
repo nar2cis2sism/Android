@@ -32,7 +32,7 @@
             android:paddingRight="@dimen/message_item_content_padding_horizontal_external" />
 	
         <!-- 发送中进度条 -->
-        <TextView
+        <ProgressBar
             style="@android:style/Widget.ProgressBar.Small"
             android:id="@+id/progress"
             android:layout_width="wrap_content"

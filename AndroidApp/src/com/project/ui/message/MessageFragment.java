@@ -10,6 +10,7 @@ import com.daimon.yueba.R;
 import com.project.app.bean.FriendListItem;
 import com.project.network.action.socket.SendMessage;
 import com.project.storage.dao.MessageDAO;
+import com.project.storage.db.Message;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseListFragment;
@@ -78,6 +79,7 @@ public class MessageFragment extends BaseListFragment {
     /******************************* 发送消息 *******************************/
     
     private void sendMessageAction(String message) {
-        getBaseActivity().sendSocketRequest(new SendMessage(MessageDAO.sendMessage(message)));
+        Message msg = MessageDAO.sendMessage(presenter.param.friend.getAccount(), message);
+        getBaseActivity().sendSocketRequest(new SendMessage(msg));
     }
 }

@@ -105,12 +105,12 @@ public class SocketManager implements SocketConnectionListener, Callback {
                     
                     ProtocolWrapper.setEncryptSecret(key);
                 }
-                else if (resp == -1)
+                else if (resp == 1)
                 {
                     // Token认证失败
                     throw new SocketException("Token认证失败");
                 }
-                else if (resp == -2)
+                else if (resp == 2)
                 {
                     // CRC校验失败
                     throw new SocketException("CRC校验失败");
@@ -186,14 +186,14 @@ public class SocketManager implements SocketConnectionListener, Callback {
     public void onError(Exception e) {
         log(e);
         socket.close();
+        // 自动重连
+        handler.reconnect(Util.getRandom(2000, 5000));
     }
 
     @Override
     public void onClosed() {
         log("Socket连接已断开");
         handler.heartbeat().stop();
-        // 自动重连
-        handler.reconnect(Util.getRandom(2000, 5000));
     }
 
     private class SocketParser implements Runnable {

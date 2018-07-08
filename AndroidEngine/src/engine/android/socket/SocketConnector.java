@@ -199,7 +199,7 @@ public class SocketConnector {
      * 连接网络
      */
     public synchronized void connect() {
-        if (isClosed == null)
+        if (isClosed())
         {
             isClosed = new AtomicBoolean();
             socketThreadPool.execute(new Runnable() {
@@ -209,10 +209,6 @@ public class SocketConnector {
                     connect(isClosed);
                 }
             });
-        }
-        else
-        {
-            throw new IllegalStateException("Please close the socket first.");
         }
     }
 
@@ -399,7 +395,7 @@ public class SocketConnector {
             } catch (Exception e) {
                 socket = null;
 
-                if (!isClosed.get())
+                if (!isClosed.getAndSet(true))
                 {
                     onError(e);
                 }
@@ -428,10 +424,13 @@ public class SocketConnector {
             }
             
             if (handShake) handshake(in, out);
-                onConnected();
+            onConnected();
         } catch (Exception e) {
-            closeSocket();
-            onError(e);
+            if (!isClosed.getAndSet(true))
+            {
+                closeSocket();
+                onError(e);
+            }
         } finally {
             socketLock.unlock();
         }

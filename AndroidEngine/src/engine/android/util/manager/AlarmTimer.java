@@ -257,8 +257,8 @@ public class AlarmTimer {
                 else
                 {
                     // we've timed out
-                    timer.notifyTimeout();
                     isRunning.set(false);
+                    timer.notifyTimeout();
                 }
             }
         }

@@ -139,7 +139,13 @@ public abstract class BaseFragment extends Fragment {
      * @see Activity#finish()
      */
     public final void finish() {
-        if (!getFragmentManager().popBackStackImmediate() && getActivity() != null)
+        if (getFragmentManager().getBackStackEntryCount() > 0
+        &&  getFragmentManager().popBackStackImmediate())
+        {
+            return;
+        }
+        
+        if (getActivity() != null)
         {
             getActivity().finish();
         }

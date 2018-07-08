@@ -1,7 +1,7 @@
 package com.project.ui.login;
 
-import static com.project.network.Actions.LOGIN;
-import static com.project.network.Actions.NAVIGATION;
+import static com.project.network.action.Actions.LOGIN;
+import static com.project.network.action.Actions.NAVIGATION;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,8 +19,8 @@ import android.widget.TextView.OnEditorActionListener;
 import com.daimon.yueba.R;
 import com.project.app.MyApp;
 import com.project.app.MySession;
-import com.project.network.action.Login;
-import com.project.network.action.Navigation;
+import com.project.network.action.http.Login;
+import com.project.network.action.http.Navigation;
 import com.project.ui.MainActivity;
 import com.project.util.AppUpgradeUtil;
 import com.project.util.MyValidator;
@@ -83,8 +83,8 @@ public class LoginFragment extends BaseFragment {
         
         if (MyApp.getApp().isDebuggable())
         {
-            username.input().setText("18311287987");
-            password.input().setText("18311287987");
+            username.input().setText("18318066253");
+            password.input().setText("password");
         }
     }
     

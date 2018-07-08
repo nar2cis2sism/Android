@@ -1,8 +1,8 @@
-package com.project.network.action;
+package com.project.network.action.http;
 
 import com.project.app.MySession;
-import com.project.network.Actions;
 import com.project.network.NetworkConfig;
+import com.project.network.action.Actions;
 import com.project.network.http.HttpJsonParser;
 import com.project.storage.MyDAOManager;
 import com.project.storage.db.User;

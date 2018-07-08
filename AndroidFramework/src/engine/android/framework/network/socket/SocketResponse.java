@@ -3,6 +3,13 @@ package engine.android.framework.network.socket;
 import engine.android.framework.network.ConnectionStatus;
 import protocol.java.ProtocolWrapper.ProtocolEntity.ProtocolData;
 
+/**
+ * Socket响应
+ * 
+ * @author Daimon
+ * @version N
+ * @since 6/6/2014
+ */
 public interface SocketResponse {
     
     /**

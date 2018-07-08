@@ -1,4 +1,4 @@
-package com.project.network;
+package com.project.network.action;
 
 /**
  * 网络信令集

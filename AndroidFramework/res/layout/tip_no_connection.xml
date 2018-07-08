@@ -1,0 +1,15 @@
+<!-- 无网提示 -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFDACB"
+    android:gravity="center_vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+    android:includeFontPadding="false"
+    android:text="@string/tip_no_connection"
+    android:textColor="?android:attr/textColorPrimary"
+    android:drawableLeft="@drawable/icon_error"
+    android:drawablePadding="8dp" />

@@ -61,23 +61,22 @@ public class MessageItem {
     }
     
     private static String formatTime(DateRange range, long time) {
-        if (range == null)
-        {
-            return CalendarFormat.format(CalendarFormat.getCalendar(time));
-        }
-        
-        return range.format(time);
+        return range != null ? range.format(time) : String.valueOf(time);
     }
     
     public boolean isReceived() {
         return message.isReceived;
     }
     
+    public boolean inFiveMinutes(MessageItem item) {
+        return Math.abs(message.creationTime - item.message.creationTime) <= FIVE_MINUTES;
+    }
+    
     public String getMessage() {
         return message.content;
     }
     
-    public boolean inFiveMinutes(MessageItem item) {
-        return Math.abs(message.creationTime - item.message.creationTime) <= FIVE_MINUTES;
+    public boolean isSendOut() {
+        return message.isSendOut;
     }
 }

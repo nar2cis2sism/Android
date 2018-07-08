@@ -7,10 +7,9 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.daimon.yueba.R;
-import com.project.app.MySession;
+import com.project.app.bean.FriendListItem;
 import com.project.network.action.socket.SendMessage;
-import com.project.storage.MyDAOManager;
-import com.project.storage.db.Message;
+import com.project.storage.dao.MessageDAO;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseListFragment;
@@ -29,6 +28,10 @@ public class MessageFragment extends BaseListFragment {
     
     MessagePresenter presenter;
     
+    public static Bundle buildParam(FriendListItem item) {
+        return MessageParam.build(item);
+    }
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +41,7 @@ public class MessageFragment extends BaseListFragment {
     @Override
     protected void setupTitleBar(TitleBar titleBar) {
         titleBar
-        .setTitle("老妈")
+        .setTitle(presenter.param.friend.getName())
         .setDisplayUpEnabled(true)
         .show();
     }
@@ -75,12 +78,6 @@ public class MessageFragment extends BaseListFragment {
     /******************************* 发送消息 *******************************/
     
     private void sendMessageAction(String message) {
-        Message msg = new Message();
-        msg.account = MySession.getUser().username;
-        msg.content = message;
-        msg.creationTime = System.currentTimeMillis();
-        MyDAOManager.getDAO().save(msg);
-        
-        getBaseActivity().sendSocketRequest(new SendMessage(msg.toProtocol()));
+        getBaseActivity().sendSocketRequest(new SendMessage(MessageDAO.sendMessage(message)));
     }
 }

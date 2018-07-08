@@ -339,7 +339,7 @@ public class ProviderTemplate {
 
     private static class ProviderSQLBuilder<T> extends DAOSQLBuilder<T> {
 
-        public final Uri uri;
+        protected final Uri uri;
 
         public ProviderSQLBuilder(Class<T> c, Uri uri) {
             super(c);

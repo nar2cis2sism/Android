@@ -39,4 +39,8 @@ public class FriendListItem {
     public String getPinyin() {
         return friend.pinyin;
     }
+    
+    public String getAccount() {
+        return friend.account;
+    }
 }

@@ -1,6 +1,6 @@
 package com.project.network.http;
 
-import com.project.network.Actions;
+import com.project.network.action.Actions;
 
 import engine.android.framework.network.ConnectionStatus.ConnectionInterceptor;
 

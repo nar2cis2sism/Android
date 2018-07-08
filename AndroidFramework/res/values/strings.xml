@@ -7,6 +7,8 @@
 	<string name="connection_status_timeout">网络超时，请稍后重试！</string>
 	<string name="connection_status_disconnected">当前网络不可用，请检查您的网络设置</string>
 	
+	<string name="tip_no_connection">网络连接不可用</string>
+	
 	<string name="dialog_error_title">出错了</string>
 
 </resources>

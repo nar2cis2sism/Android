@@ -1,10 +1,10 @@
-package com.project.network.action;
+package com.project.network.action.http;
 
 import com.project.app.MyContext;
 import com.project.app.MySession;
 import com.project.app.bean.ServerUrl;
-import com.project.network.Actions;
 import com.project.network.NetworkConfig;
+import com.project.network.action.Actions;
 import com.project.network.http.HttpJsonParser;
 
 import engine.android.framework.network.http.HttpConnectorBuilder;

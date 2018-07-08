@@ -1461,11 +1461,11 @@ public class DAOTemplate {
      */
     static class DAOSQLBuilder<T> {
 
-        public final Class<T> c;
+        final Class<T> c;
 
-        public final Table table;
+        final Table table;
 
-        public DAOExpression where;
+        DAOExpression where;
 
         public DAOSQLBuilder(Class<T> c) {
             table = Table.getTable(this.c = c);
@@ -1476,11 +1476,11 @@ public class DAOTemplate {
             return this;
         }
 
-        public void appendWhere(StringBuilder sql, List<Object> args) {
+        void appendWhere(StringBuilder sql, List<Object> args) {
             if (where != null) where.appendTo(table, sql.append(" WHERE "), args);
         }
         
-        public static String[] convertArgs(List<Object> args) {
+        static String[] convertArgs(List<Object> args) {
             String[] strs = new String[args.size()];
             ListIterator<Object> iter = args.listIterator();
             int index = 0;
@@ -1570,7 +1570,7 @@ public class DAOTemplate {
             return this;
         }
 
-        public DAOSQLBuilder<T> having(DAOExpression expression) {
+        public DAOQueryBuilder<T> having(DAOExpression expression) {
             having = expression;
             return this;
         }

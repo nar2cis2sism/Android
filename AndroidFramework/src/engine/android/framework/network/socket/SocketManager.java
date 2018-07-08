@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Socket连接管理器<p>
+ * Socket连接管理器
  * 
  * @author Daimon
  * @version N
@@ -47,17 +47,18 @@ public class SocketManager implements SocketConnectionListener, Callback {
 
     private final AppConfig config;
     
-    private SocketConnector socket;
-    
-    private boolean isSocketConnected;
+    private final SocketHandler handler;
     
     private final SparseArray<SocketAction> pendingDatas
     = new SparseArray<SocketAction>();
+    
+    private SocketConnector socket;
     
     private String token;
     
     public SocketManager(Context context) {
         this.context = (config = AppGlobal.get(context).getConfig()).getContext();
+        handler = new SocketHandler(this);
     }
     
     public void setToken(String token) {
@@ -137,15 +138,19 @@ public class SocketManager implements SocketConnectionListener, Callback {
         socket.setListener(this);
         if (config.isOffline()) socket.setServlet(config.getSocketServlet());
         socket.connect();
+        // 启动扩展功能
+        handler.setup(context);
     }
     
-    public boolean isSocketConnected() {
-        return isSocketConnected;
+    /**
+     * 重连接
+     */
+    void reconnect() {
+        socket.connect();
     }
 
     @Override
     public void onConnected(Socket socket) {
-        isSocketConnected = true;
         if (socket == null)
         {
             log("Socket连接已建立");
@@ -162,18 +167,19 @@ public class SocketManager implements SocketConnectionListener, Callback {
                 log(e);
             }
         }
+        
+        handler.heartbeat().start(config.getSocketKeepAliveTime());
     }
     
-    private static void onSend(ProtocolEntity entity) {
+    private void onSend(ProtocolEntity entity) {
         log("发送socket信令包", entity);
+        handler.heartbeat().poke();
     }
 
     @Override
     public void onReceive(Object data) {
-        ProtocolEntity entity = (ProtocolEntity) data;
-        log("收到socket信令包", entity);
-        
-        config.getSocketThreadPool().execute(new SocketParser(entity));
+        log("收到socket信令包", data);
+        config.getSocketThreadPool().execute(new SocketParser((ProtocolEntity) data));
     }
 
     @Override
@@ -184,8 +190,10 @@ public class SocketManager implements SocketConnectionListener, Callback {
 
     @Override
     public void onClosed() {
-        isSocketConnected = false;
         log("Socket连接已断开");
+        handler.heartbeat().stop();
+        // 自动重连
+        handler.reconnect(Util.getRandom(2000, 5000));
     }
 
     private class SocketParser implements Runnable {
@@ -243,19 +251,19 @@ public class SocketManager implements SocketConnectionListener, Callback {
 
         EventBus.getDefault().post(new Event(action, status, param));
     }
-    
-    private static class SocketRequest implements SocketData {
 
-        private static final AtomicInteger generator = new AtomicInteger(1);
+    private static final AtomicInteger ID_GENERATOR = new AtomicInteger(1);
+    
+    private class SocketRequest implements SocketData {
         
         private final ProtocolEntity entity;
-        
-        private byte[] byteArray;
 
         private final AtomicBoolean isInitialized = new AtomicBoolean();
         
+        private byte[] byteArray;
+        
         public SocketRequest(ProtocolData data) {
-            entity = ProtocolEntity.newInstance(generator.getAndIncrement(), data);
+            entity = ProtocolEntity.newInstance(ID_GENERATOR.getAndIncrement(), data);
         }
         
         public void init() {

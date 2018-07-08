@@ -1,18 +1,21 @@
 package com.project.network.socket.servlet;
 
+import android.os.SystemClock;
+
 import engine.android.core.util.LogFactory.LOG;
 import protocol.java.ProtocolWrapper;
 import protocol.java.ProtocolWrapper.ProtocolEntity;
 import protocol.java.ProtocolWrapper.ProtocolEntity.ProtocolData;
 import protocol.java.stream.ack.MessageACK;
 import protocol.java.stream.req.Message;
-import protocol.java.stream.req.Message.MessageBody;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 public class SocketServlet implements engine.android.socket.SocketProxy.SocketServlet {
+    
+    private static final int RESPONSE_DELAY   = 500; // (0.5s)
 
     @Override
     public void doServlet(InputStream in, OutputStream out) {
@@ -68,6 +71,7 @@ public class SocketServlet implements engine.android.socket.SocketProxy.SocketSe
         public ProtocolData[] process(int cmd, ProtocolData data) throws Exception {
             if (data instanceof Message)
             {
+                SystemClock.sleep(RESPONSE_DELAY);
                 return processMessage((Message) data);
             }
             
@@ -75,21 +79,9 @@ public class SocketServlet implements engine.android.socket.SocketProxy.SocketSe
         }
         
         private ProtocolData[] processMessage(Message msg) throws Exception {
-            // 消息返还给发送者
-            String receiver = msg.to;
-            msg.to = msg.from;
-            msg.from = receiver;
-            // 重新设置时间
-            MessageBody[] body = msg.body;
-            if (body != null)
-            {
-                for (MessageBody b : body)
-                {
-                    b.creationTime = System.currentTimeMillis();
-                    b.content = "收到：" + b.content;
-                }
-            }
-            
+            // 消息返还给发送者，重新设置内容和时间
+            msg.content = "收到：" + msg.content;
+            msg.creationTime = System.currentTimeMillis();
             push(msg);
             
             return new ProtocolData[]{ new MessageACK() };

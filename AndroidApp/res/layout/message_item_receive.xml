@@ -1,36 +1,35 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/message_item_padding_bottom" >
     
-	<!-- 时间 -->
+    <!-- 时间 -->
     <include 
-    	android:id="@+id/time"
+        android:id="@+id/time"
         layout="@layout/message_item_top" />
     
-    <!-- 左边头像 -->
-	<ImageView
-        android:id="@+id/avatar"
-	    android:layout_width="39dp"
-	    android:layout_height="39dp"
-	    android:layout_alignTop="@+id/content"
-	    android:layout_marginLeft="8dp"
-	    android:layout_marginRight="8dp" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/time" >
+    
+        <!-- 左边头像 -->
+        <ImageView
+            style="@style/message_item_avatar"
+            android:id="@+id/avatar"
+            android:layout_marginLeft="@dimen/message_item_avatar_margin_horizontal" />
 	
-	<!-- 消息内容 -->
-	<TextView
-    	android:id="@+id/content"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:background="@drawable/message_bg_left"
-	    android:layout_below="@+id/time"
-	    android:layout_toRightOf="@+id/avatar"
-	    android:layout_marginRight="40dp"
-	    android:layout_marginTop="12dp"
-	    android:layout_marginBottom="12dp"
-	    android:gravity="center_vertical"
-	    android:paddingLeft="14dp"
-	    android:paddingRight="12dp"
-	    android:textColor="?android:attr/textColorPrimary"
-	    android:textSize="16sp" />
+        <!-- 消息内容 -->
+        <TextView
+            style="@style/message_item_content"
+            android:id="@+id/content"
+            android:background="@drawable/message_bg_left"
+            android:layout_toRightOf="@+id/avatar"
+            android:layout_marginLeft="@dimen/message_item_content_margin_avatar"
+            android:layout_marginRight="@dimen/message_item_content_margin_horizontal"
+            android:paddingLeft="@dimen/message_item_content_padding_horizontal_external"
+            android:paddingRight="@dimen/message_item_content_padding_horizontal" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

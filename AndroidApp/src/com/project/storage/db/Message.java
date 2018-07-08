@@ -1,31 +1,26 @@
 package com.project.storage.db;
 
-import com.project.app.MySession;
 import com.project.storage.provider.ProviderContract.MessageColumns;
 
 import engine.android.dao.DAOTemplate;
 import engine.android.dao.annotation.DAOPrimaryKey;
 import engine.android.dao.annotation.DAOProperty;
 import engine.android.dao.annotation.DAOTable;
-import protocol.java.stream.req.Message.MessageBody;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 收发消息
  */
-//@DAOTable(name=com.project.storage.provider.ProviderContract.Message.TABLE)
+@DAOTable(name=com.project.storage.provider.ProviderContract.Message.TABLE)
 public class Message {
     
     @DAOPrimaryKey(column=MessageColumns._ID, autoincrement=true)
-    private long id;                        // 消息ID
-    
-    @DAOProperty(column=MessageColumns.IS_RECEIVED)
-    public boolean isReceived;              // True:接收消息,False:发送消息
+    private long _id;
+
+    @DAOProperty(column=MessageColumns.ID)
+    public String id;                       // 消息ID，用于排重
 
     @DAOProperty(column=MessageColumns.ACCOUNT)
-    public String account;                  // 对方账号
+    public String account;                  // 发送/接收方账号
 
     @DAOProperty(column=MessageColumns.CONTENT)
     public String content;                  // 消息内容
@@ -53,48 +48,44 @@ public class Message {
 
     @DAOProperty(column=MessageColumns.CREATION_TIME)
     public long creationTime;               // 消息创建时间
+    
+    @DAOProperty(column=MessageColumns.IS_RECEIVED)
+    public boolean isReceived;              // True:接收消息,False:发送消息
+    
+    @DAOProperty(column=MessageColumns.IS_SEND_OUT)
+    public boolean isSendOut;               // 消息是否发送成功
 
     /**
      * Mandatory empty constructor for the {@link DAOTemplate}
      */
     public Message() {}
+    
+    /**
+     * 生成唯一消息ID
+     */
+    public void generateId() {
+        id = String.valueOf(_id);
+    }
 
     /******************************* 华丽丽的分割线 *******************************/
     
     public protocol.java.stream.req.Message toProtocol() {
-        MessageBody body = new MessageBody();
-        body.content = content;
-        body.type = type;
-        body.event = event;
-        
-        protocol.java.stream.req.Message item = new protocol.java.stream.req.Message();
-        item.from = MySession.getUser().username;
-        item.to = account;
-        item.body = new MessageBody[] { body };
-        
-        return item;
+        protocol.java.stream.req.Message msg = new protocol.java.stream.req.Message();
+        msg.id = id;
+        msg.account = account;
+        msg.content = content;
+        msg.type = type;
+        msg.event = event;
+        return msg;
     }
     
-    public static List<Message> fromProtocol(protocol.java.stream.req.Message message) {
-        MessageBody[] body = message.body;
-        if (body != null && body.length > 0)
-        {
-            List<Message> list = new ArrayList<Message>(body.length);
-            for (MessageBody msg : body)
-            {
-                Message item = new Message();
-                item.isReceived = true;
-                item.account = message.from;
-                item.content = msg.content;
-                item.type = msg.type;
-                item.event = msg.event;
-                item.creationTime = msg.creationTime;
-                list.add(item);
-            }
-            
-            return list;
-        }
-        
-        return null;
+    public Message fromProtocol(protocol.java.stream.req.Message msg) {
+        id = msg.id;
+        account = msg.account;
+        content = msg.content;
+        type = msg.type;
+        event = msg.event;
+        creationTime = msg.creationTime;
+        return this;
     }
 }

@@ -84,12 +84,14 @@ public final class ProviderContract {
      */
     public interface MessageColumns extends BaseColumns {
 
-        public static final String IS_RECEIVED = "isReceived";
+        public static final String ID = "id";
         public static final String ACCOUNT = "account";
         public static final String CONTENT = "content";
         public static final String TYPE = "type";
         public static final String EVENT = "event";
         public static final String CREATION_TIME = "creationTime";
+        public static final String IS_RECEIVED = "isReceived";
+        public static final String IS_SEND_OUT = "isSendOut";
     }
 
     public static final class Message implements MessageColumns {

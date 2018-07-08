@@ -1,0 +1,18 @@
+<resources>
+
+    <!-- 消息布局底部边距 -->
+    <dimen name="message_item_padding_bottom">12dp</dimen>
+    <!-- 头像水平边距 -->
+    <dimen name="message_item_avatar_margin_horizontal">8dp</dimen>
+    <!-- 消息内容水平边距 -->
+    <dimen name="message_item_content_margin_horizontal">40dp</dimen>
+    <!-- 消息内容与头像水平间距 -->
+    <dimen name="message_item_content_margin_avatar">4dp</dimen>
+    <!-- 消息内容文本水平间距 -->
+    <dimen name="message_item_content_padding_horizontal">12dp</dimen>
+    <!-- 消息内容文本水平间距+尖尖部分 -->
+    <dimen name="message_item_content_padding_horizontal_external">14dp</dimen>
+    <!-- 发送中进度条与消息内容水平间距，4dp-消息内容水平边距 -->
+    <dimen name="message_item_progress_margin_content">-36dp</dimen>
+
+</resources>

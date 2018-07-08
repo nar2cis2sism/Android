@@ -14,10 +14,12 @@ import android.widget.ListView;
 
 import com.daimon.yueba.R;
 import com.project.app.bean.FriendListItem;
+import com.project.ui.message.MessageFragment;
 
 import engine.android.core.Injector;
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseListFragment;
+import engine.android.framework.ui.extra.SinglePaneActivity;
 import engine.android.util.AndroidUtil;
 import engine.android.util.ui.ViewSize;
 import engine.android.util.ui.ViewSize.ViewSizeObserver;
@@ -137,6 +139,12 @@ public class FriendListFragment extends BaseListFragment {
     }
     
     @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        startActivity(SinglePaneActivity.buildIntent(getContext(), MessageFragment.class, 
+                MessageFragment.buildParam(presenter.adapter.getItem(position))));
+    }
+    
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
@@ -148,10 +156,6 @@ public class FriendListFragment extends BaseListFragment {
         letter_bar.replaceLetter(0, getResources().getDrawable(R.drawable.letter_bar_search));
         letterBarHelper = new LetterBarHelper(letter_bar);
         letterBarHelper.bindListView(getListView());
-    }
-    
-    private void updateLetterBar(ListAdapter adapter) {
-        letter_bar.setVisibility(adapter == searchPresenter.adapter || adapter.isEmpty() ? View.GONE : View.VISIBLE);
     }
     
     @Override
@@ -177,5 +181,9 @@ public class FriendListFragment extends BaseListFragment {
             // ListView will get focus when update the adapter so request focus manually.
             list_header.search_box.requestFocus();
         }
+    }
+
+    private void updateLetterBar(ListAdapter adapter) {
+        letter_bar.setVisibility(adapter == searchPresenter.adapter || adapter.isEmpty() ? View.GONE : View.VISIBLE);
     }
 }

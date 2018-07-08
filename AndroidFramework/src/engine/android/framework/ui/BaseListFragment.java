@@ -282,7 +282,7 @@ public class BaseListFragment extends BaseFragment {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onListItemClick(mList, view, position, id);
+                onListItemClick(mList, view, position - mList.getHeaderViewsCount(), id);
             }
         });
         if (mAdapter != null)

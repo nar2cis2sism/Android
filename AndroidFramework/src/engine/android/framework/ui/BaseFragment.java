@@ -10,6 +10,7 @@ import engine.android.core.extra.EventBus.Event;
 import engine.android.core.extra.EventBus.EventHandler;
 import engine.android.framework.R;
 import engine.android.framework.network.ConnectionStatus;
+import engine.android.framework.util.GsonUtil;
 import engine.android.util.Util;
 import engine.android.widget.component.TitleBar;
 
@@ -115,5 +116,28 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
     public void onDestroy() {
         if (isReceiveEventEnabled) EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+    
+    /**
+     * 传递参数构造器
+     */
+    public static final class ParamsBuilder {
+        
+        private static final String EXTRA_PARAMS = "params";
+        
+        public static <Params> Bundle build(Params params) {
+            Bundle bundle = new Bundle();
+            bundle.putString(EXTRA_PARAMS, GsonUtil.toJson(params));
+            return bundle;
+        }
+        
+        public static <Params> Params parse(Bundle bundle, Class<Params> cls) {
+            if (bundle != null && bundle.containsKey(EXTRA_PARAMS))
+            {
+                return GsonUtil.parseJson(bundle.getString(EXTRA_PARAMS), cls);
+            }
+            
+            return null;
+        }
     }
 }

@@ -48,12 +48,19 @@ public class Message {
 
     @DAOProperty(column=MessageColumns.CREATION_TIME)
     public long creationTime;               // 消息创建时间
+
+    /******************************* 华丽丽的分割线 *******************************/
     
     @DAOProperty(column=MessageColumns.IS_RECEIVED)
     public boolean isReceived;              // True:接收消息,False:发送消息
-    
-    @DAOProperty(column=MessageColumns.IS_SEND_OUT)
-    public boolean isSendOut;               // 消息是否发送成功
+
+    /**
+     * 0：消息发送中
+     * 1：未发送成功
+     * 2：消息已送达
+     */
+    @DAOProperty(column=MessageColumns.SEND_STATUS)
+    public int sendStatus;                  // 消息发送状态
 
     /**
      * Mandatory empty constructor for the {@link DAOTemplate}

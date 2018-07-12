@@ -10,8 +10,6 @@ import java.util.Calendar;
 
 public class MessageItem {
     
-    private static final long FIVE_MINUTES = 5 * 60 * 1000;
-    
     private static final DateRangeLookUp map = new DateRangeLookUp();
     
     static
@@ -51,13 +49,15 @@ public class MessageItem {
         map.register(0, start).setFormat("yyyy年M月d日 HH:mm");
     }
     
-    private final Message message;
+    private static final long FIVE_MINUTES = 5 * 60 * 1000;
+    
+    public final Message message;
     
     public final String time;
     
     public MessageItem(Message message) {
         this.message = message;
-        this.time = formatTime(map.lookup(message.creationTime), message.creationTime);
+        time = formatTime(map.lookup(message.creationTime), message.creationTime);
     }
     
     private static String formatTime(DateRange range, long time) {
@@ -72,11 +72,15 @@ public class MessageItem {
         return Math.abs(message.creationTime - item.message.creationTime) <= FIVE_MINUTES;
     }
     
-    public String getMessage() {
+    public String getContent() {
         return message.content;
     }
     
-    public boolean isSendOut() {
-        return message.isSendOut;
+    public boolean isSending() {
+        return message.sendStatus == 0;
+    }
+    
+    public boolean isSendFail() {
+        return message.sendStatus == 1;
     }
 }

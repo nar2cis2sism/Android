@@ -7,10 +7,10 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.daimon.yueba.R;
-import com.project.app.bean.FriendListItem;
 import com.project.network.action.socket.SendMessage;
 import com.project.storage.dao.MessageDAO;
 import com.project.storage.db.Message;
+import com.project.ui.message.MessagePresenter.MessageParams;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseListFragment;
@@ -29,8 +29,8 @@ public class MessageFragment extends BaseListFragment {
     
     MessagePresenter presenter;
     
-    public static Bundle buildParam(FriendListItem item) {
-        return MessageParam.build(item);
+    public static Bundle buildParams(MessageParams params) {
+        return ParamsBuilder.build(params);
     }
     
     @Override
@@ -42,7 +42,7 @@ public class MessageFragment extends BaseListFragment {
     @Override
     protected void setupTitleBar(TitleBar titleBar) {
         titleBar
-        .setTitle(presenter.param.friend.getName())
+        .setTitle(presenter.params.title)
         .setDisplayUpEnabled(true)
         .show();
     }
@@ -79,7 +79,7 @@ public class MessageFragment extends BaseListFragment {
     /******************************* 发送消息 *******************************/
     
     private void sendMessageAction(String message) {
-        Message msg = MessageDAO.sendMessage(presenter.param.friend.getAccount(), message);
+        Message msg = MessageDAO.sendMessage(presenter.params.account, message);
         getBaseActivity().sendSocketRequest(new SendMessage(msg));
     }
 }

@@ -1,14 +1,16 @@
 package com.project.ui.message;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.daimon.yueba.R;
-import com.project.app.bean.FriendListItem;
+import com.project.app.MyApp;
 import com.project.app.bean.MessageItem;
+import com.project.network.action.socket.SendMessage;
 import com.project.storage.MyDAOManager;
 import com.project.storage.dao.MessageDAO;
 import com.project.storage.db.Message;
@@ -16,7 +18,7 @@ import com.project.storage.db.Message;
 import engine.android.core.BaseFragment.Presenter;
 import engine.android.core.extra.JavaBeanAdapter;
 import engine.android.dao.util.JavaBeanLoader;
-import engine.android.framework.util.GsonUtil;
+import engine.android.framework.ui.BaseFragment.ParamsBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,12 +29,12 @@ public class MessagePresenter extends Presenter<MessageFragment> {
     MessageAdapter adapter;
     MessageLoader loader;
     
-    MessageParam param;
+    MessageParams params;
     
     @Override
     protected void onCreate(Context context) {
-        param = MessageParam.parse(getCallbacks().getArguments());
-        if (param == null)
+        params = ParamsBuilder.parse(getCallbacks().getArguments(), MessageParams.class);
+        if (params == null)
         {
             getCallbacks().finish();
             return;
@@ -41,6 +43,12 @@ public class MessagePresenter extends Presenter<MessageFragment> {
         adapter = new MessageAdapter(context);
         loader = new MessageLoader(context, this);
         getCallbacks().setDataSource(adapter, loader);
+    }
+    
+    public static class MessageParams {
+        
+        public String title;
+        public String account;
     }
 }
 
@@ -80,7 +88,7 @@ class MessageAdapter extends JavaBeanAdapter<MessageItem> {
     }
 
     @Override
-    protected void bindView(int position, ViewHolder holder, MessageItem item) {
+    protected void bindView(int position, ViewHolder holder, final MessageItem item) {
         // 时间
         if (position > 0 && item.inFiveMinutes(getItem(position - 1)))
         {
@@ -95,11 +103,28 @@ class MessageAdapter extends JavaBeanAdapter<MessageItem> {
         // 头像
         holder.setImageView(R.id.avatar, R.drawable.avatar_default);
         // 消息内容
-        holder.setTextView(R.id.content, item.getMessage());
-        // 发送中进度条
+        holder.setTextView(R.id.content, item.getContent());
+        // 发送状态
         if (!item.isReceived())
         {
-            holder.setVisible(R.id.progress, !item.isSendOut());
+            holder.setVisible(R.id.progress, item.isSending());
+            if (item.isSendFail())
+            {
+                ImageView send_fail = holder.getView(R.id.send_fail);
+                send_fail.setVisibility(View.VISIBLE);
+                send_fail.setOnClickListener(new OnClickListener() {
+                    
+                    @Override
+                    public void onClick(View v) {
+                        MessageDAO.resendMessage(item.message);
+                        MyApp.global().getSocketManager().sendSocketRequest(new SendMessage(item.message));
+                    }
+                });
+            }
+            else
+            {
+                holder.setVisible(R.id.send_fail, false);
+            }
         }
     }
 }
@@ -111,7 +136,7 @@ class MessageLoader extends JavaBeanLoader<MessageItem> {
     public MessageLoader(Context context, MessagePresenter presenter) {
         super(context, MyDAOManager.getDAO());
         listen(Message.class);
-        account = presenter.param.friend.getAccount();
+        account = presenter.params.account;
     }
 
     @Override
@@ -129,35 +154,5 @@ class MessageLoader extends JavaBeanLoader<MessageItem> {
         }
         
         return null;
-    }
-}
-
-class MessageParam {
-    
-    private static final String EXTRA_FRIEND = "friend";
-    
-    public FriendListItem friend;
-    
-    public static Bundle build(FriendListItem item) {
-        Bundle bunlde = new Bundle();
-        bunlde.putString(EXTRA_FRIEND, GsonUtil.toJson(item));
-        return bunlde;
-    }
-    
-    public static MessageParam parse(Bundle bundle) {
-        if (bundle == null)
-        {
-            return null;
-        }
-        
-        String json = bundle.getString(EXTRA_FRIEND);
-        if (json == null)
-        {
-            return null;
-        }
-        
-        MessageParam param = new MessageParam();
-        param.friend = GsonUtil.parseJson(json, FriendListItem.class);
-        return param;
     }
 }

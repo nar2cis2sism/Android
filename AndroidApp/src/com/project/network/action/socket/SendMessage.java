@@ -1,11 +1,11 @@
 package com.project.network.action.socket;
 
-import com.project.storage.MyDAOManager;
+import com.project.storage.dao.MessageDAO;
 import com.project.storage.db.Message;
-import com.project.storage.provider.ProviderContract.MessageColumns;
 
 import engine.android.framework.network.socket.SocketManager.SocketBuilder;
 import engine.android.framework.network.socket.SocketResponse;
+import engine.android.framework.network.socket.SocketResponse.SocketTimeout;
 import protocol.java.ProtocolWrapper.ProtocolEntity.ProtocolData;
 import protocol.java.stream.ack.MessageACK;
 
@@ -14,7 +14,7 @@ import protocol.java.stream.ack.MessageACK;
  * 
  * @author Daimon
  */
-public class SendMessage implements SocketBuilder, SocketResponse {
+public class SendMessage implements SocketBuilder, SocketTimeout {
     
     private final Message message;
     
@@ -36,12 +36,20 @@ public class SendMessage implements SocketBuilder, SocketResponse {
     public boolean response(ProtocolData data, Callback callback) {
         if (data instanceof MessageACK)
         {
-            message.isSendOut = true;
-            MyDAOManager.getDAO().update(message, MessageColumns.IS_SEND_OUT);
-            
+            MessageDAO.sendoutMessage(message, true);
             return true;
         }
         
         return false;
+    }
+
+    @Override
+    public int getTimeout() {
+        return 30000;
+    }
+
+    @Override
+    public void timeout(Callback callback) {
+        MessageDAO.sendoutMessage(message, false);
     }
 }

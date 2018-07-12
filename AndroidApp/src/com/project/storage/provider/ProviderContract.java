@@ -91,7 +91,7 @@ public final class ProviderContract {
         public static final String EVENT = "event";
         public static final String CREATION_TIME = "creationTime";
         public static final String IS_RECEIVED = "isReceived";
-        public static final String IS_SEND_OUT = "isSendOut";
+        public static final String SEND_STATUS = "sendStatus";
     }
 
     public static final class Message implements MessageColumns {

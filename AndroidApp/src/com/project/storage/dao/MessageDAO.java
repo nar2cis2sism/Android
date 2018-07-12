@@ -1,15 +1,14 @@
 package com.project.storage.dao;
 
-import com.project.app.MySession;
 import com.project.storage.MyDAOManager.BaseDAO;
 import com.project.storage.db.Message;
 import com.project.storage.provider.ProviderContract.MessageColumns;
 
-import java.util.List;
-
 import engine.android.dao.DAOTemplate;
 import engine.android.dao.DAOTemplate.DAOExpression;
 import engine.android.dao.DAOTemplate.DAOTransaction;
+
+import java.util.List;
 
 public class MessageDAO extends BaseDAO implements MessageColumns {
     
@@ -36,6 +35,25 @@ public class MessageDAO extends BaseDAO implements MessageColumns {
         return msg;
     }
     
+    /**
+     * 重发消息
+     */
+    public static void resendMessage(Message msg) {
+        msg.sendStatus = 0;
+        dao.update(msg, SEND_STATUS);
+    }
+    
+    /**
+     * 发送消息状态
+     */
+    public static void sendoutMessage(Message msg, boolean success) {
+        msg.sendStatus = success ? 2 : 1;
+        dao.update(msg, SEND_STATUS);
+    }
+    
+    /**
+     * 收到一条消息
+     */
     public static void receiveMessage(Message msg) {
         msg.isReceived = true;
         if (dao.find(Message.class)
@@ -70,6 +88,9 @@ public class MessageDAO extends BaseDAO implements MessageColumns {
      * @param account 消息来源
      */
     public static List<Message> getMessageList(String account) {
-        return dao.find(Message.class).where(DAOExpression.create(ACCOUNT).eq(account)).orderBy(CREATION_TIME).getAll();
+        return dao.find(Message.class)
+            .where(DAOExpression.create(ACCOUNT).eq(account))
+            .orderBy(CREATION_TIME)
+            .getAll();
     }
 }

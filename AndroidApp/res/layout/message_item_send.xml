@@ -40,6 +40,16 @@
             android:layout_toLeftOf="@+id/content"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/message_item_progress_margin_content" />
+    
+        <!-- 消息发送失败提示 -->
+        <ImageView
+            android:id="@+id/send_fail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_error"
+            android:layout_toLeftOf="@+id/content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/message_item_progress_margin_content" />
 
     </RelativeLayout>
 

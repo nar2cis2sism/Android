@@ -68,13 +68,21 @@ public class BaseActivity extends NetworkActivity {
         view.setLayoutParams(params);
         setContentView(view);
     }
-    
+
     /**
      * Provide a convenient way to start fragment wrapped in {@link SinglePaneActivity}
      * (需要在Manifest中注册)
      */
     public void startFragment(Class<? extends Fragment> fragmentCls) {
-        startActivity(SinglePaneActivity.buildIntent(this, fragmentCls, null));
+        startFragment(fragmentCls, null);
+    }
+    
+    /**
+     * Provide a convenient way to start fragment wrapped in {@link SinglePaneActivity}
+     * (需要在Manifest中注册)
+     */
+    public void startFragment(Class<? extends Fragment> fragmentCls, Bundle args) {
+        startActivity(SinglePaneActivity.buildIntent(this, fragmentCls, args));
     }
     
     /******************************* TitleBar模块 *******************************/

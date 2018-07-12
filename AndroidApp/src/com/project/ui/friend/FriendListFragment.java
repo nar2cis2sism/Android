@@ -15,11 +15,11 @@ import android.widget.ListView;
 import com.daimon.yueba.R;
 import com.project.app.bean.FriendListItem;
 import com.project.ui.message.MessageFragment;
+import com.project.ui.message.MessagePresenter.MessageParams;
 
 import engine.android.core.Injector;
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseListFragment;
-import engine.android.framework.ui.extra.SinglePaneActivity;
 import engine.android.util.AndroidUtil;
 import engine.android.util.ui.ViewSize;
 import engine.android.util.ui.ViewSize.ViewSizeObserver;
@@ -140,8 +140,13 @@ public class FriendListFragment extends BaseListFragment {
     
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        startActivity(SinglePaneActivity.buildIntent(getContext(), MessageFragment.class, 
-                MessageFragment.buildParam(presenter.adapter.getItem(position))));
+        FriendListItem item = presenter.adapter.getItem(position);
+        
+        MessageParams params = new MessageParams();
+        params.title = item.getName();
+        params.account = item.getAccount();
+        
+        getBaseActivity().startFragment(MessageFragment.class, MessageFragment.buildParams(params));
     }
     
     @Override

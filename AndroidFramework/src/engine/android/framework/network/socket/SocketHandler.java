@@ -6,9 +6,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Handler;
+import android.os.Handler.Callback;
 import android.os.HandlerThread;
+import android.os.Message;
 import android.os.SystemClock;
 
+import engine.android.framework.network.socket.SocketResponse.SocketTimeout;
 import engine.android.http.HttpConnector;
 import protocol.java.stream.BaseData;
 
@@ -16,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 辅助类，提供一个后台循环线程<br>
- * 功能：断线自动重连+心跳
+ * 功能：断线自动重连+心跳包发送+超时处理
  * 
  * @author Daimon
  * @version N
@@ -28,8 +31,9 @@ class SocketHandler {
     
     private Handler handler;
     
-    private AutoReconnect autoReconnect;
-    private HeartbeatManager heartbeatManager;
+    private ConnectManager conn;
+    private HeartbeatManager heartbeat;
+    private TimeoutManager timeout;
     
     public SocketHandler(SocketManager manager) {
         this.manager = manager;
@@ -43,29 +47,33 @@ class SocketHandler {
         
         HandlerThread thread = new HandlerThread("socket保活线程");
         thread.start();
-        handler = new Handler(thread.getLooper());
+        handler = new Handler(thread.getLooper(), timeout = new TimeoutManager());
         
-        autoReconnect = new AutoReconnect(context);
+        conn = new ConnectManager(context);
+        heartbeat = new HeartbeatManager();
     }
     
     public void reconnect(long delay) {
-        handler.postDelayed(autoReconnect, delay);
+        handler.postDelayed(conn, delay);
     }
     
     public HeartbeatManager heartbeat() {
-        if (heartbeatManager == null) heartbeatManager = new HeartbeatManager();
-        return heartbeatManager;
+        return heartbeat;
+    }
+    
+    public void setTimeout(int msgId, SocketTimeout timeout) {
+        this.timeout.set(msgId, timeout);
     }
 
     /**
      * 自动重连机制
      */
-    public class AutoReconnect extends BroadcastReceiver implements Runnable {
+    public class ConnectManager extends BroadcastReceiver implements Runnable {
         
         private final IntentFilter filter;
         private boolean isAccessible;
         
-        public AutoReconnect(Context context) {
+        public ConnectManager(Context context) {
             filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
             isAccessible = HttpConnector.isAccessible(context);
             context.registerReceiver(this, filter, null, handler);
@@ -137,6 +145,31 @@ class SocketHandler {
                 lastTriggerTime = -1;
                 manager.sendSocketRequest(new BaseData(), null);
             }
+        }
+    }
+    
+    /**
+     * 超时机制
+     */
+    public class TimeoutManager implements Callback {
+        
+        public void set(int msgId, SocketTimeout timeout) {
+            int delay = timeout.getTimeout();
+            if (delay <= 0)
+            {
+                return;
+            }
+            
+            Message msg = Message.obtain();
+            msg.what = msgId;
+            msg.obj = timeout;
+            handler.sendMessageDelayed(msg, delay);
+        }
+
+        @Override
+        public boolean handleMessage(Message msg) {
+            manager.onTimeout(msg.what, (SocketTimeout) msg.obj);
+            return true;
         }
     }
 }

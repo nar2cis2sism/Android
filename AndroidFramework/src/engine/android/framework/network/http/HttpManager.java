@@ -150,7 +150,7 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
      * @param status 网络状态
      * @param param 网络参数
      */
-    protected void receive(HttpConnector conn, int status, Object param) {
+    private void receive(HttpConnector conn, int status, Object param) {
         String action = conn.getName();
         ConnectionInterceptor interceptor = config.getHttpInterceptor();
         if (interceptor != null && interceptor.intercept(action, status, param))

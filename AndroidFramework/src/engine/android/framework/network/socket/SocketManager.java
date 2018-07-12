@@ -12,6 +12,7 @@ import engine.android.core.util.LogFactory;
 import engine.android.framework.app.AppConfig;
 import engine.android.framework.app.AppGlobal;
 import engine.android.framework.network.socket.SocketResponse.Callback;
+import engine.android.framework.network.socket.SocketResponse.SocketTimeout;
 import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.socket.SocketConnectionListener;
@@ -49,8 +50,7 @@ public class SocketManager implements SocketConnectionListener, Callback {
     
     private final SocketHandler handler;
     
-    private final SparseArray<SocketAction> pendingDatas
-    = new SparseArray<SocketAction>();
+    private final SparseArray<SocketAction> pendingDatas = new SparseArray<SocketAction>();
     
     private SocketConnector socket;
     
@@ -137,9 +137,8 @@ public class SocketManager implements SocketConnectionListener, Callback {
         socket.setProxy(context);
         socket.setListener(this);
         if (config.isOffline()) socket.setServlet(config.getSocketServlet());
+        handler.setup(context); // 启动扩展功能
         socket.connect();
-        // 启动扩展功能
-        handler.setup(context);
     }
     
     /**
@@ -157,7 +156,7 @@ public class SocketManager implements SocketConnectionListener, Callback {
         }
         else
         {
-            log("Socket连接已建立:" + socket.getInetAddress());
+            log("Socket连接已建立:" + socket.getRemoteSocketAddress());
             try {
                 socket.setSendBufferSize(64 * 1024);
                 socket.setReceiveBufferSize(64 * 1024);
@@ -194,6 +193,15 @@ public class SocketManager implements SocketConnectionListener, Callback {
     public void onClosed() {
         log("Socket连接已断开");
         handler.heartbeat().stop();
+    }
+    
+    void onTimeout(int msgId, SocketTimeout timeout) {
+        int index = pendingDatas.indexOfKey(msgId);
+        if (index >= 0)
+        {
+            timeout.timeout(this);
+            pendingDatas.removeAt(index);
+        }
     }
 
     private class SocketParser implements Runnable {
@@ -312,6 +320,10 @@ public class SocketManager implements SocketConnectionListener, Callback {
                 if (response == null)
                 {
                     pendingDatas.remove(request.getMsgId());
+                }
+                else if (response instanceof SocketTimeout)
+                {
+                    handler.setTimeout(request.getMsgId(), (SocketTimeout) response);
                 }
             }
         }

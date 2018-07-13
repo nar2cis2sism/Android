@@ -1,17 +1,21 @@
 package com.project.ui.more;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.daimon.yueba.R;
+import com.project.storage.db.User;
+import com.project.ui.more.me.MeFragment;
 
 import engine.android.core.annotation.InjectView;
+import engine.android.core.annotation.OnClick;
 import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
 import engine.android.framework.ui.extra.BaseInfoFragment;
 import engine.android.util.ui.UIUtil;
@@ -24,6 +28,9 @@ import engine.android.widget.component.TitleBar;
  */
 public class MoreFragment extends BaseInfoFragment {
 
+    @InjectView(R.id.header)
+    RelativeLayout header;
+
     @InjectView(R.id.avatar)
     ImageView avatar;
     
@@ -31,7 +38,7 @@ public class MoreFragment extends BaseInfoFragment {
     TextView name;
 
     @InjectView(R.id.certification)
-    Button certification;
+    TextView certification;
     
     @InjectView(R.id.signature)
     TextView signature;
@@ -41,6 +48,14 @@ public class MoreFragment extends BaseInfoFragment {
     ViewHolder order;
     ViewHolder evaluation;
     ViewHolder message;
+    
+    MorePresenter presenter;
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        presenter = addPresenter(MorePresenter.class);
+    }
     
     @Override
     protected void setupTitleBar(TitleBar titleBar) {
@@ -84,10 +99,21 @@ public class MoreFragment extends BaseInfoFragment {
     }
     
     private void setupHeader() {
+        User user = presenter.user;
+        
         avatar.setImageResource(R.drawable.avatar_default);
-        name.setText("闫昊");
-        certification.setText("未认证");
-        signature.setText("签名");
+        name.setText(user.nickname);
+        certification.setText(presenter.getAuthenticatedText());
+        
+        if (TextUtils.isEmpty(user.signature))
+        {
+            signature.setVisibility(View.GONE);
+        }
+        else
+        {
+            signature.setVisibility(View.VISIBLE);
+            signature.setText(user.signature);
+        }
     }
     
     private ViewHolder addComponent(ViewGroup root, LayoutInflater inflater, 
@@ -110,5 +136,10 @@ public class MoreFragment extends BaseInfoFragment {
         addDivider(root, getResources().getColor(R.color.divider_horizontal), 1);
         
         return holder;
+    }
+    
+    @OnClick(R.id.header)
+    void toMe() {
+        getBaseActivity().startFragment(MeFragment.class);
     }
 }

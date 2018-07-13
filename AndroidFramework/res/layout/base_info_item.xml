@@ -7,7 +7,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginRight="8dp"
+        android:layout_marginRight="16dp"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <!-- 右边箭头 -->
@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="8dp"
+        android:layout_marginLeft="16dp"
         android:src="@drawable/arrow_right" />
     
     <FrameLayout
@@ -34,7 +34,6 @@
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="right"
 	        android:gravity="right"
-	        android:singleLine="true"
 	        android:textAppearance="?android:attr/textAppearanceSmall" />
         
     </FrameLayout>

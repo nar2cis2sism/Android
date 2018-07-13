@@ -228,7 +228,7 @@ public final class Session {
             }
         }
 
-        void sendBroadcast(String key, byte[] value, byte status) {
+        public void sendBroadcast(String key, byte[] value, byte status) {
             Intent intent = new Intent(ACTION);
             intent.putExtra(EXTRA_KEY, key);
             intent.putExtra(EXTRA_VALUE, value);

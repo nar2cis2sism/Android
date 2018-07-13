@@ -68,7 +68,7 @@ public abstract class BaseInfoFragment extends BaseFragment {
         
         if (!showArrow)
         {
-            holder.setVisibility(R.id.arrow, View.INVISIBLE);
+            holder.setVisibility(R.id.arrow, View.GONE);
         }
         
         // Divider
@@ -82,6 +82,10 @@ public abstract class BaseInfoFragment extends BaseFragment {
         divider.setBackgroundColor(color);
         root.addView(divider, new ViewGroup.LayoutParams(
                 LayoutParams.MATCH_PARENT, height));
+    }
+    
+    protected void addDivider(ViewGroup root) {
+        addDivider(root, getResources().getColor(R.color.divider_horizontal), 1);
     }
     
     protected void addCategory(ViewGroup root) {

@@ -120,8 +120,8 @@ public class SocketManager implements SocketConnectionListener, Callback {
                     throw new SocketException("握手失败");
                 }
             }
-        };
-        socket.setReceiver(new SocketReceiver() {
+        }
+        .setReceiver(new SocketReceiver() {
             
             @Override
             public Object parseData(InputStream in) throws IOException {
@@ -133,9 +133,9 @@ public class SocketManager implements SocketConnectionListener, Callback {
                 
                 return entity;
             }
-        });
-        socket.setProxy(context);
-        socket.setListener(this);
+        })
+        .setProxy(context)
+        .setListener(this);
         if (config.isOffline()) socket.setServlet(config.getSocketServlet());
         handler.setup(context); // 启动扩展功能
         socket.connect();

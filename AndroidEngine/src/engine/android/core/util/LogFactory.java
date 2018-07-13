@@ -64,7 +64,7 @@ public final class LogFactory {
     /**
      * 获取日志输出目录
      */
-    private static synchronized File _getLogDir() {
+    private static File _getLogDir() {
         if (logDir == null)
         {
             logDir = getMainApplication().getDir("log", 0);
@@ -211,6 +211,8 @@ public final class LogFactory {
         }
 
         public synchronized void flush() throws Exception {
+            if (logs.isEmpty()) return;
+            
             FileWriter fw = null;
             try {
                 fw = new FileWriter(logFile, true); // The file will be created

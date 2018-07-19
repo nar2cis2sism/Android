@@ -24,4 +24,9 @@ public interface Actions {
 //
     /** 查询好友列表 **/
     String QUERY_FRIEND_LIST = "query_friend_list";
+
+    /******************************* 华丽丽的分割线 *******************************/
+    
+    /** 上传头像 **/
+    String AVATAR = "avatar";
 }

@@ -8,6 +8,13 @@
     <string name="dialog_upgrade_now">立即升级</string>
     <string name="dialog_upgrade_later">稍后提醒</string>
     
+    <!-- Progress -->
+    <string name="progress_upload_avatar">正在上传头像</string>
+    
+    <!-- Toast -->
+    <string name="toast_upload_avatar_success">头像已上传</string>
+    <string name="toast_upload_avatar_failure">上传头像失败</string>
+    
     <!-- Login -->
     <string name="login_login">登&#160;&#160;&#160;&#160;录</string>
     <string name="login_register">用户注册</string>

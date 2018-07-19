@@ -1,13 +1,16 @@
 package com.project.storage.db;
 
+import com.project.app.bean.ServerUrl;
+import com.project.app.config.ImageTransformer;
 import com.project.storage.provider.ProviderContract.UserColumns;
 
-import protocol.java.json.UserInfo;
-
+import engine.android.core.util.CalendarFormat;
 import engine.android.dao.DAOTemplate;
 import engine.android.dao.annotation.DAOPrimaryKey;
 import engine.android.dao.annotation.DAOProperty;
 import engine.android.dao.annotation.DAOTable;
+import engine.android.framework.app.image.ImageManager.ImageUrl;
+import protocol.java.json.UserInfo;
 
 /**
  * 用户资料
@@ -75,5 +78,28 @@ public class User {
         profile = item.profile;
         isAuthenticated = item.authentication == 1;
         avatar_url = item.avatar_url;
+    }
+
+    /******************************* 华丽丽的分割线 *******************************/
+    
+    public String getGenderText() {
+        return isFemale ? "女" : "男";
+    }
+    
+    public String getBirthdayText() {
+        return CalendarFormat.formatDateByLocale(birthday, 0);
+    }
+    
+    public String getAuthenticationText() {
+        return isAuthenticated ? "已认证" : "未认证";
+    }
+    
+    public ImageUrl getAvatarUrl() {
+        if (avatar_ver == 0)
+        {
+            return null;
+        }
+        
+        return new ImageUrl(ImageTransformer.TYPE_AVATAR, ServerUrl.getDownloadUrl(avatar_url), String.valueOf(avatar_ver));
     }
 }

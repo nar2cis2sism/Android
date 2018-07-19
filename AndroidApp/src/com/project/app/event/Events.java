@@ -16,9 +16,9 @@ public class Events {
     private static final int STATUS_NONE = 0;
     
     /**
-     * @param isAccessible 网络是否可访问
+     * @param noNetwork True:网络不可用
      */
-    public static void notifyConnectivityChange(boolean isAccessible) {
-        EventBus.getDefault().post(new Event(CONNECTIVITY_CHANGE, STATUS_NONE, isAccessible));
+    public static void notifyConnectivityChange(boolean noNetwork) {
+        EventBus.getDefault().post(new Event(CONNECTIVITY_CHANGE, STATUS_NONE, noNetwork));
     }
 }

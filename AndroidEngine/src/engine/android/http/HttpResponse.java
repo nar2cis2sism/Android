@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import engine.android.util.io.IOUtil;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.Date;
@@ -27,7 +28,7 @@ public class HttpResponse {
     private Map<String, List<String>> headers;
     
     HttpResponse(HttpURLConnection conn) throws Exception {
-        this(conn.getResponseCode(), conn.getResponseMessage(), IOUtil.readStream(conn.getInputStream()));
+        this(conn.getResponseCode(), conn.getResponseMessage(), getContent(conn));
         headers = conn.getHeaderFields();
     }
     
@@ -35,6 +36,14 @@ public class HttpResponse {
         code = responseCode;
         reason = message;
         content = data;
+    }
+    
+    private static byte[] getContent(HttpURLConnection conn) {
+        try {
+            return IOUtil.readStream(conn.getInputStream());
+        } catch (IOException e) {
+            return null;
+        }
     }
     
     public int getStatusCode() {
@@ -73,7 +82,7 @@ public class HttpResponse {
         return TextUtils.join(",", list);
     }
     
-    private int getHeaderFieldInt(String field, int defaultValue) {
+    public int getHeaderFieldInt(String field, int defaultValue) {
         try {
             return Integer.parseInt(getHeaderField(field));
         } catch (NumberFormatException e) {
@@ -82,7 +91,7 @@ public class HttpResponse {
     }
     
     @SuppressWarnings("deprecation")
-    private long getHeaderFieldDate(String field, long defaultValue) {
+    public long getHeaderFieldDate(String field, long defaultValue) {
         String date = getHeaderField(field);
         if (date == null)
         {

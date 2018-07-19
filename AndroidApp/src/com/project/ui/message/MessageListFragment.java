@@ -58,9 +58,9 @@ public class MessageListFragment extends BaseListFragment {
     /**
      * 显示/隐藏无网络提示
      */
-    private void showConnectionTip(boolean noConnection) {
+    private void showConnectionTip(boolean noNetwork) {
         list_header.removeAllViews();
-        if (noConnection)
+        if (noNetwork)
         {
             list_header.addView(tip_no_connection);
         }
@@ -72,10 +72,14 @@ public class MessageListFragment extends BaseListFragment {
     }
     
     @Override
-    protected void onReceiveSuccess(String action, Object param) {
+    protected void onReceive(String action, int status, Object param) {
         if (CONNECTIVITY_CHANGE.equals(action))
         {
-            showConnectionTip(!(Boolean) param);
+            showConnectionTip((Boolean) param);
+        }
+        else
+        {
+            super.onReceive(action, status, param);
         }
     }
 }

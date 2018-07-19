@@ -1,7 +1,8 @@
-package com.project.app;
+package com.project.app.config;
 
 import android.content.Context;
 
+import com.project.app.MyApp;
 import com.project.network.http.HttpInterceptor;
 import com.project.network.http.servlet.HttpServlet;
 import com.project.network.socket.SocketInterceptor;
@@ -18,7 +19,7 @@ import engine.android.framework.app.AppConfig;
 interface IConfiguration {
     
     /** 单机不联网 **/
-    boolean NET_OFF = true;
+    boolean NET_OFF = false;
 
     /** 打印协议 **/
     boolean NET_LOG_PROTOCOL = true;
@@ -39,6 +40,7 @@ public class MyConfiguration extends AppConfig implements IConfiguration {
         configNetwork(configNetwork());
         configHttp(configHttp());
         configSocket(configSocket());
+        configImage(configImage());
     }
     
     private void configNetwork(NetworkConfig config) {
@@ -59,5 +61,9 @@ public class MyConfiguration extends AppConfig implements IConfiguration {
         config.setInterceptor(new SocketInterceptor());
         config.setPushReceiver(new SocketPushReceiver());
         config.setTimeout(SOCKET_TIMEOUT);
+    }
+    
+    private void configImage(ImageConfig config) {
+        config.setTransformer(new ImageTransformer());
     }
 }

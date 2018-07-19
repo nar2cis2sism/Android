@@ -1,18 +1,33 @@
 package com.project.ui.more.me;
 
+import static com.project.network.action.Actions.AVATAR;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.daimon.yueba.R;
+import com.project.app.MyApp;
 import com.project.app.MySession;
+import com.project.network.action.file.UploadAvatar;
 import com.project.storage.db.User;
 
+import engine.android.core.Forelet.ProgressSetting;
+import engine.android.core.annotation.InjectView;
+import engine.android.core.annotation.OnClick;
 import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
-import engine.android.core.util.CalendarFormat;
 import engine.android.framework.ui.extra.BaseInfoFragment;
+import engine.android.framework.ui.presenter.PhotoPresenter;
+import engine.android.framework.ui.presenter.PhotoPresenter.CropAttribute;
+import engine.android.framework.ui.presenter.PhotoPresenter.PhotoCallback;
+import engine.android.framework.ui.presenter.PhotoPresenter.PhotoInfo;
+import engine.android.framework.ui.widget.AvatarImageView;
 import engine.android.widget.component.TitleBar;
 
 /**
@@ -20,20 +35,11 @@ import engine.android.widget.component.TitleBar;
  * 
  * @author Daimon
  */
-public class MeFragment extends BaseInfoFragment {
+public class MeFragment extends BaseInfoFragment implements PhotoCallback {
 
-//    @InjectView(R.id.avatar)
-//    ImageView avatar;
-//    
-//    @InjectView(R.id.name)
-//    TextView name;
-//
-//    @InjectView(R.id.certification)
-//    TextView certification;
-//    
-//    @InjectView(R.id.signature)
-//    TextView signature;
-//    
+    @InjectView(R.id.avatar)
+    ImageView avatar;
+    
     ViewHolder nickname;
     ViewHolder gender;
     ViewHolder birthday;
@@ -45,6 +51,8 @@ public class MeFragment extends BaseInfoFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        enableReceiveEvent(AVATAR);
+        addPresenter(new PhotoPresenter(this));
         user = MySession.getUser();
     }
     
@@ -68,10 +76,10 @@ public class MeFragment extends BaseInfoFragment {
                 R.string.me_nickname, user.nickname, false);
         // 性别
         gender = addComponent(root, inflater, 
-                R.string.me_gender, user.isFemale ? "女" : "男", false);
+                R.string.me_gender, user.getGenderText(), false);
         // 生日
         birthday = addComponent(root, inflater, 
-                R.string.me_birthday, CalendarFormat.formatDateByLocale(user.birthday, 0), false);
+                R.string.me_birthday, user.getBirthdayText(), false);
         // 地区
         area = addComponent(root, inflater, 
                 R.string.me_area, user.city, false);
@@ -81,51 +89,69 @@ public class MeFragment extends BaseInfoFragment {
         
         return root;
     }
-//    
-//    @Override
-//    public void onViewCreated(View view, Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//        // 个人信息
-//        setupHeader();
-//    }
-//    
-//    private void setupHeader() {
-//        User user = presenter.user;
-//        
-//        avatar.setImageResource(R.drawable.avatar_default);
-//        name.setText(user.nickname);
-//        certification.setText(presenter.getAuthenticatedText());
-//        
-//        if (TextUtils.isEmpty(user.signature))
-//        {
-//            signature.setVisibility(View.GONE);
-//        }
-//        else
-//        {
-//            signature.setVisibility(View.VISIBLE);
-//            signature.setText(user.signature);
-//        }
-//    }
-//    
-//    private ViewHolder addComponent(ViewGroup root, LayoutInflater inflater, 
-//            int iconRes, int textId) {
-//        View component = inflater.inflate(R.layout.base_list_item_1, root, false);
-//        root.addView(component);
-//        
-//        ViewHolder holder = new ViewHolder(component);
-//        holder.setImageView(R.id.icon, iconRes);
-//        holder.setTextView(R.id.subject, textId);
-//    
-//        ImageView arrow = new ImageView(getContext());
-//        arrow.setImageResource(R.drawable.arrow_right);
-//        
-//        View note = holder.getView(R.id.note);
-//        UIUtil.replace(note, arrow, note.getLayoutParams());
-//        holder.removeView(R.id.note);
-//        
-//        // Divider
-//        addDivider(root, getResources().getColor(R.color.divider_horizontal), 1);
-//        
-//        return holder;
-//    }
+    
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupAvatar();
+    }
+    
+    private void setupAvatar() {
+        avatar = AvatarImageView.display(avatar, user.getAvatarUrl());
+    }
+    
+    @OnClick(R.id.header)
+    void toMe() {
+        Dialog dialog = new AlertDialog.Builder(getContext())
+        .setItems(R.array.pick_image, 
+        new DialogInterface.OnClickListener() {
+            
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                CropAttribute attr = new CropAttribute();
+                attr.saveToFile();
+                
+                switch (which) {
+                    case 0:
+                        getPresenter(PhotoPresenter.class).takePhoto(true, null);
+                        break;
+                    case 1:
+                        getPresenter(PhotoPresenter.class).pickPhoto(attr);
+                        break;
+                }
+            }
+        })
+        .create();
+
+        getBaseActivity().showDialog("pick_image", dialog);
+    }
+
+    @Override
+    public void onPhotoCapture(PhotoInfo info) {
+        getBaseActivity().showProgress(ProgressSetting.getDefault()
+        .setMessage(getString(R.string.progress_upload_avatar)));
+        
+        getBaseActivity().sendHttpRequest(new UploadAvatar(info));
+    }
+    
+    @Override
+    protected void onReceiveSuccess(String action, Object param) {
+        if (AVATAR.equals(action))
+        {
+            // 头像上传成功
+            getBaseActivity().hideProgress();
+            MyApp.showMessage(getString(R.string.toast_upload_avatar_success));
+            setupAvatar();
+        }
+    }
+    
+    @Override
+    protected void onReceiveFailure(String action, int status, Object param) {
+        if (AVATAR.equals(action))
+        {
+            // 头像上传失败
+            getBaseActivity().hideProgress();
+            MyApp.showMessage(getString(R.string.toast_upload_avatar_failure));
+        }
+    }
 }

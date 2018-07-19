@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
 import engine.android.framework.R;
 import engine.android.framework.app.AppGlobal;
-import engine.android.framework.util.ImageManager.ImageUrl;
+import engine.android.framework.app.image.ImageManager.ImageUrl;
 import engine.android.util.ui.UIUtil;
 
 public class AvatarImageView extends ImageView {
@@ -33,10 +33,11 @@ public class AvatarImageView extends ImageView {
     /**
      * 显示头像
      * 
-     * @param view 需要显示的地方（将被替换成{@link AvatarImageView}）
+     * @param view 需要显示的地方
      * @param url 头像的下载地址
+     * @return 将被替换成{@link AvatarImageView}
      */
-    public static void display(View view, ImageUrl url) {
+    public static AvatarImageView display(View view, ImageUrl url) {
         AvatarImageView avatar;
         if (view instanceof AvatarImageView)
         {
@@ -49,6 +50,7 @@ public class AvatarImageView extends ImageView {
         }
 
         avatar.display(url);
+        return avatar;
     }
 
     /**

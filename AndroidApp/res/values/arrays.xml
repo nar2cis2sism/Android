@@ -1,0 +1,8 @@
+<resources>
+    
+    <string-array name="pick_image">
+        <item>拍照</item>
+        <item>从手机相册选取</item>
+    </string-array>
+    
+</resources>

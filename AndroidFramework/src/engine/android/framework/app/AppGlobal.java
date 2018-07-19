@@ -5,9 +5,9 @@ import android.content.Context;
 import java.util.HashMap;
 
 import engine.android.core.ApplicationManager;
+import engine.android.framework.app.image.ImageManager;
 import engine.android.framework.network.http.HttpManager;
 import engine.android.framework.network.socket.SocketManager;
-import engine.android.framework.util.ImageManager;
 import engine.android.util.StringUtil;
 
 /**

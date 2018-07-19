@@ -1,6 +1,6 @@
 package com.project.network;
 
-import com.project.app.MyConfiguration;
+import com.project.app.config.MyConfiguration;
 
 /**
  * 网络通讯配置

@@ -1,5 +1,7 @@
 package com.project.ui.more;
 
+import static com.project.network.action.Actions.AVATAR;
+
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -7,10 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.daimon.yueba.R;
+import com.project.app.MySession;
 import com.project.storage.db.User;
 import com.project.ui.more.me.MeFragment;
 
@@ -18,6 +20,7 @@ import engine.android.core.annotation.InjectView;
 import engine.android.core.annotation.OnClick;
 import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
 import engine.android.framework.ui.extra.BaseInfoFragment;
+import engine.android.framework.ui.widget.AvatarImageView;
 import engine.android.util.ui.UIUtil;
 import engine.android.widget.component.TitleBar;
 
@@ -27,9 +30,6 @@ import engine.android.widget.component.TitleBar;
  * @author Daimon
  */
 public class MoreFragment extends BaseInfoFragment {
-
-    @InjectView(R.id.header)
-    RelativeLayout header;
 
     @InjectView(R.id.avatar)
     ImageView avatar;
@@ -49,12 +49,13 @@ public class MoreFragment extends BaseInfoFragment {
     ViewHolder evaluation;
     ViewHolder message;
     
-    MorePresenter presenter;
+    User user;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = addPresenter(MorePresenter.class);
+        enableReceiveEvent(AVATAR);
+        user = MySession.getUser();
     }
     
     @Override
@@ -99,12 +100,9 @@ public class MoreFragment extends BaseInfoFragment {
     }
     
     private void setupHeader() {
-        User user = presenter.user;
-        
-        avatar.setImageResource(R.drawable.avatar_default);
+        setupAvatar();
         name.setText(user.nickname);
-        certification.setText(presenter.getAuthenticatedText());
-        
+        certification.setText(user.getAuthenticationText());
         if (TextUtils.isEmpty(user.signature))
         {
             signature.setVisibility(View.GONE);
@@ -114,6 +112,10 @@ public class MoreFragment extends BaseInfoFragment {
             signature.setVisibility(View.VISIBLE);
             signature.setText(user.signature);
         }
+    }
+    
+    private void setupAvatar() {
+        avatar = AvatarImageView.display(avatar, user.getAvatarUrl());
     }
     
     private ViewHolder addComponent(ViewGroup root, LayoutInflater inflater, 
@@ -141,5 +143,14 @@ public class MoreFragment extends BaseInfoFragment {
     @OnClick(R.id.header)
     void toMe() {
         getBaseActivity().startFragment(MeFragment.class);
+    }
+    
+    @Override
+    protected void onReceiveSuccess(String action, Object param) {
+        if (AVATAR.equals(action))
+        {
+            // 头像上传成功
+            setupAvatar();
+        }
     }
 }

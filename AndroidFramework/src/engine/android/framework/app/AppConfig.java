@@ -7,9 +7,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import engine.android.framework.app.image.ImageManager.Transformer;
 import engine.android.framework.network.ConnectionStatus.ConnectionInterceptor;
 import engine.android.framework.network.socket.SocketPushReceiver;
-import engine.android.framework.util.ImageManager.Transformer;
 import engine.android.http.HttpProxy.HttpServlet;
 import engine.android.socket.SocketProxy.SocketServlet;
 import engine.android.util.extra.MyThreadFactory;

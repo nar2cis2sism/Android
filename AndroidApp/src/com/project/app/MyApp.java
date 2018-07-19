@@ -1,5 +1,7 @@
 package com.project.app;
 
+import com.project.app.config.MyConfiguration;
+
 import engine.android.core.ApplicationManager;
 import engine.android.core.util.LogFactory;
 import engine.android.framework.app.AppGlobal;

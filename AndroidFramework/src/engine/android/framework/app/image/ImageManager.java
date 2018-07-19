@@ -1,4 +1,4 @@
-package engine.android.framework.util;
+package engine.android.framework.app.image;
 
 import static engine.android.core.util.LogFactory.LOG.log;
 
@@ -7,13 +7,9 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.os.SystemClock;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
-
-import java.lang.ref.WeakReference;
-import java.util.WeakHashMap;
 
 import engine.android.core.util.LogFactory;
 import engine.android.framework.app.AppConfig;
@@ -24,6 +20,9 @@ import engine.android.util.image.AsyncImageLoader;
 import engine.android.util.image.AsyncImageLoader.ImageCallback;
 import engine.android.util.image.AsyncImageLoader.ImageDownloader;
 import engine.android.util.image.ImageStorage;
+
+import java.lang.ref.WeakReference;
+import java.util.WeakHashMap;
 
 /**
  * 图片统一管理
@@ -65,7 +64,13 @@ public class ImageManager {
     }
 
     public void display(ImageView view, ImageUrl url, Drawable defaultDrawable) {
-        if (url == null || url.equals(displayViewMap.put(view, url)))
+        if (url == null)
+        {
+            setDefaultDrawable(view, defaultDrawable);
+            return;
+        }
+        
+        if (url.equals(displayViewMap.put(view, url)))
         {
             return;
         }
@@ -75,7 +80,14 @@ public class ImageManager {
         {
             view.setImageBitmap(image);
         }
-        else if (view.getDrawable() == null && defaultDrawable != null)
+        else
+        {
+            setDefaultDrawable(view, defaultDrawable);
+        }
+    }
+    
+    private void setDefaultDrawable(ImageView view, Drawable defaultDrawable) {
+        if (view.getDrawable() == null && defaultDrawable != null)
         {
             view.setImageDrawable(defaultDrawable);
         }
@@ -94,14 +106,14 @@ public class ImageManager {
             ImageView view = callback.get();
             if (view != null && url.equals(displayViewMap.get(view)))
             {
-                showImage(view, image);
-            }
-        }
-
-        private void showImage(ImageView view, Bitmap image) {
-            if (image != null)
-            {
-                view.setImageBitmap(image);
+                if (image != null)
+                {
+                    view.setImageBitmap(image);
+                }
+                else
+                {
+                    displayViewMap.remove(view);
+                }
             }
         }
     }
@@ -117,50 +129,26 @@ public class ImageManager {
         @Override
         public Bitmap imageLoading(Object url) {
             ImageUrl imageUrl = (ImageUrl) url;
+            String downloadUrl = imageUrl.getDownloadUrl();
             String fileKey = imageUrl.getFileKey();
             String crc = imageUrl.crc;
             
             Bitmap image = null;
-
-            if (checkCrc(fileKey, crc))
+            
+            if (!config.isOffline())
             {
-                storage.remove(fileKey);
-            }
-            else
-            {
-                image = storage.get(fileKey);
-            }
-
-            if (image == null)
-            {
-                if (config.isOffline())
+                if (checkCrc(fileKey, crc))
                 {
-                    SystemClock.sleep(1000);
+                    storage.remove(fileKey);
                 }
                 else
                 {
-                    String downloadUrl = imageUrl.getDownloadUrl();
-                    if (printLog) log("图片下载-" + fileKey, downloadUrl);
-                    
-                    HttpConnector conn = new HttpConnector(downloadUrl);
-                    conn.getRequest().setHeader("Accept", "*/*");
-                    try {
-                        byte[] bs = conn.connect().getContent();
-                        image = BitmapFactory.decodeByteArray(bs, 0, bs.length);
-                        if (printLog)
-                        {
-                            log("图片下载-" + fileKey, image == null ?
-                                "无图片" : image.getWidth() + "*" + image.getHeight());
-                        }
-                        
-                        if (image != null && storage.put(fileKey, bs))
-                        {
-                            sp.edit().putString(getCrcKey(fileKey), crc).commit();
-                        }
-                    } catch (Exception e) {
-                        // 下载出错
-                        if (printLog) log("图片下载-" + fileKey, e);
-                    }
+                    image = storage.get(fileKey);
+                }
+
+                if (image == null)
+                {
+                    image = downloadImage(downloadUrl, fileKey, crc);
                 }
             }
             
@@ -192,6 +180,34 @@ public class ImageManager {
             return change;
         }
         
+        private Bitmap downloadImage(String downloadUrl, String fileKey, String crc) {
+            if (printLog) log("图片下载-" + fileKey, downloadUrl);
+            try {
+                HttpConnector conn = new HttpConnector(downloadUrl);
+                conn.getRequest().setHeader("Accept", "*/*");
+                
+                byte[] bs = conn.connect().getContent();
+                Bitmap image = BitmapFactory.decodeByteArray(bs, 0, bs.length);
+                if (printLog)
+                {
+                    log("图片下载-" + fileKey, image == null ?
+                        "无图片" : image.getWidth() + "*" + image.getHeight());
+                }
+                
+                if (image != null && storage.put(fileKey, bs))
+                {
+                    sp.edit().putString(getCrcKey(fileKey), crc).commit();
+                }
+                
+                return image;
+            } catch (Exception e) {
+                // 下载出错
+                if (printLog) log("图片下载-" + fileKey, e);
+            }
+            
+            return null;
+        }
+        
         private String getCrcKey(String fileKey) {
             return fileKey;
         }
@@ -217,7 +233,7 @@ public class ImageManager {
         /**
          * 下载地址
          */
-        public String getDownloadUrl() {
+        String getDownloadUrl() {
             return url;
         }
 

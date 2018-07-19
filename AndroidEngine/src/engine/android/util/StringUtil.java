@@ -269,6 +269,11 @@ public final class StringUtil {
      * 追加查询参数到URL地址里面
      */
     public static String appendQueryParameters(String url, Map<String, String> map) {
+        if (map == null || map.isEmpty())
+        {
+            return url;
+        }
+        
         StringBuilder sb = new StringBuilder(url);
         boolean first = true;
         for (Map.Entry<String, String> entry : map.entrySet())

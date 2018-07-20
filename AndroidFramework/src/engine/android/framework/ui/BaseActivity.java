@@ -1,6 +1,5 @@
 package engine.android.framework.ui;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -43,7 +42,7 @@ public class BaseActivity extends NetworkActivity {
             
             @Override
             public void onClick(View v) {
-                onNavigationUpClicked();
+                onBackPressed();
             }
         });
     }
@@ -85,32 +84,8 @@ public class BaseActivity extends NetworkActivity {
         startActivity(SinglePaneActivity.buildIntent(this, fragmentCls, args));
     }
     
-    /******************************* TitleBar模块 *******************************/
-    
     public final TitleBar getTitleBar() {
         return title_bar;
-    }
-    
-    protected void onNavigationUpClicked() {
-        Class<? extends Activity> cls = parentActivity();
-        if (cls != null)
-        {
-            navigateUpTo(cls);
-        }
-        else
-        {
-            finish();
-        }
-    }
-    
-    @Override
-    protected void navigateUpTo(Class<? extends Activity> cls) {
-        super.navigateUpTo(cls);
-    }
-    
-    @Override
-    protected Class<? extends Activity> parentActivity() {
-        return super.parentActivity();
     }
 }
 

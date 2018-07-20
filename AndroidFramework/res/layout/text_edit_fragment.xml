@@ -1,21 +1,44 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="16dp" >
-            
-    <engine.android.widget.component.InputBox
-        android:id="@+id/text"
-        android:layout_width="match_parent" 
-        android:layout_height="wrap_content" />
-            
+    android:paddingTop="24dp" >
+    
+    <!-- 文本字数限制 -->
+    <TextView
+        android:id="@+id/number"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@id/input"
+        android:layout_marginRight="8dp" />
+
+    <!-- 文本编辑输入 -->
+    <EditText
+        android:id="@+id/input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:layout_toLeftOf="@id/number"
+        android:layout_marginLeft="8dp"
+        android:textSize="16sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#a2a2a2"
+        android:layout_below="@id/input"
+        android:layout_marginTop="4dp" />
+    
+    <!-- 描述说明 -->
     <TextView
         android:id="@+id/description"
         android:layout_width="match_parent" 
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="范例：医学博士，从事肾脏病临床工作近20年，擅长慢性肾脏病，慢性肾功能衰竭等治疗。" />
+        android:layout_below="@id/input"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="24dp" />
     
-</LinearLayout>
+</RelativeLayout>

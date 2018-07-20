@@ -141,6 +141,7 @@ public class ZoomImageView extends View implements Observer {
 
     @Override
     protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
         if (state != null)
         {
             state.deleteObservers();
@@ -235,13 +236,17 @@ public class ZoomImageView extends View implements Observer {
      */
     public static final class ZoomState extends Observable {
 
-        private float zoom;						// 缩放比例(A value of 1.0 means the content fits the view)
+        private float zoom;                     // 缩放比例(A value of 1.0 means the content fits the view)
 
-        private float panX, panY;				// 缩放窗口中心位置坐标(relative to the content)
+        private float panX, panY;               // 缩放窗口中心位置坐标(relative to the content)
+        
+        float maxZoom,minZoom;                  // 缩放范围控制
 
         ZoomState() {
             zoom = 1.0f;
             panX = panY = 0.5f;
+            maxZoom = 2.0f;
+            minZoom = 0.5f;
         }
 
         public void notifyDataChanged() {
@@ -253,11 +258,17 @@ public class ZoomImageView extends View implements Observer {
         }
 
         public void setZoom(float zoom) {
-            if (this.zoom != zoom)
+            if (this.zoom != (zoom = Math.min(maxZoom, Math.max(minZoom, zoom))))
             {
                 this.zoom = zoom;
                 setChanged();
             }
+        }
+        
+        public void setZoomRange(float maxZoom, float minZoom) {
+            this.maxZoom = maxZoom;
+            this.minZoom = minZoom;
+            setZoom(zoom);
         }
 
         public float getPanX() {

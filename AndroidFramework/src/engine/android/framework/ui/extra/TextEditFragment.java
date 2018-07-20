@@ -1,14 +1,19 @@
 package engine.android.framework.ui.extra;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import engine.android.framework.R;
 import engine.android.framework.ui.BaseFragment;
-import engine.android.widget.component.InputBox;
+import engine.android.util.StringUtil;
+import engine.android.util.Util;
 import engine.android.widget.component.TitleBar;
 
 /**
@@ -23,7 +28,7 @@ public class TextEditFragment extends BaseFragment {
     public static final class Params {
         
         public String title;            // 标题
-        public String text;             // 编辑文本
+        public int maxEms;              // 文本字数限制（中文计数1个字符，其他计数半个字符）
         public String desc;             // 描述说明
     }
     
@@ -31,16 +36,16 @@ public class TextEditFragment extends BaseFragment {
         return ParamsBuilder.build(params);
     }
     
-    private Params params;
+    Params params;
     
-    InputBox text;
-    TextView description;
+    TextView save;
+    TextView number;
+    EditText input;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        params = ParamsBuilder.parse(getArguments(), Params.class);
-        if (params == null)
+        if ((params = ParamsBuilder.parse(getArguments(), Params.class)) == null)
         {
             finish();
         }
@@ -49,23 +54,20 @@ public class TextEditFragment extends BaseFragment {
     @Override
     protected void setupTitleBar(TitleBar titleBar) {
         // 保存
-//        TextView save = new TextView(getContext());
-//        save.setText(R.string.Save);
-//        save.setTextColor(Color.parseColor("#387ec0"));
-//        save.setTextColor(getResources().getColor(R.color.textColorBlue));
-//        save.setOnClickListener(new OnClickListener() {
-//            
-//            @Override
-//            public void onClick(View v) {
-//                notifyCallback();
-//                finish();
-//            }
-//        });
-    
+        save = newTextAction(getString(R.string.Save), new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                notifyDataChanged(input.getText().toString());
+                finish();
+            }
+        });
+        save.setEnabled(false);
+
         titleBar
         .setDisplayUpEnabled(true)
         .setTitle(params.title)
-        .addAction(getString(R.string.Save))
+        .addAction(save)
         .show();
     }
     
@@ -77,9 +79,72 @@ public class TextEditFragment extends BaseFragment {
     
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        text = (InputBox) findViewById(R.id.text);
-        text.input().setText(params.text);
-        description = (TextView) findViewById(R.id.description);
+        number = (TextView) findViewById(R.id.number);
+        input = (EditText) findViewById(R.id.input);
+        TextView description = (TextView) findViewById(R.id.description);
+        
+        if (params.maxEms > 0)
+        {
+            // 计算剩余可输入字数
+            input.addTextChangedListener(new TextWatcher() {
+                
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                
+                @Override
+                public void afterTextChanged(Editable s) {
+                    int maxEms = params.maxEms * 2;
+                    for (int i = 0, len = s.length(); i < len; i++)
+                    {
+                        int count = maxEms - (StringUtil.isDoubleByte(s, i) ? 2 : 1);
+                        if (count < 0)
+                        {
+                            s.delete(i, len);
+                            break;
+                        
+                        }
+                        else
+                        {
+                            maxEms = count;
+                        }
+                    }
+                    
+                    setNumber(Math.round(maxEms / 2.0f));
+                }
+            });
+        }
+        input.setText((CharSequence) getData());
+        // 比较新旧文本
+        input.addTextChangedListener(new TextWatcher() {
+            
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            
+            @Override
+            public void afterTextChanged(Editable s) {
+                save.setEnabled(!s.toString().equals(Util.getString(getData(), "")));
+            }
+        });
+        
         description.setText(params.desc);
+    }
+    
+    private void setNumber(int number) {
+        this.number.setText(String.valueOf(number));
+    }
+    
+    /**
+     * 监听文本变化
+     * 
+     * @param text 初始文本
+     */
+    public void setListener(CharSequence text, Listener<CharSequence> listener) {
+        super.setListener(text, listener);
     }
 }

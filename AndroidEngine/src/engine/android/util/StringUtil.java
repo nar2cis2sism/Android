@@ -57,7 +57,7 @@ public final class StringUtil {
     /**
      * 判断某个字符是否双字节（汉字）
      */
-    public static boolean isDoubleByte(String s, int index) {
+    public static boolean isDoubleByte(CharSequence s, int index) {
         int ascii = Character.codePointAt(s, index);
         if (ascii < 0 || ascii > 255)
         {

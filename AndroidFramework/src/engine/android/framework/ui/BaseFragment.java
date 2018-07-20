@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.view.View.OnClickListener;
+import android.widget.TextView;
 
 import engine.android.core.extra.EventBus;
 import engine.android.core.extra.EventBus.Event;
@@ -58,6 +60,14 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
     
     public final BaseActivity getBaseActivity() {
         return baseActivity;
+    }
+    
+    protected TextView newTextAction(CharSequence text, OnClickListener listener) {
+        TextView tv = new TextView(getContext());
+        tv.setText(text);
+        tv.setTextColor(getResources().getColorStateList(R.color.title_bar_action));
+        if (listener != null) tv.setOnClickListener(listener);
+        return tv;
     }
 
     /******************************* EventBus *******************************/

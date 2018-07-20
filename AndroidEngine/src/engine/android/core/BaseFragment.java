@@ -13,13 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import engine.android.core.util.PresentManager;
-import engine.android.core.util.PresentManager.BasePresenter;
-import engine.android.util.extra.ReflectObject;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
+import engine.android.core.util.PresentManager;
+import engine.android.core.util.PresentManager.BasePresenter;
+import engine.android.util.extra.ReflectObject;
 
 /**
  * Fragment基类<p>
@@ -29,6 +29,7 @@ import java.util.List;
  * @version N
  * @since 6/6/2014
  */
+@SuppressWarnings({"unchecked", "rawtypes"})
 public abstract class BaseFragment extends Fragment {
 
     // 自定义回调接口（与Activity进行交互）
@@ -166,7 +167,6 @@ public abstract class BaseFragment extends Fragment {
     /**
      * {@link FragmentManager#getBackStackEntryCount()}方法返回结果不及时
      */
-    @SuppressWarnings("rawtypes")
     private int getBackStackEntryCount() {
         ReflectObject ref = new ReflectObject(getFragmentManager());
         try {
@@ -216,12 +216,14 @@ public abstract class BaseFragment extends Fragment {
 
     /******************* 自定义数据监听器（与Fragment进行交互） *******************/
 
-    public interface Listener {
+    public interface Listener<D> {
 
         /**
          * 数据更新
+         * 
+         * @param data 更新后的数据
          */
-        void update(Object data);
+        void update(D data);
     }
 
     private Object data;
@@ -233,7 +235,7 @@ public abstract class BaseFragment extends Fragment {
      * @param data 初始数据
      * @param listener 数据监听器
      */
-    public void setListener(Object data, Listener listener) {
+    protected <D> void setListener(D data, Listener<D> listener) {
         this.data = data;
         this.listener = listener;
     }
@@ -241,8 +243,8 @@ public abstract class BaseFragment extends Fragment {
     /**
      * 这里返回的永远是初始数据
      */
-    protected final Object getData() {
-        return data;
+    protected final <D> D getData() {
+        return (D) data;
     }
 
     /**
@@ -363,7 +365,6 @@ public abstract class BaseFragment extends Fragment {
         
         protected void onDestroy() {}
         
-        @SuppressWarnings("unchecked")
         @Override
         protected final Presenter<C> setCallbacks(BaseFragment callbacks) {
             super.setCallbacks((C) callbacks);
@@ -371,7 +372,6 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
-    @SuppressWarnings("rawtypes")
     private static class Presenters {
         
         private LinkedList<Presenter> presenters;

@@ -20,16 +20,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import engine.android.core.Forelet.FragmentTransaction;
-import engine.android.core.Forelet.Task;
-import engine.android.core.Forelet.Task.TaskExecutor;
-
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.WeakHashMap;
+
+import engine.android.core.Forelet.FragmentTransaction;
+import engine.android.core.Forelet.Task;
+import engine.android.core.Forelet.Task.TaskExecutor;
 
 /**
  * 前台展现界面<p>
@@ -901,23 +901,24 @@ public class Forelet extends Activity implements TaskCallback {
                 // This is called when the Home (Up) button is pressed in the action bar.
                 // Create a simple intent that starts the hierarchical parent activity and
                 // use NavUtils in the Support Package to ensure proper handling of Up.
-                Class<? extends Activity> cls = parentActivity();
-                if (cls != null)
-                {
-                    navigateUpTo(cls);
-                }
-                else
-                {
-                    finish();
-                }
-
-                break;
+                onHomeUpPressed();
+                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
-
-        return true;
+    }
+    
+    protected void onHomeUpPressed() {
+        Class<? extends Activity> cls = parentActivity();
+        if (cls != null)
+        {
+            navigateUpTo(cls);
+        }
+        else
+        {
+            finish();
+        }
     }
 
     protected void navigateUpTo(Class<? extends Activity> cls) {

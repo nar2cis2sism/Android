@@ -59,5 +59,6 @@
     <string name="me_birthday">生日</string>
     <string name="me_area">地区</string>
     <string name="me_signature">个性签名</string>
+    <string name="me_no_value">未填写</string>
 
 </resources>

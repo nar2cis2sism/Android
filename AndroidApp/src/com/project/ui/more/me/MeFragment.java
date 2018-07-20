@@ -2,12 +2,10 @@ package com.project.ui.more.me;
 
 import static com.project.network.action.Actions.AVATAR;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,8 +21,10 @@ import engine.android.core.annotation.InjectView;
 import engine.android.core.annotation.OnClick;
 import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
 import engine.android.framework.ui.extra.BaseInfoFragment;
+import engine.android.framework.ui.extra.SinglePaneActivity;
+import engine.android.framework.ui.extra.TextEditFragment;
+import engine.android.framework.ui.extra.ViewImageFragment;
 import engine.android.framework.ui.presenter.PhotoPresenter;
-import engine.android.framework.ui.presenter.PhotoPresenter.CropAttribute;
 import engine.android.framework.ui.presenter.PhotoPresenter.PhotoCallback;
 import engine.android.framework.ui.presenter.PhotoPresenter.PhotoInfo;
 import engine.android.framework.ui.widget.AvatarImageView;
@@ -35,7 +35,7 @@ import engine.android.widget.component.TitleBar;
  * 
  * @author Daimon
  */
-public class MeFragment extends BaseInfoFragment implements PhotoCallback {
+public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnClickListener {
 
     @InjectView(R.id.avatar)
     ImageView avatar;
@@ -86,6 +86,8 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback {
         // 个性签名
         signature = addComponent(root, inflater, 
                 R.string.me_signature, user.signature, false);
+        signature.getConvertView().setOnClickListener(this);
+        
         
         return root;
     }
@@ -102,28 +104,29 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback {
     
     @OnClick(R.id.header)
     void toMe() {
-        Dialog dialog = new AlertDialog.Builder(getContext())
-        .setItems(R.array.pick_image, 
-        new DialogInterface.OnClickListener() {
-            
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                CropAttribute attr = new CropAttribute();
-                attr.saveToFile();
-                
-                switch (which) {
-                    case 0:
-                        getPresenter(PhotoPresenter.class).takePhoto(true, null);
-                        break;
-                    case 1:
-                        getPresenter(PhotoPresenter.class).pickPhoto(attr);
-                        break;
-                }
-            }
-        })
-        .create();
-
-        getBaseActivity().showDialog("pick_image", dialog);
+        ((SinglePaneActivity) getBaseActivity()).addFragment(new ViewImageFragment());
+//        Dialog dialog = new AlertDialog.Builder(getContext())
+//        .setItems(R.array.pick_image, 
+//        new DialogInterface.OnClickListener() {
+//            
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                CropAttribute attr = new CropAttribute();
+//                attr.saveToFile();
+//                
+//                switch (which) {
+//                    case 0:
+//                        getPresenter(PhotoPresenter.class).takePhoto(true, null);
+//                        break;
+//                    case 1:
+//                        getPresenter(PhotoPresenter.class).pickPhoto(attr);
+//                        break;
+//                }
+//            }
+//        })
+//        .create();
+//
+//        getBaseActivity().showDialog("pick_image", dialog);
     }
 
     @Override
@@ -156,6 +159,31 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback {
         else
         {
             super.onReceiveFailure(action, status, param);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == signature.getConvertView())
+        {
+            TextEditFragment.Params params = new TextEditFragment.Params();
+            params.title = getString(R.string.me_signature);
+            params.text = "范例：医学博士，从事肾脏病临床工作近20年，擅长慢性肾脏病，慢性肾功能衰竭等治疗。";
+
+            TextEditFragment fragment = new TextEditFragment();
+            fragment.setArguments(TextEditFragment.buildParams(params));
+            
+            ((SinglePaneActivity) getBaseActivity()).addFragment(fragment);
+
+//            ResumeFragment fragment = new ResumeFragment();
+//            fragment.setCallback(user.resume, new Callback() {
+//                
+//                @Override
+//                public void callback(String text) {
+//                    ((TextView) resume.getView(R.id.text))
+//                    .setText(user.resume = text);
+//                }
+//            });
         }
     }
 }

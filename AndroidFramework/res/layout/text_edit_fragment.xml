@@ -1,0 +1,21 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="16dp" >
+            
+    <engine.android.widget.component.InputBox
+        android:id="@+id/text"
+        android:layout_width="match_parent" 
+        android:layout_height="wrap_content" />
+            
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent" 
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="范例：医学博士，从事肾脏病临床工作近20年，擅长慢性肾脏病，慢性肾功能衰竭等治疗。" />
+    
+</LinearLayout>

@@ -3,6 +3,7 @@ package engine.android.core;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.Intent;
@@ -12,11 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
 import engine.android.core.util.PresentManager;
 import engine.android.core.util.PresentManager.BasePresenter;
+import engine.android.util.extra.ReflectObject;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Fragment基类<p>
@@ -139,16 +142,44 @@ public abstract class BaseFragment extends Fragment {
      * @see Activity#finish()
      */
     public final void finish() {
-        if (getFragmentManager().getBackStackEntryCount() > 0
-        &&  getFragmentManager().popBackStackImmediate())
-        {
-            return;
+        try {
+            if (getFragmentManager().popBackStackImmediate())
+            {
+                return;
+            }
+        } catch (Exception e) {
+            // 启动过程中关闭界面会抛出异常java.lang.IllegalStateException: Recursive entry to executePendingTransactions
+            // 只能通过非常手段进行下一步处理
+            if (getBackStackEntryCount() > 0)
+            {
+                getFragmentManager().popBackStack();
+                return;
+            }
         }
         
         if (getActivity() != null)
         {
             getActivity().finish();
         }
+    }
+    
+    /**
+     * {@link FragmentManager#getBackStackEntryCount()}方法返回结果不及时
+     */
+    @SuppressWarnings("rawtypes")
+    private int getBackStackEntryCount() {
+        ReflectObject ref = new ReflectObject(getFragmentManager());
+        try {
+            List mBackStackIndices = (List) ref.get("mBackStackIndices");
+            if (mBackStackIndices != null)
+            {
+                return mBackStackIndices.size();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return 0;
     }
 
     /**

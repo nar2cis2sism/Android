@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 
 import engine.android.util.listener.MyTextWatcher;
 import engine.android.util.ui.UIUtil;
@@ -19,7 +19,7 @@ import engine.android.widget.R;
  * @version N
  * @since 6/6/2014
  */
-public class InputBox extends RelativeLayout {
+public class InputBox extends LinearLayout {
     
     private EditText input;
     private View placeholder;
@@ -35,6 +35,7 @@ public class InputBox extends RelativeLayout {
     }
     
     private void init(Context context) {
+        setOrientation(VERTICAL);
         LayoutInflater.from(context).inflate(R.layout.input_box, this);
         
         input = (EditText) findViewById(R.id.input);

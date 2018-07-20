@@ -2,6 +2,8 @@ package com.project.network.http.servlet;
 
 import android.os.SystemClock;
 
+import com.project.network.NetworkConfig;
+
 import engine.android.core.util.LogFactory.LOG;
 import engine.android.http.HttpRequest;
 import engine.android.http.HttpRequest.HttpEntity;
@@ -20,21 +22,25 @@ public class HttpServlet implements engine.android.http.HttpProxy.HttpServlet {
     @Override
     public void doServlet(HttpRequest req, HttpResponse resp) {
         long time = System.currentTimeMillis();
-        try {
-            HttpEntity entity = req.getEntity();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream((int) entity.getContentLength());
-            entity.writeTo(baos);
-            String request = EntityUtil.toString(baos.toByteArray());
-            resp.setEntity(EntityUtil.toByteArray(process(req.getUrl(), request)));
-        } catch (Exception e) {
-            LOG.log(e);
+        
+        if (NetworkConfig.HTTP_URL.equals(req.getUrl()))
+        {
+            try {
+                HttpEntity entity = req.getEntity();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream((int) entity.getContentLength());
+                entity.writeTo(baos);
+                String request = EntityUtil.toString(baos.toByteArray());
+                resp.setEntity(EntityUtil.toByteArray(process(request)));
+            } catch (Exception e) {
+                LOG.log(e);
+            }
         }
         
         time = System.currentTimeMillis() - time;
         if (time < RESPONSE_DELAY) SystemClock.sleep(RESPONSE_DELAY - time);
     }
     
-    private String process(String url, String request) throws Exception {
+    private String process(String request) throws Exception {
         JSONObject json = new JSONObject(request);
         String action = json.getString("action");
 

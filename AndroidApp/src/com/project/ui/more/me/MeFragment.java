@@ -153,5 +153,9 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback {
             getBaseActivity().hideProgress();
             MyApp.showMessage(getString(R.string.toast_upload_avatar_failure));
         }
+        else
+        {
+            super.onReceiveFailure(action, status, param);
+        }
     }
 }

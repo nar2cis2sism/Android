@@ -105,16 +105,30 @@ public class HttpRequest {
         public void writeTo(OutputStream out) throws IOException {
             out.write(content);
         }
+        
+        @Override
+        public String toString() {
+            return "[Bytes]" + getContentLength();
+        }
     }
     
     public static class StringEntity extends ByteArrayEntity {
         
+        private final String string;
+        
         public StringEntity(String s) {
             super(s.getBytes());
+            this.string = s;
         }
         
         public StringEntity(String s, String charset) throws UnsupportedEncodingException {
             super(s.getBytes(charset));
+            this.string = s;
+        }
+        
+        @Override
+        public String toString() {
+            return string;
         }
     }
     
@@ -139,6 +153,11 @@ public class HttpRequest {
             } finally {
                 fis.close();
             }
+        }
+        
+        @Override
+        public String toString() {
+            return "[File]" + file.toString();
         }
     }
 }

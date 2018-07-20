@@ -19,6 +19,7 @@ import com.project.ui.more.me.MeFragment;
 import engine.android.core.annotation.InjectView;
 import engine.android.core.annotation.OnClick;
 import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
+import engine.android.framework.network.ConnectionStatus;
 import engine.android.framework.ui.extra.BaseInfoFragment;
 import engine.android.framework.ui.widget.AvatarImageView;
 import engine.android.util.ui.UIUtil;
@@ -146,11 +147,18 @@ public class MoreFragment extends BaseInfoFragment {
     }
     
     @Override
-    protected void onReceiveSuccess(String action, Object param) {
+    protected void onReceive(String action, int status, Object param) {
         if (AVATAR.equals(action))
         {
-            // 头像上传成功
-            setupAvatar();
+            if (status == ConnectionStatus.SUCCESS)
+            {
+                // 头像上传成功
+                setupAvatar();
+            }
+        }
+        else
+        {
+            super.onReceive(action, status, param);
         }
     }
 }

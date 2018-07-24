@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -23,6 +24,7 @@ import engine.android.core.Forelet.ProgressSetting;
 import engine.android.core.annotation.InjectView;
 import engine.android.core.annotation.OnClick;
 import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
+import engine.android.core.util.CalendarFormat;
 import engine.android.framework.ui.extra.BaseInfoFragment;
 import engine.android.framework.ui.extra.SinglePaneActivity;
 import engine.android.framework.ui.extra.TextEditFragment;
@@ -31,8 +33,12 @@ import engine.android.framework.ui.presenter.PhotoPresenter.CropAttribute;
 import engine.android.framework.ui.presenter.PhotoPresenter.PhotoCallback;
 import engine.android.framework.ui.presenter.PhotoPresenter.PhotoInfo;
 import engine.android.framework.ui.widget.AvatarImageView;
+import engine.android.framework.ui.widget.DatePickerDialog;
+import engine.android.framework.ui.widget.DatePickerDialog.OnDateSetListener;
 import engine.android.util.Util;
 import engine.android.widget.component.TitleBar;
+
+import java.util.Calendar;
 
 /**
  * 个人信息界面
@@ -76,14 +82,15 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         addDivider(root);
         
         // 昵称
-        nickname = addComponent(root, inflater, 
-                R.string.me_nickname, user.nickname, false);
+        setupNickName(inflater, root);
         // 性别
         gender = addComponent(root, inflater, 
                 R.string.me_gender, user.getGenderText(), false);
+        gender.getConvertView().setOnClickListener(this);
         // 生日
         birthday = addComponent(root, inflater, 
-                R.string.me_birthday, user.getBirthdayText(), false);
+                R.string.me_birthday, user.birthday != 0 ? user.getBirthdayText() : getString(R.string.me_no_value), false);
+        birthday.getConvertView().setOnClickListener(this);
         // 地区
         area = addComponent(root, inflater, 
                 R.string.me_area, user.city, false);
@@ -94,6 +101,18 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         
         
         return root;
+    }
+    
+    private void setupNickName(LayoutInflater inflater, ViewGroup root) {
+        EditText input = new EditText(getContext());
+        input.setBackgroundDrawable(null);
+        input.setPadding(0, 0, 0, 0);
+        input.setText(user.nickname);
+        input.setTextAppearance(getContext(), android.R.style.TextAppearance_Small);
+        input.setSingleLine();
+        
+        nickname = addComponent(root, inflater, 
+                R.string.me_nickname, input, false);
     }
     
     @Override
@@ -168,7 +187,15 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
 
     @Override
     public void onClick(View v) {
-        if (v == signature.getConvertView())
+        if (v == gender.getConvertView())
+        {
+            chooseGender();
+        }
+        else if (v == birthday.getConvertView())
+        {
+            chooseBirthday();
+        }
+        else if (v == signature.getConvertView())
         {
             TextEditFragment.Params params = new TextEditFragment.Params();
             params.title = getString(R.string.me_signature);
@@ -186,5 +213,40 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
             
             ((SinglePaneActivity) getBaseActivity()).addFragment(fragment);
         }
+    }
+    
+    private void chooseGender() {
+        Dialog dialog = new AlertDialog.Builder(getContext())
+        .setTitle(R.string.dialog_gender_title)
+        .setItems(R.array.gender, new DialogInterface.OnClickListener() {
+            
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                user.isFemale = which == 1;
+                gender.setTextView(R.id.text, user.getGenderText());
+            }
+        })
+        .create();
+
+        getBaseActivity().showDialog("gender", dialog);
+    }
+    
+    private void chooseBirthday() {
+        Calendar date = null;
+        if (user.birthday != 0)
+        {
+            date = CalendarFormat.getCalendar(user.birthday);
+        }
+        
+        DatePickerDialog dialog = new DatePickerDialog(getContext(), new OnDateSetListener() {
+            
+            @Override
+            public void onDateSet(Calendar date) {
+                user.birthday = date.getTimeInMillis();
+                birthday.setTextView(R.id.text, user.getBirthdayText());
+            }
+        }, date);
+        
+        getBaseActivity().showDialog("birthday", dialog);
     }
 }

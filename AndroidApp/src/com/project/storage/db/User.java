@@ -87,7 +87,7 @@ public class User {
     }
     
     public String getBirthdayText() {
-        return CalendarFormat.formatDateByLocale(birthday, 0);
+        return CalendarFormat.formatDateByLocale(birthday, CalendarFormat.SHOW_YEAR);
     }
     
     public String getAuthenticationText() {

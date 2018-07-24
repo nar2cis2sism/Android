@@ -165,7 +165,7 @@ public class LoginFragment extends BaseFragment {
         &&  getBaseActivity().requestValidation())
         {
             getBaseActivity().showProgress(ProgressSetting.getDefault()
-            .setMessage(getString(R.string.login_progress)));
+            .setMessage(getString(R.string.progress_login)));
             
             if (MySession.hasNavigation())
             {

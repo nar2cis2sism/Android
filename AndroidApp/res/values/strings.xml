@@ -7,8 +7,10 @@
     <string name="dialog_upgrade_title">升级</string>
     <string name="dialog_upgrade_now">立即升级</string>
     <string name="dialog_upgrade_later">稍后提醒</string>
+    <string name="dialog_gender_title">选择性别</string>
     
     <!-- Progress -->
+    <string name="progress_login">登录中,请稍候&#8230;</string>
     <string name="progress_upload_avatar">正在上传头像</string>
     
     <!-- Toast -->
@@ -24,7 +26,6 @@
     <string name="login_password_hint">输入密码</string>
     <string name="login_password_validation_empty">请输入密码</string>
     <string name="login_password_validation_length">密码长度应为6-16位</string>
-    <string name="login_progress">登录中,请稍候&#8230;</string>
     
     <!-- Message -->
     <string name="message_title">消息</string>

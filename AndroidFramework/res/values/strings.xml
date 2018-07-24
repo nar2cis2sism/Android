@@ -11,5 +11,6 @@
 	<string name="tip_no_connection">网络连接不可用</string>
 	
 	<string name="dialog_error_title">出错了</string>
+	<string name="dialog_date_picker_title">选择日期</string>
 
 </resources>

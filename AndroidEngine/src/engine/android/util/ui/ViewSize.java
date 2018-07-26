@@ -1,6 +1,7 @@
 package engine.android.util.ui;
 
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 
 /**
@@ -31,7 +32,9 @@ public final class ViewSize {
 
         @Override
         public void onSizeChanged(View view, ViewSize size) {
-            view.getLayoutParams().width = adjustWidthByHeight(size.height);
+            LayoutParams params = view.getLayoutParams();
+            params.width = adjustWidthByHeight(size.height);
+            view.setLayoutParams(params);
         }
     }
     
@@ -41,7 +44,9 @@ public final class ViewSize {
 
         @Override
         public void onSizeChanged(View view, ViewSize size) {
-            view.getLayoutParams().height = adjustHeightByWidth(size.width);
+            LayoutParams params = view.getLayoutParams();
+            params.height = adjustHeightByWidth(size.width);
+            view.setLayoutParams(params);
         }
     }
     

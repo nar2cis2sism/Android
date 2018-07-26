@@ -27,6 +27,9 @@ public interface Actions {
 
     /******************************* 华丽丽的分割线 *******************************/
     
+    /** 实名认证 **/
+    String AUTHENTICATION = "authentication";
+    
     /** 上传头像 **/
     String AVATAR = "avatar";
 }

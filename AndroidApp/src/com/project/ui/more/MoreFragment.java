@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.daimon.yueba.R;
 import com.project.app.MySession;
 import com.project.storage.db.User;
+import com.project.ui.more.authentication.AuthenticationFragment;
 import com.project.ui.more.me.MeFragment;
 
 import engine.android.core.annotation.InjectView;
@@ -38,8 +39,8 @@ public class MoreFragment extends BaseInfoFragment {
     @InjectView(R.id.name)
     TextView name;
 
-    @InjectView(R.id.certification)
-    TextView certification;
+    @InjectView(R.id.authentication)
+    TextView authentication;
     
     @InjectView(R.id.signature)
     TextView signature;
@@ -103,7 +104,7 @@ public class MoreFragment extends BaseInfoFragment {
     private void setupHeader() {
         setupAvatar();
         name.setText(user.nickname);
-        certification.setText(user.getAuthenticationText());
+        authentication.setText(user.getAuthenticationText());
         if (TextUtils.isEmpty(user.signature))
         {
             signature.setVisibility(View.GONE);
@@ -144,6 +145,11 @@ public class MoreFragment extends BaseInfoFragment {
     @OnClick(R.id.header)
     void toMe() {
         getBaseActivity().startFragment(MeFragment.class);
+    }
+    
+    @OnClick(R.id.authentication)
+    void authentication() {
+        getBaseActivity().startFragment(AuthenticationFragment.class);
     }
     
     @Override

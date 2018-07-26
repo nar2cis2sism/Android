@@ -20,16 +20,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import engine.android.core.Forelet.FragmentTransaction;
+import engine.android.core.Forelet.Task;
+import engine.android.core.Forelet.Task.TaskExecutor;
+
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.WeakHashMap;
-
-import engine.android.core.Forelet.FragmentTransaction;
-import engine.android.core.Forelet.Task;
-import engine.android.core.Forelet.Task.TaskExecutor;
 
 /**
  * 前台展现界面<p>
@@ -64,10 +64,10 @@ public class Forelet extends Activity implements TaskCallback {
                 Injector.restoreState(this, savedInstance.savedMap);
         }
     }
-
+    
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
 
         commitAllowed = true;
         commit();

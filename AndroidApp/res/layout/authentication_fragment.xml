@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+	
+    <!-- 介绍说明 -->
+    <TextView
+        style="@style/ListItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="@string/authentication_introduction" />
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:background="@color/divider_category" />
+    
+    <GridView
+        android:id="@+id/grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:listSelector="@android:color/transparent"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:numColumns="3"
+        android:horizontalSpacing="16dp"
+        android:verticalSpacing="16dp" />
+
+</LinearLayout>

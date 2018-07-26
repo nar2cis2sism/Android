@@ -55,6 +55,12 @@
     <string name="more_evaluation">我的评价</string>
     <string name="more_message">消息中心</string>
     
+    <!-- Authentication -->
+    <string name="authentication_title">实名认证</string>
+    <string name="authentication_introduction">请务必上传真实资料，以免影响使用</string>
+    <string name="authentication_commit">提交</string>
+    <string name="authentication_finish">页面在%d秒后自动关闭</string>
+    
     <!-- Me -->
     <string name="me_title">个人信息</string>
     <string name="me_avatar">头像</string>

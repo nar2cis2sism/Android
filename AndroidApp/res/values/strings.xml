@@ -4,14 +4,17 @@
     <string name="app_name">AndroidApp</string>
     
     <!-- Dialog -->
+    <string name="dialog_tip_title">提示</string>
     <string name="dialog_upgrade_title">升级</string>
     <string name="dialog_upgrade_now">立即升级</string>
     <string name="dialog_upgrade_later">稍后提醒</string>
     <string name="dialog_gender_title">选择性别</string>
+    <string name="dialog_modify_info">是否保存更改设置？</string>
     
     <!-- Progress -->
     <string name="progress_login">登录中,请稍候&#8230;</string>
     <string name="progress_upload_avatar">正在上传头像</string>
+    <string name="progress_waiting">处理中,请稍候&#8230;</string>
     
     <!-- Toast -->
     <string name="toast_upload_avatar_success">头像已上传</string>

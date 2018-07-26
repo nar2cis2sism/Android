@@ -292,6 +292,10 @@ public final class StringUtil {
         return sb.toString();
     }
 
+    public static boolean equals(String a, String b) {
+        return (a == null ? "" : a).equals(b == null ? "" : b);
+    }
+
     /**
      * Alphabetical comparison of object.
      */

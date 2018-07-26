@@ -1,61 +1,83 @@
 package com.project.network.action.http;
-//package com.project.network.action;
-//
-//import com.project.app.MySession;
-//import com.project.network.Actions;
-//import com.project.network.NetworkConfig;
-//import com.project.network.http.HttpJsonParser;
-//
-//import org.json.JSONObject;
-//
-//import engine.android.framework.network.http.HttpManager;
-//import engine.android.framework.network.http.HttpManager.HttpBuilder;
-//import engine.android.framework.network.http.HttpManager.JsonEntity;
-//import engine.android.framework.util.GsonUtil;
-//import engine.android.http.HttpConnector;
-//import engine.android.http.util.HttpParser;
-//import protocol.java.json.UserInfo;
-//
-///**
-// * 修改个人信息
-// * 
-// * @author Daimon
-// */
-//public class EditUserInfo implements HttpBuilder, JsonEntity {
-//    
-//    public final String action = Actions.EDIT_USER_INFO;
-//    
-//    public final String token;              // 用户登录凭证
-//    
-//    public final long version;              // 用户信息版本
-//    
-//    public EditUserInfo() {
-//        token = MySession.getToken();
-//        version = 0;
-//    }
-//
-//    @Override
-//    public HttpConnector buildConnector(HttpManager http) {
-//        return http.buildHttpConnector(NetworkConfig.HTTP_URL, action, this);
-//    }
-//
-//    @Override
-//    public HttpParser buildParser() {
-//        return new Parser();
-//    }
-//
-//    @Override
-//    public String toJson() {
-//        return GsonUtil.toJson(this);
-//    }
-//    
-//    private class Parser extends HttpJsonParser {
-//        
-//        @Override
-//        protected Object process(JSONObject data) throws Exception {
-//            UserInfo info = GsonUtil.parseJson(data.toString(), UserInfo.class);
-//            
-//            return super.process(data);
-//        }
-//    }
-//}
+
+import com.project.app.MySession;
+import com.project.network.NetworkConfig;
+import com.project.network.action.Actions;
+import com.project.network.http.HttpJsonParser;
+import com.project.storage.MyDAOManager;
+import com.project.storage.db.User;
+import com.project.storage.provider.ProviderContract.UserColumns;
+
+import engine.android.framework.network.http.HttpConnectorBuilder;
+import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
+import engine.android.framework.network.http.HttpManager.HttpBuilder;
+import engine.android.http.HttpConnector;
+import engine.android.http.util.HttpParser;
+import engine.android.util.extra.ChangeStatus;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+/**
+ * 修改个人信息
+ * 
+ * @author Daimon
+ */
+public class EditUserInfo implements HttpBuilder, JsonEntity, UserColumns {
+    
+    public final String action = Actions.EDIT_USER_INFO;
+    
+    public User user;
+    public ChangeStatus status;
+
+    @Override
+    public HttpConnector buildConnector(HttpConnectorBuilder builder) {
+        return builder
+              .setAction(action)
+              .setUrl(NetworkConfig.HTTP_URL)
+              .setEntity(this)
+              .build();
+    }
+
+    @Override
+    public HttpParser buildParser() {
+        return new Parser();
+    }
+
+    @Override
+    public String toJson() {
+        try {
+            JSONObject json = new JSONObject()
+            .put("action", action)
+            .put("token", MySession.getToken())
+            .put("version", user.version);
+            
+            if (status.isChanged(NICKNAME)) json.put("nickname", user.nickname);
+            if (status.isChanged(IS_FEMALE)) json.put("gender", user.isFemale ? 1 : 0);
+            if (status.isChanged(BIRTHDAY)) json.put("birthday", user.birthday);
+            if (status.isChanged(CITY)) json.put("city", user.city);
+            if (status.isChanged(SIGNATURE)) json.put("signature", user.signature);
+            if (status.isChanged(PROFILE)) json.put("profile", user.profile);
+   
+            return json.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+    
+    private class Parser extends HttpJsonParser {
+        
+        @Override
+        protected Object process(JSONObject data) throws Exception {
+            long version = data.getLong("version"); // 用户信息版本
+            user.version = version;
+            status.setChanged(VERSION, true);
+            
+            MyDAOManager.getDAO().update(user, status.getChangedProperties());
+            MySession.setUser(user);
+            
+            return super.process(data);
+        }
+    }
+}

@@ -57,7 +57,6 @@ public class EditUserInfo implements HttpBuilder, JsonEntity, UserColumns {
             if (status.isChanged(BIRTHDAY)) json.put("birthday", user.birthday);
             if (status.isChanged(CITY)) json.put("city", user.city);
             if (status.isChanged(SIGNATURE)) json.put("signature", user.signature);
-            if (status.isChanged(PROFILE)) json.put("profile", user.profile);
    
             return json.toString();
         } catch (JSONException e) {

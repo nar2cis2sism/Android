@@ -245,7 +245,6 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         status.setChanged(BIRTHDAY, user.birthday != origin.birthday);
         status.setChanged(CITY, !StringUtil.equals(user.city, origin.city));
         status.setChanged(SIGNATURE, !StringUtil.equals(user.signature, origin.signature));
-        status.setChanged(PROFILE, !StringUtil.equals(user.profile, origin.profile));
         
         if (!status.isChanged())
         {

@@ -28,7 +28,6 @@ public final class ProviderContract {
         public static final String BIRTHDAY = "birthday";
         public static final String CITY = "city";
         public static final String SIGNATURE = "signature";
-        public static final String PROFILE = "profile";
         public static final String IS_AUTHENTICATED = "isAuthenticated";
         public static final String VERSION = "version";
         public static final String AVATAR_URL = "avatar_url";

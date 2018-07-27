@@ -36,9 +36,6 @@ public class User {
     @DAOProperty(column=UserColumns.SIGNATURE)
     public String signature;                // 签名
 
-    @DAOProperty(column=UserColumns.PROFILE)
-    public String profile;                  // 个人简介
-
     @DAOProperty(column=UserColumns.IS_AUTHENTICATED)
     public boolean isAuthenticated;         // 实名认证
 
@@ -75,7 +72,6 @@ public class User {
         birthday = item.birthday;
         city = item.city;
         signature = item.signature;
-        profile = item.profile;
         isAuthenticated = item.authentication == 1;
         avatar_url = item.avatar_url;
     }

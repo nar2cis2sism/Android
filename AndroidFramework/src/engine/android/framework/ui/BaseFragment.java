@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
+import engine.android.core.Forelet.OnBackListener;
 import engine.android.core.extra.EventBus;
 import engine.android.core.extra.EventBus.Event;
 import engine.android.core.extra.EventBus.EventHandler;
@@ -20,6 +21,8 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
     
     private BaseActivity baseActivity;
     
+    private OnBackListener onBackListener;
+    
     private boolean menuVisible = true;
     
     @Override
@@ -29,7 +32,17 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
         if (activity instanceof BaseActivity)
         {
             baseActivity = (BaseActivity) activity;
+            if (this instanceof OnBackListener)
+            {
+                baseActivity.addOnBackListener(onBackListener = (OnBackListener) this);
+            }
         }
+    }
+    
+    @Override
+    public void onDetach() {
+        if (onBackListener != null) baseActivity.removeOnBackListener(onBackListener);
+        super.onDetach();
     }
     
     @Override
@@ -55,19 +68,11 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
     protected void setupTitleBar(TitleBar titleBar) {}
     
     public final TitleBar getTitleBar() {
-        return baseActivity != null && !baseActivity.isFinishing() ? baseActivity.getTitleBar() : null;
+        return baseActivity == null || baseActivity.isFinishing() ? null : baseActivity.getTitleBar();
     }
     
     public final BaseActivity getBaseActivity() {
         return baseActivity;
-    }
-    
-    protected TextView newTextAction(CharSequence text, OnClickListener listener) {
-        TextView tv = new TextView(getContext());
-        tv.setText(text);
-        tv.setTextColor(getResources().getColorStateList(R.color.title_bar_action));
-        if (listener != null) tv.setOnClickListener(listener);
-        return tv;
     }
 
     /******************************* EventBus *******************************/
@@ -126,6 +131,16 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
     public void onDestroy() {
         if (isReceiveEventEnabled) EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+    /******************************* 华丽丽的分割线 *******************************/
+    
+    protected TextView newTextAction(CharSequence text, OnClickListener listener) {
+        TextView tv = new TextView(getContext());
+        tv.setText(text);
+        tv.setTextColor(getResources().getColorStateList(R.color.title_bar_action));
+        if (listener != null) tv.setOnClickListener(listener);
+        return tv;
     }
     
     /**

@@ -1,0 +1,23 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ListItem"
+    android:background="@drawable/region_item_bg" >
+		
+    <!-- 地区名称 -->
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	<!-- 已选地区 -->
+	<TextView
+	    android:id="@+id/selected"
+	    android:visibility="gone"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentRight="true"
+	    android:layout_centerVertical="true"
+	    android:text="@string/region_selected" />
+
+</RelativeLayout>

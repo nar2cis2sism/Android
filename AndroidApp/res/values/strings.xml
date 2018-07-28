@@ -67,8 +67,12 @@
     <string name="me_nickname">昵称</string>
     <string name="me_gender">性别</string>
     <string name="me_birthday">生日</string>
-    <string name="me_area">地区</string>
+    <string name="me_region">地区</string>
     <string name="me_signature">个性签名</string>
     <string name="me_no_value">未填写</string>
+    
+    <!-- Region -->
+    <string name="region_title">选择地区</string>
+    <string name="region_selected">已选地区</string>
 
 </resources>

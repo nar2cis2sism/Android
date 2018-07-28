@@ -169,6 +169,13 @@ public class Forelet extends Activity implements TaskCallback {
         onBackListener.addFirst(listener);
     }
     
+    public void removeOnBackListener(OnBackListener listener) {
+        if (onBackListener != null)
+        {
+            onBackListener.remove(listener);
+        }
+    }
+    
     @Override
     public void onBackPressed() {
         if (onBackListener != null)
@@ -178,6 +185,10 @@ public class Forelet extends Activity implements TaskCallback {
                 if (listener.onBackPressed())
                 {
                     return;
+                }
+                else
+                {
+                    break;
                 }
             }
         }

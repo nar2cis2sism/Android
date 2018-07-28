@@ -1,5 +1,7 @@
 package com.project.storage.db;
 
+import android.text.TextUtils;
+
 import com.project.app.bean.ServerUrl;
 import com.project.app.config.ImageTransformer;
 import com.project.storage.provider.ProviderContract.UserColumns;
@@ -30,8 +32,11 @@ public class User {
     @DAOProperty(column=UserColumns.BIRTHDAY)
     public long birthday;                   // 出生日期
 
-    @DAOProperty(column=UserColumns.CITY)
-    public String city;                     // 常驻城市
+    @DAOProperty(column=UserColumns.REGION)
+    public String region;                   // 地区名称
+
+    @DAOProperty(column=UserColumns.REGION_CODE)
+    public String region_code;              // 区域编码
 
     @DAOProperty(column=UserColumns.SIGNATURE)
     public String signature;                // 签名
@@ -58,22 +63,28 @@ public class User {
 
     /******************************* 华丽丽的分割线 *******************************/
     
-//    /**
-//     * 包含“用户信息版本”和“头像版本”，用“:”分隔
-//     */
-//    public String getVersion() {
-//        return version + ":" + avatar_ver;
-//    }
-//    
     public void fromProtocol(UserInfo item) {
         version = item.version;
         nickname = item.nickname;
         isFemale = item.gender == 1;
         birthday = item.birthday;
-        city = item.city;
+        parseRegion(item.region);
         signature = item.signature;
         isAuthenticated = item.authentication == 1;
         avatar_url = item.avatar_url;
+    }
+    
+    private void parseRegion(String region) {
+        if (!TextUtils.isEmpty(region))
+        {
+            String[] strs = region.split(":");
+            region_code = strs[0];
+            this.region = strs[1];
+        }
+    }
+    
+    public String toRegion() {
+        return region_code + ":" + region;
     }
 
     /******************************* 华丽丽的分割线 *******************************/
@@ -84,6 +95,11 @@ public class User {
     
     public String getBirthdayText() {
         return CalendarFormat.formatDateByLocale(birthday, CalendarFormat.SHOW_YEAR);
+    }
+    
+    public void setRegion(Region region) {
+        this.region = region.name;
+        region_code = region.code;
     }
     
     public String getAuthenticationText() {

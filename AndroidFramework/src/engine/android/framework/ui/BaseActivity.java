@@ -36,7 +36,7 @@ public class BaseActivity extends NetworkActivity {
         setupTitleBar(title_bar = (TitleBar) getLayoutInflater().inflate(
                 R.layout.title_bar, root, false));
     }
-    
+
     private void setupTitleBar(TitleBar title_bar) {
         title_bar.setUpListener(new OnClickListener() {
             
@@ -45,6 +45,10 @@ public class BaseActivity extends NetworkActivity {
                 onBackPressed();
             }
         });
+    }
+    
+    public final TitleBar getTitleBar() {
+        return title_bar;
     }
 
     @Override
@@ -82,10 +86,6 @@ public class BaseActivity extends NetworkActivity {
      */
     public void startFragment(Class<? extends Fragment> fragmentCls, Bundle args) {
         startActivity(SinglePaneActivity.buildIntent(this, fragmentCls, args));
-    }
-    
-    public final TitleBar getTitleBar() {
-        return title_bar;
     }
 }
 

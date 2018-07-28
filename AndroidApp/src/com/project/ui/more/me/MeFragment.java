@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,8 +21,10 @@ import com.project.app.MyApp;
 import com.project.app.MySession;
 import com.project.network.action.file.UploadAvatar;
 import com.project.network.action.http.EditUserInfo;
+import com.project.storage.db.Region;
 import com.project.storage.db.User;
 import com.project.storage.provider.ProviderContract.UserColumns;
+import com.project.ui.RegionFragment;
 
 import engine.android.core.Forelet.OnBackListener;
 import engine.android.core.Forelet.ProgressSetting;
@@ -59,7 +62,7 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
     ViewHolder nickname;
     ViewHolder gender;
     ViewHolder birthday;
-    ViewHolder area;
+    ViewHolder region;
     ViewHolder signature;
     
     User user;
@@ -69,8 +72,6 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         super.onCreate(savedInstanceState);
         enableReceiveEvent(AVATAR, EDIT_USER_INFO);
         addPresenter(new PhotoPresenter(this));
-        getBaseActivity().addOnBackListener(this);
-        
         user = Util.clone(MySession.getUser());
     }
     
@@ -100,8 +101,9 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
                 R.string.me_birthday, user.birthday != 0 ? user.getBirthdayText() : getString(R.string.me_no_value), false);
         birthday.getConvertView().setOnClickListener(this);
         // 地区
-        area = addComponent(root, inflater, 
-                R.string.me_area, user.city, false);
+        region = addComponent(root, inflater, 
+                R.string.me_region, user.region, false);
+        region.getConvertView().setOnClickListener(this);
         // 个性签名
         signature = addComponent(root, inflater, 
                 R.string.me_signature, Util.getString(user.signature, getString(R.string.me_no_value)), false);
@@ -178,6 +180,27 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         {
             chooseBirthday();
         }
+        else if (v == region.getConvertView())
+        {
+            Region region = null;
+            if (!TextUtils.isEmpty(user.region_code))
+            {
+                region = new Region();
+                region.code = user.region_code;
+            }
+            
+            RegionFragment fragment = new RegionFragment();
+            fragment.setListener(region, new Listener<Region>() {
+                
+                @Override
+                public void update(Region data) {
+                    user.setRegion(data);
+                    MeFragment.this.region.setTextView(R.id.text, user.region);
+                }
+            });
+            
+            ((SinglePaneActivity) getBaseActivity()).addFragment(fragment);
+        }
         else if (v == signature.getConvertView())
         {
             TextEditFragment.Params params = new TextEditFragment.Params();
@@ -243,7 +266,7 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         status.setChanged(NICKNAME, !StringUtil.equals(user.nickname, origin.nickname));
         status.setChanged(IS_FEMALE, user.isFemale != origin.isFemale);
         status.setChanged(BIRTHDAY, user.birthday != origin.birthday);
-        status.setChanged(CITY, !StringUtil.equals(user.city, origin.city));
+        status.setChanged(REGION, !StringUtil.equals(user.region_code, origin.region_code));
         status.setChanged(SIGNATURE, !StringUtil.equals(user.signature, origin.signature));
         
         if (!status.isChanged())

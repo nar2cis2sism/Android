@@ -26,7 +26,8 @@ public final class ProviderContract {
         public static final String NICKNAME = "nickname";
         public static final String IS_FEMALE = "isFemale";
         public static final String BIRTHDAY = "birthday";
-        public static final String CITY = "city";
+        public static final String REGION = "region";
+        public static final String REGION_CODE = "region_code";
         public static final String SIGNATURE = "signature";
         public static final String IS_AUTHENTICATED = "isAuthenticated";
         public static final String VERSION = "version";

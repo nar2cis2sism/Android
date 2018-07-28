@@ -243,14 +243,14 @@ public abstract class BaseFragment extends Fragment {
     /**
      * 这里返回的永远是初始数据
      */
-    protected final <D> D getData() {
+    public final <D> D getData() {
         return (D) data;
     }
 
     /**
      * 通知数据更新
      */
-    protected void notifyDataChanged(Object data) {
+    public void notifyDataChanged(Object data) {
         if (listener != null)
         {
             listener.update(data);

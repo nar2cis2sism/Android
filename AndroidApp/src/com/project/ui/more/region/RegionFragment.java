@@ -1,4 +1,4 @@
-package com.project.ui;
+package com.project.ui.more.region;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -55,6 +55,14 @@
     <string name="more_evaluation">我的评价</string>
     <string name="more_message">消息中心</string>
     
+    <!-- Setting -->
+    <string name="setting_title">应用设置</string>
+    <string name="setting_password">修改密码</string>
+    <string name="setting_phone">更换手机号</string>
+    <string name="setting_version">版本更新</string>
+    <string name="setting_about">关于我们</string>
+    <string name="setting_logout">退出登录</string>
+    
     <!-- Authentication -->
     <string name="authentication_title">实名认证</string>
     <string name="authentication_introduction">请务必上传真实资料，以免影响使用</string>

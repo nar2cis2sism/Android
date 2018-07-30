@@ -24,7 +24,7 @@ import com.project.network.action.http.EditUserInfo;
 import com.project.storage.db.Region;
 import com.project.storage.db.User;
 import com.project.storage.provider.ProviderContract.UserColumns;
-import com.project.ui.RegionFragment;
+import com.project.ui.more.region.RegionFragment;
 
 import engine.android.core.Forelet.OnBackListener;
 import engine.android.core.Forelet.ProgressSetting;

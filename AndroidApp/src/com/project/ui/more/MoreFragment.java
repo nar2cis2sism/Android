@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,6 +17,7 @@ import com.project.app.MySession;
 import com.project.storage.db.User;
 import com.project.ui.more.authentication.AuthenticationFragment;
 import com.project.ui.more.me.MeFragment;
+import com.project.ui.more.setting.SettingFragment;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.core.annotation.OnClick;
@@ -64,7 +66,13 @@ public class MoreFragment extends BaseInfoFragment {
     protected void setupTitleBar(TitleBar titleBar) {
         titleBar
         .setTitle(R.string.more_title)
-        .addAction(R.drawable.more_setting)
+        .addAction(R.drawable.more_setting, new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                getBaseActivity().startFragment(SettingFragment.class);
+            }
+        })
         .show();
     }
 

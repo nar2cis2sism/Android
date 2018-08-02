@@ -22,6 +22,7 @@ import com.project.app.MySession;
 import com.project.network.action.http.Login;
 import com.project.network.action.http.Navigation;
 import com.project.ui.MainActivity;
+import com.project.ui.login.register.RegisterFragment;
 import com.project.util.AppUpgradeUtil;
 import com.project.util.MyValidator;
 
@@ -177,6 +178,11 @@ public class LoginFragment extends BaseFragment {
                 sendNavigationAction();
             }
         }
+    }
+    
+    @OnClick(R.id.register)
+    void register() {
+        getBaseActivity().startFragment(RegisterFragment.class);
     }
 
     /******************************* 获取导航配置 *******************************/

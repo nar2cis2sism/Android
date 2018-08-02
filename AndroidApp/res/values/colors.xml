@@ -2,5 +2,6 @@
 <resources>
     
 	<color name="login_red">#ff0000</color>
+	<item name="register_red" type="color">@color/login_red</item>
     
 </resources>

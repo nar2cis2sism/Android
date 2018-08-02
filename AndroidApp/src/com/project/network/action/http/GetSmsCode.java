@@ -9,35 +9,26 @@ import engine.android.framework.network.http.HttpManager.HttpBuilder;
 import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.http.util.HttpParser;
-import engine.android.util.secure.CryptoUtil;
-import engine.android.util.secure.HexUtil;
 
 /**
- * 用户注册
+ * 获取手机验证码
  * 
  * @author Daimon
  */
-public class Register implements HttpBuilder, JsonEntity {
+public class GetSmsCode implements HttpBuilder, JsonEntity {
     
-    public final String action = Actions.REGISTER;
+    public final String action = Actions.GET_SMS_CODE;
     
-    public final String username;           // 用户名
-    
-    public final String password;           // 密码
+    public final String mobile_phone;       // 手机号
     
     /**
-     * 0：手机号码注册
+     * 0：允许重复
+     * 1：禁止重复
      */
-    public int type;                        // 注册方式
+    public int type;                        // 号码验重类型
     
-    /**
-     * 手机号码注册时为短信验证码
-     */
-    public String passport;
-    
-    public Register(String username, String password) {
-        this.username = username;
-        this.password = HexUtil.encode(CryptoUtil.SHA1((password + "000").getBytes()));
+    public GetSmsCode(String mobile_phone) {
+        this.mobile_phone = mobile_phone;
     }
 
     @Override

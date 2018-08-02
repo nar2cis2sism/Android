@@ -12,10 +12,13 @@ public interface Actions {
 
     /** 用户登录 **/
     String LOGIN = "login";
+
+    /** 获取手机验证码 **/
+    String GET_SMS_CODE = "get_sms_code";
     
-//    /** 用户注册 **/
-//    String REGISTER = "register";
-//
+    /** 用户注册 **/
+    String REGISTER = "register";
+
     /** 获取个人信息 **/
     String GET_USER_INFO = "get_user_info";
 

@@ -13,6 +13,13 @@ import engine.android.framework.app.AppGlobal;
 import engine.android.framework.app.image.ImageManager.ImageUrl;
 import engine.android.util.ui.UIUtil;
 
+/**
+ * 头像显示控件
+ * 
+ * @author Daimon
+ * @version N
+ * @since 6/6/2014
+ */
 public class AvatarImageView extends ImageView {
 
     public AvatarImageView(Context context) {

@@ -1,5 +1,6 @@
 package engine.android.framework.ui.presenter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -34,6 +35,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * 提供选取图片功能
+ * 
+ * @author Daimon
+ * @version N
+ * @since 6/6/2014
+ */
+@SuppressLint("InlinedApi")
 public class PhotoPresenter extends Presenter<BaseFragment> {
     
     private static final int REQUEST_TAKE_PHOTO = 1;
@@ -114,45 +123,50 @@ public class PhotoPresenter extends Presenter<BaseFragment> {
         public CropAttribute() {
             aspectX = aspectY = 1;
             outputX = outputY = 200;
-            scale = circleCrop = true;
+            scale = true;
         }
 
         /**
          * 设置裁剪比例
          */
-        public void setAspectRatio(int aspectX, int aspectY) {
+        public CropAttribute setAspectRatio(int aspectX, int aspectY) {
             this.aspectX = aspectX;
             this.aspectY = aspectY;
+            return this;
         }
         
         /**
          * 设置输出图像尺寸
          */
-        public void setOutputSize(int outputX, int outputY) {
+        public CropAttribute setOutputSize(int outputX, int outputY) {
             this.outputX = outputX;
             this.outputY = outputY;
+            return this;
         }
         
         /**
          * 设置图片能否缩放
          */
-        public void setScale(boolean scale) {
+        public CropAttribute setScale(boolean scale) {
             this.scale = scale;
+            return this;
         }
         
         /**
          * 设置裁剪形状是否为圆形
          */
-        public void setCircleCrop(boolean circleCrop) {
+        public CropAttribute setCircleCrop(boolean circleCrop) {
             this.circleCrop = circleCrop;
+            return this;
         }
         
         /**
          * 有些手机裁剪出来的图片小于预定值，
          * 如需要固定尺寸，需要保存到SD卡文件内
          */
-        public void saveToFile() {
+        public CropAttribute saveToFile() {
             saveToFile = true;
+            return this;
         }
     }
 
@@ -185,6 +199,7 @@ public class PhotoPresenter extends Presenter<BaseFragment> {
         intent.putExtra("noFaceDetection", true);
         // 去除黑边
         intent.putExtra("scaleUpIfNeeded", true);
+        
         if (attr.saveToFile)
         {
             intent.putExtra(MediaStore.EXTRA_OUTPUT, cropPhoto_output
@@ -192,6 +207,7 @@ public class PhotoPresenter extends Presenter<BaseFragment> {
         }
         else
         {
+            cropPhoto_output = null;
             intent.putExtra("return-data", true);
         }
 
@@ -264,6 +280,9 @@ public class PhotoPresenter extends Presenter<BaseFragment> {
         }
     }
     
+    /**
+     * 照片信息
+     */
     public static final class PhotoInfo implements Parcelable {
         
         Uri uri;

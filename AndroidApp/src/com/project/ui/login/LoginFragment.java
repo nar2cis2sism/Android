@@ -23,18 +23,18 @@ import com.project.network.action.http.Login;
 import com.project.network.action.http.Navigation;
 import com.project.ui.MainActivity;
 import com.project.ui.login.register.RegisterFragment;
-import com.project.util.AppUpgradeUtil;
+import com.project.util.AppUtil;
 import com.project.util.MyValidator;
 
-import engine.android.core.Forelet.ProgressSetting;
 import engine.android.core.annotation.InjectView;
 import engine.android.core.annotation.OnClick;
 import engine.android.framework.ui.BaseFragment;
 import engine.android.util.listener.MyTextWatcher;
 import engine.android.util.ui.MyValidator.PatternValidation;
+import engine.android.util.ui.MyPasswordTransformationMethod;
 import engine.android.util.ui.UIUtil;
 import engine.android.widget.component.InputBox;
-import protocol.java.json.AppUpgradeInfo;
+import protocol.http.AppUpgradeInfo;
 
 /**
  * 登录界面
@@ -61,7 +61,6 @@ public class LoginFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
         enableReceiveEvent(NAVIGATION, LOGIN);
     }
 
@@ -137,6 +136,7 @@ public class LoginFragment extends BaseFragment {
         input.setCompoundDrawablesWithIntrinsicBounds(R.drawable.login_password, 0, 0, 0);
         input.setHint(R.string.login_password_hint);
         input.setInputType(EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_PASSWORD);
+        input.setTransformationMethod(MyPasswordTransformationMethod.getInstance());
         input.setImeOptions(EditorInfo.IME_ACTION_DONE);
         
         input.setOnEditorActionListener(new OnEditorActionListener() {
@@ -152,12 +152,6 @@ public class LoginFragment extends BaseFragment {
                 return false;
             }
         });
-        
-        getBaseActivity().bindValidation(input, new MyValidator.Validation<EditText>()
-        .addValidation(new PatternValidation<EditText>(MyValidator.VALID), 
-                getString(R.string.login_password_validation_empty))
-        .addValidation(new PatternValidation<EditText>(MyValidator.LOGIN_PASSWORD), 
-                getString(R.string.login_password_validation_length)));
     }
     
     @OnClick(R.id.login)
@@ -165,9 +159,7 @@ public class LoginFragment extends BaseFragment {
         if (getBaseActivity().checkNetworkStatus(true)
         &&  getBaseActivity().requestValidation())
         {
-            getBaseActivity().showProgress(ProgressSetting.getDefault()
-            .setMessage(getString(R.string.progress_login)));
-            
+            showProgress(getString(R.string.progress_login));
             if (MySession.hasNavigation())
             {
                 // 已有导航配置
@@ -209,7 +201,7 @@ public class LoginFragment extends BaseFragment {
                 if (info.type == 1)
                 {
                     // 强制升级，弹窗提醒
-                    AppUpgradeUtil.upgradeApp(getBaseActivity(), info, true);
+                    AppUtil.upgradeApp(getBaseActivity(), info, true);
                     getBaseActivity().hideProgress();
                     return;
                 }

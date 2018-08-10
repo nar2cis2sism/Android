@@ -16,7 +16,7 @@ import engine.android.http.util.HttpParser;
 
 import org.json.JSONObject;
 
-import protocol.java.json.UserInfo;
+import protocol.http.UserInfo;
 
 /**
  * 获取个人信息

@@ -9,7 +9,6 @@ import android.view.ViewGroup.LayoutParams;
 import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
 import engine.android.framework.R;
 import engine.android.framework.ui.BaseFragment;
-import engine.android.util.AndroidUtil;
 import engine.android.util.ui.UIUtil;
 
 /**
@@ -27,7 +26,7 @@ public abstract class BaseInfoFragment extends BaseFragment {
     
     /**
      * @param titleId 标题
-     * @param textId 文本
+     * @param text 文本
      * @param showArrow 是否显示右箭头
      */
     protected ViewHolder addComponent(ViewGroup root, LayoutInflater inflater, 
@@ -68,11 +67,11 @@ public abstract class BaseInfoFragment extends BaseFragment {
         
         if (!showArrow)
         {
-            holder.setVisibility(R.id.arrow, View.GONE);
+            holder.setVisible(R.id.arrow, false);
         }
         
         // Divider
-        addDivider(root, getResources().getColor(R.color.divider_horizontal), 1);
+        addDivider(root);
         
         return holder;
     }
@@ -89,7 +88,7 @@ public abstract class BaseInfoFragment extends BaseFragment {
     }
     
     protected void addCategory(ViewGroup root) {
-        addDivider(root, getResources().getColor(R.color.divider_category), 
-                AndroidUtil.dp2px(getContext(), 10));
+        addDivider(root, getResources().getColor(R.color.divider_category),
+            getResources().getDimensionPixelSize(R.dimen.divider_category_height));
     }
 }

@@ -1,7 +1,7 @@
 package engine.android.framework.network.socket;
 
 import engine.android.framework.network.ConnectionStatus;
-import protocol.java.ProtocolWrapper.ProtocolEntity.ProtocolData;
+import protocol.util.ProtocolWrapper.ProtocolEntity.ProtocolData;
 
 /**
  * Socket响应

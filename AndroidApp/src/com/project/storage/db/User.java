@@ -12,13 +12,13 @@ import engine.android.dao.annotation.DAOPrimaryKey;
 import engine.android.dao.annotation.DAOProperty;
 import engine.android.dao.annotation.DAOTable;
 import engine.android.framework.app.image.ImageManager.ImageUrl;
-import protocol.java.json.UserInfo;
+import protocol.http.UserInfo;
 
 /**
  * 用户资料
  */
 @DAOTable(name=com.project.storage.provider.ProviderContract.User.TABLE)
-public class User {
+public class User implements UserColumns {
     
     @DAOPrimaryKey(column=UserColumns.USERNAME)
     public String username;                 // 用户名
@@ -63,7 +63,7 @@ public class User {
 
     /******************************* 华丽丽的分割线 *******************************/
     
-    public void fromProtocol(UserInfo item) {
+    public User fromProtocol(UserInfo item) {
         version = item.version;
         nickname = item.nickname;
         isFemale = item.gender == 1;
@@ -72,6 +72,7 @@ public class User {
         signature = item.signature;
         isAuthenticated = item.authentication == 1;
         avatar_url = item.avatar_url;
+        return this;
     }
     
     private void parseRegion(String region) {

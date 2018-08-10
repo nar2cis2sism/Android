@@ -17,10 +17,10 @@ import android.widget.GridView;
 import com.daimon.yueba.R;
 import com.project.network.action.file.Authentication;
 
-import engine.android.core.Forelet.ProgressSetting;
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseFragment;
 import engine.android.framework.ui.extra.SinglePaneActivity;
+import engine.android.framework.ui.extra.ViewImageFragment;
 import engine.android.framework.ui.presenter.PhotoPresenter;
 import engine.android.framework.ui.presenter.PhotoPresenter.PhotoInfo;
 import engine.android.widget.component.TitleBar;
@@ -80,6 +80,18 @@ public class AuthenticationFragment extends BaseFragment implements OnItemClickL
     
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        PhotoInfo item = adapter.getItem(position);
+        if (item == null)
+        {
+            pickImage();
+        }
+        else
+        {
+            getBaseActivity().startFragment(ViewImageFragment.class);
+        }
+    }
+    
+    void pickImage() {
         Dialog dialog = new AlertDialog.Builder(getContext())
         .setItems(R.array.pick_image, 
         new DialogInterface.OnClickListener() {
@@ -111,17 +123,9 @@ public class AuthenticationFragment extends BaseFragment implements OnItemClickL
         }
         else if (getBaseActivity().checkNetworkStatus(true))
         {
-            getBaseActivity().showProgress(ProgressSetting.getDefault()
-            .setMessage(getString(R.string.progress_waiting)));
-            
-            sendAuthenticationAction(list);
+            showProgress(getString(R.string.progress_waiting));
+            getBaseActivity().sendHttpRequest(new Authentication(list));
         }
-    }
-
-    /******************************* 实名认证 *******************************/
-    
-    private void sendAuthenticationAction(List<PhotoInfo> list) {
-        getBaseActivity().sendHttpRequest(new Authentication(list));
     }
     
     @Override

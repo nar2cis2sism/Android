@@ -17,7 +17,7 @@ import engine.android.util.AndroidUtil;
 
 import org.json.JSONObject;
 
-import protocol.java.json.AppUpgradeInfo;
+import protocol.http.AppUpgradeInfo;
 
 /**
  * 获取导航配置

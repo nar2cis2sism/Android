@@ -6,23 +6,29 @@ import static com.project.network.action.Actions.REGISTER;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.daimon.yueba.R;
 import com.project.app.MyApp;
+import com.project.app.bean.ErrorInfo;
 import com.project.network.action.http.GetSmsCode;
 import com.project.network.action.http.Register;
+import com.project.util.AppUtil;
 import com.project.util.MyValidator;
 
-import engine.android.core.Forelet.ProgressSetting;
 import engine.android.core.annotation.InjectView;
 import engine.android.core.annotation.OnClick;
 import engine.android.framework.ui.BaseFragment;
@@ -58,7 +64,6 @@ public class RegisterFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
         enableReceiveEvent(GET_SMS_CODE, REGISTER);
     }
     
@@ -96,24 +101,18 @@ public class RegisterFragment extends BaseFragment {
         final EditText input = username.input();
         input.setHint(R.string.register_username_hint);
         input.setInputType(EditorInfo.TYPE_CLASS_PHONE);
+        
         input.addTextChangedListener(new TextWatcher() {
             
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // TODO Auto-generated method stub
-                
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
             
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // TODO Auto-generated method stub
-                
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             
             @Override
             public void afterTextChanged(Editable s) {
-                smsCode.setEnabled(MyValidator.validate(
-                        s.toString(), MyValidator.MOBILE_NUMBER));
+                smsCode.setEnabled(MyValidator.validate(s.toString(), MyValidator.MOBILE_NUMBER));
             }
         });
         // 获取验证码
@@ -137,20 +136,41 @@ public class RegisterFragment extends BaseFragment {
         // 输入框
         final EditText input = password.input();
         input.setHint(R.string.register_password_hint);
+        input.setKeyListener(AppUtil.passwordKeyListener);
         input.setInputType(EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_PASSWORD);
         
+        // 密码显示
+        ImageView eye = new ImageView(getContext());
+        eye.setImageResource(R.drawable.register_eye);
+        eye.setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        input.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        input.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                        break;
+                }
+                
+                return true;
+            }
+        });
+        password.place(eye);
+        
         getBaseActivity().bindValidation(input, new Validation<EditText>()
-        .addValidation(new PatternValidation<EditText>(MyValidator.VALID), 
-                getString(R.string.login_password_validation_empty))
-        .addValidation(new PatternValidation<EditText>(MyValidator.LOGIN_PASSWORD), 
-                getString(R.string.login_password_validation_length)));
+        .addValidation(new PatternValidation<EditText>(MyValidator.PASSWORD), 
+                getString(R.string.register_password_validation_length)));
     }
     
     void getSmsCode() {
         if (getBaseActivity().checkNetworkStatus(true))
         {
+            showProgress(getString(R.string.progress_waiting));
             sendGetSmsCodeAction();
-            showNext();
         }
     }
     
@@ -176,7 +196,7 @@ public class RegisterFragment extends BaseFragment {
         
         bottom.setVisibility(View.VISIBLE);
         bottom.startAnimation(AnimationUtils.loadAnimation(
-                getContext(), R.anim.slide_up));
+                getContext(), R.anim.slide_up_in));
     }
     
     @OnClick(R.id.next)
@@ -184,9 +204,7 @@ public class RegisterFragment extends BaseFragment {
         if (getBaseActivity().checkNetworkStatus(true)
         &&  getBaseActivity().requestValidation())
         {
-            getBaseActivity().showProgress(ProgressSetting.getDefault()
-            .setMessage(getString(R.string.progress_waiting)));
-            
+            showProgress(getString(R.string.progress_waiting));
             sendRegisterAction();
         }
     }
@@ -213,10 +231,32 @@ public class RegisterFragment extends BaseFragment {
     
     @Override
     protected void onReceiveSuccess(String action, Object param) {
-        if (REGISTER.equals(action))
+        if (GET_SMS_CODE.equals(action))
         {
             getBaseActivity().hideProgress();
+            showNext();
+            MyApp.showMessage(getString(R.string.toast_sms_code));
+        }
+        else if (REGISTER.equals(action))
+        {
             finish();
         }
+    }
+    
+    @Override
+    protected void onReceiveFailure(String action, int status, Object param) {
+        if (param instanceof ErrorInfo)
+        {
+            ErrorInfo info = (ErrorInfo) param;
+            if (info.code == 415)
+            {
+                // 数据已存在
+                getBaseActivity().hideProgress();
+                MyApp.showMessage(getString(R.string.register_username_exist));
+                return;
+            }
+        }
+        
+        super.onReceiveFailure(action, status, param);
     }
 }

@@ -3,7 +3,8 @@ package com.project.app;
 import com.project.app.bean.ServerUrl;
 import com.project.storage.db.User;
 
-import protocol.java.json.AppUpgradeInfo;
+import protocol.http.AppUpgradeInfo;
+
 import engine.android.core.Session;
 
 public class MySession {

@@ -2,6 +2,7 @@ package com.project.network.action.http;
 
 import com.project.network.NetworkConfig;
 import com.project.network.action.Actions;
+import com.project.network.http.HttpJsonParser;
 
 import engine.android.framework.network.http.HttpConnectorBuilder;
 import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
@@ -42,7 +43,7 @@ public class GetSmsCode implements HttpBuilder, JsonEntity {
 
     @Override
     public HttpParser buildParser() {
-        return null;
+        return new HttpJsonParser();
     }
 
     @Override

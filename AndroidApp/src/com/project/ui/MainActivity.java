@@ -18,12 +18,12 @@ import com.project.ui.beside.BesideFragment;
 import com.project.ui.friend.FriendListFragment;
 import com.project.ui.message.MessageListFragment;
 import com.project.ui.more.MoreFragment;
-import com.project.util.AppUpgradeUtil;
+import com.project.util.AppUtil;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseActivity;
 import engine.android.widget.extra.ViewPager;
-import protocol.java.json.AppUpgradeInfo;
+import protocol.http.AppUpgradeInfo;
 
 /**
  * 主界面
@@ -93,22 +93,21 @@ public class MainActivity extends BaseActivity {
                 .setIndicator(new TabView(this, R.drawable.main_tab_more))
                 .setContent(emptyContent), MoreFragment.class, null));
         
-        pager.setOffscreenPageLimit(adapter.getCount() - 1);
-        pager.setAdapter(adapter);
-        
-        pager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            
-            @Override
-            public void onPageSelected(int position) {
-                tabHost.setCurrentTab(position);
-            }
-        });
-        
         tabHost.setOnTabChangedListener(new OnTabChangeListener() {
             
             @Override
             public void onTabChanged(String tabId) {
                 pager.setCurrentItem(tabHost.getCurrentTab());
+            }
+        });
+        
+        pager.setOffscreenPageLimit(adapter.getCount() - 1);
+        pager.setAdapter(adapter);
+        pager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            
+            @Override
+            public void onPageSelected(int position) {
+                tabHost.setCurrentTab(position);
             }
         });
     }
@@ -175,7 +174,7 @@ public class MainActivity extends BaseActivity {
         AppUpgradeInfo info = MySession.getUpgradeInfo();
         if (info != null)
         {
-            AppUpgradeUtil.upgradeApp(this, info, false);
+            AppUtil.upgradeApp(this, info, false);
             MySession.setUpgradeInfo(null);
         }
     }

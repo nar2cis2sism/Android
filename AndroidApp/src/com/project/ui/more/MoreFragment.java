@@ -1,7 +1,5 @@
 package com.project.ui.more;
 
-import static com.project.network.action.Actions.AVATAR;
-
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -22,7 +20,6 @@ import com.project.ui.more.setting.SettingFragment;
 import engine.android.core.annotation.InjectView;
 import engine.android.core.annotation.OnClick;
 import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
-import engine.android.framework.network.ConnectionStatus;
 import engine.android.framework.ui.extra.BaseInfoFragment;
 import engine.android.framework.ui.widget.AvatarImageView;
 import engine.android.util.ui.UIUtil;
@@ -58,7 +55,6 @@ public class MoreFragment extends BaseInfoFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        enableReceiveEvent(AVATAR);
         user = MySession.getUser();
     }
     
@@ -110,7 +106,7 @@ public class MoreFragment extends BaseInfoFragment {
     }
     
     private void setupHeader() {
-        setupAvatar();
+        avatar = AvatarImageView.display(avatar, user.getAvatarUrl());
         name.setText(user.nickname);
         authentication.setText(user.getAuthenticationText());
         if (TextUtils.isEmpty(user.signature))
@@ -122,10 +118,6 @@ public class MoreFragment extends BaseInfoFragment {
             signature.setVisibility(View.VISIBLE);
             signature.setText(user.signature);
         }
-    }
-    
-    private void setupAvatar() {
-        avatar = AvatarImageView.display(avatar, user.getAvatarUrl());
     }
     
     private ViewHolder addComponent(ViewGroup root, LayoutInflater inflater, 
@@ -145,7 +137,7 @@ public class MoreFragment extends BaseInfoFragment {
         holder.removeView(R.id.note);
         
         // Divider
-        addDivider(root, getResources().getColor(R.color.divider_horizontal), 1);
+        addDivider(root);
         
         return holder;
     }
@@ -158,21 +150,5 @@ public class MoreFragment extends BaseInfoFragment {
     @OnClick(R.id.authentication)
     void authentication() {
         getBaseActivity().startFragment(AuthenticationFragment.class);
-    }
-    
-    @Override
-    protected void onReceive(String action, int status, Object param) {
-        if (AVATAR.equals(action))
-        {
-            if (status == ConnectionStatus.SUCCESS)
-            {
-                // 头像上传成功
-                setupAvatar();
-            }
-        }
-        else
-        {
-            super.onReceive(action, status, param);
-        }
     }
 }

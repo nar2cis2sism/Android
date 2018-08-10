@@ -23,7 +23,7 @@ import engine.android.http.util.HttpParser;
 
 import org.json.JSONObject;
 
-import protocol.java.json.FriendSync;
+import protocol.http.FriendSync;
 
 import java.util.List;
 
@@ -107,7 +107,7 @@ public class QueryFriendList implements HttpBuilder, JsonEntity {
                 }
                 else if (friend == null)
                 {
-                    dao.save(new Friend(item));
+                    dao.save(new Friend().fromProtocol(item));
                 }
             }
             

@@ -5,12 +5,13 @@ import android.text.TextUtils;
 import com.project.storage.provider.ProviderContract.FriendColumns;
 import com.project.util.MyValidator;
 
-import net.sourceforge.pinyin4j.lite.PinyinHelper;
-
 import engine.android.dao.DAOTemplate;
 import engine.android.dao.annotation.DAOPrimaryKey;
 import engine.android.dao.annotation.DAOProperty;
-import protocol.java.json.FriendSync;
+
+import net.sourceforge.pinyin4j.lite.PinyinHelper;
+
+import protocol.http.FriendSync;
 
 /**
  * 好友信息
@@ -60,7 +61,7 @@ public class Friend {
 
     /******************************* 华丽丽的分割线 *******************************/
     
-    public Friend(FriendSync item) {
+    public Friend fromProtocol(FriendSync item) {
         account = item.account;
         nickname = item.nickname;
         signature = item.signature;
@@ -68,6 +69,7 @@ public class Friend {
         displayName = getDisplayName();
         pinyin = PinyinHelper.getInstance().getPinyins(displayName, "").toLowerCase();
         sorting = sort(pinyin);
+        return this;
     }
     
     /**
@@ -101,6 +103,8 @@ public class Friend {
     
         return sort + pinyin;
     }
+
+    /******************************* 华丽丽的分割线 *******************************/
 
     /**
      * 获取排序分类

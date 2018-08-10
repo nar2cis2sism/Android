@@ -6,7 +6,7 @@ import engine.android.http.HttpResponse;
 
 import org.json.JSONObject;
 
-import protocol.java.EntityUtil;
+import protocol.util.EntityUtil;
 
 public class HttpJsonParser extends engine.android.http.util.json.HttpJsonParser {
     

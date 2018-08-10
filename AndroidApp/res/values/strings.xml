@@ -9,7 +9,7 @@
     <string name="dialog_upgrade_now">立即升级</string>
     <string name="dialog_upgrade_later">稍后提醒</string>
     <string name="dialog_gender_title">选择性别</string>
-    <string name="dialog_modify_info">是否保存更改设置？</string>
+    <string name="dialog_edit_message">是否保存更改设置？</string>
     
     <!-- Progress -->
     <string name="progress_login">登录中,请稍候&#8230;</string>
@@ -19,6 +19,7 @@
     <!-- Toast -->
     <string name="toast_upload_avatar_success">头像已上传</string>
     <string name="toast_upload_avatar_failure">上传头像失败</string>
+    <string name="toast_sms_code">验证码已发送，请注意查收</string>
     
     <!-- Login -->
     <string name="login_login">登&#160;&#160;&#160;&#160;录</string>
@@ -26,17 +27,17 @@
     <string name="login_find_password">找回密码</string>
     <string name="login_username_hint">输入电话号码</string>
     <string name="login_username_validation_mobile">请您输入正确的手机号码</string>
-    <string name="login_password_hint">输入密码</string>
-    <string name="login_password_validation_empty">请输入密码</string>
-    <string name="login_password_validation_length">密码长度应为6-16位</string>
+    <item name="login_password_hint" type="string">@string/register_password_hint</item>
     
     <!-- Register -->
     <string name="register_title">用户注册</string>
     <string name="register_next">下一步</string>
     <string name="register_license">注册即表示您已阅读并同意\n注册协议</string>
     <string name="register_username_hint">输入手机号</string>
+    <string name="register_username_exist">手机号已被他人使用</string>
     <string name="register_passcode_hint">输入验证码</string>
-    <item name="register_password_hint" type="string">@string/login_password_hint</item>
+    <string name="register_password_hint">输入密码</string>
+    <string name="register_password_validation_length">密码长度应为6-16位</string>
     
     <!-- Message -->
     <string name="message_title">消息</string>
@@ -66,7 +67,7 @@
     <!-- Setting -->
     <string name="setting_title">应用设置</string>
     <string name="setting_password">修改密码</string>
-    <string name="setting_phone">更换手机号</string>
+    <string name="setting_phone">绑定手机</string>
     <string name="setting_version">版本更新</string>
     <string name="setting_about">关于我们</string>
     <string name="setting_logout">退出登录</string>
@@ -79,7 +80,6 @@
     
     <!-- Me -->
     <string name="me_title">个人信息</string>
-    <string name="me_introduction">请如实填写个人信息</string>
     <string name="me_avatar">头像</string>
     <string name="me_nickname">昵称</string>
     <string name="me_gender">性别</string>

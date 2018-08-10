@@ -21,7 +21,7 @@ import engine.android.widget.component.TitleBar;
  * 
  * @author Daimon
  */
-public class AuthenticationFinishFragment extends BaseFragment {
+public class AuthenticationFinishFragment extends BaseFragment implements Runnable {
     
     @InjectView(R.id.tip)
     TextView tip;
@@ -47,24 +47,11 @@ public class AuthenticationFinishFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupTip();
-        postTip(new Runnable() {
-            
-            @Override
-            public void run() {
-                if (--seconds == 0)
-                {
-                    finish();
-                    return;
-                }
-                
-                setupTip();
-                postTip(this);
-            }
-        });
+        postTip(this);
     }
     
     private void postTip(Runnable run) {
-        getBaseActivity().getHandler().postDelayed(run, 1000);
+        tip.postDelayed(run, 1000);
     }
     
     private void setupTip() {
@@ -75,5 +62,17 @@ public class AuthenticationFinishFragment extends BaseFragment {
         span.setSpan(new ForegroundColorSpan(Color.RED), index, index + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         
         tip.setText(span);
+    }
+
+    @Override
+    public void run() {
+        if (--seconds == 0)
+        {
+            finish();
+            return;
+        }
+        
+        setupTip();
+        postTip(this);
     }
 }

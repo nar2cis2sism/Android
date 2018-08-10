@@ -13,6 +13,7 @@ import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
 import engine.android.http.HttpConnector;
 import engine.android.http.util.HttpParser;
+import engine.android.util.StringUtil;
 import engine.android.util.extra.ChangeStatus;
 
 import org.json.JSONException;
@@ -27,8 +28,23 @@ public class EditUserInfo implements HttpBuilder, JsonEntity, UserColumns {
     
     public final String action = Actions.EDIT_USER_INFO;
     
-    public User user;
-    public ChangeStatus status;
+    public final User user;
+    public final ChangeStatus status;
+    
+    public EditUserInfo(User user) {
+        this.user = user;
+        status = new ChangeStatus();
+        init();
+    }
+    
+    private void init() {
+        User origin = MySession.getUser();
+        status.setChanged(NICKNAME, !StringUtil.equals(user.nickname, origin.nickname));
+        status.setChanged(IS_FEMALE, user.isFemale != origin.isFemale);
+        status.setChanged(BIRTHDAY, user.birthday != origin.birthday);
+        status.setChanged(REGION, !StringUtil.equals(user.region_code, origin.region_code));
+        status.setChanged(SIGNATURE, !StringUtil.equals(user.signature, origin.signature));
+    }
 
     @Override
     public HttpConnector buildConnector(HttpConnectorBuilder builder) {

@@ -6,8 +6,8 @@ import com.project.storage.db.Message;
 import engine.android.framework.network.socket.SocketManager.SocketBuilder;
 import engine.android.framework.network.socket.SocketResponse;
 import engine.android.framework.network.socket.SocketResponse.SocketTimeout;
-import protocol.java.ProtocolWrapper.ProtocolEntity.ProtocolData;
-import protocol.java.stream.ack.MessageACK;
+import protocol.socket.ack.MessageACK;
+import protocol.util.ProtocolWrapper.ProtocolEntity.ProtocolData;
 
 /**
  * 发送消息

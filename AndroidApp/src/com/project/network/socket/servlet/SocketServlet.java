@@ -3,11 +3,11 @@ package com.project.network.socket.servlet;
 import android.os.SystemClock;
 
 import engine.android.core.util.LogFactory.LOG;
-import protocol.java.ProtocolWrapper;
-import protocol.java.ProtocolWrapper.ProtocolEntity;
-import protocol.java.ProtocolWrapper.ProtocolEntity.ProtocolData;
-import protocol.java.stream.ack.MessageACK;
-import protocol.java.stream.req.Message;
+import protocol.socket.ack.MessageACK;
+import protocol.socket.req.Message;
+import protocol.util.ProtocolWrapper;
+import protocol.util.ProtocolWrapper.ProtocolEntity;
+import protocol.util.ProtocolWrapper.ProtocolEntity.ProtocolData;
 
 import java.io.IOException;
 import java.io.InputStream;

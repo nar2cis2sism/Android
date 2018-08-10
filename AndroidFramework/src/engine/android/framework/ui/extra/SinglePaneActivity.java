@@ -26,6 +26,25 @@ public class SinglePaneActivity extends BaseActivity implements OnBackStackChang
     
     private static final int CONTENT_ID = R.id.single_pane_content;
     
+    /**
+     * 通过此方法构造出Intent启动
+     * 
+     * @param fragmentCls Fragment类名
+     * @param args Fragment参数
+     */
+    public static final Intent buildIntent(Context context, Class<? extends Fragment> fragmentCls, 
+            Bundle args) {
+        Intent intent = new Intent(context, SinglePaneActivity.class)
+        .putExtra(EXTRA_FRAGMENT_CLASS_NAME, fragmentCls.getName());
+        
+        if (args != null)
+        {
+            intent.putExtras(args);
+        }
+        
+        return intent;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,11 +74,6 @@ public class SinglePaneActivity extends BaseActivity implements OnBackStackChang
         }
     }
 
-    @Override
-    public void onBackStackChanged() {
-        getContentFragment().setMenuVisibility(true);
-    }
-    
     private Fragment parseIntent(Intent intent) {
         if (intent != null)
         {
@@ -85,25 +99,11 @@ public class SinglePaneActivity extends BaseActivity implements OnBackStackChang
         return null;
     }
 
-    /**
-     * 通过此方法构造出Intent启动
-     * 
-     * @param fragmentCls Fragment类名
-     * @param args Fragment参数
-     */
-    public static final Intent buildIntent(Context context, Class<? extends Fragment> fragmentCls, 
-            Bundle args) {
-        Intent intent = new Intent(context, SinglePaneActivity.class)
-        .putExtra(EXTRA_FRAGMENT_CLASS_NAME, fragmentCls.getName());
-        
-        if (args != null)
-        {
-            intent.putExtras(args);
-        }
-        
-        return intent;
+    @Override
+    public void onBackStackChanged() {
+        getContentFragment().setMenuVisibility(true);
     }
-    
+
     public Fragment getContentFragment() {
         return getFragmentManager().findFragmentById(CONTENT_ID);
     }

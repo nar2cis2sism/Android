@@ -6,9 +6,9 @@ import org.json.JSONObject;
 
 public class ErrorInfo implements Failure {
     
-    private final int code;                    // 错误编码
+    public final int code;                     // 错误编码
     
-    private final String msg;                  // 错误原因描述
+    public final String msg;                   // 错误原因描述
     
     private ErrorInfo(int code, String msg) {
         this.code = code;
@@ -17,7 +17,7 @@ public class ErrorInfo implements Failure {
     
     public static ErrorInfo parse(JSONObject json) {
         int code = json.optInt("code");
-        if (code == protocol.java.json.ErrorInfo.CODE_SUCCESS)
+        if (code == protocol.http.ErrorInfo.CODE_SUCCESS)
         {
             return null;
         }

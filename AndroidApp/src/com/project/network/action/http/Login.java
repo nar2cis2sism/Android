@@ -10,7 +10,7 @@ import com.project.network.http.HttpJsonParser;
 import com.project.storage.MyDAOManager;
 import com.project.storage.dao.UserDAO;
 import com.project.storage.db.User;
-import com.project.storage.provider.ProviderContract.UserColumns;
+import com.project.util.AppUtil;
 
 import engine.android.framework.network.http.HttpConnectorBuilder;
 import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
@@ -20,8 +20,6 @@ import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.http.util.HttpParser;
 import engine.android.util.manager.MyTelephonyDevice;
-import engine.android.util.secure.CryptoUtil;
-import engine.android.util.secure.HexUtil;
 
 import org.json.JSONObject;
 
@@ -42,7 +40,7 @@ public class Login implements HttpBuilder, JsonEntity {
     
     public Login(String username, String password) {
         this.username = username;
-        this.password = HexUtil.encode(CryptoUtil.SHA1((password + "000").getBytes()));
+        this.password = AppUtil.encryptPassword(password);
         deviceID = new MyTelephonyDevice(MyContext.getContext()).getDeviceId();
     }
 
@@ -72,6 +70,7 @@ public class Login implements HttpBuilder, JsonEntity {
             String token = data.getString("token");
             String user_info_ver = data.getString("user_info_ver");
             long friend_list_timestamp = data.optLong("friend_list_timestamp");
+            
             String[] strs = user_info_ver.split(":");
             long version = Long.parseLong(strs[0]);
             long avatar_ver = Long.parseLong(strs[1]);
@@ -109,7 +108,7 @@ public class Login implements HttpBuilder, JsonEntity {
             else if (avatar_ver != user.avatar_ver)
             {
                 user.avatar_ver = avatar_ver;
-                MyDAOManager.getDAO().update(user, UserColumns.AVATAR_VER);
+                MyDAOManager.getDAO().update(user, User.AVATAR_VER);
             }
             
             MySession.setUser(user);

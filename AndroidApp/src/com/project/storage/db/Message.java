@@ -76,8 +76,8 @@ public class Message {
 
     /******************************* 华丽丽的分割线 *******************************/
     
-    public protocol.java.stream.req.Message toProtocol() {
-        protocol.java.stream.req.Message msg = new protocol.java.stream.req.Message();
+    public protocol.socket.req.Message toProtocol() {
+        protocol.socket.req.Message msg = new protocol.socket.req.Message();
         msg.id = id;
         msg.account = account;
         msg.content = content;
@@ -86,7 +86,7 @@ public class Message {
         return msg;
     }
     
-    public Message fromProtocol(protocol.java.stream.req.Message msg) {
+    public Message fromProtocol(protocol.socket.req.Message msg) {
         id = msg.id;
         account = msg.account;
         content = msg.content;

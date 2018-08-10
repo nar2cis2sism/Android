@@ -23,7 +23,7 @@ import engine.android.http.HttpRequest;
 import engine.android.http.HttpRequest.HttpEntity;
 import engine.android.http.HttpResponse;
 import engine.android.http.util.HttpParser;
-import protocol.java.EntityUtil;
+import protocol.util.EntityUtil;
 
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;

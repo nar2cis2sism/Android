@@ -8,6 +8,7 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 import engine.android.core.Forelet.OnBackListener;
+import engine.android.core.Forelet.ProgressSetting;
 import engine.android.core.extra.EventBus;
 import engine.android.core.extra.EventBus.Event;
 import engine.android.core.extra.EventBus.EventHandler;
@@ -42,6 +43,7 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
     @Override
     public void onDetach() {
         if (onBackListener != null) baseActivity.removeOnBackListener(onBackListener);
+        baseActivity = null;
         super.onDetach();
     }
     
@@ -135,14 +137,6 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
 
     /******************************* 华丽丽的分割线 *******************************/
     
-    protected TextView newTextAction(CharSequence text, OnClickListener listener) {
-        TextView tv = new TextView(getContext());
-        tv.setText(text);
-        tv.setTextColor(getResources().getColorStateList(R.color.title_bar_action));
-        if (listener != null) tv.setOnClickListener(listener);
-        return tv;
-    }
-    
     /**
      * 传递参数构造器
      */
@@ -164,5 +158,17 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
             
             return null;
         }
+    }
+    
+    protected void showProgress(CharSequence message) {
+        baseActivity.showProgress(ProgressSetting.getDefault().setMessage(message));
+    }
+    
+    protected TextView newTextAction(CharSequence text, OnClickListener listener) {
+        TextView tv = new TextView(getContext());
+        tv.setText(text);
+        tv.setTextColor(getResources().getColorStateList(R.color.title_bar_action));
+        if (listener != null) tv.setOnClickListener(listener);
+        return tv;
     }
 }

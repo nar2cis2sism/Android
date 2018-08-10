@@ -11,7 +11,7 @@ import engine.android.util.file.FileManager;
 
 import org.json.JSONObject;
 
-import protocol.java.EntityUtil;
+import protocol.util.EntityUtil;
 
 import java.io.ByteArrayOutputStream;
 

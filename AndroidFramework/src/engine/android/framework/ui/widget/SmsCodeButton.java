@@ -11,6 +11,8 @@ import engine.android.framework.R;
  * “获取验证码”的按钮
  *
  * @author Daimon
+ * @version N
+ * @since 6/6/2014
  */
 public class SmsCodeButton extends Button {
     

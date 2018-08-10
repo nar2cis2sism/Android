@@ -13,6 +13,9 @@ public interface Actions {
     /** 用户登录 **/
     String LOGIN = "login";
 
+    /** 用户注销 **/
+    String LOGOUT = "logout";
+
     /** 获取手机验证码 **/
     String GET_SMS_CODE = "get_sms_code";
     

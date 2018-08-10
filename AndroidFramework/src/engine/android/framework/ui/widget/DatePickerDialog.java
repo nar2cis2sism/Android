@@ -16,6 +16,13 @@ import engine.android.widget.common.wheel.WheelView;
 
 import java.util.Calendar;
 
+/**
+ * 日期选择对话框
+ * 
+ * @author Daimon
+ * @version N
+ * @since 6/6/2014
+ */
 public class DatePickerDialog extends AlertDialog implements OnWheelChangedListener, OnClickListener {
     
     private static final int MIN_YEAR = 1901;
@@ -44,11 +51,14 @@ public class DatePickerDialog extends AlertDialog implements OnWheelChangedListe
         this(context, listener, null);
     }
 
+    /**
+     * @param date 初始显示日期
+     */
     public DatePickerDialog(Context context, OnDateSetListener listener, Calendar date) {
         super(context);
         this.listener = listener;
 
-        setTitle(context.getString(R.string.dialog_date_picker_title));
+        setTitle(context.getString(R.string.date_picker_title));
         
         View view = LayoutInflater.from(context).inflate(R.layout.date_picker_dialog, null);
         year = (WheelView) view.findViewById(R.id.year);

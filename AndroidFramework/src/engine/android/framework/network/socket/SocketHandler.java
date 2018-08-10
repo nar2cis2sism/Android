@@ -11,9 +11,10 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.os.SystemClock;
 
+import protocol.socket.SimpleData;
+
 import engine.android.framework.network.socket.SocketResponse.SocketTimeout;
 import engine.android.http.HttpConnector;
-import protocol.java.stream.BaseData;
 
 import java.util.concurrent.TimeUnit;
 
@@ -143,7 +144,7 @@ class SocketHandler {
             else
             {
                 lastTriggerTime = -1;
-                manager.sendSocketRequest(new BaseData(), null);
+                manager.sendSocketRequest(new SimpleData(), null);
             }
         }
     }

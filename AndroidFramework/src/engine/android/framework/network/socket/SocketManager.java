@@ -23,9 +23,9 @@ import engine.android.util.Util;
 import engine.android.util.secure.CRCUtil;
 import engine.android.util.secure.HexUtil;
 import engine.android.util.secure.Obfuscate;
-import protocol.java.ProtocolWrapper;
-import protocol.java.ProtocolWrapper.ProtocolEntity;
-import protocol.java.ProtocolWrapper.ProtocolEntity.ProtocolData;
+import protocol.util.ProtocolWrapper;
+import protocol.util.ProtocolWrapper.ProtocolEntity;
+import protocol.util.ProtocolWrapper.ProtocolEntity.ProtocolData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -185,6 +185,12 @@ public class SocketManager implements SocketConnectionListener, Callback {
     public void onError(Exception e) {
         log(e);
         socket.close();
+        
+        if (e instanceof SocketException)
+        {
+            return;
+        }
+        
         // 自动重连
         handler.reconnect(Util.getRandom(2000, 5000));
     }

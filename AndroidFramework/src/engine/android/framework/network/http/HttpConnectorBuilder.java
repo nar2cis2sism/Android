@@ -2,7 +2,7 @@ package engine.android.framework.network.http;
 
 import engine.android.http.HttpConnector;
 import engine.android.http.HttpRequest.HttpEntity;
-import protocol.java.EntityUtil;
+import protocol.util.EntityUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;

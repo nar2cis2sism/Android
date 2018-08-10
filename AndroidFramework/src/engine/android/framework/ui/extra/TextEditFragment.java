@@ -39,7 +39,6 @@ public class TextEditFragment extends BaseFragment {
     Params params;
     
     TextView save;
-    TextView number;
     EditText input;
     
     @Override
@@ -79,7 +78,7 @@ public class TextEditFragment extends BaseFragment {
     
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        number = (TextView) findViewById(R.id.number);
+        final TextView number = (TextView) findViewById(R.id.number);
         input = (EditText) findViewById(R.id.input);
         TextView description = (TextView) findViewById(R.id.description);
         
@@ -112,7 +111,7 @@ public class TextEditFragment extends BaseFragment {
                         }
                     }
                     
-                    setNumber(Math.round(maxEms / 2.0f));
+                    number.setText(String.valueOf(Math.round(maxEms / 2.0f)));
                 }
             });
         }
@@ -135,16 +134,12 @@ public class TextEditFragment extends BaseFragment {
         description.setText(params.desc);
     }
     
-    private void setNumber(int number) {
-        this.number.setText(String.valueOf(number));
-    }
-    
     /**
      * 监听文本变化
      * 
      * @param text 初始文本
      */
-    public void setListener(CharSequence text, Listener<CharSequence> listener) {
+    public void setListener(String text, Listener<String> listener) {
         super.setListener(text, listener);
     }
 }

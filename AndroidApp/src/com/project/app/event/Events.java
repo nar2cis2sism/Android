@@ -8,7 +8,7 @@ import engine.android.core.extra.EventBus.Event;
  * 
  * @author Daimon
  */
-public class Events {
+public final class Events {
 
     /** 网络切换 **/
     public static final String CONNECTIVITY_CHANGE = "CONNECTIVITY_CHANGE";

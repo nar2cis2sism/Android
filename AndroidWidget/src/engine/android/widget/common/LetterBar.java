@@ -13,11 +13,12 @@ import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.TextView;
 
 import engine.android.util.ui.FloatingWindow;
 import engine.android.widget.R;
-import engine.android.widget.base.CustomView;
+import engine.android.widget.base.CustomView.TouchEventDelegate;
 
 import java.util.Arrays;
 
@@ -28,7 +29,7 @@ import java.util.Arrays;
  * @version N
  * @since 6/6/2014
  */
-public class LetterBar extends CustomView {
+public class LetterBar extends View {
     
     private static final String INVALID_LETTER = "\u00b7";          // "·"
     

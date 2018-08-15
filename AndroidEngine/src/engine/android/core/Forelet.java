@@ -954,6 +954,22 @@ public class Forelet extends Activity implements TaskCallback {
         
         return handler;
     }
+    
+    /**
+     * 循环发送事件
+     * 
+     * @param period 循环周期
+     */
+    public final void postSchedule(final Runnable r, final long period) {
+        getHandler().postDelayed(new Runnable() {
+            
+            @Override
+            public void run() {
+                r.run();
+                getHandler().postDelayed(this, period);
+            }
+        }, period);
+    }
 }
 
 interface TaskCallback {

@@ -140,11 +140,6 @@ public class WheelView extends View {
         init(context);
     }
 
-    public WheelView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init(context);
-    }
-
     private void init(Context context) {
         gestureDetector = new GestureDetector(context, gestureListener);
         scroller = new Scroller(context);

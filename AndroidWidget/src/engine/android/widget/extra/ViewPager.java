@@ -36,14 +36,14 @@ public class ViewPager extends android.support.v4.view.ViewPager {
     }
     
     @Override
-    public boolean onTouchEvent(MotionEvent arg0) {
-        if (isSlidable) return super.onTouchEvent(arg0);
-        return false;
-    }
-    
-    @Override
     public boolean onInterceptTouchEvent(MotionEvent arg0) {
         if (isSlidable) return super.onInterceptTouchEvent(arg0);
+        return false;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent arg0) {
+        if (isSlidable) return super.onTouchEvent(arg0);
         return false;
     }
     

@@ -74,7 +74,7 @@ public class CustomView extends View {
             int x = (int) event.getX();
             int y = (int) event.getY();
             
-            switch (event.getAction()) {
+            switch (action) {
                 case MotionEvent.ACTION_DOWN:
                     return handleActionDown(event, lastMotionX = x, lastMotionY = y);
                 case MotionEvent.ACTION_MOVE:

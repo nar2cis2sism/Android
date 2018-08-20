@@ -97,19 +97,10 @@ public class CustomViewGroup extends ViewGroup {
         protected int lastMotionY;
 
         public boolean onInterceptTouchEvent(MotionEvent event) {
-            int action = event.getAction();
-            if (action == MotionEvent.ACTION_CANCEL)
-            {
-                releaseVelocityTracker();
-                return false;
-            }
-
-            obtainVelocityTracker().addMovement(event);
-
             int x = (int) event.getX();
             int y = (int) event.getY();
             
-            switch (action) {
+            switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     return interceptActionDown(event, lastMotionX = x, lastMotionY = y);
                 case MotionEvent.ACTION_MOVE:

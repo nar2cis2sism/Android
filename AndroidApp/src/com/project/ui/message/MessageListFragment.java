@@ -5,6 +5,7 @@ import static com.project.app.event.Events.CONNECTIVITY_CHANGE;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -13,6 +14,8 @@ import com.daimon.yueba.R;
 
 import engine.android.framework.ui.BaseListFragment;
 import engine.android.http.HttpConnector;
+import engine.android.util.ui.UIUtil;
+import engine.android.widget.common.list.PinnedHeaderListView;
 import engine.android.widget.component.TitleBar;
 
 /**
@@ -41,6 +44,18 @@ public class MessageListFragment extends BaseListFragment {
         .setTitle(R.string.message_title)
         .addAction(R.drawable.message_add)
         .show();
+    }
+    
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View root = super.onCreateView(inflater, container, savedInstanceState);
+        
+        PinnedHeaderListView listView = new PinnedHeaderListView(getContext());
+        listView.setPinnedHeaderView(R.layout.base_list_category);
+        listView.setOverScrollMode(ListView.OVER_SCROLL_NEVER);
+        
+        UIUtil.replace(root.findViewById(android.R.id.list), listView, null);
+        return root;
     }
     
     @Override

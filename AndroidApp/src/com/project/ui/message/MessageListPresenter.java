@@ -1,6 +1,9 @@
 package com.project.ui.message;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.view.View;
 import android.widget.TextView;
 
 import com.daimon.yueba.R;
@@ -10,6 +13,7 @@ import engine.android.core.BaseFragment.Presenter;
 import engine.android.core.extra.JavaBeanAdapter;
 import engine.android.core.extra.JavaBeanLoader;
 import engine.android.framework.ui.util.DateRange;
+import engine.android.widget.common.list.PinnedHeaderListView.PinnedHeaderAdapter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,7 +33,7 @@ public class MessageListPresenter extends Presenter<MessageListFragment> {
     }
 }
 
-class MessageListAdapter extends JavaBeanAdapter<MessageListItem> {
+class MessageListAdapter extends JavaBeanAdapter<MessageListItem> implements PinnedHeaderAdapter {
 
     public MessageListAdapter(Context context) {
         super(context, R.layout.message_list_item);
@@ -61,6 +65,51 @@ class MessageListAdapter extends JavaBeanAdapter<MessageListItem> {
 
         // 消息
         ((TextView) holder.getView(R.id.content)).setText(item.message);
+    }
+
+    @Override
+    public boolean getPinnedHeaderState(int position) {
+        return getItem(position + 1).category != getItem(position).category;
+    }
+
+    @Override
+    public void configurePinnedHeader(View header, int position, float visibleRatio) {
+        PinnedHeaderCache cache = (PinnedHeaderCache) header.getTag();
+        if (cache == null)
+        {
+            cache = new PinnedHeaderCache();
+            cache.category = ((TextView) header);
+            cache.color = cache.category.getTextColors();
+            header.setTag(cache);
+        }
+        
+        DateRange category = getItem(position).category;
+        if (category != null)
+        {
+            cache.category.setText(category.getLabel());
+            header.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            header.setVisibility(View.GONE);
+        }
+        
+        if (visibleRatio == 1.0f)
+        {
+            cache.category.setTextColor(cache.color);
+        }
+        else
+        {
+            int color = cache.color.getDefaultColor();
+            cache.category.setTextColor(Color.argb((int) (0xff * visibleRatio), 
+                    Color.red(color), Color.green(color), Color.blue(color)));
+        }
+    }
+    
+    private static class PinnedHeaderCache {
+        
+        public TextView category;
+        public ColorStateList color;
     }
 }
 

@@ -3,10 +3,18 @@ package com.project.storage.provider;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+/**
+ * Contains definitions for the supported URIs and columns.
+ * 
+ * @author Daimon
+ */
 public final class ProviderContract {
     
+    /** The authority for the provider */
+    public static final String AUTHORITY = "app.provider";
+    
     /** A content:// style uri to the authority for the provider */
-    private static final Uri AUTHORITY_URI = Uri.parse("content://" + MyContentProvider.AUTHORITY);
+    public static final Uri AUTHORITY_URI = Uri.parse("content://" + AUTHORITY);
     
     protected interface SortingColumns {
 
@@ -14,26 +22,26 @@ public final class ProviderContract {
          * 排序字段
          * <P>Type: TEXT</P>
          */
-        public static final String SORTING = "sorting";
+        String SORTING = "sorting";
     }
 
     /**
      * @see User
      */
-    public interface UserColumns extends BaseColumns {
+    public interface UserColumns {
 
-        public static final String USERNAME = "username";
-        public static final String NICKNAME = "nickname";
-        public static final String IS_FEMALE = "isFemale";
-        public static final String BIRTHDAY = "birthday";
-        public static final String REGION = "region";
-        public static final String REGION_CODE = "region_code";
-        public static final String SIGNATURE = "signature";
-        public static final String IS_AUTHENTICATED = "isAuthenticated";
-        public static final String VERSION = "version";
-        public static final String AVATAR_URL = "avatar_url";
-        public static final String AVATAR_VER = "avatar_ver";
-        public static final String FRIEND_LIST_TIMESTAMP = "friend_list_timestamp";
+        String USERNAME = "username";
+        String NICKNAME = "nickname";
+        String IS_FEMALE = "isFemale";
+        String BIRTHDAY = "birthday";
+        String REGION = "region";
+        String REGION_CODE = "region_code";
+        String SIGNATURE = "signature";
+        String IS_AUTHENTICATED = "isAuthenticated";
+        String VERSION = "version";
+        String AVATAR_URL = "avatar_url";
+        String AVATAR_VER = "avatar_ver";
+        String FRIEND_LIST_TIMESTAMP = "friend_list_timestamp";
     }
 
     public static final class User implements UserColumns {
@@ -56,12 +64,14 @@ public final class ProviderContract {
      */
     public interface FriendColumns extends SortingColumns {
 
-        public static final String ACCOUNT = "account";
-        public static final String NICK_NAME = "nick_name";
-        public static final String SIGNATURE = "signature";
-        public static final String AVATAR_URL = "avatar_url";
-        public static final String DISPLAY_NAME = "display_name";
-        public static final String PINYIN = "pinyin";
+        String ACCOUNT = "account";
+        String NICKNAME = "nickname";
+        String SIGNATURE = "signature";
+        String VERSION = "version";
+        String AVATAR_URL = "avatar_url";
+        String AVATAR_VER = "avatar_ver";
+        String DISPLAY_NAME = "display_name";
+        String PINYIN = "pinyin";
     }
 
     public static final class Friend implements FriendColumns {
@@ -84,14 +94,14 @@ public final class ProviderContract {
      */
     public interface MessageColumns extends BaseColumns {
 
-        public static final String ID = "id";
-        public static final String ACCOUNT = "account";
-        public static final String CONTENT = "content";
-        public static final String TYPE = "type";
-        public static final String EVENT = "event";
-        public static final String CREATION_TIME = "creationTime";
-        public static final String IS_RECEIVED = "isReceived";
-        public static final String SEND_STATUS = "sendStatus";
+        String ID = "id";
+        String ACCOUNT = "account";
+        String CONTENT = "content";
+        String TYPE = "type";
+        String EVENT = "event";
+        String CREATION_TIME = "creationTime";
+        String IS_RECEIVED = "isReceived";
+        String SEND_STATUS = "sendStatus";
     }
 
     public static final class Message implements MessageColumns {

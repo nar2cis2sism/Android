@@ -35,14 +35,11 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
     ViewHolder about;
     
     FastClickCounter counter = new FastClickCounter(7);     // 日志上传后门
-//    User user;
-//    
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         enableReceiveEvent(LOGOUT);
-//        addPresenter(new PhotoPresenter(this));
-//        user = Util.clone(MySession.getUser());
     }
     
     @Override
@@ -60,18 +57,14 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
                 R.layout.setting_fragment, container, false);
         
         // 修改密码
-        password = addComponent(root, inflater, 
-                R.string.setting_password, NO_TEXT, true);
+        password = addComponent(root, inflater, R.string.setting_password, NO_TEXT, true);
         // 绑定手机
-        phone = addComponent(root, inflater, 
-                R.string.setting_phone, NO_TEXT, true);
+        phone = addComponent(root, inflater, R.string.setting_phone, NO_TEXT, true);
         // 版本更新
-        version = addComponent(root, inflater, 
-                R.string.setting_version, NO_TEXT, true);
+        version = addComponent(root, inflater, R.string.setting_version, NO_TEXT, true);
         version.getConvertView().setOnClickListener(this);
         // 关于我们
-        about = addComponent(root, inflater, 
-                R.string.setting_about, NO_TEXT, true);
+        about = addComponent(root, inflater, R.string.setting_about, NO_TEXT, true);
         about.getConvertView().setOnClickListener(this);
         // 退出登录按钮换位
         View logout = root.findViewById(R.id.logout);
@@ -113,7 +106,7 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
             MySession.setUser(null);
             
             MyApp.getApp().popupAllActivities();
-            getBaseActivity().startFragment(LoginFragment.class);
+            startFragment(LoginFragment.class);
         }
     }
 }

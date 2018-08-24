@@ -77,6 +77,8 @@
     <string name="authentication_introduction">请务必上传真实资料，以免影响使用</string>
     <string name="authentication_commit">提交</string>
     <string name="authentication_finish">页面在%d秒后自动关闭</string>
+    <string name="authentication_yes">已认证</string>
+    <string name="authentication_no">未认证</string>
     
     <!-- Me -->
     <string name="me_title">个人信息</string>

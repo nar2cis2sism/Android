@@ -2,12 +2,16 @@ package com.project.storage.db;
 
 import android.text.TextUtils;
 
+import com.project.app.bean.ServerUrl;
+import com.project.app.config.ImageTransformer;
 import com.project.storage.provider.ProviderContract.FriendColumns;
 import com.project.util.MyValidator;
 
 import engine.android.dao.DAOTemplate;
 import engine.android.dao.annotation.DAOPrimaryKey;
 import engine.android.dao.annotation.DAOProperty;
+import engine.android.dao.annotation.DAOTable;
+import engine.android.framework.app.image.ImageManager.ImageUrl;
 
 import net.sourceforge.pinyin4j.lite.PinyinHelper;
 
@@ -18,40 +22,39 @@ import protocol.http.FriendSync;
  * 
  * @author Daimon
  */
-//@DAOTable(name=com.project.storage.provider.ProviderContract.Friend.TABLE)
-public class Friend {
-
+@DAOTable(name=com.project.storage.provider.ProviderContract.Friend.TABLE)
+public class Friend implements FriendColumns {
     
-    @DAOPrimaryKey(column=FriendColumns.ACCOUNT)
+    @DAOPrimaryKey(column=ACCOUNT)
     public String account;                      // 账号
 
-    @DAOProperty(column=FriendColumns.NICK_NAME)
+    @DAOProperty(column=NICKNAME)
     public String nickname;                     // 昵称
 
-    @DAOProperty(column=FriendColumns.SIGNATURE)
+    @DAOProperty(column=SIGNATURE)
     public String signature;                    // 签名
 
-//    @DAOProperty(column=FriendColumns.VERSION)
-//    public long version;                        // 好友信息版本号
+    @DAOProperty(column=VERSION)
+    public long version;                        // 好友信息版本号
 
-    @DAOProperty(column=FriendColumns.AVATAR_URL)
+    @DAOProperty(column=AVATAR_URL)
     public String avatar_url;                   // 头像下载地址
 
-//    @DAOProperty(column=FriendColumns.AVATAR_VER)
-//    public long avatar_ver;                     // 头像版本号
+    @DAOProperty(column=AVATAR_VER)
+    public long avatar_ver;                     // 头像版本号
 
-    @DAOProperty(column=FriendColumns.DISPLAY_NAME)
+    @DAOProperty(column=DISPLAY_NAME)
     public String displayName;                  // 显示名称
 
-    @DAOProperty(column=FriendColumns.PINYIN)
+    @DAOProperty(column=PINYIN)
     public String pinyin;                       // 汉字全拼（小写）
     
-    /************************* 排序字段 *************************/
+    /******************************* 排序字段 *******************************/
 
     public static final int SORT_ENGLISH    = 0;
     public static final int SORT_OTHER      = 1;
 
-    @DAOProperty(column=FriendColumns.SORTING)
+    @DAOProperty(column=SORTING)
     public String sorting;
 
     /**
@@ -105,6 +108,16 @@ public class Friend {
     }
 
     /******************************* 华丽丽的分割线 *******************************/
+    
+    public ImageUrl getAvatarUrl() {
+        if (avatar_ver == 0)
+        {
+            return null;
+        }
+        
+        return new ImageUrl(ImageTransformer.TYPE_AVATAR,
+                ServerUrl.getDownloadUrl(avatar_url), String.valueOf(avatar_ver));
+    }
 
     /**
      * 获取排序分类

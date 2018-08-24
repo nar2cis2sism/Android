@@ -18,6 +18,7 @@ import engine.android.core.extra.SplashScreen;
 import engine.android.core.extra.SplashScreen.SplashCallback;
 import engine.android.core.extra.SplashScreen.SplashLoading;
 import engine.android.framework.ui.BaseActivity;
+import engine.android.framework.ui.extra.SinglePaneActivity;
 
 /**
  * 启动界面
@@ -78,13 +79,13 @@ public class LaunchActivity extends BaseActivity implements SplashCallback, Spla
             }
             else
             {
-                startFragment(LoginFragment.class);
+                startActivity(SinglePaneActivity.buildIntent(this, LoginFragment.class, null));
             }
         }
         else
         {
             // 显示引导页
-            startFragment(GuideFragment.class);
+            startActivity(SinglePaneActivity.buildIntent(this, GuideFragment.class, null));
         }
         
         finish();

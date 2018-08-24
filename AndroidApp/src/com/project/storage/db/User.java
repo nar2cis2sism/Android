@@ -2,6 +2,8 @@ package com.project.storage.db;
 
 import android.text.TextUtils;
 
+import com.daimon.yueba.R;
+import com.project.app.MyContext;
 import com.project.app.bean.ServerUrl;
 import com.project.app.config.ImageTransformer;
 import com.project.storage.provider.ProviderContract.UserColumns;
@@ -20,40 +22,40 @@ import protocol.http.UserInfo;
 @DAOTable(name=com.project.storage.provider.ProviderContract.User.TABLE)
 public class User implements UserColumns {
     
-    @DAOPrimaryKey(column=UserColumns.USERNAME)
+    @DAOPrimaryKey(column=USERNAME)
     public String username;                 // 用户名
 
-    @DAOProperty(column=UserColumns.NICKNAME)
+    @DAOProperty(column=NICKNAME)
     public String nickname;                 // 用户昵称
     
-    @DAOProperty(column=UserColumns.IS_FEMALE)
+    @DAOProperty(column=IS_FEMALE)
     public boolean isFemale;                // 性别[True:女,False:男]
 
-    @DAOProperty(column=UserColumns.BIRTHDAY)
+    @DAOProperty(column=BIRTHDAY)
     public long birthday;                   // 出生日期
 
-    @DAOProperty(column=UserColumns.REGION)
+    @DAOProperty(column=REGION)
     public String region;                   // 地区名称
 
-    @DAOProperty(column=UserColumns.REGION_CODE)
+    @DAOProperty(column=REGION_CODE)
     public String region_code;              // 区域编码
 
-    @DAOProperty(column=UserColumns.SIGNATURE)
+    @DAOProperty(column=SIGNATURE)
     public String signature;                // 签名
 
-    @DAOProperty(column=UserColumns.IS_AUTHENTICATED)
+    @DAOProperty(column=IS_AUTHENTICATED)
     public boolean isAuthenticated;         // 实名认证
 
-    @DAOProperty(column=UserColumns.VERSION)
+    @DAOProperty(column=VERSION)
     public long version;                    // 用户信息版本号
 
-    @DAOProperty(column=UserColumns.AVATAR_URL)
+    @DAOProperty(column=AVATAR_URL)
     public String avatar_url;               // 头像下载地址
 
-    @DAOProperty(column=UserColumns.AVATAR_VER)
+    @DAOProperty(column=AVATAR_VER)
     public long avatar_ver;                 // 头像版本号
 
-    @DAOProperty(column=UserColumns.FRIEND_LIST_TIMESTAMP)
+    @DAOProperty(column=FRIEND_LIST_TIMESTAMP)
     public long friend_list_timestamp;      // 好友列表同步时间戳
 
     /**
@@ -91,7 +93,8 @@ public class User implements UserColumns {
     /******************************* 华丽丽的分割线 *******************************/
     
     public String getGenderText() {
-        return isFemale ? "女" : "男";
+        return MyContext.getResources().getString(isFemale
+             ? R.string.gender_female : R.string.gender_male);
     }
     
     public String getBirthdayText() {
@@ -104,7 +107,8 @@ public class User implements UserColumns {
     }
     
     public String getAuthenticationText() {
-        return isAuthenticated ? "已认证" : "未认证";
+        return MyContext.getResources().getString(isAuthenticated
+             ? R.string.authentication_yes : R.string.authentication_no);
     }
     
     public ImageUrl getAvatarUrl() {
@@ -113,6 +117,7 @@ public class User implements UserColumns {
             return null;
         }
         
-        return new ImageUrl(ImageTransformer.TYPE_AVATAR, ServerUrl.getDownloadUrl(avatar_url), String.valueOf(avatar_ver));
+        return new ImageUrl(ImageTransformer.TYPE_AVATAR,
+                ServerUrl.getDownloadUrl(avatar_url), String.valueOf(avatar_ver));
     }
 }

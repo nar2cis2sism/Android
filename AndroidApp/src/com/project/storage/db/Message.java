@@ -11,18 +11,18 @@ import engine.android.dao.annotation.DAOTable;
  * 收发消息
  */
 @DAOTable(name=com.project.storage.provider.ProviderContract.Message.TABLE)
-public class Message {
+public class Message implements MessageColumns {
     
-    @DAOPrimaryKey(column=MessageColumns._ID, autoincrement=true)
+    @DAOPrimaryKey(column=_ID, autoincrement=true)
     private long _id;
 
-    @DAOProperty(column=MessageColumns.ID)
+    @DAOProperty(column=ID)
     public String id;                       // 消息ID，用于排重
 
-    @DAOProperty(column=MessageColumns.ACCOUNT)
+    @DAOProperty(column=ACCOUNT)
     public String account;                  // 发送/接收方账号
 
-    @DAOProperty(column=MessageColumns.CONTENT)
+    @DAOProperty(column=CONTENT)
     public String content;                  // 消息内容
     
     /**
@@ -34,7 +34,7 @@ public class Message {
      * 5：位置
      * 6：名片
      */
-    @DAOProperty(column=MessageColumns.TYPE)
+    @DAOProperty(column=TYPE)
     public int type;                        // 消息类型
     
     /**
@@ -43,15 +43,15 @@ public class Message {
      * 2：系统消息
      * 3：公众平台
      */
-    @DAOProperty(column=MessageColumns.EVENT)
+    @DAOProperty(column=EVENT)
     public int event;                       // 消息事件
 
-    @DAOProperty(column=MessageColumns.CREATION_TIME)
+    @DAOProperty(column=CREATION_TIME)
     public long creationTime;               // 消息创建时间
 
     /******************************* 华丽丽的分割线 *******************************/
     
-    @DAOProperty(column=MessageColumns.IS_RECEIVED)
+    @DAOProperty(column=IS_RECEIVED)
     public boolean isReceived;              // True:接收消息,False:发送消息
 
     /**
@@ -59,7 +59,7 @@ public class Message {
      * 1：未发送成功
      * 2：消息已送达
      */
-    @DAOProperty(column=MessageColumns.SEND_STATUS)
+    @DAOProperty(column=SEND_STATUS)
     public int sendStatus;                  // 消息发送状态
 
     /**

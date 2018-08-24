@@ -19,7 +19,7 @@ import engine.android.framework.app.AppConfig;
 interface IConfiguration {
     
     /** 单机不联网 **/
-    boolean NET_OFF = false;
+    boolean NET_OFF = true;
 
     /** 打印协议 **/
     boolean NET_LOG_PROTOCOL = true;

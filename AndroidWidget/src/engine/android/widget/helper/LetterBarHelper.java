@@ -57,11 +57,22 @@ public class LetterBarHelper implements OnLetterChangedListener {
 
     @Override
     public void onLetterChanged(String letter) {
-        if (listView == null) return;
-        Integer index = getIndex(letter);
-        if (index == null) return;
+        if (listView == null)
+        {
+            return;
+        }
         
-        if (index < 0) index = 0;
+        Integer index = getIndex(letter);
+        if (index == null)
+        {
+            return;
+        }
+        
+        if (index < 0)
+        {
+            index = 0;
+        }
+        
         listView.setSelection(index);
     }
 }

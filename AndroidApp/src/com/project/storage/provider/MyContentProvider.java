@@ -1,5 +1,7 @@
 package com.project.storage.provider;
 
+import static com.project.storage.provider.ProviderContract.AUTHORITY;
+
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
@@ -21,10 +23,12 @@ import engine.android.dao.DAOTemplate;
 
 import java.util.ArrayList;
 
+/**
+ * Share data between multiple applications. 
+ * 
+ * @author Daimon
+ */
 public class MyContentProvider extends ContentProvider {
-    
-    /** The authority for the provider */
-    public static final String AUTHORITY = "app.provider";
     
     private static final UriMatcher matcher;
     
@@ -44,12 +48,12 @@ public class MyContentProvider extends ContentProvider {
         // 第二个参数是要匹配的路径，#代表任意数字，另外还可以用*来匹配任意文本
         // 第三个参数必须传入一个大于零的匹配码，用于match()方法对相匹配的URI返回相对应的匹配码
         matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        
-        // 对外暴露的表需要在这里注册
-//        registerTable(Friend.TABLE);
     }
     
-    private static void registerTable(String table) {
+    /**
+     * 对外暴露的表需要通过此函数注册
+     */
+    public static void registerTable(String table) {
         matcher.addURI(AUTHORITY, table, ITEM);
         matcher.addURI(AUTHORITY, table + "/#", ITEM_ID);
     }

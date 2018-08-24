@@ -96,15 +96,13 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         gender = addComponent(root, inflater, R.string.me_gender, user.getGenderText(), false);
         gender.getConvertView().setOnClickListener(this);
         // 生日
-        birthday = addComponent(root, inflater, R.string.me_birthday, 
-                user.birthday != 0 ? user.getBirthdayText() : getString(R.string.me_no_value), false);
+        birthday = addComponent(root, inflater, R.string.me_birthday, user.birthday != 0 ? user.getBirthdayText() : getString(R.string.me_no_value), false);
         birthday.getConvertView().setOnClickListener(this);
         // 地区
         region = addComponent(root, inflater, R.string.me_region, user.region, false);
         region.getConvertView().setOnClickListener(this);
         // 个性签名
-        signature = addComponent(root, inflater, R.string.me_signature, 
-                Util.getString(user.signature, getString(R.string.me_no_value)), false);
+        signature = addComponent(root, inflater, R.string.me_signature, Util.getString(user.signature, getString(R.string.me_no_value)), false);
         signature.getConvertView().setOnClickListener(this);
         
         return root;
@@ -140,7 +138,6 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 CropAttribute attr = new CropAttribute().saveToFile();
-                
                 switch (which) {
                     case 0:
                         getPresenter(PhotoPresenter.class).takePhoto(true, attr);
@@ -156,15 +153,15 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         getBaseActivity().showDialog("pick_image", dialog);
     }
 
-    @OnClick(R.id.avatar)
-    void viewAvatar() {
-        getBaseActivity().startFragment(ViewImageFragment.class);
-    }
-
     @Override
     public void onPhotoCapture(PhotoInfo info) {
         showProgress(getString(R.string.progress_upload_avatar));
         getBaseActivity().sendHttpRequest(new UploadAvatar(info));
+    }
+
+    @OnClick(R.id.avatar)
+    void viewAvatar() {
+        startFragment(ViewImageFragment.class);
     }
 
     @Override

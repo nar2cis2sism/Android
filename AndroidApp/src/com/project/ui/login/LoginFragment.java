@@ -174,7 +174,7 @@ public class LoginFragment extends BaseFragment {
     
     @OnClick(R.id.register)
     void register() {
-        getBaseActivity().startFragment(RegisterFragment.class);
+        startFragment(RegisterFragment.class);
     }
 
     /******************************* 获取导航配置 *******************************/

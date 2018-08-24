@@ -87,7 +87,7 @@ public class AuthenticationFragment extends BaseFragment implements OnItemClickL
         }
         else
         {
-            getBaseActivity().startFragment(ViewImageFragment.class);
+            startFragment(ViewImageFragment.class);
         }
     }
     

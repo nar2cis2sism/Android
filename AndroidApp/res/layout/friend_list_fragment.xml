@@ -1,10 +1,18 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:widget="http://schemas.android.com/apk/res-auto" >
             
-    <ListView android:id="@android:id/list"
+    <ListView 
+        android:id="@android:id/list"
+        android:layout_width="match_parent" 
+        android:layout_height="match_parent" />
+            
+    <engine.android.widget.extra.MyExpandableListView 
+        android:id="@+id/expandable_list"
         android:layout_width="match_parent" 
         android:layout_height="match_parent"
-        android:drawSelectorOnTop="false" />
+        
+        android:listSelector="@android:color/transparent"
+        android:groupIndicator="@null" />
    
     <engine.android.widget.common.LetterBar 
         android:id="@+id/letter_bar"

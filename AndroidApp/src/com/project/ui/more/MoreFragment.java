@@ -1,7 +1,6 @@
 package com.project.ui.more;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,13 +33,10 @@ public class MoreFragment extends BaseInfoFragment {
 
     @InjectView(R.id.avatar)
     ImageView avatar;
-    
     @InjectView(R.id.name)
     TextView name;
-
     @InjectView(R.id.authentication)
     TextView authentication;
-    
     @InjectView(R.id.signature)
     TextView signature;
     
@@ -55,6 +51,7 @@ public class MoreFragment extends BaseInfoFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         user = MySession.getUser();
     }
     
@@ -66,7 +63,7 @@ public class MoreFragment extends BaseInfoFragment {
             
             @Override
             public void onClick(View v) {
-                getBaseActivity().startFragment(SettingFragment.class);
+                startFragment(SettingFragment.class);
             }
         })
         .show();
@@ -80,44 +77,17 @@ public class MoreFragment extends BaseInfoFragment {
         addCategory(root);
         
         // 我的二维码
-        qrcode = addComponent(root, inflater, 
-                R.drawable.more_qrcode, R.string.more_qrcode);
+        qrcode = addComponent(root, inflater, R.drawable.more_qrcode, R.string.more_qrcode);
         // 我的钱包
-        wallet = addComponent(root, inflater, 
-                R.drawable.more_wallet, R.string.more_wallet);
+        wallet = addComponent(root, inflater, R.drawable.more_wallet, R.string.more_wallet);
         // 订单状态
-        order = addComponent(root, inflater, 
-                R.drawable.more_order, R.string.more_order);
+        order = addComponent(root, inflater, R.drawable.more_order, R.string.more_order);
         // 我的评价
-        evaluation = addComponent(root, inflater, 
-                R.drawable.more_evaluation, R.string.more_evaluation);
+        evaluation = addComponent(root, inflater, R.drawable.more_evaluation, R.string.more_evaluation);
         // 消息中心
-        message = addComponent(root, inflater, 
-                R.drawable.more_message, R.string.more_message);
+        message = addComponent(root, inflater, R.drawable.more_message, R.string.more_message);
         
         return root;
-    }
-    
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        // 个人信息
-        setupHeader();
-    }
-    
-    private void setupHeader() {
-        avatar = AvatarImageView.display(avatar, user.getAvatarUrl());
-        name.setText(user.nickname);
-        authentication.setText(user.getAuthenticationText());
-        if (TextUtils.isEmpty(user.signature))
-        {
-            signature.setVisibility(View.GONE);
-        }
-        else
-        {
-            signature.setVisibility(View.VISIBLE);
-            signature.setText(user.signature);
-        }
     }
     
     private ViewHolder addComponent(ViewGroup root, LayoutInflater inflater, 
@@ -141,14 +111,28 @@ public class MoreFragment extends BaseInfoFragment {
         
         return holder;
     }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // 个人信息
+        setupHeader();
+    }
+    
+    private void setupHeader() {
+        avatar = AvatarImageView.display(avatar, user.getAvatarUrl());
+        name.setText(user.nickname);
+        authentication.setText(user.getAuthenticationText());
+        UIUtil.setTextVisible(signature, user.signature);
+    }
     
     @OnClick(R.id.header)
     void toMe() {
-        getBaseActivity().startFragment(MeFragment.class);
+        startFragment(MeFragment.class);
     }
     
     @OnClick(R.id.authentication)
     void authentication() {
-        getBaseActivity().startFragment(AuthenticationFragment.class);
+        startFragment(AuthenticationFragment.class);
     }
 }

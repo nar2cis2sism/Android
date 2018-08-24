@@ -1,9 +1,11 @@
 <resources>
     
     <string-array name="gender">
-        <item>男</item>
-        <item>女</item>
+        <item>@string/gender_male</item>
+        <item>@string/gender_female</item>
     </string-array>
+    <string name="gender_male">男</string>
+    <string name="gender_female">女</string>
     
     <string-array name="pick_image">
         <item>拍照</item>

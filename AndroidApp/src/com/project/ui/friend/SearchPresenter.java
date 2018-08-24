@@ -11,6 +11,7 @@ import com.project.app.bean.FriendListItem;
 import engine.android.core.BaseFragment.Presenter;
 import engine.android.core.extra.JavaBeanAdapter;
 import engine.android.core.extra.JavaBeanAdapter.FilterMatcher;
+import engine.android.framework.ui.widget.AvatarImageView;
 import engine.android.widget.component.SearchBox.SearchProvider;
 
 public class SearchPresenter extends Presenter<FriendListFragment> implements SearchProvider, FilterListener {
@@ -29,7 +30,8 @@ public class SearchPresenter extends Presenter<FriendListFragment> implements Se
         {
             if (isSearching)
             {
-                getCallbacks().switchSearchMode(isSearching = false);
+                isSearching = false;
+                getCallbacks().updateView();
                 getCallbacks().search_empty.setVisibility(View.GONE);
             }
         }
@@ -44,7 +46,7 @@ public class SearchPresenter extends Presenter<FriendListFragment> implements Se
     public void onFilterComplete(int count) {
         if (isSearching)
         {
-            getCallbacks().switchSearchMode(isSearching);
+            getCallbacks().updateView();
             getCallbacks().search_empty.setVisibility(count == 0 ? View.VISIBLE : View.GONE);
         }
     }
@@ -60,19 +62,19 @@ class SearchAdapter extends JavaBeanAdapter<FriendListItem> implements FilterMat
     @Override
     protected void bindView(int position, ViewHolder holder, FriendListItem item) {
         // 好友头像
-        holder.setImageView(R.id.icon, R.drawable.avatar_default);
+        AvatarImageView.display(holder, R.id.icon, item.avatarUrl);
         // 名称
-        holder.setTextView(R.id.subject, item.getName());
+        holder.setTextView(R.id.subject, item.friend.displayName);
         //
         holder.setVisible(R.id.note, false);
     }
 
     @Override
     public boolean match(FriendListItem item, CharSequence constraint) {
-        return match(item.getPinyin(), constraint) || match(item.getName(), constraint);
+        return match(item.friend.pinyin, constraint) || match(item.friend.displayName, constraint);
     }
     
-    private boolean match(String text, CharSequence constraint) {
+    private static boolean match(String text, CharSequence constraint) {
         return !TextUtils.isEmpty(text) && text.contains(constraint);
     }
 }

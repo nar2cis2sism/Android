@@ -3,6 +3,7 @@ package engine.android.framework.ui;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import engine.android.core.extra.EventBus.Event;
 import engine.android.core.extra.EventBus.EventHandler;
 import engine.android.framework.R;
 import engine.android.framework.network.ConnectionStatus;
+import engine.android.framework.ui.extra.SinglePaneActivity;
 import engine.android.framework.util.GsonUtil;
 import engine.android.util.Util;
 import engine.android.widget.component.TitleBar;
@@ -75,6 +77,22 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
     
     public final BaseActivity getBaseActivity() {
         return baseActivity;
+    }
+
+    /**
+     * Provide a convenient way to start fragment wrapped in {@link SinglePaneActivity}
+     * (需要在Manifest中注册)
+     */
+    public void startFragment(Class<? extends Fragment> fragmentCls) {
+        startFragment(fragmentCls, null);
+    }
+    
+    /**
+     * Provide a convenient way to start fragment wrapped in {@link SinglePaneActivity}
+     * (需要在Manifest中注册)
+     */
+    public void startFragment(Class<? extends Fragment> fragmentCls, Bundle args) {
+        startActivity(SinglePaneActivity.buildIntent(getContext(), fragmentCls, args));
     }
 
     /******************************* EventBus *******************************/

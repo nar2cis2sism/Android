@@ -2,6 +2,7 @@ package engine.android.util.ui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -179,6 +180,21 @@ public final class UIUtil {
         }
 
         return false;
+    }
+    
+    /**
+     * 有文本时显示/无文本时隐藏控件
+     */
+    public static void setTextVisible(TextView view, CharSequence text) {
+        if (TextUtils.isEmpty(text))
+        {
+            view.setVisibility(View.GONE);
+        }
+        else
+        {
+            view.setVisibility(View.VISIBLE);
+            view.setText(text);
+        }
     }
     
     /**

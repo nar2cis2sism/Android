@@ -44,7 +44,7 @@ public class MessageDAO extends BaseDAO implements MessageColumns {
     }
     
     /**
-     * 发送消息状态
+     * 发送消息成功/失败
      */
     public static void sendoutMessage(Message msg, boolean success) {
         msg.sendStatus = success ? 2 : 1;

@@ -83,7 +83,7 @@ public class MessageListFragment extends BaseListFragment {
     
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        getBaseActivity().startFragment(MessageFragment.class);
+        startFragment(MessageFragment.class);
     }
     
     @Override

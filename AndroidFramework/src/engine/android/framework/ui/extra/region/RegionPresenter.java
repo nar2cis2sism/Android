@@ -1,27 +1,24 @@
-package com.project.ui.more.region;
+package engine.android.framework.ui.extra.region;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.text.TextUtils;
 
-import com.daimon.yueba.R;
-import com.project.storage.RegionDataBase;
-import com.project.storage.db.Region;
-
 import engine.android.core.BaseFragment.Presenter;
 import engine.android.core.extra.JavaBeanAdapter.JavaBeanCursorAdapter;
 import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
 import engine.android.dao.DAOTemplate;
+import engine.android.framework.R;
 import engine.android.util.ui.CursorLoader;
 
-public class RegionPresenter extends Presenter<RegionFragment> {
+class RegionPresenter extends Presenter<RegionFragment> {
     
     private static final int PROVINCE   = 0;        // 省级
     private static final int CITY       = 1;        // 市级
     private static final int REGION     = 2;        // 区级
     
     RegionAdapter adapter;
-    RegionLoader  loader;
+    RegionLoader loader;
     
     int level;                                      // 当前地方级别
     String[] regionName = new String[REGION + 1];   // 当前地级名称
@@ -116,7 +113,7 @@ class RegionAdapter extends JavaBeanCursorAdapter {
 class RegionLoader extends CursorLoader {
 
     public RegionLoader(Context context) {
-        super(context, RegionDataBase.getDAO());
+        super(context, RegionDataBase.open(context));
         setTable(RegionDataBase.TABLE);
         setSelection(Region.REGION_CODE + " LIKE ? AND " + Region.REGION_CODE + " <> ?");
         setRegionCode(null);

@@ -14,6 +14,7 @@ import engine.android.dao.annotation.DAOPrimaryKey;
 import engine.android.dao.annotation.DAOProperty;
 import engine.android.dao.annotation.DAOTable;
 import engine.android.framework.app.image.ImageManager.ImageUrl;
+import engine.android.framework.ui.extra.region.Region;
 import protocol.http.UserInfo;
 
 /**

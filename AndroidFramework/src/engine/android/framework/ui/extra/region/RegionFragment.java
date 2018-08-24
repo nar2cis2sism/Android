@@ -1,4 +1,4 @@
-package com.project.ui.more.region;
+package engine.android.framework.ui.extra.region;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,10 +8,8 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
-import com.daimon.yueba.R;
-import com.project.storage.db.Region;
-
 import engine.android.core.Forelet.OnBackListener;
+import engine.android.framework.R;
 import engine.android.framework.ui.BaseListFragment;
 import engine.android.util.AndroidUtil;
 import engine.android.util.ui.ListViewState;
@@ -65,12 +63,6 @@ public class RegionFragment extends BaseListFragment implements OnBackListener {
     }
     
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        state.save();
-        presenter.onListItemClick(position);
-    }
-    
-    @Override
     protected void notifyDataSetChanged() {
         presenter.updateSelectedRegionCode();
         if (restoreList)
@@ -84,6 +76,12 @@ public class RegionFragment extends BaseListFragment implements OnBackListener {
         }
     }
 
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        state.save();
+        presenter.onListItemClick(position);
+    }
+    
     @Override
     public boolean onBackPressed() {
         restoreList = true;

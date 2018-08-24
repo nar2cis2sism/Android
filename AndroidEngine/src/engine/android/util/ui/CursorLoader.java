@@ -25,7 +25,7 @@ import java.util.Arrays;
  */
 public class CursorLoader extends AsyncTaskLoader<Cursor> {
 
-    private final SQLiteDatabase db;
+    protected final SQLiteDatabase db;
 
     private boolean distinct;
     private String table;

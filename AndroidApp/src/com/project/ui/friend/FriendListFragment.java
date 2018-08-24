@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ExpandableListView;
@@ -104,13 +103,7 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
         .setDisplayShowTitleEnabled(false)
         .setDisplayShowCustomEnabled(true)
         .setCustomView(onCreateListSwitcher())
-        .addAction(R.drawable.friend_add, new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                list_header.search_box.getSearchEditText().append("l");
-            }
-        })
+        .addAction(R.drawable.friend_add)
         .show();
     }
     
@@ -217,39 +210,54 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
         presenter.groupAdapter.update(presenter.loader.groups);
         searchPresenter.adapter.update(presenter.adapter.getItems());
         presenter.updateLetterIndex(letterBarHelper, getListView());
-        updateView();
+        if (!searchPresenter.isSearching && showAllFriends)
+        {
+            setLetterBarVisible(true);
+        }
     }
     
     void updateView() {
         if (searchPresenter.isSearching)
         {
             // 搜索模式
-            getTitleBar().setDisplayShowTitleEnabled(true).setDisplayShowCustomEnabled(false);
-            list_header.action_container.setVisibility(View.GONE);
-            setViewVisible(true, false, false);
+            updateTitleBar(true);
+            setActionVisible(false);
+            setViewVisible(true, false);
             setListAdapter(searchPresenter.adapter);
         }
         else
         {
-            getTitleBar().setDisplayShowTitleEnabled(false).setDisplayShowCustomEnabled(true);
-            list_header.action_container.setVisibility(View.VISIBLE);
+            updateTitleBar(false);
+            setActionVisible(true);
             if (showAllFriends)
             {
-                setViewVisible(true, false, !presenter.adapter.isEmpty());
+                setViewVisible(true, true);
                 setListAdapter(presenter.adapter);
             }
             else
             {
                 // 分组模式
-                setViewVisible(false, true, false);
+                setViewVisible(false, false);
             }
         }
     }
     
-    private void setViewVisible(boolean showListView, boolean showExpandableListView, boolean showLetterBar) {
+    private void updateTitleBar(boolean showTitle) {
+        getTitleBar().setDisplayShowTitleEnabled(showTitle).setDisplayShowCustomEnabled(!showTitle);
+    }
+    
+    private void setActionVisible(boolean shown) {
+        list_header.action_container.setVisibility(shown ? View.VISIBLE : View.GONE);
+    }
+    
+    private void setViewVisible(boolean showListView, boolean showLetterBar) {
         getListView().setVisibility(showListView ? View.VISIBLE : View.GONE);
-        expandable_list.setVisibility(showExpandableListView ? View.VISIBLE : View.GONE);
-        letter_bar.setVisibility(showLetterBar ? View.VISIBLE : View.GONE);
+        expandable_list.setVisibility(showListView ? View.GONE : View.VISIBLE);
+        setLetterBarVisible(showLetterBar);
+    }
+    
+    private void setLetterBarVisible(boolean showLetterBar) {
+        letter_bar.setVisibility(showLetterBar && !presenter.adapter.isEmpty() ? View.VISIBLE : View.GONE);
     }
     
     @Override

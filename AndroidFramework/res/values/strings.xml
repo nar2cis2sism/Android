@@ -16,5 +16,8 @@
     
     <string name="get_sms_code">获取验证码</string>
     <string name="get_sms_code_timer"><xliff:g>%1$d</xliff:g>秒后可重试</string>
+    
+    <string name="region_title">选择地区</string>
+    <string name="region_selected">已选地区</string>
 
 </resources>

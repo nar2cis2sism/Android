@@ -3,8 +3,12 @@ package com.project.network.socket.servlet;
 import android.os.SystemClock;
 
 import engine.android.core.util.LogFactory.LOG;
+import engine.android.framework.util.GsonUtil;
+import engine.android.util.file.FileManager;
 import protocol.socket.ack.MessageACK;
+import protocol.socket.ack.OfflineMessageACK;
 import protocol.socket.req.Message;
+import protocol.socket.req.OfflineMessage;
 import protocol.util.ProtocolWrapper;
 import protocol.util.ProtocolWrapper.ProtocolEntity;
 import protocol.util.ProtocolWrapper.ProtocolEntity.ProtocolData;
@@ -74,6 +78,10 @@ public class SocketServlet implements engine.android.socket.SocketProxy.SocketSe
                 SystemClock.sleep(RESPONSE_DELAY);
                 return processMessage((Message) data);
             }
+            else if (data instanceof OfflineMessage)
+            {
+                return process(OfflineMessageACK.class);
+            }
             
             return null;
         }
@@ -85,6 +93,11 @@ public class SocketServlet implements engine.android.socket.SocketProxy.SocketSe
             push(msg);
             
             return new ProtocolData[]{ new MessageACK() };
+        }
+        
+        private ProtocolData[] process(Class<? extends ProtocolData> ackCls) throws Exception {
+            String json = new String(FileManager.readFile(getClass(), ackCls.getSimpleName()));
+            return new ProtocolData[]{ GsonUtil.parseJson(json, ackCls) };
         }
     }
 }

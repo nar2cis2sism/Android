@@ -6,8 +6,10 @@ import com.project.app.MySession;
 import com.project.app.bean.ServerUrl;
 import com.project.network.NetworkConfig;
 import com.project.network.action.Actions;
+import com.project.network.action.socket.PullOfflineMessage;
 import com.project.network.http.HttpJsonParser;
 import com.project.storage.MyDAOManager;
+import com.project.storage.dao.MessageDAO;
 import com.project.storage.dao.UserDAO;
 import com.project.storage.db.User;
 import com.project.util.AppUtil;
@@ -91,6 +93,8 @@ public class Login implements HttpBuilder, JsonEntity {
             {
                 MyApp.global().getHttpManager().sendHttpRequest(new QueryFriendList(user.friend_list_timestamp));
             }
+            // 获取离线消息
+            MyApp.global().getSocketManager().sendSocketRequest(new PullOfflineMessage(MessageDAO.getLatestMessageTimestamp()));
             
             return super.process(data);
         }

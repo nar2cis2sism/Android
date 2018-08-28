@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.daimon.yueba.R;
 import com.project.app.MyApp;
@@ -24,16 +23,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class MessagePresenter extends Presenter<MessageFragment> {
+public class ConversationPresenter extends Presenter<ConversationFragment> {
     
     MessageAdapter adapter;
-    MessageLoader loader;
+    MessageLoader  loader;
     
-    MessageParams params;
+    ConversationParams params;
     
     @Override
     protected void onCreate(Context context) {
-        params = ParamsBuilder.parse(getCallbacks().getArguments(), MessageParams.class);
+        params = ParamsBuilder.parse(getCallbacks().getArguments(), ConversationParams.class);
         if (params == null)
         {
             getCallbacks().finish();
@@ -41,14 +40,14 @@ public class MessagePresenter extends Presenter<MessageFragment> {
         }
         
         adapter = new MessageAdapter(context);
-        loader = new MessageLoader(context, this);
+        loader  = new MessageLoader(context, this);
         getCallbacks().setDataSource(adapter, loader);
     }
     
-    public static class MessageParams {
+    public static class ConversationParams {
         
-        public String title;
-        public String account;
+        public String title;                // 标题
+        public String account;              // 账号
     }
 }
 
@@ -69,7 +68,7 @@ class MessageAdapter extends JavaBeanAdapter<MessageItem> {
     
     @Override
     public int getItemViewType(int position) {
-        return getItem(position).isReceived() ? VIEW_TYPE_RECEIVE : VIEW_TYPE_SEND;
+        return getItem(position).message.isReceived ? VIEW_TYPE_RECEIVE : VIEW_TYPE_SEND;
     }
     
     @Override
@@ -88,7 +87,8 @@ class MessageAdapter extends JavaBeanAdapter<MessageItem> {
     }
 
     @Override
-    protected void bindView(int position, ViewHolder holder, final MessageItem item) {
+    protected void bindView(int position, ViewHolder holder, MessageItem item) {
+        final Message message = item.message;
         // 时间
         if (position > 0 && item.inFiveMinutes(getItem(position - 1)))
         {
@@ -97,27 +97,26 @@ class MessageAdapter extends JavaBeanAdapter<MessageItem> {
         }
         else
         {
-            holder.setTextView(R.id.time, item.time);
             holder.setVisible(R.id.time, true);
+            holder.setTextView(R.id.time, item.time);
         }
         // 头像
         holder.setImageView(R.id.avatar, R.drawable.avatar_default);
         // 消息内容
-        holder.setTextView(R.id.content, item.getContent());
+        holder.setTextView(R.id.content, message.content);
         // 发送状态
-        if (!item.isReceived())
+        if (!message.isReceived)
         {
             holder.setVisible(R.id.progress, item.isSending());
             if (item.isSendFail())
             {
-                ImageView send_fail = holder.getView(R.id.send_fail);
-                send_fail.setVisibility(View.VISIBLE);
-                send_fail.setOnClickListener(new OnClickListener() {
+                holder.setVisible(R.id.send_fail, true);
+                holder.getView(R.id.send_fail).setOnClickListener(new OnClickListener() {
                     
                     @Override
                     public void onClick(View v) {
-                        MessageDAO.resendMessage(item.message);
-                        MyApp.global().getSocketManager().sendSocketRequest(new SendMessage(item.message));
+                        MessageDAO.resendMessage(message);
+                        MyApp.global().getSocketManager().sendSocketRequest(new SendMessage(message));
                     }
                 });
             }
@@ -133,7 +132,7 @@ class MessageLoader extends JavaBeanLoader<MessageItem> {
     
     private final String account;
 
-    public MessageLoader(Context context, MessagePresenter presenter) {
+    public MessageLoader(Context context, ConversationPresenter presenter) {
         super(context, MyDAOManager.getDAO());
         listen(Message.class);
         account = presenter.params.account;

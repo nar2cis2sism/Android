@@ -18,8 +18,8 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.daimon.yueba.R;
 import com.project.app.bean.FriendListItem;
-import com.project.ui.message.MessageFragment;
-import com.project.ui.message.MessagePresenter.MessageParams;
+import com.project.ui.message.ConversationFragment;
+import com.project.ui.message.ConversationPresenter.ConversationParams;
 
 import engine.android.core.Injector;
 import engine.android.core.annotation.InjectView;
@@ -124,8 +124,8 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
     
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
-        showAllFriends = checkedId == R.id.button_negative;
-        updateView();
+        setListViewVisible(showAllFriends = checkedId == R.id.button_negative);
+        updateLetterBar();
     }
 
     @Override
@@ -187,22 +187,22 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        toMessageFragment((FriendListItem) getListAdapter().getItem(position));
+        toConversationFragment((FriendListItem) getListAdapter().getItem(position));
     }
     
     @Override
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
             int childPosition, long id) {
-        toMessageFragment(presenter.groupAdapter.getChild(groupPosition, childPosition));
+        toConversationFragment(presenter.groupAdapter.getChild(groupPosition, childPosition));
         return true;
     }
     
-    private void toMessageFragment(FriendListItem item) {
-        MessageParams params = new MessageParams();
+    private void toConversationFragment(FriendListItem item) {
+        ConversationParams params = new ConversationParams();
         params.title = item.friend.displayName;
         params.account = item.friend.account;
         
-        startFragment(MessageFragment.class, MessageFragment.buildParams(params));
+        startFragment(ConversationFragment.class, ConversationFragment.buildParams(params));
     }
 
     @Override
@@ -210,63 +210,55 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
         presenter.groupAdapter.update(presenter.loader.groups);
         searchPresenter.adapter.update(presenter.adapter.getItems());
         presenter.updateLetterIndex(letterBarHelper, getListView());
-        if (!searchPresenter.isSearching && showAllFriends)
-        {
-            setLetterBarVisible(true);
-        }
+        updateLetterBar();
     }
     
-    void updateView() {
-        if (searchPresenter.isSearching)
+    /**
+     * @param inSearch True:进入搜索模式,False:退出搜索模式
+     */
+    void switchSearchMode(boolean inSearch) {
+        ListAdapter adapter = inSearch ? searchPresenter.adapter : presenter.adapter;
+        if (getListAdapter() == adapter)
         {
-            // 搜索模式
-            updateTitleBar(true);
-            setActionVisible(false);
-            setViewVisible(true, false);
-            setListAdapter(searchPresenter.adapter);
+            return;
         }
-        else
+        
+        updateTitleBar(inSearch);
+        setActionVisible(!inSearch);
+        if (!showAllFriends)
         {
-            updateTitleBar(false);
-            setActionVisible(true);
-            if (showAllFriends)
-            {
-                setViewVisible(true, true);
-                setListAdapter(presenter.adapter);
-            }
-            else
-            {
-                // 分组模式
-                setViewVisible(false, false);
-            }
+            setListViewVisible(inSearch);
         }
+        
+        setListAdapter(adapter);
+        updateLetterBar();
     }
     
     private void updateTitleBar(boolean showTitle) {
-        getTitleBar().setDisplayShowTitleEnabled(showTitle).setDisplayShowCustomEnabled(!showTitle);
+        getTitleBar()
+        .setDisplayShowTitleEnabled(showTitle)
+        .setDisplayShowCustomEnabled(!showTitle);
     }
     
     private void setActionVisible(boolean shown) {
         list_header.action_container.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
     
-    private void setViewVisible(boolean showListView, boolean showLetterBar) {
-        getListView().setVisibility(showListView ? View.VISIBLE : View.GONE);
-        expandable_list.setVisibility(showListView ? View.GONE : View.VISIBLE);
-        setLetterBarVisible(showLetterBar);
+    private void setListViewVisible(boolean shown) {
+        getListView().setVisibility(shown ? View.VISIBLE : View.GONE);
+        expandable_list.setVisibility(shown ? View.GONE : View.VISIBLE);
     }
     
-    private void setLetterBarVisible(boolean showLetterBar) {
-        letter_bar.setVisibility(showLetterBar && !presenter.adapter.isEmpty() ? View.VISIBLE : View.GONE);
+    private void updateLetterBar() {
+        letter_bar.setVisibility(!searchPresenter.isSearching
+                && showAllFriends && !presenter.adapter.isEmpty()
+                ? View.VISIBLE : View.GONE);
     }
     
-    @Override
-    public void setListAdapter(ListAdapter adapter) {
-        if (getListAdapter() != adapter)
-        {
-            super.setListAdapter(adapter);
-            // ListView will get focus when update the adapter so request focus manually.
-            list_header.search_box.requestFocus();
-        }
-    }
+//    @Override
+//    public void setListAdapter(ListAdapter adapter) {
+//        super.setListAdapter(adapter);
+//        // ListView will get focus when update the adapter so request focus manually.
+//        list_header.search_box.requestFocus();
+//    }
 }

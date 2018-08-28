@@ -10,7 +10,7 @@ import com.daimon.yueba.R;
 import com.project.network.action.socket.SendMessage;
 import com.project.storage.dao.MessageDAO;
 import com.project.storage.db.Message;
-import com.project.ui.message.MessagePresenter.MessageParams;
+import com.project.ui.message.ConversationPresenter.ConversationParams;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseListFragment;
@@ -22,21 +22,21 @@ import engine.android.widget.component.TitleBar;
  * 
  * @author Daimon
  */
-public class MessageFragment extends BaseListFragment {
+public class ConversationFragment extends BaseListFragment {
     
     @InjectView(R.id.conversation_bar)
     ConversationBar conversation_bar;
     
-    MessagePresenter presenter;
+    ConversationPresenter presenter;
     
-    public static Bundle buildParams(MessageParams params) {
+    public static Bundle buildParams(ConversationParams params) {
         return ParamsBuilder.build(params);
     }
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = addPresenter(MessagePresenter.class);
+        presenter = addPresenter(ConversationPresenter.class);
     }
     
     @Override
@@ -63,7 +63,6 @@ public class MessageFragment extends BaseListFragment {
     protected void setupListView(ListView listView) {
         listView.setDivider(null);
         listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-        listView.setStackFromBottom(true);
     }
     
     private void setupConversationBar(ConversationBar conversation_bar) {

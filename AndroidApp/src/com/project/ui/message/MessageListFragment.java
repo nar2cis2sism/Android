@@ -11,6 +11,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.daimon.yueba.R;
+import com.project.storage.db.Friend;
+import com.project.ui.message.ConversationPresenter.ConversationParams;
 
 import engine.android.framework.ui.BaseListFragment;
 import engine.android.http.HttpConnector;
@@ -66,6 +68,7 @@ public class MessageListFragment extends BaseListFragment {
     private View onCreateListHeader() {
         list_header = new FrameLayout(getContext());
         tip_no_connection = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.tip_no_connection, null);
+        list_header.addView(tip_no_connection);
         showConnectionTip(!HttpConnector.isAccessible(getContext()));
         return list_header;
     }
@@ -74,16 +77,22 @@ public class MessageListFragment extends BaseListFragment {
      * 显示/隐藏无网络提示
      */
     private void showConnectionTip(boolean noNetwork) {
-        list_header.removeAllViews();
-        if (noNetwork)
-        {
-            list_header.addView(tip_no_connection);
-        }
+        tip_no_connection.setVisibility(noNetwork ? View.VISIBLE : View.GONE);
     }
     
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        startFragment(MessageFragment.class);
+        Friend friend = presenter.adapter.getItem(position).friend;
+        if (friend == null)
+        {
+            return;
+        }
+
+        ConversationParams params = new ConversationParams();
+        params.title = friend.displayName;
+        params.account = friend.account;
+        
+        startFragment(ConversationFragment.class, ConversationFragment.buildParams(params));
     }
     
     @Override

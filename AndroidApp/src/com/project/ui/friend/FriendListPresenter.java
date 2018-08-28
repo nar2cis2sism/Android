@@ -10,8 +10,8 @@ import com.daimon.yueba.R;
 import com.project.app.bean.FriendGroupItem;
 import com.project.app.bean.FriendListItem;
 import com.project.storage.MyDAOManager;
+import com.project.storage.dao.FriendDAO;
 import com.project.storage.db.Friend;
-import com.project.storage.provider.ProviderContract.FriendColumns;
 
 import engine.android.core.BaseFragment.Presenter;
 import engine.android.core.extra.JavaBeanAdapter;
@@ -28,14 +28,14 @@ import java.util.List;
 public class FriendListPresenter extends Presenter<FriendListFragment> {
     
     FriendListAdapter adapter;
-    FriendGroupAdapter groupAdapter;
     FriendListLoader  loader;
+    FriendGroupAdapter groupAdapter;
     
     @Override
     protected void onCreate(Context context) {
         adapter = new FriendListAdapter(context);
-        groupAdapter = new FriendGroupAdapter(context);
         loader  = new FriendListLoader(context);
+        groupAdapter = new FriendGroupAdapter(context);
         getCallbacks().setDataSource(adapter, loader);
     }
     
@@ -159,7 +159,7 @@ class FriendListLoader extends JavaBeanLoader<FriendListItem> {
 
     @Override
     public Collection<FriendListItem> loadInBackground() {
-        List<Friend> friends = dao.find(Friend.class).orderBy(FriendColumns.SORTING).getAll();
+        List<Friend> friends = FriendDAO.getFriendList();
         List<FriendListItem> list = null;
         if (friends != null)
         {

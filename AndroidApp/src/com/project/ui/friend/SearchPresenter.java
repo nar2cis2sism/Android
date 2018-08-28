@@ -30,8 +30,7 @@ public class SearchPresenter extends Presenter<FriendListFragment> implements Se
         {
             if (isSearching)
             {
-                isSearching = false;
-                getCallbacks().updateView();
+                getCallbacks().switchSearchMode(isSearching = false);
                 getCallbacks().search_empty.setVisibility(View.GONE);
             }
         }
@@ -46,7 +45,7 @@ public class SearchPresenter extends Presenter<FriendListFragment> implements Se
     public void onFilterComplete(int count) {
         if (isSearching)
         {
-            getCallbacks().updateView();
+            getCallbacks().switchSearchMode(isSearching);
             getCallbacks().search_empty.setVisibility(count == 0 ? View.VISIBLE : View.GONE);
         }
     }

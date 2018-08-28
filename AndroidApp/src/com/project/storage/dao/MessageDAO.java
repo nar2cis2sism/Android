@@ -84,6 +84,16 @@ public class MessageDAO extends BaseDAO implements MessageColumns {
     
     /**
      * 获取消息列表
+     */
+    public static List<Message> getMessageList() {
+        return dao.find(Message.class)
+            .groupBy(ACCOUNT)
+            .orderDesc(CREATION_TIME)
+            .getAll();
+    }
+    
+    /**
+     * 获取消息列表
      * 
      * @param account 消息来源
      */
@@ -92,5 +102,21 @@ public class MessageDAO extends BaseDAO implements MessageColumns {
             .where(DAOExpression.create(ACCOUNT).eq(account))
             .orderBy(CREATION_TIME)
             .getAll();
+    }
+    
+    /**
+     * 获取收到的最新消息时间戳
+     */
+    public static long getLatestMessageTimestamp() {
+        Message msg = dao.find(Message.class)
+                .where(DAOExpression.create(IS_RECEIVED).eq(true))
+                .orderDesc(CREATION_TIME)
+                .get();
+        if (msg != null)
+        {
+            return msg.creationTime;
+        }
+        
+        return 0;
     }
 }

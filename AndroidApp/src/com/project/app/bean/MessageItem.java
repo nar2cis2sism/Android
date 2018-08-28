@@ -61,25 +61,24 @@ public class MessageItem {
     }
     
     private static String formatTime(DateRange range, long time) {
-        return range != null ? range.format(time) : String.valueOf(time);
-    }
-    
-    public boolean isReceived() {
-        return message.isReceived;
+        return range != null ? range.format(time)
+             : CalendarFormat.format(CalendarFormat.getCalendar(time));
     }
     
     public boolean inFiveMinutes(MessageItem item) {
         return Math.abs(message.creationTime - item.message.creationTime) <= FIVE_MINUTES;
     }
     
-    public String getContent() {
-        return message.content;
-    }
-    
+    /**
+     * 消息发送中
+     */
     public boolean isSending() {
         return message.sendStatus == 0;
     }
     
+    /**
+     * 消息发送失败
+     */
     public boolean isSendFail() {
         return message.sendStatus == 1;
     }

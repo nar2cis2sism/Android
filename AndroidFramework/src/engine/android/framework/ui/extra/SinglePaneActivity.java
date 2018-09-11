@@ -20,7 +20,7 @@ import engine.android.framework.ui.BaseActivity;
  * @version N
  * @since 6/6/2014
  */
-public class SinglePaneActivity extends BaseActivity implements OnBackStackChangedListener {
+public class SinglePaneActivity extends BaseActivity {
     
     private static final String EXTRA_FRAGMENT_CLASS_NAME = "fragmentClassName";
     
@@ -69,7 +69,13 @@ public class SinglePaneActivity extends BaseActivity implements OnBackStackChang
                 .add(CONTENT_ID, fragment)
                 .commit();
                 
-                getFragmentManager().addOnBackStackChangedListener(this);
+                getFragmentManager().addOnBackStackChangedListener(new OnBackStackChangedListener() {
+                    
+                    @Override
+                    public void onBackStackChanged() {
+                        getContentFragment().setMenuVisibility(true);
+                    }
+                });
             }
         }
     }
@@ -97,11 +103,6 @@ public class SinglePaneActivity extends BaseActivity implements OnBackStackChang
      */
     protected Fragment onCreateFragment() {
         return null;
-    }
-
-    @Override
-    public void onBackStackChanged() {
-        getContentFragment().setMenuVisibility(true);
     }
 
     public Fragment getContentFragment() {

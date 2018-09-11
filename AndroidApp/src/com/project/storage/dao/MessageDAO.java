@@ -25,10 +25,10 @@ public class MessageDAO extends BaseDAO implements MessageColumns {
         dao.save(msg);
         
         msg = dao.find(Message.class)
-            .where(DAOExpression.create(IS_RECEIVED).eq(msg.isReceived)
-            .and(ACCOUNT).eq(msg.account))
-            .orderDesc(_ID)
-            .get();
+        .where(DAOExpression.create(IS_RECEIVED).eq(msg.isReceived)
+        .and(ACCOUNT).eq(msg.account))
+        .orderDesc(_ID)
+        .get();
         msg.generateId();
         dao.update(msg, ID);
         
@@ -57,16 +57,18 @@ public class MessageDAO extends BaseDAO implements MessageColumns {
     public static void receiveMessage(Message msg) {
         msg.isReceived = true;
         if (dao.find(Message.class)
-            .where(DAOExpression.create(IS_RECEIVED).eq(msg.isReceived)
-            .and(ACCOUNT).eq(msg.account)
-            .and(ID).eq(msg.id))
-            .get()
-            == null)
+        .where(DAOExpression.create(IS_RECEIVED).eq(msg.isReceived)
+        .and(ACCOUNT).eq(msg.account)
+        .and(ID).eq(msg.id))
+        .get() == null)
         {
             dao.save(msg);
         }
     }
     
+    /**
+     * 收到多条消息
+     */
     public static void receiveMessage(final Message[] msgs) {
         dao.execute(new DAOTransaction() {
             
@@ -87,9 +89,9 @@ public class MessageDAO extends BaseDAO implements MessageColumns {
      */
     public static List<Message> getMessageList() {
         return dao.find(Message.class)
-            .groupBy(ACCOUNT)
-            .orderDesc(CREATION_TIME)
-            .getAll();
+        .groupBy(ACCOUNT)
+        .orderDesc(CREATION_TIME)
+        .getAll();
     }
     
     /**
@@ -99,9 +101,50 @@ public class MessageDAO extends BaseDAO implements MessageColumns {
      */
     public static List<Message> getMessageList(String account) {
         return dao.find(Message.class)
-            .where(DAOExpression.create(ACCOUNT).eq(account))
-            .orderBy(CREATION_TIME)
-            .getAll();
+        .where(DAOExpression.create(ACCOUNT).eq(account))
+        .orderBy(CREATION_TIME)
+        .getAll();
+    }
+
+    /**
+     * 获取未读消息列表
+     */
+    public static List<Message> getUnreadMessageList() {
+        return dao.find(Message.class)
+        .where(DAOExpression.create(IS_RECEIVED).eq(true)
+        .and(IS_READ).eq(false))
+        .orderDesc(CREATION_TIME)
+        .getAll();
+    }
+
+    /**
+     * 获取未读消息数量
+     * 
+     * @param account 消息来源
+     */
+    public static long getUnreadMessageCount(String account) {
+        return dao.find(Message.class)
+        .where(DAOExpression.create(ACCOUNT).eq(account)
+        .and(IS_RECEIVED).eq(true)
+        .and(IS_READ).eq(false))
+        .getCount();
+    }
+    
+    /**
+     * 设置消息已读
+     * 
+     * @param account 消息来源
+     * @return 是否有未读消息改变
+     */
+    public static boolean setMessageRead(String account) {
+        Message msg = new Message();
+        msg.isRead = true;
+        
+        return dao.edit(Message.class)
+        .where(DAOExpression.create(ACCOUNT).eq(account)
+        .and(IS_RECEIVED).eq(true)
+        .and(IS_READ).eq(false))
+        .update(msg, IS_READ);
     }
     
     /**
@@ -109,9 +152,9 @@ public class MessageDAO extends BaseDAO implements MessageColumns {
      */
     public static long getLatestMessageTimestamp() {
         Message msg = dao.find(Message.class)
-                .where(DAOExpression.create(IS_RECEIVED).eq(true))
-                .orderDesc(CREATION_TIME)
-                .get();
+        .where(DAOExpression.create(IS_RECEIVED).eq(true))
+        .orderDesc(CREATION_TIME)
+        .get();
         if (msg != null)
         {
             return msg.creationTime;

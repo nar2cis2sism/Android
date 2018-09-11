@@ -43,6 +43,7 @@ public class MessageListItem {
     public final String timeText;               // 时间文本
     
     public Friend friend;
+    public long unreadCount;                    // 未读消息数量
     
     public MessageListItem(long time, String name, String message) {
         this.time = time;

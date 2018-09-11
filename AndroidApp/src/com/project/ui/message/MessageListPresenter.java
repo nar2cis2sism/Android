@@ -3,7 +3,9 @@ package com.project.ui.message;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.daimon.yueba.R;
@@ -19,6 +21,9 @@ import engine.android.core.BaseFragment.Presenter;
 import engine.android.core.extra.JavaBeanAdapter;
 import engine.android.dao.util.JavaBeanLoader;
 import engine.android.framework.ui.util.DateRange;
+import engine.android.framework.ui.widget.AvatarImageView;
+import engine.android.util.ui.UIUtil;
+import engine.android.widget.common.BadgeView;
 import engine.android.widget.common.list.PinnedHeaderListView.PinnedHeaderAdapter;
 
 import java.util.ArrayList;
@@ -46,6 +51,20 @@ class MessageListAdapter extends JavaBeanAdapter<MessageListItem> implements Pin
     public MessageListAdapter(Context context) {
         super(context, R.layout.message_list_item);
     }
+    
+    @Override
+    protected View newView(int position, LayoutInflater inflater, ViewGroup parent) {
+        View root = super.newView(position, inflater, parent);
+        View icon = root.findViewById(R.id.icon);
+        // 头像
+        AvatarImageView avatar = new AvatarImageView(getContext());
+        UIUtil.replace(icon, avatar, icon.getLayoutParams());
+        // 未读徽章
+        BadgeView badge = new BadgeView(getContext(), avatar);
+        root.findViewById(R.id.icon).setTag(badge);
+        
+        return root;
+    }
 
     @Override
     protected void bindView(int position, ViewHolder holder, MessageListItem item) {
@@ -61,9 +80,19 @@ class MessageListAdapter extends JavaBeanAdapter<MessageListItem> implements Pin
             holder.setVisible(R.id.category, true);
             holder.setTextView(R.id.category, category.getLabel());
         }
-        
+        // 未读徽章
+        BadgeView badge = (BadgeView) holder.getView(R.id.icon).getTag();
+        if (item.unreadCount != 0)
+        {
+            badge.setText(String.valueOf(item.unreadCount));
+            badge.show();
+        }
+        else
+        {
+            badge.hide();
+        }
         // 头像
-        holder.setImageView(R.id.icon, R.drawable.avatar_default);
+        ((AvatarImageView) badge.getTarget()).display(null);
         // 时间
         holder.setTextView(R.id.note, item.timeText);
         // 名称
@@ -136,6 +165,7 @@ class MessageListLoader extends JavaBeanLoader<MessageListItem> {
                 Friend friend = FriendDAO.getFriendByAccount(message.account);
                 MessageListItem item = new MessageListItem(message.creationTime, friend.displayName, message.content);
                 item.friend = friend;
+                item.unreadCount = MessageDAO.getUnreadMessageCount(message.account);
                 list.add(item);
             }
             

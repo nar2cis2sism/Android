@@ -1,4 +1,4 @@
-package com.project.ui.message;
+package com.project.ui.message.conversation;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,7 +10,7 @@ import com.daimon.yueba.R;
 import com.project.network.action.socket.SendMessage;
 import com.project.storage.dao.MessageDAO;
 import com.project.storage.db.Message;
-import com.project.ui.message.ConversationPresenter.ConversationParams;
+import com.project.ui.message.conversation.ConversationPresenter.ConversationParams;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseListFragment;
@@ -22,7 +22,7 @@ import engine.android.widget.component.TitleBar;
  * 
  * @author Daimon
  */
-public class ConversationFragment extends BaseListFragment {
+class ConversationFragment extends BaseListFragment {
     
     @InjectView(R.id.conversation_bar)
     ConversationBar conversation_bar;

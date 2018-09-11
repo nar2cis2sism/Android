@@ -53,6 +53,9 @@ public class Message implements MessageColumns {
     
     @DAOProperty(column=IS_RECEIVED)
     public boolean isReceived;              // True:接收消息,False:发送消息
+    
+    @DAOProperty(column=IS_READ)
+    public boolean isRead;                  // 消息是否已读
 
     /**
      * 0：消息发送中

@@ -48,7 +48,13 @@
         
         <activity
             android:name="com.project.ui.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask" />
+        
+        <activity
+            android:name="com.project.ui.message.conversation.ConversationActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask" />
         
         <!-- 网络监听器 -->
         <receiver android:name="com.project.network.util.ConnectivityChangeReceiver">

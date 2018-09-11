@@ -18,8 +18,8 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.daimon.yueba.R;
 import com.project.app.bean.FriendListItem;
-import com.project.ui.message.ConversationFragment;
-import com.project.ui.message.ConversationPresenter.ConversationParams;
+import com.project.ui.message.conversation.ConversationActivity;
+import com.project.ui.message.conversation.ConversationPresenter.ConversationParams;
 
 import engine.android.core.Injector;
 import engine.android.core.annotation.InjectView;
@@ -187,22 +187,22 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        toConversationFragment((FriendListItem) getListAdapter().getItem(position));
+        toConversation((FriendListItem) getListAdapter().getItem(position));
     }
     
     @Override
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
             int childPosition, long id) {
-        toConversationFragment(presenter.groupAdapter.getChild(groupPosition, childPosition));
+        toConversation(presenter.groupAdapter.getChild(groupPosition, childPosition));
         return true;
     }
     
-    private void toConversationFragment(FriendListItem item) {
+    private void toConversation(FriendListItem item) {
         ConversationParams params = new ConversationParams();
         params.title = item.friend.displayName;
         params.account = item.friend.account;
         
-        startFragment(ConversationFragment.class, ConversationFragment.buildParams(params));
+        startActivity(ConversationActivity.buildIntent(getContext(), params));
     }
 
     @Override

@@ -1,4 +1,6 @@
-package com.project.ui.message;
+package com.project.ui.message.conversation;
+
+import static com.project.logic.MessageLogic.currentConversation;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +11,7 @@ import android.view.ViewGroup;
 import com.daimon.yueba.R;
 import com.project.app.MyApp;
 import com.project.app.bean.MessageItem;
+import com.project.logic.MessageLogic;
 import com.project.network.action.socket.SendMessage;
 import com.project.storage.MyDAOManager;
 import com.project.storage.dao.MessageDAO;
@@ -39,9 +42,17 @@ public class ConversationPresenter extends Presenter<ConversationFragment> {
             return;
         }
         
+        currentConversation = params.account;
+        
         adapter = new MessageAdapter(context);
         loader  = new MessageLoader(context, this);
         getCallbacks().setDataSource(adapter, loader);
+    }
+    
+    @Override
+    protected void onDestroy() {
+        currentConversation = null;
+        super.onDestroy();
     }
     
     public static class ConversationParams {
@@ -131,6 +142,8 @@ class MessageAdapter extends JavaBeanAdapter<MessageItem> {
 class MessageLoader extends JavaBeanLoader<MessageItem> {
     
     private final String account;
+    
+    private boolean firstTime = true;
 
     public MessageLoader(Context context, ConversationPresenter presenter) {
         super(context, MyDAOManager.getDAO());
@@ -140,6 +153,12 @@ class MessageLoader extends JavaBeanLoader<MessageItem> {
 
     @Override
     public Collection<MessageItem> loadInBackground() {
+        if (firstTime)
+        {
+            MessageLogic.setMessageRead(account);
+            firstTime = false;
+        }
+        
         List<Message> messages = MessageDAO.getMessageList(account);
         if (messages != null)
         {

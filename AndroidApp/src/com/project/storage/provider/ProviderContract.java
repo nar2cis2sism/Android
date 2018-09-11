@@ -101,6 +101,7 @@ public final class ProviderContract {
         String EVENT = "event";
         String CREATION_TIME = "creationTime";
         String IS_RECEIVED = "isReceived";
+        String IS_READ = "isRead";
         String SEND_STATUS = "sendStatus";
     }
 

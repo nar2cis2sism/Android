@@ -22,6 +22,7 @@ public abstract class JavaBeanLoader<D> extends AsyncTaskLoader<Collection<D>> {
     private ConfigChange config;
 
     private DataChangeObserver dataChangeObserver;
+    private boolean registerObserver;
 
     private Collection<D> mData;
 
@@ -84,9 +85,10 @@ public abstract class JavaBeanLoader<D> extends AsyncTaskLoader<Collection<D>> {
         }
 
         // Start watching for changes in the data.
-        if (dataChangeObserver != null)
+        if (dataChangeObserver != null && !registerObserver)
         {
             dataChangeObserver.registerObserver(getContext());
+            registerObserver = true;
         }
 
         if (takeContentChanged()
@@ -134,9 +136,10 @@ public abstract class JavaBeanLoader<D> extends AsyncTaskLoader<Collection<D>> {
         }
 
         // Stop monitoring for changes.
-        if (dataChangeObserver != null)
+        if (registerObserver)
         {
             dataChangeObserver.unregisterObserver(getContext());
+            registerObserver = false;
         }
     }
 

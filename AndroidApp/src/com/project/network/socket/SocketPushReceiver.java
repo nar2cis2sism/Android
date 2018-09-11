@@ -1,6 +1,6 @@
 package com.project.network.socket;
 
-import com.project.storage.dao.MessageDAO;
+import com.project.logic.MessageLogic;
 
 import engine.android.framework.network.socket.SocketResponse.Callback;
 import protocol.socket.req.Message;
@@ -17,6 +17,6 @@ public class SocketPushReceiver implements engine.android.framework.network.sock
     }
     
     private void receiveMessage(Message msg) {
-        MessageDAO.receiveMessage(new com.project.storage.db.Message().fromProtocol(msg));
+        MessageLogic.receiveMessage(new com.project.storage.db.Message().fromProtocol(msg));
     }
 }

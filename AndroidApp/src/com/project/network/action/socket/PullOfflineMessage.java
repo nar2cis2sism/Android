@@ -1,6 +1,6 @@
 package com.project.network.action.socket;
 
-import com.project.storage.dao.MessageDAO;
+import com.project.logic.MessageLogic;
 
 import engine.android.framework.network.socket.SocketManager.SocketBuilder;
 import engine.android.framework.network.socket.SocketResponse;
@@ -58,6 +58,6 @@ public class PullOfflineMessage implements SocketBuilder, SocketResponse {
             items[i] = new com.project.storage.db.Message().fromProtocol(messages[i]);
         }
         
-        MessageDAO.receiveMessage(items);
+        MessageLogic.receiveMessage(items);
     }
 }

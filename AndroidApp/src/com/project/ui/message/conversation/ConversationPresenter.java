@@ -10,28 +10,33 @@ import android.view.ViewGroup;
 
 import com.daimon.yueba.R;
 import com.project.app.MyApp;
-import com.project.app.bean.MessageItem;
+import com.project.app.MySession;
+import com.project.app.bean.ConversationItem;
 import com.project.logic.MessageLogic;
 import com.project.network.action.socket.SendMessage;
 import com.project.storage.MyDAOManager;
+import com.project.storage.dao.FriendDAO;
 import com.project.storage.dao.MessageDAO;
+import com.project.storage.db.Friend;
 import com.project.storage.db.Message;
+import com.project.ui.message.conversation.ConversationActivity.ConversationParams;
 
 import engine.android.core.BaseFragment.Presenter;
 import engine.android.core.extra.JavaBeanAdapter;
 import engine.android.dao.util.JavaBeanLoader;
 import engine.android.framework.ui.BaseFragment.ParamsBuilder;
+import engine.android.framework.ui.widget.AvatarImageView;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ConversationPresenter extends Presenter<ConversationFragment> {
+class ConversationPresenter extends Presenter<ConversationFragment> {
     
-    MessageAdapter adapter;
-    MessageLoader  loader;
+    ConversationAdapter adapter;
+    ConversationLoader  loader;
     
-    ConversationParams params;
+    ConversationParams  params;
     
     @Override
     protected void onCreate(Context context) {
@@ -44,32 +49,28 @@ public class ConversationPresenter extends Presenter<ConversationFragment> {
         
         currentConversation = params.account;
         
-        adapter = new MessageAdapter(context);
-        loader  = new MessageLoader(context, this);
+        adapter = new ConversationAdapter(context, this);
+        loader  = new ConversationLoader(context, this);
         getCallbacks().setDataSource(adapter, loader);
     }
     
     @Override
     protected void onDestroy() {
         currentConversation = null;
-        super.onDestroy();
-    }
-    
-    public static class ConversationParams {
-        
-        public String title;                // 标题
-        public String account;              // 账号
     }
 }
 
-class MessageAdapter extends JavaBeanAdapter<MessageItem> {
+class ConversationAdapter extends JavaBeanAdapter<ConversationItem> {
     
     private static final int VIEW_TYPE_RECEIVE  = 0;
     private static final int VIEW_TYPE_SEND     = 1;
     private static final int VIEW_TYPE_COUNT    = 2;
+    
+    private final ConversationParams params;
 
-    public MessageAdapter(Context context) {
+    public ConversationAdapter(Context context, ConversationPresenter presenter) {
         super(context, 0);
+        params = presenter.params;
     }
     
     @Override
@@ -98,7 +99,7 @@ class MessageAdapter extends JavaBeanAdapter<MessageItem> {
     }
 
     @Override
-    protected void bindView(int position, ViewHolder holder, MessageItem item) {
+    protected void bindView(int position, ViewHolder holder, ConversationItem item) {
         final Message message = item.message;
         // 时间
         if (position > 0 && item.inFiveMinutes(getItem(position - 1)))
@@ -112,7 +113,14 @@ class MessageAdapter extends JavaBeanAdapter<MessageItem> {
             holder.setTextView(R.id.time, item.time);
         }
         // 头像
-        holder.setImageView(R.id.avatar, R.drawable.avatar_default);
+        if (message.isReceived)
+        {
+            AvatarImageView.display(holder, R.id.avatar, params.friend.getAvatarUrl());
+        }
+        else
+        {
+            AvatarImageView.display(holder, R.id.avatar, MySession.getUser().getAvatarUrl());
+        }
         // 消息内容
         holder.setTextView(R.id.content, message.content);
         // 发送状态
@@ -139,33 +147,36 @@ class MessageAdapter extends JavaBeanAdapter<MessageItem> {
     }
 }
 
-class MessageLoader extends JavaBeanLoader<MessageItem> {
+class ConversationLoader extends JavaBeanLoader<ConversationItem> {
     
-    private final String account;
-    
-    private boolean firstTime = true;
+    private final ConversationParams params;
 
-    public MessageLoader(Context context, ConversationPresenter presenter) {
+    public ConversationLoader(Context context, ConversationPresenter presenter) {
         super(context, MyDAOManager.getDAO());
         listen(Message.class);
-        account = presenter.params.account;
+        params = presenter.params;
     }
 
     @Override
-    public Collection<MessageItem> loadInBackground() {
-        if (firstTime)
+    public Collection<ConversationItem> loadInBackground() {
+        String account = params.account;
+        Friend friend = params.friend;
+        
+        if (friend == null)
         {
+            params.friend = friend = FriendDAO.getFriendByAccount(account);
+            if (friend == null) throw new RuntimeException("Can not find friend:" + account);
+            
             MessageLogic.setMessageRead(account);
-            firstTime = false;
         }
         
         List<Message> messages = MessageDAO.getMessageList(account);
         if (messages != null)
         {
-            List<MessageItem> list = new ArrayList<MessageItem>(messages.size());
+            List<ConversationItem> list = new ArrayList<ConversationItem>(messages.size());
             for (Message message : messages)
             {
-                list.add(new MessageItem(message));
+                list.add(new ConversationItem(message));
             }
             
             return list;

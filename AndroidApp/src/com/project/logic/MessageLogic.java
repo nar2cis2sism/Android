@@ -2,8 +2,8 @@ package com.project.logic;
 
 import android.text.TextUtils;
 
-import com.project.MyNotificationManager;
 import com.project.app.event.Events;
+import com.project.app.util.MyNotificationManager;
 import com.project.storage.dao.MessageDAO;
 import com.project.storage.db.Message;
 import com.project.ui.MainActivity;

@@ -1,5 +1,6 @@
 package engine.android.util.extra;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -24,6 +25,15 @@ public class ReflectObject {
 
     public Object getObject() {
         return obj;
+    }
+
+    /**
+     * 利用反射实例化对象
+     */
+    public static <T> T newInstance(Class<T> c) throws Exception {
+        Constructor<T> constructor = c.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        return constructor.newInstance();
     }
 
     /**

@@ -4,9 +4,10 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 
+import com.project.storage.db.Friend;
 import com.project.ui.MainActivity;
-import com.project.ui.message.conversation.ConversationPresenter.ConversationParams;
 
+import engine.android.framework.ui.BaseFragment.ParamsBuilder;
 import engine.android.framework.ui.extra.SinglePaneActivity;
 
 /**
@@ -16,9 +17,19 @@ import engine.android.framework.ui.extra.SinglePaneActivity;
  */
 public class ConversationActivity extends SinglePaneActivity {
     
+    public static class ConversationParams {
+        
+        public final String account;            // 好友账号
+        Friend friend;                          // 好友信息
+        
+        public ConversationParams(String account) {
+            this.account = account;
+        }
+    }
+    
     public static Intent buildIntent(Context context, ConversationParams params) {
         return new Intent(context, ConversationActivity.class)
-        .putExtras(ConversationFragment.buildParams(params));
+        .putExtras(ParamsBuilder.build(params));
     }
     
     @Override

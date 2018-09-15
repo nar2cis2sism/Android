@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.daimon.yueba.R;
 import com.project.storage.db.Friend;
 import com.project.ui.message.conversation.ConversationActivity;
-import com.project.ui.message.conversation.ConversationPresenter.ConversationParams;
+import com.project.ui.message.conversation.ConversationActivity.ConversationParams;
 
 import engine.android.framework.ui.BaseListFragment;
 import engine.android.http.HttpConnector;
@@ -89,11 +89,7 @@ public class MessageListFragment extends BaseListFragment {
             return;
         }
 
-        ConversationParams params = new ConversationParams();
-        params.title = friend.displayName;
-        params.account = friend.account;
-        
-        startActivity(ConversationActivity.buildIntent(getContext(), params));
+        startActivity(ConversationActivity.buildIntent(getContext(), new ConversationParams(friend.account)));
     }
     
     @Override

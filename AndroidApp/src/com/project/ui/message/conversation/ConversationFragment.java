@@ -4,13 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.daimon.yueba.R;
 import com.project.network.action.socket.SendMessage;
 import com.project.storage.dao.MessageDAO;
 import com.project.storage.db.Message;
-import com.project.ui.message.conversation.ConversationPresenter.ConversationParams;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseListFragment;
@@ -29,10 +29,6 @@ class ConversationFragment extends BaseListFragment {
     
     ConversationPresenter presenter;
     
-    public static Bundle buildParams(ConversationParams params) {
-        return ParamsBuilder.build(params);
-    }
-    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +38,6 @@ class ConversationFragment extends BaseListFragment {
     @Override
     protected void setupTitleBar(TitleBar titleBar) {
         titleBar
-        .setTitle(presenter.params.title)
         .setDisplayUpEnabled(true)
         .show();
     }
@@ -73,6 +68,12 @@ class ConversationFragment extends BaseListFragment {
                 sendMessageAction(message.toString());
             }
         });
+    }
+    
+    @Override
+    public void setListAdapter(ListAdapter adapter) {
+        super.setListAdapter(adapter);
+        getTitleBar().setTitle(presenter.params.friend.displayName);
     }
 
     /******************************* 发送消息 *******************************/

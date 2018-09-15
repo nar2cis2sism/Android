@@ -19,7 +19,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import com.daimon.yueba.R;
 import com.project.app.bean.FriendListItem;
 import com.project.ui.message.conversation.ConversationActivity;
-import com.project.ui.message.conversation.ConversationPresenter.ConversationParams;
+import com.project.ui.message.conversation.ConversationActivity.ConversationParams;
 
 import engine.android.core.Injector;
 import engine.android.core.annotation.InjectView;
@@ -198,11 +198,7 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
     }
     
     private void toConversation(FriendListItem item) {
-        ConversationParams params = new ConversationParams();
-        params.title = item.friend.displayName;
-        params.account = item.friend.account;
-        
-        startActivity(ConversationActivity.buildIntent(getContext(), params));
+        startActivity(ConversationActivity.buildIntent(getContext(), new ConversationParams(item.friend.account)));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package engine.android.core.util;
 
+import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
@@ -23,7 +24,9 @@ public final class PresentManager {
      */
     public <P extends BasePresenter<C>, C> P addPresenter(Class<P> presenterCls, C callbacks) {
         try {
-            P p = presenterCls.newInstance();
+            Constructor<P> constructor = presenterCls.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            P p = constructor.newInstance();
             if (map == null) map = new LinkedHashMap<Class<? extends BasePresenter<?>>, BasePresenter<?>>();
             map.put(presenterCls, p.setCallbacks(callbacks));
             return p;

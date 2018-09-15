@@ -8,7 +8,7 @@ import engine.android.framework.ui.util.DateRange.DateRangeLookUp;
 
 import java.util.Calendar;
 
-public class MessageItem {
+public class ConversationItem {
     
     private static final DateRangeLookUp map = new DateRangeLookUp();
     
@@ -55,7 +55,7 @@ public class MessageItem {
     
     public final String time;
     
-    public MessageItem(Message message) {
+    public ConversationItem(Message message) {
         this.message = message;
         time = formatTime(map.lookup(message.creationTime), message.creationTime);
     }
@@ -65,7 +65,7 @@ public class MessageItem {
              : CalendarFormat.format(CalendarFormat.getCalendar(time));
     }
     
-    public boolean inFiveMinutes(MessageItem item) {
+    public boolean inFiveMinutes(ConversationItem item) {
         return Math.abs(message.creationTime - item.message.creationTime) <= FIVE_MINUTES;
     }
     

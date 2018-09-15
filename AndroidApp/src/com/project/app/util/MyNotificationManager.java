@@ -1,4 +1,4 @@
-package com.project;
+package com.project.app.util;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,10 +10,15 @@ import com.daimon.yueba.R;
 import com.project.app.MyContext;
 import com.project.storage.db.Message;
 import com.project.ui.message.conversation.ConversationActivity;
-import com.project.ui.message.conversation.ConversationPresenter.ConversationParams;
+import com.project.ui.message.conversation.ConversationActivity.ConversationParams;
 
 import engine.android.util.extra.Singleton;
 
+/**
+ * 通知管理器
+ * 
+ * @author Daimon
+ */
 public class MyNotificationManager {
     
     private static int NOTIFICATION_ID = 0;
@@ -60,16 +65,13 @@ public class MyNotificationManager {
      * @param count 未读消息数量
      */
     public void notifyMessage(Message msg, int count) {
-        ConversationParams params = new ConversationParams();
-        params.title = "";
-        params.account = msg.account;
-        
         Builder builder = new Builder(context)
         .setSmallIcon(R.drawable.ic_launcher)
         .setContentTitle(context.getString(R.string.app_name))
         .setContentText(msg.content)
         .setNumber(count)
-        .setContentIntent(pendingActivityIntent(ConversationActivity.buildIntent(context, params)));
+        .setContentIntent(pendingActivityIntent(ConversationActivity
+                .buildIntent(context, new ConversationParams(msg.account))));
         
         nm.notify(MESSAGE, builder.build());
     }

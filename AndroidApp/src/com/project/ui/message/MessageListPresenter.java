@@ -33,7 +33,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class MessageListPresenter extends Presenter<MessageListFragment> {
+class MessageListPresenter extends Presenter<MessageListFragment> {
     
     MessageListAdapter adapter;
     MessageListLoader  loader;
@@ -92,7 +92,7 @@ class MessageListAdapter extends JavaBeanAdapter<MessageListItem> implements Pin
             badge.hide();
         }
         // 头像
-        ((AvatarImageView) badge.getTarget()).display(null);
+        ((AvatarImageView) badge.getTarget()).display(item.getFriendAvatarUrl());
         // 时间
         holder.setTextView(R.id.note, item.timeText);
         // 名称
@@ -163,8 +163,7 @@ class MessageListLoader extends JavaBeanLoader<MessageListItem> {
             for (Message message : messages)
             {
                 Friend friend = FriendDAO.getFriendByAccount(message.account);
-                MessageListItem item = new MessageListItem(message.creationTime, friend.displayName, message.content);
-                item.friend = friend;
+                MessageListItem item = new MessageListItem(message, friend);
                 item.unreadCount = MessageDAO.getUnreadMessageCount(message.account);
                 list.add(item);
             }
@@ -219,6 +218,26 @@ class MessageListLoader extends JavaBeanLoader<MessageListItem> {
                 "系统消息", 
                 "土豪发奖了！十万支付券"));
         // 5
+        cal.add(Calendar.DATE, -1);
+        list.add(new MessageListItem(cal.getTimeInMillis(), 
+                "我的电脑", 
+                "[离线]手机轻松传输文件"));
+        // 6
+        cal.add(Calendar.DATE, -1);
+        list.add(new MessageListItem(cal.getTimeInMillis(), 
+                "我的电脑", 
+                "[离线]手机轻松传输文件"));
+        // 7
+        cal.add(Calendar.DATE, -1);
+        list.add(new MessageListItem(cal.getTimeInMillis(), 
+                "我的电脑", 
+                "[离线]手机轻松传输文件"));
+        // 8
+        cal.add(Calendar.DATE, -1);
+        list.add(new MessageListItem(cal.getTimeInMillis(), 
+                "我的电脑", 
+                "[离线]手机轻松传输文件"));
+        // 9
         cal.add(Calendar.DATE, -1);
         list.add(new MessageListItem(cal.getTimeInMillis(), 
                 "我的电脑", 

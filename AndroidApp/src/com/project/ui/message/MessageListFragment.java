@@ -84,12 +84,10 @@ public class MessageListFragment extends BaseListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         Friend friend = presenter.adapter.getItem(position).friend;
-        if (friend == null)
+        if (friend != null)
         {
-            return;
+            startActivity(ConversationActivity.buildIntent(getContext(), new ConversationParams(friend.account)));
         }
-
-        startActivity(ConversationActivity.buildIntent(getContext(), new ConversationParams(friend.account)));
     }
     
     @Override

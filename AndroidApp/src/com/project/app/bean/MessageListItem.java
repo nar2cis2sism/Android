@@ -1,8 +1,10 @@
 package com.project.app.bean;
 
 import com.project.storage.db.Friend;
+import com.project.storage.db.Message;
 
 import engine.android.core.util.CalendarFormat;
+import engine.android.framework.app.image.ImageManager.ImageUrl;
 import engine.android.framework.ui.util.DateRange;
 import engine.android.framework.ui.util.DateRange.DateRangeLookUp;
 
@@ -53,8 +55,17 @@ public class MessageListItem {
         timeText = formatTime(category, time);
     }
     
+    public MessageListItem(Message msg, Friend friend) {
+        this(msg.creationTime, friend.displayName, msg.content);
+        this.friend = friend;
+    }
+    
     private static String formatTime(DateRange category, long time) {
         return category != null ? category.format(time)
              : CalendarFormat.format(CalendarFormat.getCalendar(time));
+    }
+    
+    public ImageUrl getFriendAvatarUrl() {
+        return friend != null ? friend.getAvatarUrl() : null;
     }
 }

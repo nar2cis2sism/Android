@@ -49,13 +49,6 @@ public class MoreFragment extends BaseInfoFragment {
     User user;
     
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        user = MySession.getUser();
-    }
-    
-    @Override
     protected void setupTitleBar(TitleBar titleBar) {
         titleBar
         .setTitle(R.string.more_title)
@@ -111,11 +104,12 @@ public class MoreFragment extends BaseInfoFragment {
         
         return holder;
     }
-
+    
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        // 个人信息
+    public void onResume() {
+        super.onResume();
+        // 实时更新个人信息
+        user = MySession.getUser();
         setupHeader();
     }
     

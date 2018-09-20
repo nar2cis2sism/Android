@@ -1,7 +1,10 @@
 package com.project.network.action.file;
 
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 
+import com.project.app.MyApp;
+import com.project.app.MySession;
 import com.project.network.action.Actions;
 import com.project.storage.dao.UserDAO;
 
@@ -41,6 +44,7 @@ public class UploadAvatar extends FileUpload {
 
             // 头像上传成功
             UserDAO.updateAvatarVersion(Long.parseLong(crc));
+            MyApp.global().getImageManager().save(MySession.getUser().getAvatarUrl(), BitmapFactory.decodeFile(file.getAbsolutePath()));
             return null;
         }
     }

@@ -150,51 +150,6 @@ public class Forelet extends Activity implements TaskCallback {
         super.setContentView(view, params);
         inject(this);
     }
-    
-    /******************************* 回退事件处理 *******************************/
-    
-    public interface OnBackListener {
-        
-        boolean onBackPressed();
-    }
-    
-    private LinkedList<OnBackListener> onBackListener;
-    
-    public void addOnBackListener(OnBackListener listener) {
-        if (onBackListener == null)
-        {
-            onBackListener = new LinkedList<OnBackListener>();
-        }
-        
-        onBackListener.addFirst(listener);
-    }
-    
-    public void removeOnBackListener(OnBackListener listener) {
-        if (onBackListener != null)
-        {
-            onBackListener.remove(listener);
-        }
-    }
-    
-    @Override
-    public void onBackPressed() {
-        if (onBackListener != null)
-        {
-            for (OnBackListener listener : onBackListener)
-            {
-                if (listener.onBackPressed())
-                {
-                    return;
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
-        
-        super.onBackPressed();
-    }
 
     /******************************* 对话框管理 *******************************/
 

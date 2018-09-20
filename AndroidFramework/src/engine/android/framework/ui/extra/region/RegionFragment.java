@@ -8,9 +8,9 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
-import engine.android.core.Forelet.OnBackListener;
 import engine.android.framework.R;
 import engine.android.framework.ui.BaseListFragment;
+import engine.android.framework.ui.extra.SinglePaneActivity.OnBackListener;
 import engine.android.util.AndroidUtil;
 import engine.android.util.ui.ListViewState;
 import engine.android.widget.component.TitleBar;

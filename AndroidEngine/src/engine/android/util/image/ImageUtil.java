@@ -286,7 +286,7 @@ public final class ImageUtil {
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        image.compress(CompressFormat.PNG, 100, baos);
+        image.compress(image.hasAlpha() ? CompressFormat.PNG : CompressFormat.JPEG, 100, baos);
         return baos.toByteArray();
     }
 

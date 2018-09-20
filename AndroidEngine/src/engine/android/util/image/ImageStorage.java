@@ -114,7 +114,7 @@ public class ImageStorage {
             FileOutputStream fos = null;
             try {
                 fos = new FileOutputStream(file);
-                return image.compress(CompressFormat.PNG, 100, fos);
+                return image.compress(image.hasAlpha() ? CompressFormat.PNG : CompressFormat.JPEG, 100, fos);
             } finally {
                 if (fos != null)
                 {

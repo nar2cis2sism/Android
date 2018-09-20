@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,15 +22,14 @@ import com.project.app.MySession;
 import com.project.network.action.file.UploadAvatar;
 import com.project.network.action.http.EditUserInfo;
 import com.project.storage.db.User;
-import com.project.storage.provider.ProviderContract.UserColumns;
 
-import engine.android.core.Forelet.OnBackListener;
 import engine.android.core.annotation.InjectView;
 import engine.android.core.annotation.OnClick;
 import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
 import engine.android.core.util.CalendarFormat;
 import engine.android.framework.ui.extra.BaseInfoFragment;
 import engine.android.framework.ui.extra.SinglePaneActivity;
+import engine.android.framework.ui.extra.SinglePaneActivity.OnBackListener;
 import engine.android.framework.ui.extra.TextEditFragment;
 import engine.android.framework.ui.extra.ViewImageFragment;
 import engine.android.framework.ui.extra.region.Region;
@@ -53,10 +51,10 @@ import java.util.Calendar;
  * 
  * @author Daimon
  */
-public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnClickListener, OnBackListener, UserColumns {
+public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnClickListener, OnBackListener {
 
     @InjectView(R.id.avatar)
-    ImageView avatar;
+    AvatarImageView avatar;
     
     ViewHolder nickname;
     ViewHolder gender;
@@ -122,11 +120,7 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupAvatar();
-    }
-    
-    private void setupAvatar() {
-        avatar = AvatarImageView.display(avatar, user.getAvatarUrl());
+        avatar.display(user.getAvatarUrl());
     }
     
     @OnClick(R.id.header)
@@ -288,7 +282,7 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         })
         .create();
 
-        getBaseActivity().showDialog("edit", dialog);
+        getBaseActivity().showDialog("edit_message", dialog);
         return true;
     }
     
@@ -299,7 +293,7 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
             // 头像上传成功
             getBaseActivity().hideProgress();
             MyApp.showMessage(getString(R.string.toast_upload_avatar_success));
-            setupAvatar();
+            avatar.display(MySession.getUser().getAvatarUrl());
         }
         else if (EDIT_USER_INFO.equals(action))
         {

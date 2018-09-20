@@ -120,6 +120,11 @@ class SocketHandler {
         }
         
         public void poke() {
+            if (interval <= 0)
+            {
+                return;
+            }
+            
             if (lastTriggerTime == -1)
             {
                 lastTriggerTime = SystemClock.uptimeMillis();

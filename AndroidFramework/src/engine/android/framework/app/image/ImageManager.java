@@ -22,6 +22,7 @@ import engine.android.util.image.AsyncImageLoader.ImageDownloader;
 import engine.android.util.image.ImageStorage;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.WeakHashMap;
 
 /**
@@ -41,6 +42,8 @@ public class ImageManager {
 
     private final WeakHashMap<View, ImageUrl> displayViewMap;
     
+    private final HashMap<ImageUrl, Bitmap> savedImageMap;
+    
     private final ImageStorage storage;
     
     private final Transformer transformer;
@@ -52,6 +55,7 @@ public class ImageManager {
         loader = new AsyncImageLoader();
         downloader = new MyImageDownloader(context);
         displayViewMap = new WeakHashMap<View, ImageUrl>();
+        savedImageMap = new HashMap<ImageUrl, Bitmap>();
         storage = new ImageStorage(config.getImageDir());
         transformer = config.getImageTransformer();
     }
@@ -84,6 +88,12 @@ public class ImageManager {
         {
             setDefaultDrawable(view, defaultDrawable);
         }
+    }
+    
+    public void save(ImageUrl url, Bitmap image) {
+        savedImageMap.put(url, image);
+        loader.updateImage(url, null);
+        loader.loadImage(url, downloader, null);
     }
     
     private void setDefaultDrawable(ImageView view, Drawable defaultDrawable) {
@@ -133,9 +143,8 @@ public class ImageManager {
             String fileKey = imageUrl.getFileKey();
             String crc = imageUrl.crc;
             
-            Bitmap image = null;
-            
-            if (!config.isOffline())
+            Bitmap image = savedImageMap.remove(imageUrl);
+            if (image == null)
             {
                 if (checkCrc(fileKey, crc))
                 {
@@ -146,14 +155,22 @@ public class ImageManager {
                     image = storage.get(fileKey);
                 }
 
-                if (image == null)
+                if (image == null && !config.isOffline())
                 {
                     image = downloadImage(downloadUrl, fileKey, crc);
                 }
             }
+            else if (storage.put(fileKey, image))
+            {
+                updateCrc(fileKey, crc);
+            }
             
             if (transformer != null) image = transformer.transform(imageUrl, image);
             return image;
+        }
+
+        private String getCrcKey(String fileKey) {
+            return fileKey;
         }
 
         /**
@@ -179,6 +196,13 @@ public class ImageManager {
 
             return change;
         }
+
+        /**
+         * 更新图片版本号
+         */
+        private void updateCrc(String fileKey, String crc) {
+            sp.edit().putString(getCrcKey(fileKey), crc).commit();
+        }
         
         private Bitmap downloadImage(String downloadUrl, String fileKey, String crc) {
             if (printLog) log("图片下载-" + fileKey, downloadUrl);
@@ -196,7 +220,7 @@ public class ImageManager {
                 
                 if (image != null && storage.put(fileKey, bs))
                 {
-                    sp.edit().putString(getCrcKey(fileKey), crc).commit();
+                    updateCrc(fileKey, crc);
                 }
                 
                 return image;
@@ -206,10 +230,6 @@ public class ImageManager {
             }
             
             return null;
-        }
-        
-        private String getCrcKey(String fileKey) {
-            return fileKey;
         }
     }
 

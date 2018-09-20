@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-import engine.android.core.Forelet.OnBackListener;
 import engine.android.core.Forelet.ProgressSetting;
 import engine.android.core.extra.EventBus;
 import engine.android.core.extra.EventBus.Event;
@@ -24,8 +23,6 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
     
     private BaseActivity baseActivity;
     
-    private OnBackListener onBackListener;
-    
     private boolean menuVisible = true;
     
     @Override
@@ -35,16 +32,11 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
         if (activity instanceof BaseActivity)
         {
             baseActivity = (BaseActivity) activity;
-            if (this instanceof OnBackListener)
-            {
-                baseActivity.addOnBackListener(onBackListener = (OnBackListener) this);
-            }
         }
     }
     
     @Override
     public void onDetach() {
-        if (onBackListener != null) baseActivity.removeOnBackListener(onBackListener);
         baseActivity = null;
         super.onDetach();
     }
@@ -152,8 +144,6 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
         if (isReceiveEventEnabled) EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
-
-    /******************************* 华丽丽的分割线 *******************************/
     
     /**
      * 传递参数构造器
@@ -177,6 +167,8 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment impl
             return null;
         }
     }
+
+    /******************************* 华丽丽的分割线 *******************************/
     
     protected void showProgress(CharSequence message) {
         baseActivity.showProgress(ProgressSetting.getDefault().setMessage(message));

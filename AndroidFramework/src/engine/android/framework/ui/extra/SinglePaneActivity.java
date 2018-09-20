@@ -134,4 +134,24 @@ public class SinglePaneActivity extends BaseActivity {
             }
         });
     }
+    
+    /**
+     * 回退事件监听器（用于处理Fragment回退事件）
+     */
+    public interface OnBackListener {
+        
+        boolean onBackPressed();
+    }
+    
+    @Override
+    public void onBackPressed() {
+        Fragment fragment = getContentFragment();
+        if (fragment instanceof OnBackListener
+        && ((OnBackListener) fragment).onBackPressed())
+        {
+            return;
+        }
+        
+        super.onBackPressed();
+    }
 }

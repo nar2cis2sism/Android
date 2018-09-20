@@ -165,9 +165,9 @@ public class SocketManager implements SocketConnectionListener, Callback {
             } catch (SocketException e) {
                 log(e);
             }
+
+            handler.heartbeat().start(config.getSocketKeepAliveTime());
         }
-        
-        handler.heartbeat().start(config.getSocketKeepAliveTime());
     }
     
     private void onSend(ProtocolEntity entity) {

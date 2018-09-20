@@ -25,9 +25,6 @@ import engine.android.widget.component.TitleBar;
  */
 public class TextEditFragment extends BaseFragment {
     
-    TextView save;
-    EditText input;
-    
     Params params;
     
     public static final class Params {
@@ -37,9 +34,12 @@ public class TextEditFragment extends BaseFragment {
         public String desc;             // 描述说明
     }
     
-    public static Bundle buildParams(Params params) {
+    public static final Bundle buildParams(Params params) {
         return ParamsBuilder.build(params);
     }
+    
+    TextView save;
+    EditText input;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {

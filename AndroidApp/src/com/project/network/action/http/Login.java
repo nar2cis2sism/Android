@@ -84,12 +84,12 @@ public class Login implements HttpBuilder, JsonEntity {
             sm.setup(ServerUrl.getSocketServerUrl());
             // 更新用户资料
             User user = processUser(avatar_ver);
-            if (version != user.version)
+            if (version > user.version)
             {
                 MyApp.global().getHttpManager().sendHttpRequest(new GetUserInfo(user.version));
             }
             // 同步好友列表
-            if (friend_list_timestamp != user.friend_list_timestamp)
+            if (friend_list_timestamp > user.friend_list_timestamp)
             {
                 MyApp.global().getHttpManager().sendHttpRequest(new QueryFriendList(user.friend_list_timestamp));
             }
@@ -109,7 +109,7 @@ public class Login implements HttpBuilder, JsonEntity {
                 user.avatar_ver = avatar_ver;
                 MyDAOManager.getDAO().save(user);
             }
-            else if (avatar_ver != user.avatar_ver)
+            else if (avatar_ver > user.avatar_ver)
             {
                 user.avatar_ver = avatar_ver;
                 MyDAOManager.getDAO().update(user, User.AVATAR_VER);

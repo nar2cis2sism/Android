@@ -71,6 +71,8 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
             action_container.addAction(R.drawable.friend_recommend, R.string.friend_recommend);
         }
     }
+    
+    ChooseButton list_switcher;
 
     ListHeader list_header;
     
@@ -100,26 +102,28 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
     protected void setupTitleBar(TitleBar titleBar) {
         titleBar
         .setTitle(R.string.friend_title) // 搜索时显示
-        .setDisplayShowTitleEnabled(false)
-        .setDisplayShowCustomEnabled(true)
-        .setCustomView(onCreateListSwitcher())
+        .setCustomView(getListSwitcher())
         .addAction(R.drawable.friend_add)
         .show();
+        updateTitleBar(searchPresenter.isSearching);
     }
     
-    private View onCreateListSwitcher() {
-        ChooseButton button = new ChooseButton(getContext());
-        button.setPositiveButton(R.string.friend_by_group, null);
-        button.setNegativeButton(R.string.friend_all, null);
-        button.setOnCheckedChangeListener(this);
-        button.choosePositiveButton();
-        
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.CENTER;
-        button.setLayoutParams(params);
-        
-        return button;
+    private ChooseButton getListSwitcher() {
+        if (list_switcher == null)
+        {
+            ChooseButton button = list_switcher = new ChooseButton(getContext());
+            button.setPositiveButton(R.string.friend_by_group, null);
+            button.setNegativeButton(R.string.friend_all, null);
+            button.setOnCheckedChangeListener(this);
+            button.choosePositiveButton();
+
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            params.gravity = Gravity.CENTER;
+            button.setLayoutParams(params);
+        }
+
+        return list_switcher;
     }
     
     @Override
@@ -186,6 +190,14 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
     }
 
     @Override
+    protected void notifyDataSetChanged() {
+        presenter.groupAdapter.update(presenter.loader.groups);
+        searchPresenter.adapter.update(presenter.adapter.getItems());
+        presenter.updateLetterIndex(letterBarHelper, getListView());
+        updateLetterBar();
+    }
+
+    @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         toConversation((FriendListItem) getListAdapter().getItem(position));
     }
@@ -201,14 +213,6 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
         startActivity(ConversationActivity.buildIntent(getContext(), new ConversationParams(item.friend.account)));
     }
 
-    @Override
-    protected void notifyDataSetChanged() {
-        presenter.groupAdapter.update(presenter.loader.groups);
-        searchPresenter.adapter.update(presenter.adapter.getItems());
-        presenter.updateLetterIndex(letterBarHelper, getListView());
-        updateLetterBar();
-    }
-    
     /**
      * @param inSearch True:进入搜索模式,False:退出搜索模式
      */
@@ -216,6 +220,7 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
         ListAdapter adapter = inSearch ? searchPresenter.adapter : presenter.adapter;
         if (getListAdapter() == adapter)
         {
+            // 此方法会调用多次，故加此判断避免冗余
             return;
         }
         

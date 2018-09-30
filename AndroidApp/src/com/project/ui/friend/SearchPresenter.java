@@ -14,7 +14,7 @@ import engine.android.core.extra.JavaBeanAdapter.FilterMatcher;
 import engine.android.framework.ui.widget.AvatarImageView;
 import engine.android.widget.component.SearchBox.SearchProvider;
 
-public class SearchPresenter extends Presenter<FriendListFragment> implements SearchProvider, FilterListener {
+class SearchPresenter extends Presenter<FriendListFragment> implements SearchProvider, FilterListener {
     
     SearchAdapter adapter;
     boolean isSearching;
@@ -25,7 +25,7 @@ public class SearchPresenter extends Presenter<FriendListFragment> implements Se
     }
 
     @Override
-    public void search(String key) {
+    public void search(String key, boolean imeAction) {
         if (TextUtils.isEmpty(key) || TextUtils.isEmpty(key = key.trim()))
         {
             if (isSearching)
@@ -37,7 +37,15 @@ public class SearchPresenter extends Presenter<FriendListFragment> implements Se
         else
         {
             isSearching = true;
-            adapter.getFilter().filter(key.toLowerCase(), this);
+            if (imeAction)
+            {
+                // 全局搜索
+            }
+            else
+            {
+                // 本地搜索
+                adapter.getFilter().filter(key.toLowerCase(), this);
+            }
         }
     }
 

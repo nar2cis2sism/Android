@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class FriendListPresenter extends Presenter<FriendListFragment> {
+class FriendListPresenter extends Presenter<FriendListFragment> {
     
     FriendListAdapter adapter;
     FriendListLoader  loader;
@@ -103,36 +103,6 @@ class FriendGroupAdapter extends BaseExpandableListAdapter<FriendGroupItem, Frie
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
-            View convertView, ViewGroup parent) {
-        ViewHolder holder;
-        if (convertView == null)
-        {
-            (convertView = getLayoutInflater().inflate(R.layout.base_list_item_2, parent, false))
-            .setTag(holder = new ViewHolder(convertView));
-        }
-        else
-        {
-            holder = (ViewHolder) convertView.getTag();
-        }
-
-        if (holder != null)
-        {
-            FriendListItem item = getChild(groupPosition, childPosition);
-            // 好友头像
-            AvatarImageView.display(holder, R.id.icon, item.avatarUrl);
-            // 名称
-            holder.setTextView(R.id.title, item.friend.displayName);
-            // 签名
-            holder.setTextView(R.id.content, item.friend.signature);
-            //
-            holder.setVisible(R.id.note, false);
-        }
-
-        return convertView;
-    }
-
-    @Override
     protected View newGroupView(int groupPosition, ViewGroup parent) {
         return getLayoutInflater().inflate(R.layout.friend_group_item, parent, false);
     }
@@ -145,6 +115,36 @@ class FriendGroupAdapter extends BaseExpandableListAdapter<FriendGroupItem, Frie
                 : R.drawable.group_indicator_collapsed);
         holder.setTextView(R.id.number, String.valueOf(item.getChildrenCount()));
         holder.setTextView(R.id.name, item.name);
+    }
+
+    @Override
+    public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
+            View convertView, ViewGroup parent) {
+        ViewHolder holder;
+        if (convertView == null)
+        {
+            (convertView = getLayoutInflater().inflate(R.layout.base_list_item_2, parent, false))
+            .setTag(holder = new ViewHolder(convertView));
+        }
+        else
+        {
+            holder = (ViewHolder) convertView.getTag();
+        }
+    
+        if (holder != null)
+        {
+            FriendListItem item = getChild(groupPosition, childPosition);
+            // 好友头像
+            AvatarImageView.display(holder, R.id.icon, item.avatarUrl);
+            // 名称
+            holder.setTextView(R.id.title, item.friend.displayName);
+            // 签名
+            holder.setTextView(R.id.content, item.friend.signature);
+            //
+            holder.setVisible(R.id.note, false);
+        }
+    
+        return convertView;
     }
 }
 
@@ -159,8 +159,8 @@ class FriendListLoader extends JavaBeanLoader<FriendListItem> {
 
     @Override
     public Collection<FriendListItem> loadInBackground() {
-        List<Friend> friends = FriendDAO.getFriendList();
         List<FriendListItem> list = null;
+        List<Friend> friends = FriendDAO.getFriendList();
         if (friends != null)
         {
             list = new ArrayList<FriendListItem>(friends.size());

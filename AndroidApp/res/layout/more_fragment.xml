@@ -10,62 +10,62 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-    	<!-- 头像 -->
-	    <ImageView
-	        android:id="@+id/avatar"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_centerVertical="true"
-	        android:layout_marginRight="8dp" />
+        <!-- 头像 -->
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp" />
 
-	    <!-- 右边箭头 -->
-	    <ImageView
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentRight="true"
-	        android:layout_centerVertical="true"
-	        android:layout_marginLeft="8dp"
-	        android:src="@drawable/arrow_right" />
+        <!-- 右边箭头 -->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:src="@drawable/arrow_right" />
 
-	    <!-- 中间区域 -->
-	    <RelativeLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_toRightOf="@id/avatar"
-	        android:layout_toLeftOf="@id/arrow"
-	        android:layout_centerVertical="true" >
+        <!-- 中间区域 -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/avatar"
+            android:layout_toLeftOf="@id/arrow"
+            android:layout_centerVertical="true" >
 	
-	        <!-- 名称 -->
-	        <TextView
-	            android:id="@+id/name"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_marginRight="8dp"
-	            android:singleLine="true"
-	            android:textAppearance="?android:attr/textAppearanceMedium"
-	            android:textSize="20sp" />
+            <!-- 名称 -->
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:singleLine="true"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="20sp" />
 	
-	        <!-- 实名认证 -->
-	        <TextView
-	            style="@style/Widget.Button.Yellow"
-	            android:id="@+id/authentication"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_toRightOf="@id/name"
-	            android:layout_alignTop="@id/name"
-	            android:layout_alignBottom="@id/name"
-	            android:textSize="12sp" />
+            <!-- 实名认证 -->
+            <TextView
+                style="@style/Widget.Button.Yellow"
+                android:id="@+id/authentication"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/name"
+                android:layout_alignTop="@id/name"
+                android:layout_alignBottom="@id/name"
+                android:textSize="12sp" />
 	
-	        <!-- 签名 -->
-	        <TextView
-	            android:id="@+id/signature"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_below="@id/name"
-	            android:layout_marginTop="8dp"
-	            android:singleLine="true" />
+            <!-- 签名 -->
+            <TextView
+                android:id="@+id/signature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/name"
+                android:layout_marginTop="8dp"
+                android:singleLine="true" />
 	    
-	    </RelativeLayout>
+        </RelativeLayout>
         
     </RelativeLayout>
 

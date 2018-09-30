@@ -4,11 +4,15 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 import engine.android.util.listener.MyTextWatcher;
 import engine.android.widget.R;
@@ -66,6 +70,9 @@ public class SearchBox extends LinearLayout implements OnClickListener {
         return search_text;
     }
     
+    /**
+     * 设置搜索器
+     */
     public void setSearchProvider(final SearchProvider searchProvider) {
         search_text.addTextChangedListener(new TextWatcher() {
             
@@ -77,14 +84,32 @@ public class SearchBox extends LinearLayout implements OnClickListener {
             
             @Override
             public void afterTextChanged(Editable s) {
-                searchProvider.search(s.toString());
+                searchProvider.search(s.toString(), false);
+            }
+        });
+        search_text.setOnEditorActionListener(new OnEditorActionListener() {
+            
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH)
+                {
+                    searchProvider.search(search_text.getText().toString(), true);
+                    return true;
+                }
+                
+                return false;
             }
         });
     }
     
     public interface SearchProvider {
         
-        void search(String key);
+        /**
+         * 
+         * @param key 搜索关键字
+         * @param imeAction 键盘上的搜索按钮点击事件
+         */
+        void search(String key, boolean imeAction);
     }
     
     private class ClearAction extends MyTextWatcher implements OnClickListener {
@@ -96,7 +121,7 @@ public class SearchBox extends LinearLayout implements OnClickListener {
 
         @Override
         protected void changeFromEmpty(String after) {
-            if (showVoiceIcon)  search_voice.setVisibility(View.GONE);
+            if (showVoiceIcon) search_voice.setVisibility(View.GONE);
             search_clear.setVisibility(View.VISIBLE);
         }
 

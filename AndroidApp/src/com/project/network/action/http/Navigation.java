@@ -18,7 +18,6 @@ import engine.android.util.AndroidUtil;
 import org.json.JSONObject;
 
 import protocol.http.NavigationData;
-import protocol.http.NavigationData.AppUpgradeInfo;
 
 /**
  * 获取导航配置
@@ -72,12 +71,7 @@ public class Navigation implements HttpBuilder, JsonEntity {
             MySession.setServerUrl(url);
             
             // APP升级信息
-            AppUpgradeInfo upgrade = data.upgrade;
-            if (upgrade != null)
-            {
-                // 需要升级
-                MySession.setUpgradeInfo(upgrade);
-            }
+            MySession.setUpgradeInfo(data.upgrade);
             
             return super.process(obj);
         }

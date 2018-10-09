@@ -3,10 +3,13 @@ package com.project.ui.more.setting;
 import static com.project.network.action.Actions.LOGOUT;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.daimon.yueba.R;
@@ -14,12 +17,14 @@ import com.project.app.MyApp;
 import com.project.app.MySession;
 import com.project.network.action.http.Logout;
 import com.project.ui.login.LoginFragment;
+import com.project.util.AppUtil;
 import com.project.util.LogUploader;
 
 import engine.android.core.annotation.OnClick;
 import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
 import engine.android.framework.ui.extra.BaseInfoFragment;
 import engine.android.util.ui.FastClickCounter;
+import engine.android.widget.common.BadgeView;
 import engine.android.widget.component.TitleBar;
 
 /**
@@ -61,8 +66,23 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
         // 绑定手机
         phone = addComponent(root, inflater, R.string.setting_phone, NO_TEXT, true);
         // 版本更新
-        version = addComponent(root, inflater, R.string.setting_version, NO_TEXT, true);
-        version.getConvertView().setOnClickListener(this);
+        if (MySession.getUpgradeInfo() != null)
+        {
+            BadgeView badge = new BadgeView(getContext());
+            badge.setText("New");
+            badge.setPadding(16, 4, 16, 4);
+            
+            version = addComponent(root, inflater, R.string.setting_version, badge, true);
+            version.getConvertView().setOnClickListener(this);
+            
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            params.gravity = Gravity.LEFT;
+            badge.setLayoutParams(params);
+        }
+        else
+        {
+            version = addComponent(root, inflater, R.string.setting_version, NO_TEXT, true);
+        }
         // 关于我们
         about = addComponent(root, inflater, R.string.setting_about, NO_TEXT, true);
         about.getConvertView().setOnClickListener(this);
@@ -87,6 +107,7 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
     public void onClick(View v) {
         if (v == version.getConvertView())
         {
+            AppUtil.upgradeApp(getBaseActivity(), MySession.getUpgradeInfo(), false);
         }
         else if (v == about.getConvertView())
         {

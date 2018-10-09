@@ -1,6 +1,5 @@
 package com.project.network.action.http;
 
-import com.google.gson.reflect.TypeToken;
 import com.project.app.MyApp;
 import com.project.app.MySession;
 import com.project.network.NetworkConfig;
@@ -8,9 +7,8 @@ import com.project.network.action.Actions;
 import com.project.network.http.HttpJsonParser;
 import com.project.storage.MyDAOManager;
 import com.project.storage.dao.FriendDAO;
+import com.project.storage.dao.UserDAO;
 import com.project.storage.db.Friend;
-import com.project.storage.db.User;
-import com.project.storage.provider.ProviderContract.UserColumns;
 
 import engine.android.dao.DAOTemplate;
 import engine.android.dao.DAOTemplate.DAOTransaction;
@@ -23,9 +21,8 @@ import engine.android.http.util.HttpParser;
 
 import org.json.JSONObject;
 
-import protocol.http.FriendSync;
-
-import java.util.List;
+import protocol.http.FriendListData;
+import protocol.http.FriendListData.FriendData;
 
 /**
  * 查询好友列表
@@ -64,57 +61,55 @@ public class QueryFriendList implements HttpBuilder, JsonEntity {
         return GsonUtil.toJson(this);
     }
     
-    private class Parser extends HttpJsonParser implements DAOTransaction {
+    private static class Parser extends HttpJsonParser implements DAOTransaction {
         
-        long timestamp;
-        int sync_type;
-        int sync_status;
-        List<FriendSync> list;
+        FriendListData data;
         
         @Override
-        protected Object process(JSONObject data) throws Exception {
-            timestamp = data.getLong("timestamp");
-            sync_type = data.getInt("sync_type");
-            sync_status = data.getInt("sync_status");
-            list = GsonUtil.parseJson(data.getString("list"), 
-                    new TypeToken<List<FriendSync>>() {}.getType());
+        protected Object process(JSONObject obj) throws Exception {
+            data = GsonUtil.parseJson(obj.toString(), FriendListData.class);
             
             MyDAOManager.getDAO().execute(this);
-            if (sync_status == 1)
+            if (data.sync_status == 1)
             {
                 // 继续同步
-                MyApp.global().getHttpManager().sendHttpRequest(new QueryFriendList(timestamp));
+                MyApp.global().getHttpManager().sendHttpRequest(new QueryFriendList(data.timestamp));
             }
             
-            return super.process(data);
+            return super.process(obj);
         }
 
         @Override
         public boolean execute(DAOTemplate dao) throws Exception {
-            if (sync_type == 0)
+            if (data.sync_type == 0)
             {
                 // 全量更新，清空历史数据
                 dao.resetTable(Friend.class);
             }
             
-            for (FriendSync item : list)
+            for (FriendData item : data.list)
             {
                 Friend friend = FriendDAO.getFriendByAccount(item.account);
-                if (item.action == 1)
+                if (item.op == 1)
                 {
                     // 删除好友
                     if (friend != null) dao.remove(friend);
                 }
-                else if (friend == null)
+                else
                 {
-                    dao.save(new Friend().fromProtocol(item));
+                    if (friend == null)
+                    {
+                        dao.save(new Friend().fromProtocol(item));
+                    }
+                    else
+                    {
+                        dao.update(friend.fromProtocol(item));
+                    }
                 }
             }
             
             // 同步完成，更新时间戳
-            User user = MySession.getUser();
-            user.friend_list_timestamp = timestamp;
-            dao.update(user, UserColumns.FRIEND_LIST_TIMESTAMP);
+            UserDAO.updateFriendListTimestamp(data.timestamp);
             
             return true;
         }

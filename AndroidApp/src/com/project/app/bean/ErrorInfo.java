@@ -15,8 +15,8 @@ public class ErrorInfo implements Failure {
         this.msg = msg;
     }
     
-    public static ErrorInfo parse(JSONObject json) {
-        int code = json.optInt("code");
+    public static ErrorInfo parse(JSONObject json) throws Exception {
+        int code = json.getInt("code");
         if (code == protocol.http.ErrorInfo.CODE_SUCCESS)
         {
             return null;

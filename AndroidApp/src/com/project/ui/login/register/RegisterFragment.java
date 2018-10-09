@@ -91,7 +91,7 @@ public class RegisterFragment extends BaseFragment {
         
         if (MyApp.getApp().isDebuggable())
         {
-            username.input().setText("18318066253");
+            username.input().setText("18222776787");
             password.input().setText("password");
         }
     }
@@ -213,7 +213,7 @@ public class RegisterFragment extends BaseFragment {
     
     private void sendGetSmsCodeAction() {
         GetSmsCode action = new GetSmsCode(username.input().getText().toString());
-        action.type = 1;
+        action.duplication = 1;
         
         getBaseActivity().sendHttpRequest(action);
     }

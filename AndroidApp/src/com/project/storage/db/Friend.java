@@ -15,7 +15,7 @@ import engine.android.framework.app.image.ImageManager.ImageUrl;
 
 import net.sourceforge.pinyin4j.lite.PinyinHelper;
 
-import protocol.http.FriendSync;
+import protocol.http.FriendListData.FriendData;
 
 /**
  * 好友信息
@@ -30,18 +30,28 @@ public class Friend implements FriendColumns {
 
     @DAOProperty(column=NICKNAME)
     public String nickname;                     // 昵称
+    
+    @DAOProperty(column=IS_FEMALE)
+    public boolean isFemale;                    // 性别[True:女,False:男]
+
+    @DAOProperty(column=REGION)
+    public String region;                       // 地区名称
 
     @DAOProperty(column=SIGNATURE)
     public String signature;                    // 签名
 
+    /**
+     * 高位表示“好友信息版本(Int32)”
+     * 低位表示“头像版本(Int32)”
+     */
     @DAOProperty(column=VERSION)
-    public long version;                        // 好友信息版本号
+    public long version;                        // 好友资料版本
 
     @DAOProperty(column=AVATAR_URL)
     public String avatar_url;                   // 头像下载地址
-
-    @DAOProperty(column=AVATAR_VER)
-    public long avatar_ver;                     // 头像版本号
+    
+    @DAOProperty(column=MOBILE_PHONE)
+    public String mobile_phone;                 // 手机号
 
     @DAOProperty(column=DISPLAY_NAME)
     public String displayName;                  // 显示名称
@@ -64,11 +74,15 @@ public class Friend implements FriendColumns {
 
     /******************************* 华丽丽的分割线 *******************************/
     
-    public Friend fromProtocol(FriendSync item) {
+    public Friend fromProtocol(FriendData item) {
         account = item.account;
+        version = item.version;
         nickname = item.nickname;
+        isFemale = item.gender == 1;
+        region = item.region;
         signature = item.signature;
         avatar_url = item.avatar_url;
+        mobile_phone = item.mobile_phone;
         displayName = getDisplayName();
         pinyin = PinyinHelper.getInstance().getPinyins(displayName, "").toLowerCase();
         sorting = sort(pinyin);
@@ -110,6 +124,7 @@ public class Friend implements FriendColumns {
     /******************************* 华丽丽的分割线 *******************************/
     
     public ImageUrl getAvatarUrl() {
+        int avatar_ver = (int) version;
         if (avatar_ver == 0)
         {
             return null;

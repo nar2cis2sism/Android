@@ -25,6 +25,8 @@ import engine.android.util.manager.MyTelephonyDevice;
 
 import org.json.JSONObject;
 
+import protocol.http.LoginData;
+
 /**
  * 用户登录
  * 
@@ -68,38 +70,34 @@ public class Login implements HttpBuilder, JsonEntity {
     private class Parser extends HttpJsonParser {
         
         @Override
-        protected Object process(JSONObject data) throws Exception {
-            String token = data.getString("token");
-            String user_info_ver = data.getString("user_info_ver");
-            long friend_list_timestamp = data.optLong("friend_list_timestamp");
+        protected Object process(JSONObject obj) throws Exception {
+            LoginData data = GsonUtil.parseJson(obj.toString(), LoginData.class);
             
-            String[] strs = user_info_ver.split(":");
-            long version = Long.parseLong(strs[0]);
-            long avatar_ver = Long.parseLong(strs[1]);
-            
-            MySession.setToken(token);
+            MySession.setToken(data.token);
             // 启动socket连接
             SocketManager sm = MyApp.global().getSocketManager();
-            sm.setToken(token);
+            sm.setToken(data.token);
             sm.setup(ServerUrl.getSocketServerUrl());
             // 更新用户资料
+            int version = (int) (data.version >> 32);
+            int avatar_ver = (int) data.version;
             User user = processUser(avatar_ver);
             if (version > user.version)
             {
                 MyApp.global().getHttpManager().sendHttpRequest(new GetUserInfo(user.version));
             }
             // 同步好友列表
-            if (friend_list_timestamp > user.friend_list_timestamp)
+            if (data.friend_list_timestamp != null && data.friend_list_timestamp > user.friend_list_timestamp)
             {
                 MyApp.global().getHttpManager().sendHttpRequest(new QueryFriendList(user.friend_list_timestamp));
             }
             // 获取离线消息
             MyApp.global().getSocketManager().sendSocketRequest(new PullOfflineMessage(MessageDAO.getLatestMessageTimestamp()));
             
-            return super.process(data);
+            return super.process(obj);
         }
         
-        private User processUser(long avatar_ver) {
+        private User processUser(int avatar_ver) {
             User user = UserDAO.getUserByUsername(username);
             if (user == null)
             {

@@ -26,7 +26,7 @@ public class GetSmsCode implements HttpBuilder, JsonEntity {
      * 0：允许重复
      * 1：禁止重复
      */
-    public int type;                        // 号码验重类型
+    public int duplication;                 // 号码验重
     
     public GetSmsCode(String mobile_phone) {
         this.mobile_phone = mobile_phone;

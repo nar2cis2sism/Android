@@ -17,7 +17,8 @@ import engine.android.util.AndroidUtil;
 
 import org.json.JSONObject;
 
-import protocol.http.AppUpgradeInfo;
+import protocol.http.NavigationData;
+import protocol.http.NavigationData.AppUpgradeInfo;
 
 /**
  * 获取导航配置
@@ -58,29 +59,27 @@ public class Navigation implements HttpBuilder, JsonEntity {
         return GsonUtil.toJson(this);
     }
     
-    private class Parser extends HttpJsonParser {
+    private static class Parser extends HttpJsonParser {
         
         @Override
-        protected Object process(JSONObject data) throws Exception {
-            String socket_server_url = data.getString("socket_server_url");
-            String upload_server_url = data.getString("upload_server_url");
-            String download_server_url = data.getString("download_server_url");
+        protected Object process(JSONObject obj) throws Exception {
+            NavigationData data = GsonUtil.parseJson(obj.toString(), NavigationData.class);
             
             ServerUrl url = new ServerUrl();
-            url.socket_server_url = socket_server_url;
-            url.upload_server_url = upload_server_url;
-            url.download_server_url = download_server_url;
+            url.socket_server_url = data.socket_server_url;
+            url.upload_server_url = data.upload_server_url;
+            url.download_server_url = data.download_server_url;
             MySession.setServerUrl(url);
             
             // APP升级信息
-            JSONObject upgrade = data.optJSONObject("upgrade");
+            AppUpgradeInfo upgrade = data.upgrade;
             if (upgrade != null)
             {
                 // 需要升级
-                MySession.setUpgradeInfo(GsonUtil.parseJson(upgrade.toString(), AppUpgradeInfo.class));
+                MySession.setUpgradeInfo(upgrade);
             }
             
-            return super.process(data);
+            return super.process(obj);
         }
     }
 }

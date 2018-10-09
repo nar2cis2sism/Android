@@ -2,6 +2,7 @@ package com.project.network.http.servlet;
 
 import android.os.SystemClock;
 
+import com.project.app.MySession;
 import com.project.app.bean.ServerUrl;
 import com.project.network.NetworkConfig;
 
@@ -40,7 +41,7 @@ public class HttpServlet implements engine.android.http.HttpProxy.HttpServlet {
                 if (url.endsWith("action=avatar"))
                 {
                     // 上传头像
-                    resp.setHeader("crc", String.valueOf(System.currentTimeMillis()));
+                    resp.setHeader("crc", String.valueOf(MySession.getUser().avatar_ver + 1));
                 }
             }
         } catch (Exception e) {

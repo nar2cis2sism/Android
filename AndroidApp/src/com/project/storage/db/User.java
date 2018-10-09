@@ -24,40 +24,40 @@ import protocol.http.UserInfo;
 public class User implements UserColumns {
     
     @DAOPrimaryKey(column=USERNAME)
-    public String username;                 // 用户名
+    public String username;                     // 用户名
 
     @DAOProperty(column=NICKNAME)
-    public String nickname;                 // 用户昵称
+    public String nickname;                     // 用户昵称
     
     @DAOProperty(column=IS_FEMALE)
-    public boolean isFemale;                // 性别[True:女,False:男]
+    public boolean isFemale;                    // 性别[True:女,False:男]
 
     @DAOProperty(column=BIRTHDAY)
-    public long birthday;                   // 出生日期
+    public long birthday;                       // 出生日期
 
     @DAOProperty(column=REGION)
-    public String region;                   // 地区名称
+    public String region;                       // 地区名称
 
     @DAOProperty(column=REGION_CODE)
-    public String region_code;              // 区域编码
+    public String region_code;                  // 区域编码
 
     @DAOProperty(column=SIGNATURE)
-    public String signature;                // 签名
+    public String signature;                    // 签名
 
     @DAOProperty(column=IS_AUTHENTICATED)
-    public boolean isAuthenticated;         // 实名认证
+    public boolean isAuthenticated;             // 实名认证
 
     @DAOProperty(column=VERSION)
-    public long version;                    // 用户信息版本号
+    public int version;                         // 用户信息版本号
 
     @DAOProperty(column=AVATAR_URL)
-    public String avatar_url;               // 头像下载地址
+    public String avatar_url;                   // 头像下载地址
 
     @DAOProperty(column=AVATAR_VER)
-    public long avatar_ver;                 // 头像版本号
+    public int avatar_ver;                      // 头像版本号
 
     @DAOProperty(column=FRIEND_LIST_TIMESTAMP)
-    public long friend_list_timestamp;      // 好友列表同步时间戳
+    public long friend_list_timestamp;          // 好友列表同步时间戳
 
     /**
      * Mandatory empty constructor for the {@link DAOTemplate}

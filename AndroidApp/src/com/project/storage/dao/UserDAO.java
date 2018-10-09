@@ -17,9 +17,18 @@ public class UserDAO extends BaseDAO implements UserColumns {
     /**
      * 更新用户头像版本号
      */
-    public static void updateAvatarVersion(long version) {
+    public static void updateAvatarVersion(int version) {
         User user = MySession.getUser();
         user.avatar_ver = version;
         dao.update(user, AVATAR_VER);
+    }
+    
+    /**
+     * 更新好友列表同步时间戳
+     */
+    public static void updateFriendListTimestamp(long timestamp) {
+        User user = MySession.getUser();
+        user.friend_list_timestamp = timestamp;
+        dao.update(user, FRIEND_LIST_TIMESTAMP);
     }
 }

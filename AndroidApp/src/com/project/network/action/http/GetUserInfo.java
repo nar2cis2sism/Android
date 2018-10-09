@@ -29,9 +29,9 @@ public class GetUserInfo implements HttpBuilder, JsonEntity {
     
     public final String token;              // 用户登录凭证
     
-    public final long version;              // 用户信息版本
+    public final int version;               // 用户信息版本
     
-    public GetUserInfo(long version) {
+    public GetUserInfo(int version) {
         token = MySession.getToken();
         this.version = version;
     }
@@ -55,15 +55,14 @@ public class GetUserInfo implements HttpBuilder, JsonEntity {
         return GsonUtil.toJson(this);
     }
     
-    private class Parser extends HttpJsonParser {
+    private static class Parser extends HttpJsonParser {
         
         @Override
         protected Object process(JSONObject data) throws Exception {
             UserInfo info = GsonUtil.parseJson(data.toString(), UserInfo.class);
             
             User user = MySession.getUser();
-            user.fromProtocol(info);
-            MyDAOManager.getDAO().update(user);
+            MyDAOManager.getDAO().update(user.fromProtocol(info));
             
             return super.process(data);
         }

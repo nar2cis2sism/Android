@@ -85,8 +85,7 @@ public class EditUserInfo implements HttpBuilder, JsonEntity, UserColumns {
         
         @Override
         protected Object process(JSONObject data) throws Exception {
-            long version = data.getLong("version"); // 用户信息版本
-            user.version = version;
+            user.version = data.getInt("version");
             status.setChanged(VERSION, true);
             
             MyDAOManager.getDAO().update(user, status.getChangedProperties());

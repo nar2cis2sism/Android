@@ -14,7 +14,7 @@ public class NetworkConfig implements URLConfig {
 
 interface URLConfig {
     
-    String URL_TEST     = "http://10.66.50.86:8080/AppServer/app";
+    String URL_TEST     = "http://10.66.51.105:8080/AppServer/app";
     
     String URL_PRODUCT  = URL_TEST;
 }

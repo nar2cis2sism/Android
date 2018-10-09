@@ -43,7 +43,7 @@ public class UploadAvatar extends FileUpload {
             }
 
             // 头像上传成功
-            UserDAO.updateAvatarVersion(Long.parseLong(crc));
+            UserDAO.updateAvatarVersion(Integer.parseInt(crc));
             MyApp.global().getImageManager().save(MySession.getUser().getAvatarUrl(), BitmapFactory.decodeFile(file.getAbsolutePath()));
             return null;
         }

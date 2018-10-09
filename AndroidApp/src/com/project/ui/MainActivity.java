@@ -1,7 +1,7 @@
 package com.project.ui;
 
-import static engine.android.util.AndroidUtil.dp2px;
 import static com.project.app.event.Events.MAIN_TAB_BADGE;
+import static engine.android.util.AndroidUtil.dp2px;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -31,7 +31,7 @@ import engine.android.core.extra.EventBus.EventHandler;
 import engine.android.framework.ui.BaseActivity;
 import engine.android.widget.common.BadgeView;
 import engine.android.widget.extra.ViewPager;
-import protocol.http.AppUpgradeInfo;
+import protocol.http.NavigationData.AppUpgradeInfo;
 
 /**
  * 主界面
@@ -156,7 +156,6 @@ public class MainActivity extends BaseActivity implements EventHandler {
         if (info != null)
         {
             AppUtil.upgradeApp(this, info, false);
-            MySession.setUpgradeInfo(null);
         }
     }
     

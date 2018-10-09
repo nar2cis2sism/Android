@@ -30,11 +30,11 @@ import engine.android.core.annotation.InjectView;
 import engine.android.core.annotation.OnClick;
 import engine.android.framework.ui.BaseFragment;
 import engine.android.util.listener.MyTextWatcher;
-import engine.android.util.ui.MyValidator.PatternValidation;
 import engine.android.util.ui.MyPasswordTransformationMethod;
+import engine.android.util.ui.MyValidator.PatternValidation;
 import engine.android.util.ui.UIUtil;
 import engine.android.widget.component.InputBox;
-import protocol.http.AppUpgradeInfo;
+import protocol.http.NavigationData.AppUpgradeInfo;
 
 /**
  * 登录界面

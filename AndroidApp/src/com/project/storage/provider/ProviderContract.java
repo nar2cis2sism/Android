@@ -66,10 +66,12 @@ public final class ProviderContract {
 
         String ACCOUNT = "account";
         String NICKNAME = "nickname";
+        String IS_FEMALE = "isFemale";
+        String REGION = "region";
         String SIGNATURE = "signature";
         String VERSION = "version";
         String AVATAR_URL = "avatar_url";
-        String AVATAR_VER = "avatar_ver";
+        String MOBILE_PHONE = "mobile_phone";
         String DISPLAY_NAME = "display_name";
         String PINYIN = "pinyin";
     }

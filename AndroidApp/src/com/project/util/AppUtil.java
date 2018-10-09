@@ -7,10 +7,10 @@ import android.text.method.KeyListener;
 
 import com.daimon.yueba.R;
 
-import protocol.http.AppUpgradeInfo;
 import engine.android.framework.ui.BaseActivity;
 import engine.android.util.secure.CryptoUtil;
 import engine.android.util.secure.HexUtil;
+import protocol.http.NavigationData.AppUpgradeInfo;
 
 public class AppUtil {
     

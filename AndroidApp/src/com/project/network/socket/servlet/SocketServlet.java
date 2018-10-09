@@ -73,17 +73,22 @@ public class SocketServlet implements engine.android.socket.SocketProxy.SocketSe
          * @return 响应客户端
          */
         public ProtocolData[] process(int cmd, ProtocolData data) throws Exception {
-            if (data instanceof Message)
+            if (data instanceof OfflineMessage)
+            {
+                return process(OfflineMessageACK.class);
+            }
+            else if (data instanceof Message)
             {
                 SystemClock.sleep(RESPONSE_DELAY);
                 return processMessage((Message) data);
             }
-            else if (data instanceof OfflineMessage)
-            {
-                return process(OfflineMessageACK.class);
-            }
             
             return null;
+        }
+        
+        private ProtocolData[] process(Class<? extends ProtocolData> ackCls) throws Exception {
+            String json = new String(FileManager.readFile(getClass(), ackCls.getSimpleName()));
+            return new ProtocolData[]{ GsonUtil.parseJson(json, ackCls) };
         }
         
         private ProtocolData[] processMessage(Message msg) throws Exception {
@@ -93,11 +98,6 @@ public class SocketServlet implements engine.android.socket.SocketProxy.SocketSe
             push(msg);
             
             return new ProtocolData[]{ new MessageACK() };
-        }
-        
-        private ProtocolData[] process(Class<? extends ProtocolData> ackCls) throws Exception {
-            String json = new String(FileManager.readFile(getClass(), ackCls.getSimpleName()));
-            return new ProtocolData[]{ GsonUtil.parseJson(json, ackCls) };
         }
     }
 }

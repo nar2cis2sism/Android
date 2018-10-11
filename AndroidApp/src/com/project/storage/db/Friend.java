@@ -15,6 +15,7 @@ import engine.android.framework.app.image.ImageManager.ImageUrl;
 
 import net.sourceforge.pinyin4j.lite.PinyinHelper;
 
+import protocol.http.FriendInfo;
 import protocol.http.FriendListData.FriendData;
 
 /**
@@ -83,10 +84,26 @@ public class Friend implements FriendColumns {
         signature = item.signature;
         avatar_url = item.avatar_url;
         mobile_phone = item.mobile_phone;
+        init();
+        return this;
+    }
+    
+    public Friend fromProtocol(FriendInfo info) {
+        version = info.version;
+        nickname = info.nickname;
+        isFemale = info.gender == 1;
+        region = info.region;
+        signature = info.signature;
+        avatar_url = info.avatar_url;
+        mobile_phone = info.mobile_phone;
+        init();
+        return this;
+    }
+    
+    private void init() {
         displayName = getDisplayName();
         pinyin = PinyinHelper.getInstance().getPinyins(displayName, "").toLowerCase();
         sorting = sort(pinyin);
-        return this;
     }
     
     /**

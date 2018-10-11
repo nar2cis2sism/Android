@@ -50,6 +50,9 @@
     <string name="friend_discuss">讨论组</string>
     <string name="friend_public">公众好友</string>
     <string name="friend_recommend">好友推荐</string>
+    <string name="friend_info">详细资料</string>
+    <string name="friend_phone">电话号码</string>
+    <string name="friend_region">地区</string>
     
     <!-- Beside -->
     <string name="beside_demo">Demo</string>

@@ -18,6 +18,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.daimon.yueba.R;
 import com.project.app.bean.FriendListItem;
+import com.project.network.action.http.SearchContact;
 import com.project.ui.friend.info.FriendInfoFragment;
 import com.project.ui.friend.info.FriendInfoFragment.FriendInfoParams;
 
@@ -262,4 +263,11 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
 //        // ListView will get focus when update the adapter so request focus manually.
 //        list_header.search_box.requestFocus();
 //    }
+
+    /******************************* 搜索联系人 *******************************/
+    
+    void searchContact(String key) {
+        showProgress(null);
+        getBaseActivity().sendHttpRequest(new SearchContact(key));
+    }
 }

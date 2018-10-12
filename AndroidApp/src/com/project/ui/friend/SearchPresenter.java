@@ -40,6 +40,7 @@ class SearchPresenter extends Presenter<FriendListFragment> implements SearchPro
             if (imeAction)
             {
                 // 全局搜索
+                getCallbacks().searchContact(key);
             }
             else
             {

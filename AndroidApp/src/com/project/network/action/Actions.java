@@ -34,6 +34,12 @@ public interface Actions {
     /** 查询好友列表 **/
     String QUERY_FRIEND_LIST = "query_friend_list";
 
+    /** 搜索联系人 **/
+    String SEARCH_CONTACT = "search_contact";
+    
+    /** 添加删除好友 **/
+    String ADD_FRIEND = "add_friend";
+
     /******************************* 华丽丽的分割线 *******************************/
     
     /** 实名认证 **/

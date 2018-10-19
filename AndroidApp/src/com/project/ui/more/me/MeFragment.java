@@ -67,7 +67,7 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        enableReceiveEvent(AVATAR, EDIT_USER_INFO);
+        getBaseActivity().registerEventHandler(new EventHandler());
         addPresenter(new PhotoPresenter(this));
         
         user = Util.clone(MySession.getUser());
@@ -286,32 +286,39 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         return true;
     }
     
-    @Override
-    protected void onReceiveSuccess(String action, Object param) {
-        if (AVATAR.equals(action))
-        {
-            // 头像上传成功
-            getBaseActivity().hideProgress();
-            MyApp.showMessage(getString(R.string.toast_upload_avatar_success));
-            avatar.display(MySession.getUser().getAvatarUrl());
+    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+        
+        public EventHandler() {
+            super(AVATAR, EDIT_USER_INFO);
         }
-        else if (EDIT_USER_INFO.equals(action))
-        {
-            finish();
+
+        @Override
+        protected void onReceiveSuccess(String action, Object param) {
+            if (AVATAR.equals(action))
+            {
+                // 头像上传成功
+                hideProgress();
+                MyApp.showMessage(getString(R.string.toast_upload_avatar_success));
+                avatar.display(MySession.getUser().getAvatarUrl());
+            }
+            else if (EDIT_USER_INFO.equals(action))
+            {
+                finish();
+            }
         }
-    }
-    
-    @Override
-    protected void onReceiveFailure(String action, int status, Object param) {
-        if (AVATAR.equals(action))
-        {
-            // 头像上传失败
-            getBaseActivity().hideProgress();
-            MyApp.showMessage(getString(R.string.toast_upload_avatar_failure));
-        }
-        else
-        {
-            super.onReceiveFailure(action, status, param);
+        
+        @Override
+        protected void onReceiveFailure(String action, int status, Object param) {
+            if (AVATAR.equals(action))
+            {
+                // 头像上传失败
+                hideProgress();
+                MyApp.showMessage(getString(R.string.toast_upload_avatar_failure));
+            }
+            else
+            {
+                super.onReceiveFailure(action, status, param);
+            }
         }
     }
 }

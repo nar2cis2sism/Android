@@ -65,7 +65,7 @@ public class FriendInfoFragment extends BaseInfoFragment {
         }
         else
         {
-            enableReceiveEvent(GET_FRIEND_INFO);
+            getBaseActivity().registerEventHandler(new EventHandler());
         }
     }
     
@@ -152,34 +152,27 @@ public class FriendInfoFragment extends BaseInfoFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        sendGetFriendInfoAction();
-    }
-
-    /******************************* 获取好友信息 *******************************/
-    
-    private void sendGetFriendInfoAction() {
         getBaseActivity().sendHttpRequest(new GetFriendInfo(friend));
     }
     
-    @Override
-    protected void onReceiveSuccess(String action, Object param) {
-        if (GET_FRIEND_INFO.equals(action))
-        {
+    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+        
+        public EventHandler() {
+            super(GET_FRIEND_INFO);
+        }
+
+        @Override
+        protected void onReceiveSuccess(String action, Object param) {
             if (param instanceof Friend)
             {
                 friend = (Friend) param;
                 setupView();
             }
         }
-    }
-    
-    @Override
-    protected void onReceiveFailure(String action, int status, Object param) {
-        if (GET_FRIEND_INFO.equals(action))
-        {
-            return;
-        }
         
-        super.onReceiveFailure(action, status, param);
+        @Override
+        protected void onReceiveFailure(String action, int status, Object param) {
+            // Do nothing.
+        }
     }
 }

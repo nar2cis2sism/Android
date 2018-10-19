@@ -45,23 +45,19 @@ public class LoginFragment extends BaseFragment {
     
     @InjectView(R.id.username)
     InputBox username;
-
     @InjectView(R.id.password)
     InputBox password;
-
     @InjectView(R.id.login)
     Button login;
-
     @InjectView(R.id.register)
     TextView register;
-
     @InjectView(R.id.find_password)
     TextView find_password;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        enableReceiveEvent(NAVIGATION, LOGIN);
+        getBaseActivity().registerEventHandler(new EventHandler());
     }
 
     @Override
@@ -167,7 +163,7 @@ public class LoginFragment extends BaseFragment {
             }
             else
             {
-                sendNavigationAction();
+                getBaseActivity().sendHttpRequest(new Navigation());
             }
         }
     }
@@ -177,47 +173,48 @@ public class LoginFragment extends BaseFragment {
         startFragment(RegisterFragment.class);
     }
 
-    /******************************* 获取导航配置 *******************************/
-    
-    private void sendNavigationAction() {
-        getBaseActivity().sendHttpRequest(new Navigation());
-    }
-
     /******************************* 用户登录 *******************************/
     
-    private void sendLoginAction() {
+    void sendLoginAction() {
         getBaseActivity().sendHttpRequest(new Login(
                 username.input().getText().toString(), 
                 password.input().getText().toString()));
     }
     
-    @Override
-    protected void onReceiveSuccess(String action, Object param) {
-        if (NAVIGATION.equals(action))
-        {
-            AppUpgradeInfo info = MySession.getUpgradeInfo();
-            if (info != null)
-            {
-                if (info.type == 1)
-                {
-                    // 强制升级，弹窗提醒
-                    AppUtil.upgradeApp(getBaseActivity(), info, true);
-                    getBaseActivity().hideProgress();
-                    return;
-                }
-                else
-                {
-                    // 建议升级，进入主界面后弹窗提醒
-                }
-            }
-            
-            MySession.getNavigation();
-            sendLoginAction();
+    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+        
+        public EventHandler() {
+            super(NAVIGATION, LOGIN);
         }
-        else if (LOGIN.equals(action))
-        {
-            startActivity(new Intent(getContext(), MainActivity.class));
-            finish();
+
+        @Override
+        protected void onReceiveSuccess(String action, Object param) {
+            if (NAVIGATION.equals(action))
+            {
+                AppUpgradeInfo info = MySession.getUpgradeInfo();
+                if (info != null)
+                {
+                    if (info.type == 1)
+                    {
+                        // 强制升级，弹窗提醒
+                        AppUtil.upgradeApp(getBaseActivity(), info, true);
+                        hideProgress();
+                        return;
+                    }
+                    else
+                    {
+                        // 建议升级，进入主界面后弹窗提醒
+                    }
+                }
+                
+                MySession.getNavigation();
+                sendLoginAction();
+            }
+            else if (LOGIN.equals(action))
+            {
+                startActivity(new Intent(getContext(), MainActivity.class));
+                finish();
+            }
         }
     }
 }

@@ -43,10 +43,8 @@ public class AuthenticationFragment extends BaseFragment implements OnItemClickL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        enableReceiveEvent(AUTHENTICATION);
-        
-        adapter = new AuthenticationAdapter(getContext());
-        addPresenter(new PhotoPresenter(adapter));
+        getBaseActivity().registerEventHandler(new EventHandler());
+        addPresenter(new PhotoPresenter(adapter = new AuthenticationAdapter(getContext())));
     }
     
     @Override
@@ -74,6 +72,10 @@ public class AuthenticationFragment extends BaseFragment implements OnItemClickL
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupGridView(grid);
+    }
+    
+    private void setupGridView(GridView grid) {
         grid.setAdapter(adapter);
         grid.setOnItemClickListener(this);
     }
@@ -91,7 +93,7 @@ public class AuthenticationFragment extends BaseFragment implements OnItemClickL
         }
     }
     
-    void pickImage() {
+    private void pickImage() {
         Dialog dialog = new AlertDialog.Builder(getContext())
         .setItems(R.array.pick_image, 
         new DialogInterface.OnClickListener() {
@@ -128,11 +130,15 @@ public class AuthenticationFragment extends BaseFragment implements OnItemClickL
         }
     }
     
-    @Override
-    protected void onReceiveSuccess(String action, Object param) {
-        if (AUTHENTICATION.equals(action))
-        {
-            getBaseActivity().hideProgress();
+    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+        
+        public EventHandler() {
+            super(AUTHENTICATION);
+        }
+
+        @Override
+        protected void onReceiveSuccess(String action, Object param) {
+            hideProgress();
             ((SinglePaneActivity) getBaseActivity()).replaceFragment(new AuthenticationFinishFragment());
         }
     }

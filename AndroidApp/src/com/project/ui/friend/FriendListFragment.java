@@ -49,7 +49,6 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
         
         @InjectView(R.id.search_box)
         SearchBox search_box;
-    
         @InjectView(R.id.action_container)
         ActionContainer action_container;
         
@@ -79,11 +78,9 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
     
     @InjectView(R.id.expandable_list)
     MyExpandableListView expandable_list;
-    
     @InjectView(R.id.letter_bar)
     LetterBar letter_bar;
     LetterBarHelper letterBarHelper;
-
     @InjectView(R.id.search_empty)
     ImageView search_empty;
     
@@ -251,23 +248,23 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
         expandable_list.setVisibility(shown ? View.GONE : View.VISIBLE);
     }
     
+    @Override
+    public void setListAdapter(ListAdapter adapter) {
+        super.setListAdapter(adapter);
+        // ListView will get focus when update the adapter so request focus manually.
+        list_header.search_box.requestFocus();
+    }
+
     private void updateLetterBar() {
         letter_bar.setVisibility(!searchPresenter.isSearching
                 && showAllFriends && !presenter.adapter.isEmpty()
                 ? View.VISIBLE : View.GONE);
     }
     
-//    @Override
-//    public void setListAdapter(ListAdapter adapter) {
-//        super.setListAdapter(adapter);
-//        // ListView will get focus when update the adapter so request focus manually.
-//        list_header.search_box.requestFocus();
-//    }
-
     /******************************* 搜索联系人 *******************************/
     
     void searchContact(String key) {
-        showProgress(null);
+        showProgress(true);
         getBaseActivity().sendHttpRequest(new SearchContact(key));
     }
 }

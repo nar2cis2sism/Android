@@ -16,7 +16,7 @@ import engine.android.framework.ui.presenter.PhotoPresenter.PhotoCallback;
 import engine.android.framework.ui.presenter.PhotoPresenter.PhotoInfo;
 import engine.android.util.image.ImageSize;
 
-public class AuthenticationAdapter extends JavaBeanAdapter<PhotoInfo> implements PhotoCallback {
+class AuthenticationAdapter extends JavaBeanAdapter<PhotoInfo> implements PhotoCallback {
     
     private final ImageSize size;
 

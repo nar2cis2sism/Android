@@ -48,23 +48,19 @@ public class RegisterFragment extends BaseFragment {
     @InjectView(R.id.username)
     InputBox username;
     SmsCodeButton smsCode;
-    
     @InjectView(R.id.passcode)
     InputBox passcode;
-
     @InjectView(R.id.password)
     InputBox password;
-    
     @InjectView(R.id.bottom)
     LinearLayout bottom;
-
     @InjectView(R.id.next)
     Button next;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        enableReceiveEvent(GET_SMS_CODE, REGISTER);
+        getBaseActivity().registerEventHandler(new EventHandler());
     }
     
     @Override
@@ -122,12 +118,19 @@ public class RegisterFragment extends BaseFragment {
             
             @Override
             public void onClick(View v) {
-                getSmsCode();
+                if (getBaseActivity().checkNetworkStatus(true))
+                {
+                    showProgress(getString(R.string.progress_waiting));
+            
+                    GetSmsCode action = new GetSmsCode(username.input().getText().toString());
+                    action.duplication = 1;
+                    getBaseActivity().sendHttpRequest(action);
+                }
             }
         });
         username.place(smsCode);
     }
-    
+
     private void setupPasscode() {
         passcode.input().setHint(R.string.register_passcode_hint);
     }
@@ -166,18 +169,25 @@ public class RegisterFragment extends BaseFragment {
                 getString(R.string.register_password_validation_length)));
     }
     
-    void getSmsCode() {
-        if (getBaseActivity().checkNetworkStatus(true))
+    @OnClick(R.id.next)
+    void next() {
+        if (getBaseActivity().checkNetworkStatus(true)
+        &&  getBaseActivity().requestValidation())
         {
             showProgress(getString(R.string.progress_waiting));
-            sendGetSmsCodeAction();
+            
+            Register action = new Register(
+                    username.input().getText().toString(), 
+                    password.input().getText().toString());
+            action.passport = passcode.input().getText().toString();
+            getBaseActivity().sendHttpRequest(action);
         }
     }
-    
+
     /**
      * 显示“下一步”
      */
-    private void showNext() {
+    void showNext() {
         username.input().setEnabled(false);
         smsCode.n秒后可重新获取验证码(60);
         
@@ -199,64 +209,41 @@ public class RegisterFragment extends BaseFragment {
                 getContext(), R.anim.slide_up_in));
     }
     
-    @OnClick(R.id.next)
-    void next() {
-        if (getBaseActivity().checkNetworkStatus(true)
-        &&  getBaseActivity().requestValidation())
-        {
-            showProgress(getString(R.string.progress_waiting));
-            sendRegisterAction();
-        }
-    }
-
-    /******************************* 获取手机验证码 *******************************/
-    
-    private void sendGetSmsCodeAction() {
-        GetSmsCode action = new GetSmsCode(username.input().getText().toString());
-        action.duplication = 1;
+    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
         
-        getBaseActivity().sendHttpRequest(action);
-    }
+        public EventHandler() {
+            super(GET_SMS_CODE, REGISTER);
+        }
 
-    /******************************* 用户注册 *******************************/
-    
-    private void sendRegisterAction() {
-        Register action = new Register(
-                username.input().getText().toString(), 
-                password.input().getText().toString());
-        action.passport = passcode.input().getText().toString();
-        
-        getBaseActivity().sendHttpRequest(action);
-    }
-    
-    @Override
-    protected void onReceiveSuccess(String action, Object param) {
-        if (GET_SMS_CODE.equals(action))
-        {
-            getBaseActivity().hideProgress();
-            showNext();
-            MyApp.showMessage(getString(R.string.toast_sms_code));
-        }
-        else if (REGISTER.equals(action))
-        {
-            finish();
-        }
-    }
-    
-    @Override
-    protected void onReceiveFailure(String action, int status, Object param) {
-        if (param instanceof ErrorInfo)
-        {
-            ErrorInfo info = (ErrorInfo) param;
-            if (info.code == 415)
+        @Override
+        protected void onReceiveSuccess(String action, Object param) {
+            if (GET_SMS_CODE.equals(action))
             {
-                // 数据已存在
-                getBaseActivity().hideProgress();
-                MyApp.showMessage(getString(R.string.register_username_exist));
-                return;
+                hideProgress();
+                showNext();
+                MyApp.showMessage(getString(R.string.toast_sms_code));
+            }
+            else if (REGISTER.equals(action))
+            {
+                finish();
             }
         }
         
-        super.onReceiveFailure(action, status, param);
+        @Override
+        protected void onReceiveFailure(String action, int status, Object param) {
+            if (param instanceof ErrorInfo)
+            {
+                ErrorInfo info = (ErrorInfo) param;
+                if (info.code == 415)
+                {
+                    // 数据已存在
+                    hideProgress();
+                    MyApp.showMessage(getString(R.string.register_username_exist));
+                    return;
+                }
+            }
+            
+            super.onReceiveFailure(action, status, param);
+        }
     }
 }

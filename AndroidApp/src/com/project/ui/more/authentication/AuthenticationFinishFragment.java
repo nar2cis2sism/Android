@@ -47,11 +47,6 @@ public class AuthenticationFinishFragment extends BaseFragment implements Runnab
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupTip();
-        postTip(this);
-    }
-    
-    private void postTip(Runnable run) {
-        tip.postDelayed(run, 1000);
     }
     
     private void setupTip() {
@@ -63,16 +58,22 @@ public class AuthenticationFinishFragment extends BaseFragment implements Runnab
         
         tip.setText(span);
     }
+    
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getBaseActivity().postSchedule(this, 1000);
+    }
 
     @Override
     public void run() {
         if (--seconds == 0)
         {
             finish();
-            return;
         }
-        
-        setupTip();
-        postTip(this);
+        else
+        {
+            setupTip();
+        }
     }
 }

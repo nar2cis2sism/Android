@@ -65,7 +65,8 @@ class ConversationFragment extends BaseListFragment {
             
             @Override
             public void onSendMessage(CharSequence message) {
-                sendMessageAction(message.toString());
+                Message msg = MessageDAO.sendMessage(presenter.params.account, message.toString());
+                getBaseActivity().sendSocketRequest(new SendMessage(msg));
             }
         });
     }
@@ -74,12 +75,5 @@ class ConversationFragment extends BaseListFragment {
     public void setListAdapter(ListAdapter adapter) {
         super.setListAdapter(adapter);
         getTitleBar().setTitle(presenter.params.friend.displayName);
-    }
-
-    /******************************* 发送消息 *******************************/
-    
-    private void sendMessageAction(String message) {
-        Message msg = MessageDAO.sendMessage(presenter.params.account, message);
-        getBaseActivity().sendSocketRequest(new SendMessage(msg));
     }
 }

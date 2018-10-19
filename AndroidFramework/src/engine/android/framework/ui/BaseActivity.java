@@ -1,5 +1,7 @@
 package engine.android.framework.ui;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -9,13 +11,17 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import engine.android.core.Forelet;
+import engine.android.core.extra.EventBus;
+import engine.android.core.extra.EventBus.Event;
 import engine.android.framework.R;
 import engine.android.framework.app.AppGlobal;
+import engine.android.framework.network.ConnectionStatus;
 import engine.android.framework.network.http.HttpManager;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
 import engine.android.framework.network.socket.SocketManager;
 import engine.android.framework.network.socket.SocketManager.SocketBuilder;
 import engine.android.http.HttpConnector;
+import engine.android.util.Util;
 import engine.android.widget.component.TitleBar;
 
 public class BaseActivity extends NetworkActivity {
@@ -68,6 +74,82 @@ public class BaseActivity extends NetworkActivity {
     public void setContentView(View view, LayoutParams params) {
         view.setLayoutParams(params);
         setContentView(view);
+    }
+
+    /******************************* EventBus *******************************/
+    
+    private EventHandler handler;
+    
+    public static class EventHandler implements engine.android.core.extra.EventBus.EventHandler {
+        
+        private final String[] actions;
+        
+        private BaseActivity baseActivity;
+        
+        public EventHandler(String... actions) {
+            this.actions = actions;
+        }
+
+        @Override
+        public void handleEvent(Event event) {
+            onReceive(event.action, event.status, event.param);
+        }
+        
+        protected void onReceive(String action, int status, Object param) {
+            if (status == ConnectionStatus.SUCCESS)
+            {
+                onReceiveSuccess(action, param);
+            }
+            else
+            {
+                onReceiveFailure(action, status, param);
+            }
+        }
+        
+        protected void onReceiveSuccess(String action, Object param) {}
+        
+        protected void onReceiveFailure(String action, int status, Object param) {
+            hideProgress();
+            showErrorDialog(param);
+        }
+        
+        protected void hideProgress() {
+            baseActivity.hideProgress();
+        }
+        
+        protected void showErrorDialog(Object error) {
+            Dialog dialog = new AlertDialog.Builder(baseActivity)
+            .setTitle(R.string.dialog_error_title)
+            .setMessage(Util.getString(error, null))
+            .setPositiveButton(android.R.string.ok, null)
+            .create();
+        
+            baseActivity.showDialog("dialog_error", dialog);
+        }
+    }
+    
+    /**
+     * 注册事件处理器
+     */
+    public final void registerEventHandler(EventHandler handler) {
+        if (handler != null && this.handler == null)
+        {
+            String[] actions = handler.actions;
+            if (actions != null && actions.length > 0)
+            {
+                (this.handler = handler).baseActivity = this;
+                for (String action : actions)
+                {
+                    EventBus.getDefault().register(action, handler);
+                }
+            }
+        }
+    }
+    
+    @Override
+    protected void onDestroy(boolean finish) {
+        if (handler != null) EventBus.getDefault().unregister(handler);
+        super.onDestroy(finish);
     }
 }
 

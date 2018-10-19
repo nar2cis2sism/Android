@@ -36,9 +36,8 @@ public class MessageListFragment extends BaseListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getBaseActivity().registerEventHandler(new EventHandler());
         presenter = addPresenter(MessageListPresenter.class);
-        
-        enableReceiveEvent(CONNECTIVITY_CHANGE);
     }
     
     @Override
@@ -77,7 +76,7 @@ public class MessageListFragment extends BaseListFragment {
     /**
      * 显示/隐藏无网络提示
      */
-    private void showConnectionTip(boolean noNetwork) {
+    void showConnectionTip(boolean noNetwork) {
         tip_no_connection.setVisibility(noNetwork ? View.VISIBLE : View.GONE);
     }
     
@@ -90,15 +89,15 @@ public class MessageListFragment extends BaseListFragment {
         }
     }
     
-    @Override
-    protected void onReceive(String action, int status, Object param) {
-        if (CONNECTIVITY_CHANGE.equals(action))
-        {
-            showConnectionTip((Boolean) param);
+    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+        
+        public EventHandler() {
+            super(CONNECTIVITY_CHANGE);
         }
-        else
-        {
-            super.onReceive(action, status, param);
+        
+        @Override
+        protected void onReceive(String action, int status, Object param) {
+            showConnectionTip((Boolean) param);
         }
     }
 }

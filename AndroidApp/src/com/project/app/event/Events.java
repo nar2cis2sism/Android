@@ -24,14 +24,12 @@ public final class Events {
 
     /******************************* 主界面标签徽章 *******************************/
     public static final String MAIN_TAB_BADGE = "MAIN_TAB_BADGE";
-    public static final int STATUS_SHOW = 1;
-    public static final int STATUS_HIDE = 2;
 
     /**
      * @param tag 主界面标签tag。例如{@link MainActivity#TAB_TAG_MESSAGE}
      * @param shown 显示/隐藏徽章效果
      */
     public static void notifyMainTabBadge(String tag, boolean shown) {
-        EventBus.getDefault().post(new Event(MAIN_TAB_BADGE, shown ? STATUS_SHOW : STATUS_HIDE, tag));
+        EventBus.getDefault().post(new Event(MAIN_TAB_BADGE, shown ? 1 : 0, tag));
     }
 }

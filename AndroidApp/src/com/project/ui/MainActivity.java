@@ -17,7 +17,6 @@ import android.widget.TabHost.TabSpec;
 
 import com.daimon.yueba.R;
 import com.project.app.MySession;
-import com.project.app.event.Events;
 import com.project.ui.beside.BesideFragment;
 import com.project.ui.friend.FriendListFragment;
 import com.project.ui.message.MessageListFragment;
@@ -25,9 +24,6 @@ import com.project.ui.more.MoreFragment;
 import com.project.util.AppUtil;
 
 import engine.android.core.annotation.InjectView;
-import engine.android.core.extra.EventBus;
-import engine.android.core.extra.EventBus.Event;
-import engine.android.core.extra.EventBus.EventHandler;
 import engine.android.framework.ui.BaseActivity;
 import engine.android.widget.common.BadgeView;
 import engine.android.widget.extra.ViewPager;
@@ -38,7 +34,7 @@ import protocol.http.NavigationData.AppUpgradeInfo;
  * 
  * @author Daimon
  */
-public class MainActivity extends BaseActivity implements EventHandler {
+public class MainActivity extends BaseActivity {
     
     /** 外界可以通过传递标签tag设置当前显示页面 **/
     public static final String EXTRA_TAB_TAG        = "tab_tag";
@@ -74,7 +70,7 @@ public class MainActivity extends BaseActivity implements EventHandler {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(MAIN_TAB_BADGE, this);
+        registerEventHandler(new EventHandler());
         setContentView(R.layout.main_activity);
         
         setupView();
@@ -141,6 +137,38 @@ public class MainActivity extends BaseActivity implements EventHandler {
         tabHost.setCurrentTabByTag(tag);
     }
     
+    private static class ViewPagerAdapter extends engine.android.widget.extra.ViewPager.ViewPagerAdapter {
+    
+        public ViewPagerAdapter(FragmentManager fm, int count) {
+            super(fm, count);
+        }
+    
+        public TabSpec addTab(TabSpec tabSpec, Class<? extends Fragment> c, Bundle args) {
+            addPage(tabSpec.getTag(), c, args);
+            return tabSpec;
+        }
+    }
+
+    private static class TabView extends RelativeLayout {
+    
+        public TabView(Context context, int iconId, String tag) {
+            super(context);
+            
+            ImageView iv = new ImageView(context);
+            iv.setImageResource(iconId);
+            
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            
+            addView(iv, params);
+            
+            BadgeView badge = new BadgeView(context, iv);
+            badge.setBadgeMargin(0, dp2px(context, 6), dp2px(context, 12), 0);
+            badge.setTag(tag);
+        }
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -159,61 +187,30 @@ public class MainActivity extends BaseActivity implements EventHandler {
         }
     }
     
-    @Override
-    protected void onDestroy(boolean finish) {
-        EventBus.getDefault().unregister(this);
-        super.onDestroy(finish);
-    }
-
-    private static class TabView extends RelativeLayout {
-
-        public TabView(Context context, int iconId, String tag) {
-            super(context);
-            
-            ImageView iv = new ImageView(context);
-            iv.setImageResource(iconId);
-            
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-            
-            addView(iv, params);
-            
-            BadgeView badge = new BadgeView(context, iv);
-            badge.setBadgeMargin(0, dp2px(context, 6), dp2px(context, 12), 0);
-            badge.setTag(tag);
+    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+        
+        public EventHandler() {
+            super(MAIN_TAB_BADGE);
         }
-    }
-    
-    private static class ViewPagerAdapter extends engine.android.widget.extra.ViewPager.ViewPagerAdapter {
-
-        public ViewPagerAdapter(FragmentManager fm, int count) {
-            super(fm, count);
+        
+        @Override
+        protected void onReceive(String action, int status, Object param) {
+            showTabBadge((String) param, status != 0);
         }
-
-        public TabSpec addTab(TabSpec tabSpec, Class<? extends Fragment> c, Bundle args) {
-            addPage(tabSpec.getTag(), c, args);
-            return tabSpec;
-        }
-    }
-
-    @Override
-    public void handleEvent(Event event) {
-        showTabBadge((String) event.param, event.status == Events.STATUS_SHOW);
-    }
-    
-    /**
-     * 显示/隐藏标签徽章（数据更新标志）
-     */
-    private void showTabBadge(String tag, boolean shown) {
-        BadgeView badge = (BadgeView) tabHost.getTabWidget().findViewWithTag(tag);
-        if (shown)
-        {
-            badge.show();
-        }
-        else
-        {
-            badge.hide();
+        
+        /**
+         * 显示/隐藏标签徽章（数据更新标志）
+         */
+        private void showTabBadge(String tag, boolean shown) {
+            BadgeView badge = (BadgeView) tabHost.getTabWidget().findViewWithTag(tag);
+            if (shown)
+            {
+                badge.show();
+            }
+            else
+            {
+                badge.hide();
+            }
         }
     }
 }

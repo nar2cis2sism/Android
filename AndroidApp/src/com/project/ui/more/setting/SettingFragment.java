@@ -44,7 +44,7 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        enableReceiveEvent(LOGOUT);
+        getBaseActivity().registerEventHandler(new EventHandler());
     }
     
     @Override
@@ -75,7 +75,8 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
             version = addComponent(root, inflater, R.string.setting_version, badge, true);
             version.getConvertView().setOnClickListener(this);
             
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.LEFT;
             badge.setLayoutParams(params);
         }
@@ -119,10 +120,14 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
         }
     }
     
-    @Override
-    protected void onReceiveSuccess(String action, Object param) {
-        if (LOGOUT.equals(action))
-        {
+    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+        
+        public EventHandler() {
+            super(LOGOUT);
+        }
+
+        @Override
+        protected void onReceiveSuccess(String action, Object param) {
             // 清除缓存数据
             MySession.setUser(null);
             

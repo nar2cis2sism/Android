@@ -79,8 +79,8 @@ public class Login implements HttpBuilder, JsonEntity {
             sm.setToken(data.token);
             sm.setup(ServerUrl.getSocketServerUrl());
             // 更新用户资料
-            int version = (int) (data.version >> 32);
-            int avatar_ver = (int) data.version;
+            int avatar_ver = (int) (data.version >> 32);
+            int version = (int) data.version;
             User user = processUser(avatar_ver);
             if (version > user.version)
             {

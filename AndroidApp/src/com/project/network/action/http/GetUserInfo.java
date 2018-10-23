@@ -5,7 +5,6 @@ import com.project.network.NetworkConfig;
 import com.project.network.action.Actions;
 import com.project.network.http.HttpJsonParser;
 import com.project.storage.MyDAOManager;
-import com.project.storage.db.User;
 
 import engine.android.framework.network.http.HttpConnectorBuilder;
 import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
@@ -16,7 +15,7 @@ import engine.android.http.util.HttpParser;
 
 import org.json.JSONObject;
 
-import protocol.http.UserInfo;
+import protocol.http.UserData;
 
 /**
  * 获取个人信息
@@ -58,13 +57,12 @@ public class GetUserInfo implements HttpBuilder, JsonEntity {
     private static class Parser extends HttpJsonParser {
         
         @Override
-        protected Object process(JSONObject data) throws Exception {
-            UserInfo info = GsonUtil.parseJson(data.toString(), UserInfo.class);
+        protected Object process(JSONObject obj) throws Exception {
+            UserData data = GsonUtil.parseJson(obj.toString(), UserData.class);
             
-            User user = MySession.getUser();
-            MyDAOManager.getDAO().update(user.fromProtocol(info));
+            MyDAOManager.getDAO().update(MySession.getUser().fromProtocol(data));
             
-            return super.process(data);
+            return super.process(obj);
         }
     }
 }

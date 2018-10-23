@@ -15,7 +15,7 @@ import engine.android.dao.annotation.DAOProperty;
 import engine.android.dao.annotation.DAOTable;
 import engine.android.framework.app.image.ImageManager.ImageUrl;
 import engine.android.framework.ui.extra.region.Region;
-import protocol.http.UserInfo;
+import protocol.http.UserData;
 
 /**
  * 用户资料
@@ -66,15 +66,15 @@ public class User implements UserColumns {
 
     /******************************* 华丽丽的分割线 *******************************/
     
-    public User fromProtocol(UserInfo item) {
-        version = item.version;
-        nickname = item.nickname;
-        isFemale = item.gender == 1;
-        birthday = item.birthday;
-        parseRegion(item.region);
-        signature = item.signature;
-        isAuthenticated = item.authentication == 1;
-        avatar_url = item.avatar_url;
+    public User fromProtocol(UserData data) {
+        version = data.version;
+        nickname = data.nickname;
+        isFemale = data.gender == 1;
+        birthday = data.birthday;
+        parseRegion(data.region);
+        signature = data.signature;
+        isAuthenticated = data.authentication == 1;
+        avatar_url = data.avatar_url;
         return this;
     }
     

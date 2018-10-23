@@ -22,7 +22,7 @@ import engine.android.http.util.HttpParser;
 import org.json.JSONObject;
 
 import protocol.http.FriendListData;
-import protocol.http.FriendListData.FriendData;
+import protocol.http.FriendListData.FriendListItem;
 
 /**
  * 查询好友列表
@@ -87,7 +87,7 @@ public class QueryFriendList implements HttpBuilder, JsonEntity {
                 dao.resetTable(Friend.class);
             }
             
-            for (FriendData item : data.list)
+            for (FriendListItem item : data.list)
             {
                 Friend friend = FriendDAO.getFriendByAccount(item.account);
                 if (item.op == 1)
@@ -99,11 +99,11 @@ public class QueryFriendList implements HttpBuilder, JsonEntity {
                 {
                     if (friend == null)
                     {
-                        dao.save(new Friend().fromProtocol(item));
+                        dao.save(new Friend(item.account, item.info));
                     }
-                    else
+                    else if (item.info != null)
                     {
-                        dao.update(friend.fromProtocol(item));
+                        dao.update(friend.fromProtocol(item.info));
                     }
                 }
             }

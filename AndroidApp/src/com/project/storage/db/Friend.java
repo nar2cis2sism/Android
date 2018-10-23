@@ -15,8 +15,8 @@ import engine.android.framework.app.image.ImageManager.ImageUrl;
 
 import net.sourceforge.pinyin4j.lite.PinyinHelper;
 
-import protocol.http.FriendInfo;
-import protocol.http.FriendListData.FriendData;
+import protocol.http.FriendData.FriendInfo;
+import protocol.http.FriendListData.FriendListItem;
 
 /**
  * 好友信息
@@ -42,8 +42,8 @@ public class Friend implements FriendColumns {
     public String signature;                    // 签名
 
     /**
-     * 高位表示“好友信息版本(Int32)”
-     * 低位表示“头像版本(Int32)”
+     * 高位表示“头像版本(Int32)”
+     * 低位表示“信息版本(Int32)”
      */
     @DAOProperty(column=VERSION)
     public long version;                        // 好友资料版本
@@ -75,21 +75,7 @@ public class Friend implements FriendColumns {
 
     /******************************* 华丽丽的分割线 *******************************/
     
-    public Friend fromProtocol(FriendData item) {
-        account = item.account;
-        version = item.version;
-        nickname = item.nickname;
-        isFemale = item.gender == 1;
-        region = item.region;
-        signature = item.signature;
-        avatar_url = item.avatar_url;
-        mobile_phone = item.mobile_phone;
-        init();
-        return this;
-    }
-    
     public Friend fromProtocol(FriendInfo info) {
-        version = info.version;
         nickname = info.nickname;
         isFemale = info.gender == 1;
         region = info.region;
@@ -98,6 +84,23 @@ public class Friend implements FriendColumns {
         mobile_phone = info.mobile_phone;
         init();
         return this;
+    }
+    
+    public Friend fromProtocol(FriendListItem.FriendInfo info) {
+        version = info.version;
+        return fromProtocol((FriendInfo) info);
+    }
+
+    public Friend(String account, FriendListItem.FriendInfo info) {
+        this.account = account;
+        if (info != null)
+        {
+            fromProtocol(info);
+        }
+        else
+        {
+            init();
+        }
     }
     
     private void init() {

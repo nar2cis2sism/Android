@@ -1,36 +1,25 @@
 package com.project.network.action.http;
 
-import com.project.app.MyApp;
-import com.project.app.MyContext;
 import com.project.app.MySession;
-import com.project.app.bean.ServerUrl;
 import com.project.network.NetworkConfig;
 import com.project.network.action.Actions;
-import com.project.network.action.socket.PullOfflineMessage;
 import com.project.network.http.HttpJsonParser;
 import com.project.storage.MyDAOManager;
-import com.project.storage.dao.MessageDAO;
+import com.project.storage.dao.FriendDAO;
 import com.project.storage.dao.UserDAO;
-import com.project.storage.db.User;
-import com.project.util.AppUtil;
+import com.project.storage.db.Friend;
 
+import engine.android.dao.DAOTemplate;
 import engine.android.framework.network.http.HttpConnectorBuilder;
 import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
-import engine.android.framework.network.socket.SocketManager;
 import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.http.util.HttpParser;
-import engine.android.util.manager.MyTelephonyDevice;
 
 import org.json.JSONObject;
 
-import java.util.List;
-
 import protocol.http.AddFriendData;
-import protocol.http.LoginData;
-import protocol.http.SearchContactData;
-import protocol.http.SearchContactData.ContactData;
 
 /**
  * 添加删除好友
@@ -76,16 +65,32 @@ public class AddFriend implements HttpBuilder, JsonEntity {
         return GsonUtil.toJson(this);
     }
     
-    private static class Parser extends HttpJsonParser {
+    private class Parser extends HttpJsonParser {
         
         @Override
         protected Object process(JSONObject obj) throws Exception {
             AddFriendData data = GsonUtil.parseJson(obj.toString(), AddFriendData.class);
-            long timestamp = data.timestamp;
             
+            UserDAO.updateFriendListTimestamp(data.timestamp);
             
-            
-            
+            DAOTemplate dao = MyDAOManager.getDAO();
+            Friend friend = FriendDAO.getFriendByAccount(account);
+            if (op == 1)
+            {
+                // 删除好友
+                if (friend != null) dao.remove(friend);
+            }
+            else
+            {
+                if (friend == null)
+                {
+                    dao.save(new Friend(account, data.info));
+                }
+                else if (data.info != null)
+                {
+                    dao.update(friend.fromProtocol(data.info));
+                }
+            }
             
             return super.process(obj);
         }

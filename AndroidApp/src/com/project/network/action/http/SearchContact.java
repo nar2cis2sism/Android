@@ -1,35 +1,23 @@
 package com.project.network.action.http;
 
-import com.project.app.MyApp;
-import com.project.app.MyContext;
 import com.project.app.MySession;
-import com.project.app.bean.ServerUrl;
 import com.project.network.NetworkConfig;
 import com.project.network.action.Actions;
-import com.project.network.action.socket.PullOfflineMessage;
 import com.project.network.http.HttpJsonParser;
-import com.project.storage.MyDAOManager;
-import com.project.storage.dao.MessageDAO;
-import com.project.storage.dao.UserDAO;
-import com.project.storage.db.User;
-import com.project.util.AppUtil;
 
 import engine.android.framework.network.http.HttpConnectorBuilder;
 import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
-import engine.android.framework.network.socket.SocketManager;
 import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.http.util.HttpParser;
-import engine.android.util.manager.MyTelephonyDevice;
 
 import org.json.JSONObject;
 
-import java.util.List;
-
-import protocol.http.LoginData;
 import protocol.http.SearchContactData;
 import protocol.http.SearchContactData.ContactData;
+
+import java.util.List;
 
 /**
  * 搜索联系人
@@ -80,6 +68,7 @@ public class SearchContact implements HttpBuilder, JsonEntity {
         @Override
         protected Object process(JSONObject obj) throws Exception {
             SearchContactData data = GsonUtil.parseJson(obj.toString(), SearchContactData.class);
+            
             int count = data.count;
             List<ContactData> list = data.list;
             

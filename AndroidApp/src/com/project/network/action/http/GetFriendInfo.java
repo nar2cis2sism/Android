@@ -17,9 +17,9 @@ import engine.android.http.util.HttpParser;
 
 import org.json.JSONObject;
 
-import java.lang.reflect.Modifier;
+import protocol.http.FriendData;
 
-import protocol.http.FriendInfo;
+import java.lang.reflect.Modifier;
 
 /**
  * 获取好友信息
@@ -70,18 +70,17 @@ public class GetFriendInfo implements HttpBuilder, JsonEntity {
     private class Parser extends HttpJsonParser {
         
         @Override
-        protected Object process(JSONObject data) throws Exception {
-            FriendInfo info = GsonUtil.parseJson(data.toString(), FriendInfo.class);
-            // 好友信息更新
-            int version = (int) (friend.version >> 32);
-            int latestVersion = (int) (info.version >> 32);
-            if (version != latestVersion)
+        protected Object process(JSONObject obj) throws Exception {
+            FriendData data = GsonUtil.parseJson(obj.toString(), FriendData.class);
+            
+            friend.version = data.version;
+            if (data.info != null)
             {
-                MyDAOManager.getDAO().update(friend.fromProtocol(info));
+                // 好友信息更新
+                MyDAOManager.getDAO().update(friend.fromProtocol(data.info));
             }
             else
             {
-                friend.version = info.version;
                 MyDAOManager.getDAO().update(friend, Friend.VERSION);
             }
 

@@ -1,15 +1,21 @@
 package engine.android.framework.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 import engine.android.core.Forelet.ProgressSetting;
+import engine.android.core.extra.EventBus;
+import engine.android.core.extra.EventBus.Event;
 import engine.android.framework.R;
+import engine.android.framework.network.ConnectionStatus;
 import engine.android.framework.ui.extra.SinglePaneActivity;
 import engine.android.framework.util.GsonUtil;
+import engine.android.util.Util;
 import engine.android.widget.component.TitleBar;
 
 public abstract class BaseFragment extends engine.android.core.BaseFragment {
@@ -64,20 +70,82 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment {
         return baseActivity;
     }
 
-    /**
-     * Provide a convenient way to start fragment wrapped in {@link SinglePaneActivity}
-     * (需要在Manifest中注册)
-     */
-    public void startFragment(Class<? extends Fragment> fragmentCls) {
-        startFragment(fragmentCls, null);
+    /******************************* EventBus *******************************/
+    
+    private EventHandler handler;
+    
+    public static class EventHandler implements engine.android.core.extra.EventBus.EventHandler {
+        
+        private final String[] actions;
+        
+        private BaseActivity baseActivity;
+        
+        public EventHandler(String... actions) {
+            this.actions = actions;
+        }
+
+        @Override
+        public void handleEvent(Event event) {
+            onReceive(event.action, event.status, event.param);
+        }
+        
+        protected void onReceive(String action, int status, Object param) {
+            if (status == ConnectionStatus.SUCCESS)
+            {
+                onReceiveSuccess(action, param);
+            }
+            else
+            {
+                onReceiveFailure(action, status, param);
+            }
+        }
+        
+        protected void onReceiveSuccess(String action, Object param) {}
+        
+        protected void onReceiveFailure(String action, int status, Object param) {
+            if (baseActivity == null) return;
+            hideProgress();
+            showErrorDialog(param);
+        }
+        
+        protected void hideProgress() {
+            baseActivity.hideProgress();
+        }
+        
+        protected void showErrorDialog(Object error) {
+            Dialog dialog = new AlertDialog.Builder(baseActivity)
+            .setTitle(R.string.dialog_error_title)
+            .setMessage(Util.getString(error, null))
+            .setPositiveButton(android.R.string.ok, null)
+            .create();
+        
+            baseActivity.showDialog("dialog_error", dialog);
+        }
     }
     
     /**
-     * Provide a convenient way to start fragment wrapped in {@link SinglePaneActivity}
-     * (需要在Manifest中注册)
+     * 注册事件处理器<br>
+     * Call it in {@link #onCreate(android.os.Bundle)}
      */
-    public void startFragment(Class<? extends Fragment> fragmentCls, Bundle args) {
-        startActivity(SinglePaneActivity.buildIntent(getContext(), fragmentCls, args));
+    public final void registerEventHandler(EventHandler handler) {
+        if (handler != null && this.handler == null)
+        {
+            String[] actions = handler.actions;
+            if (actions != null && actions.length > 0)
+            {
+                (this.handler = handler).baseActivity = getBaseActivity();
+                for (String action : actions)
+                {
+                    EventBus.getDefault().register(action, handler);
+                }
+            }
+        }
+    }
+    
+    @Override
+    public void onDestroy() {
+        if (handler != null) EventBus.getDefault().unregister(handler);
+        super.onDestroy();
     }
     
     /**
@@ -101,6 +169,22 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment {
             
             return null;
         }
+    }
+
+    /**
+     * Provide a convenient way to start fragment wrapped in {@link SinglePaneActivity}
+     * (需要在Manifest中注册)
+     */
+    public void startFragment(Class<? extends Fragment> fragmentCls) {
+        startFragment(fragmentCls, null);
+    }
+    
+    /**
+     * Provide a convenient way to start fragment wrapped in {@link SinglePaneActivity}
+     * (需要在Manifest中注册)
+     */
+    public void startFragment(Class<? extends Fragment> fragmentCls, Bundle args) {
+        startActivity(SinglePaneActivity.buildIntent(getContext(), fragmentCls, args));
     }
 
     /******************************* 华丽丽的分割线 *******************************/

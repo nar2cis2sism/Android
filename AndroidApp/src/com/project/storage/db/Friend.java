@@ -144,7 +144,7 @@ public class Friend implements FriendColumns {
     /******************************* 华丽丽的分割线 *******************************/
     
     public ImageUrl getAvatarUrl() {
-        int avatar_ver = (int) version;
+        int avatar_ver = (int) (version >> 32);
         if (avatar_ver == 0)
         {
             return null;

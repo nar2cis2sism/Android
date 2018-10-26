@@ -1,10 +1,14 @@
 package com.project.ui.friend;
 
+import static com.project.network.action.Actions.SEARCH_CONTACT;
+import static com.project.network.action.Actions.ADD_FRIEND;
+
 import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ExpandableListView;
@@ -18,6 +22,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.daimon.yueba.R;
 import com.project.app.bean.FriendListItem;
+import com.project.network.action.http.AddFriend;
 import com.project.network.action.http.SearchContact;
 import com.project.ui.friend.info.FriendInfoFragment;
 import com.project.ui.friend.info.FriendInfoFragment.FriendInfoParams;
@@ -35,6 +40,9 @@ import engine.android.widget.component.SearchBox;
 import engine.android.widget.component.TitleBar;
 import engine.android.widget.extra.MyExpandableListView;
 import engine.android.widget.helper.LetterBarHelper;
+import protocol.http.SearchContactData.ContactData;
+
+import java.util.List;
 
 /**
  * 好友列表界面
@@ -92,6 +100,7 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        registerEventHandler(new EventHandler());
         presenter = addPresenter(FriendListPresenter.class);
         searchPresenter = addPresenter(SearchPresenter.class);
     }
@@ -101,7 +110,29 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
         titleBar
         .setTitle(R.string.friend_title) // 搜索时显示
         .setCustomView(getListSwitcher())
-        .addAction(R.drawable.friend_add)
+        .addAction(R.drawable.friend_add, new OnClickListener() {
+            
+            int i;
+            
+            @Override
+            public void onClick(View v) {
+                if (i == 0)
+                {
+                    list_header.search_box.getSearchEditText().setText("13872530618");
+                }
+                else if (i == 1)
+                {
+                    searchPresenter.search(list_header.search_box.getSearchEditText().getText().toString(), true);
+                }
+                else
+                {
+                    i = 0;
+                    return;
+                }
+                
+                i++;
+            }
+        })
         .show();
         updateTitleBar(searchPresenter.isSearching);
     }
@@ -264,7 +295,46 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
     /******************************* 搜索联系人 *******************************/
     
     void searchContact(String key) {
-        showProgress(true);
+        showProgress(getString(R.string.progress_search_contact));
         getBaseActivity().sendHttpRequest(new SearchContact(key));
+    }
+    
+    /******************************* 加为好友 *******************************/
+    
+    void addFriend(String account) {
+        showProgress(getString(R.string.progress_waiting));
+        getBaseActivity().sendHttpRequest(new AddFriend(account, false));
+    }
+    
+    private class EventHandler extends engine.android.framework.ui.BaseFragment.EventHandler {
+        
+        public EventHandler() {
+            super(SEARCH_CONTACT, ADD_FRIEND);
+        }
+
+        @Override
+        protected void onReceiveSuccess(String action, Object param) {
+            if (SEARCH_CONTACT.equals(action))
+            {
+                hideProgress();
+                @SuppressWarnings("unchecked")
+                List<ContactData> list = (List<ContactData>) param;
+                if (list == null || list.isEmpty())
+                {
+                    search_empty.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    search_empty.setVisibility(View.GONE);
+                    searchPresenter.globalAdapter.update(list);
+                    setListAdapter(searchPresenter.globalAdapter);
+                }
+            }
+            else if (ADD_FRIEND.equals(action))
+            {
+                hideProgress();
+                list_header.search_box.getSearchEditText().setText(null);
+            }
+        }
     }
 }

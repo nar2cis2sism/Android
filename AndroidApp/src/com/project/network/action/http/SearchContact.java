@@ -75,7 +75,7 @@ public class SearchContact implements HttpBuilder, JsonEntity {
             
             
             
-            return super.process(obj);
+            return list;
         }
     }
 }

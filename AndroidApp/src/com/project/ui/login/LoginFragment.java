@@ -57,7 +57,7 @@ public class LoginFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getBaseActivity().registerEventHandler(new EventHandler());
+        registerEventHandler(new EventHandler());
     }
 
     @Override
@@ -181,7 +181,7 @@ public class LoginFragment extends BaseFragment {
                 password.input().getText().toString()));
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+    private class EventHandler extends engine.android.framework.ui.BaseFragment.EventHandler {
         
         public EventHandler() {
             super(NAVIGATION, LOGIN);

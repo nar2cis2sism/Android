@@ -60,7 +60,7 @@ public class RegisterFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getBaseActivity().registerEventHandler(new EventHandler());
+        registerEventHandler(new EventHandler());
     }
     
     @Override
@@ -209,7 +209,7 @@ public class RegisterFragment extends BaseFragment {
                 getContext(), R.anim.slide_up_in));
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+    private class EventHandler extends engine.android.framework.ui.BaseFragment.EventHandler {
         
         public EventHandler() {
             super(GET_SMS_CODE, REGISTER);

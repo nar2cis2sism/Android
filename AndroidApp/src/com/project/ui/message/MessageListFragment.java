@@ -36,7 +36,7 @@ public class MessageListFragment extends BaseListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getBaseActivity().registerEventHandler(new EventHandler());
+        registerEventHandler(new EventHandler());
         presenter = addPresenter(MessageListPresenter.class);
     }
     
@@ -89,7 +89,7 @@ public class MessageListFragment extends BaseListFragment {
         }
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+    private class EventHandler extends engine.android.framework.ui.BaseFragment.EventHandler {
         
         public EventHandler() {
             super(CONNECTIVITY_CHANGE);

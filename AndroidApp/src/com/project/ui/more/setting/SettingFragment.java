@@ -44,7 +44,7 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getBaseActivity().registerEventHandler(new EventHandler());
+        registerEventHandler(new EventHandler());
     }
     
     @Override
@@ -120,7 +120,7 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
         }
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+    private class EventHandler extends engine.android.framework.ui.BaseFragment.EventHandler {
         
         public EventHandler() {
             super(LOGOUT);

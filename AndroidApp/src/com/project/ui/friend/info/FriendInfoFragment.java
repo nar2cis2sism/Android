@@ -65,7 +65,7 @@ public class FriendInfoFragment extends BaseInfoFragment {
         }
         else
         {
-            getBaseActivity().registerEventHandler(new EventHandler());
+            registerEventHandler(new EventHandler());
         }
     }
     
@@ -155,7 +155,7 @@ public class FriendInfoFragment extends BaseInfoFragment {
         getBaseActivity().sendHttpRequest(new GetFriendInfo(friend));
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+    private class EventHandler extends engine.android.framework.ui.BaseFragment.EventHandler {
         
         public EventHandler() {
             super(GET_FRIEND_INFO);

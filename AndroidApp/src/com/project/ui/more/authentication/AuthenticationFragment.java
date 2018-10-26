@@ -43,7 +43,7 @@ public class AuthenticationFragment extends BaseFragment implements OnItemClickL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getBaseActivity().registerEventHandler(new EventHandler());
+        registerEventHandler(new EventHandler());
         addPresenter(new PhotoPresenter(adapter = new AuthenticationAdapter(getContext())));
     }
     
@@ -130,7 +130,7 @@ public class AuthenticationFragment extends BaseFragment implements OnItemClickL
         }
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+    private class EventHandler extends engine.android.framework.ui.BaseFragment.EventHandler {
         
         public EventHandler() {
             super(AUTHENTICATION);

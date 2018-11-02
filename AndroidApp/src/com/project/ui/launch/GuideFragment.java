@@ -27,13 +27,10 @@ public class GuideFragment extends BaseFragment implements OnViewChangeListener 
     
     @InjectView(R.id.fling_layout)
     FlingLayout fling_layout;
-    
     @InjectView(R.id.experience)
     ImageView experience;
-    
     @InjectView(R.id.skip)
     ImageView skip;
-
     @InjectView(R.id.page_indicator)
     PageIndicator page_indicator;
 

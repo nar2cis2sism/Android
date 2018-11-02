@@ -54,6 +54,8 @@ public class Friend implements FriendColumns {
     @DAOProperty(column=MOBILE_PHONE)
     public String mobile_phone;                 // 手机号
 
+    /******************************* 华丽丽的分割线 *******************************/
+
     @DAOProperty(column=DISPLAY_NAME)
     public String displayName;                  // 显示名称
 
@@ -74,6 +76,18 @@ public class Friend implements FriendColumns {
     public Friend() {}
 
     /******************************* 华丽丽的分割线 *******************************/
+
+    public Friend(String account, FriendListItem.FriendInfo info) {
+        this.account = account;
+        if (info != null)
+        {
+            fromProtocol(info);
+        }
+        else
+        {
+            init();
+        }
+    }
     
     public Friend fromProtocol(FriendInfo info) {
         nickname = info.nickname;
@@ -89,18 +103,6 @@ public class Friend implements FriendColumns {
     public Friend fromProtocol(FriendListItem.FriendInfo info) {
         version = info.version;
         return fromProtocol((FriendInfo) info);
-    }
-
-    public Friend(String account, FriendListItem.FriendInfo info) {
-        this.account = account;
-        if (info != null)
-        {
-            fromProtocol(info);
-        }
-        else
-        {
-            init();
-        }
     }
     
     private void init() {

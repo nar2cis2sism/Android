@@ -1,6 +1,7 @@
 package com.project.app;
 
 import com.project.app.config.MyConfiguration;
+import com.project.util.LogUploader;
 
 import engine.android.core.ApplicationManager;
 import engine.android.core.util.LogFactory;
@@ -39,10 +40,10 @@ public class MyApp extends ApplicationManager {
         
 //        LOG.log(getConfig().isOffline() ? "单机版" : "网络版");
     }
-//    
-//    @Override
-//    protected boolean handleException(Throwable ex) {
-//        LogUploader.uploadLog();
-//        return false;
-//    }
+    
+    @Override
+    protected boolean handleException(Throwable ex) {
+        LogUploader.upload(this);
+        return false;
+    }
 }

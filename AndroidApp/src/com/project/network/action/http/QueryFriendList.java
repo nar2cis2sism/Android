@@ -97,6 +97,7 @@ public class QueryFriendList implements HttpBuilder, JsonEntity {
                 }
                 else
                 {
+                    // 加为好友
                     if (friend == null)
                     {
                         dao.save(new Friend(item.account, item.info));

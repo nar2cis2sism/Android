@@ -10,13 +10,14 @@ import android.widget.ListView;
 
 import engine.android.framework.R;
 import engine.android.framework.ui.BaseListFragment;
+import engine.android.framework.ui.extra.SinglePaneActivity;
 import engine.android.framework.ui.extra.SinglePaneActivity.OnBackListener;
 import engine.android.util.AndroidUtil;
 import engine.android.util.ui.ListViewState;
 import engine.android.widget.component.TitleBar;
 
 /**
- * 地区选择界面
+ * 地区选择界面（需用{@link SinglePaneActivity}为容器以拦截后退事件）
  * 
  * @author Daimon
  */

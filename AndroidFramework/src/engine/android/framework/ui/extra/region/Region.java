@@ -4,10 +4,15 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
-import engine.android.dao.DAOTemplate;
+import java.io.File;
+import java.io.FileOutputStream;
+
 import engine.android.dao.annotation.DAOPrimaryKey;
 import engine.android.dao.annotation.DAOProperty;
 import engine.android.dao.annotation.DAOTable;
+import engine.android.util.file.FileManager;
+import engine.android.util.io.IOUtil;
+import engine.android.util.manager.SDCardManager;
 
 /**
  * 地区
@@ -36,15 +41,31 @@ interface RegionColumns extends BaseColumns {
  */
 class RegionDataBase {
 
+    public static final String DATABASE = "region.db";
     public static final String TABLE = "area";
     
     public static final SQLiteDatabase open(Context context) {
-        return new RegionDataBase(context).dao;
+        return loadDB(context, DATABASE);
     }
-
-    private final SQLiteDatabase dao;
     
-    private RegionDataBase(Context context) {
-        dao = DAOTemplate.loadAssetsDB(context, "region.db");
+    private static SQLiteDatabase loadDB(Context context, String name) {
+        File db_file = new File(SDCardManager.openSDCardAppDir(context), name);
+        
+        if (!db_file.exists())
+        {
+            FileManager.createFileIfNecessary(db_file);
+
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(db_file);
+                IOUtil.writeStream(Region.class.getResourceAsStream(name), fos);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                IOUtil.closeSilently(fos);
+            }
+        }
+        
+        return SQLiteDatabase.openOrCreateDatabase(db_file, null);
     }
 }

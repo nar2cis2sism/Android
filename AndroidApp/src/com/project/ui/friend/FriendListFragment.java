@@ -1,14 +1,13 @@
 package com.project.ui.friend;
 
-import static com.project.network.action.Actions.SEARCH_CONTACT;
 import static com.project.network.action.Actions.ADD_FRIEND;
+import static com.project.network.action.Actions.SEARCH_CONTACT;
 
 import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ExpandableListView;
@@ -27,10 +26,13 @@ import com.project.network.action.http.SearchContact;
 import com.project.ui.friend.info.FriendInfoFragment;
 import com.project.ui.friend.info.FriendInfoFragment.FriendInfoParams;
 
+import java.util.List;
+
 import engine.android.core.Injector;
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseListFragment;
 import engine.android.util.AndroidUtil;
+import engine.android.util.ui.UIUtil;
 import engine.android.util.ui.ViewSize;
 import engine.android.util.ui.ViewSize.ViewSizeObserver;
 import engine.android.widget.common.LetterBar;
@@ -42,8 +44,6 @@ import engine.android.widget.extra.MyExpandableListView;
 import engine.android.widget.helper.LetterBarHelper;
 import protocol.http.SearchContactData.ContactData;
 
-import java.util.List;
-
 /**
  * 好友列表界面
  * 
@@ -51,7 +51,7 @@ import java.util.List;
  */
 public class FriendListFragment extends BaseListFragment implements OnCheckedChangeListener, OnChildClickListener {
     
-    private class ListHeader {
+    class ListHeader {
         
         View header;
         
@@ -77,6 +77,10 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
             action_container.addAction(R.drawable.friend_public, R.string.friend_public);
             // 好友推荐
             action_container.addAction(R.drawable.friend_recommend, R.string.friend_recommend);
+        }
+        
+        public void hideSoftInput() {
+            UIUtil.hideSoftInput(search_box);
         }
     }
     
@@ -110,29 +114,7 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
         titleBar
         .setTitle(R.string.friend_title) // 搜索时显示
         .setCustomView(getListSwitcher())
-        .addAction(R.drawable.friend_add, new OnClickListener() {
-            
-            int i;
-            
-            @Override
-            public void onClick(View v) {
-                if (i == 0)
-                {
-                    list_header.search_box.getSearchEditText().setText("13872530618");
-                }
-                else if (i == 1)
-                {
-                    searchPresenter.search(list_header.search_box.getSearchEditText().getText().toString(), true);
-                }
-                else
-                {
-                    i = 0;
-                    return;
-                }
-                
-                i++;
-            }
-        })
+        .addAction(R.drawable.friend_add)
         .show();
         updateTitleBar(searchPresenter.isSearching);
     }
@@ -170,7 +152,7 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
     }
     
     private ListHeader onCreateListHeader(LayoutInflater inflater) {
-        View view = inflater.inflate(R.layout.friend_list_header, null);
+        View view = inflater.inflate(R.layout.friend_list_header, (ViewGroup) null);
         ViewSize.observeViewSize(view, new ViewSizeObserver() {
             
             @Override
@@ -261,6 +243,8 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
         }
         
         setListAdapter(adapter);
+        // ListView will get focus when update the adapter so request focus manually.
+        if (searchPresenter.isSearching) list_header.search_box.requestFocus();
         updateLetterBar();
     }
     
@@ -278,18 +262,15 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
         getListView().setVisibility(shown ? View.VISIBLE : View.GONE);
         expandable_list.setVisibility(shown ? View.GONE : View.VISIBLE);
     }
-    
-    @Override
-    public void setListAdapter(ListAdapter adapter) {
-        super.setListAdapter(adapter);
-        // ListView will get focus when update the adapter so request focus manually.
-        list_header.search_box.requestFocus();
-    }
 
     private void updateLetterBar() {
         letter_bar.setVisibility(!searchPresenter.isSearching
                 && showAllFriends && !presenter.adapter.isEmpty()
                 ? View.VISIBLE : View.GONE);
+    }
+    
+    void showSearchEmpty(boolean shown) {
+        search_empty.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
     
     /******************************* 搜索联系人 *******************************/
@@ -306,7 +287,7 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
         getBaseActivity().sendHttpRequest(new AddFriend(account, false));
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseFragment.EventHandler {
+    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
         
         public EventHandler() {
             super(SEARCH_CONTACT, ADD_FRIEND);
@@ -317,18 +298,13 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
             if (SEARCH_CONTACT.equals(action))
             {
                 hideProgress();
+                list_header.hideSoftInput();
                 @SuppressWarnings("unchecked")
                 List<ContactData> list = (List<ContactData>) param;
-                if (list == null || list.isEmpty())
-                {
-                    search_empty.setVisibility(View.VISIBLE);
-                }
-                else
-                {
-                    search_empty.setVisibility(View.GONE);
-                    searchPresenter.globalAdapter.update(list);
-                    setListAdapter(searchPresenter.globalAdapter);
-                }
+                
+                showSearchEmpty(list == null || list.isEmpty());
+                searchPresenter.globalAdapter.update(list);
+                setListAdapter(searchPresenter.globalAdapter);
             }
             else if (ADD_FRIEND.equals(action))
             {

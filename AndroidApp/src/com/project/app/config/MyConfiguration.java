@@ -58,8 +58,8 @@ public class MyConfiguration extends AppConfig implements IConfiguration {
     
     private void configSocket(SocketConfig config) {
         config.setServlet(new SocketServlet());
-        config.setInterceptor(new SocketInterceptor());
         config.setPushReceiver(new SocketPushReceiver());
+        config.setInterceptor(new SocketInterceptor());
         config.setTimeout(SOCKET_TIMEOUT);
     }
     

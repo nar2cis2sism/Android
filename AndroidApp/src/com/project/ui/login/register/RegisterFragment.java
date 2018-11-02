@@ -209,7 +209,7 @@ public class RegisterFragment extends BaseFragment {
                 getContext(), R.anim.slide_up_in));
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseFragment.EventHandler {
+    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
         
         public EventHandler() {
             super(GET_SMS_CODE, REGISTER);

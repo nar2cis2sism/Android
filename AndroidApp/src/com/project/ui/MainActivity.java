@@ -137,6 +137,12 @@ public class MainActivity extends BaseActivity {
         tabHost.setCurrentTabByTag(tag);
     }
     
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(SAVED_TAB_TAG, tabHost.getCurrentTabTag());
+    }
+
     private static class ViewPagerAdapter extends engine.android.widget.extra.ViewPager.ViewPagerAdapter {
     
         public ViewPagerAdapter(FragmentManager fm, int count) {
@@ -169,12 +175,6 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(SAVED_TAB_TAG, tabHost.getCurrentTabTag());
-    }
-    
     /******************************* 华丽丽的分割线 *******************************/
     
     @Override

@@ -130,7 +130,7 @@ public class AuthenticationFragment extends BaseFragment implements OnItemClickL
         }
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseFragment.EventHandler {
+    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
         
         public EventHandler() {
             super(AUTHENTICATION);

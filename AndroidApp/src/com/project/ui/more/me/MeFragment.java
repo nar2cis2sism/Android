@@ -240,7 +240,7 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         params.maxEms = 30;
 
         TextEditFragment fragment = new TextEditFragment();
-        fragment.setArguments(TextEditFragment.buildParams(params));
+        fragment.setArguments(ParamsBuilder.build(params));
         fragment.setListener(user.signature, new Listener<String>() {
             
             @Override
@@ -286,7 +286,7 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         return true;
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseFragment.EventHandler {
+    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
         
         public EventHandler() {
             super(AVATAR, EDIT_USER_INFO);

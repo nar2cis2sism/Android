@@ -15,11 +15,14 @@ import com.project.app.bean.ServerUrl;
 import com.project.app.config.ImageTransformer;
 import com.project.storage.dao.FriendDAO;
 import com.project.storage.db.Friend;
+import com.project.ui.friend.info.FriendInfoFragment;
+import com.project.ui.friend.info.FriendInfoFragment.FriendInfoParams;
 
 import engine.android.core.BaseFragment.Presenter;
 import engine.android.core.extra.JavaBeanAdapter;
 import engine.android.core.extra.JavaBeanAdapter.FilterMatcher;
 import engine.android.framework.app.image.ImageManager.ImageUrl;
+import engine.android.framework.ui.BaseFragment.ParamsBuilder;
 import engine.android.framework.ui.widget.AvatarImageView;
 import engine.android.util.ui.UIUtil;
 import engine.android.widget.component.SearchBox.SearchProvider;
@@ -43,8 +46,9 @@ class SearchPresenter extends Presenter<FriendListFragment> implements SearchPro
         {
             if (isSearching)
             {
+                getCallbacks().list_header.hideSoftInput();
                 getCallbacks().switchSearchMode(isSearching = false);
-                getCallbacks().search_empty.setVisibility(View.GONE);
+                getCallbacks().showSearchEmpty(false);
             }
         }
         else
@@ -68,7 +72,7 @@ class SearchPresenter extends Presenter<FriendListFragment> implements SearchPro
         if (isSearching)
         {
             getCallbacks().switchSearchMode(isSearching);
-            getCallbacks().search_empty.setVisibility(count == 0 ? View.VISIBLE : View.GONE);
+            getCallbacks().showSearchEmpty(count == 0);
         }
     }
 }
@@ -128,10 +132,18 @@ class GlobalSearchAdapter extends JavaBeanAdapter<ContactData> {
         // 名称
         holder.setTextView(R.id.subject, getDisplayName(item));
         // 加为好友
-        Friend friend = FriendDAO.getFriendByAccount(item.account);
+        final Friend friend = FriendDAO.getFriendByAccount(item.account);
         if (friend != null)
         {
             holder.setVisible(R.id.note, false);
+            holder.getConvertView().setOnClickListener(new OnClickListener() {
+                
+                @Override
+                public void onClick(View v) {
+                    presenter.getCallbacks().startFragment(FriendInfoFragment.class, 
+                            ParamsBuilder.build(new FriendInfoParams(friend)));
+                }
+            });
         }
         else
         {
@@ -143,6 +155,7 @@ class GlobalSearchAdapter extends JavaBeanAdapter<ContactData> {
                     presenter.getCallbacks().addFriend(item.account);
                 }
             });
+            holder.getConvertView().setOnClickListener(null);
         }
     }
     
@@ -154,7 +167,7 @@ class GlobalSearchAdapter extends JavaBeanAdapter<ContactData> {
         }
         
         return new ImageUrl(ImageTransformer.TYPE_AVATAR,
-                ServerUrl.getDownloadUrl(avatarUrl), String.valueOf(System.currentTimeMillis()));
+                ServerUrl.getDownloadUrl(avatarUrl), null);
     }
     
     /**

@@ -18,7 +18,7 @@ class RegionPresenter extends Presenter<RegionFragment> {
     private static final int REGION     = 2;        // 区级
     
     RegionAdapter adapter;
-    RegionLoader loader;
+    RegionLoader  loader;
     
     int level;                                      // 当前地方级别
     String[] regionName = new String[REGION + 1];   // 当前地级名称

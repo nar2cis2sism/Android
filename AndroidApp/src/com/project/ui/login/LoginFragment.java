@@ -181,7 +181,7 @@ public class LoginFragment extends BaseFragment {
                 password.input().getText().toString()));
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseFragment.EventHandler {
+    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
         
         public EventHandler() {
             super(NAVIGATION, LOGIN);

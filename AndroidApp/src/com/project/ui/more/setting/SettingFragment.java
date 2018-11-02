@@ -120,7 +120,7 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
         }
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseFragment.EventHandler {
+    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
         
         public EventHandler() {
             super(LOGOUT);

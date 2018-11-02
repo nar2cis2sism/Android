@@ -13,6 +13,7 @@ import engine.android.core.extra.EventBus;
 import engine.android.core.extra.EventBus.Event;
 import engine.android.framework.R;
 import engine.android.framework.network.ConnectionStatus;
+import engine.android.framework.ui.BaseActivity.EventHandler;
 import engine.android.framework.ui.extra.SinglePaneActivity;
 import engine.android.framework.util.GsonUtil;
 import engine.android.util.Util;
@@ -74,71 +75,14 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment {
     
     private EventHandler handler;
     
-    public static class EventHandler implements engine.android.core.extra.EventBus.EventHandler {
-        
-        private final String[] actions;
-        
-        private BaseActivity baseActivity;
-        
-        public EventHandler(String... actions) {
-            this.actions = actions;
-        }
-
-        @Override
-        public void handleEvent(Event event) {
-            onReceive(event.action, event.status, event.param);
-        }
-        
-        protected void onReceive(String action, int status, Object param) {
-            if (status == ConnectionStatus.SUCCESS)
-            {
-                onReceiveSuccess(action, param);
-            }
-            else
-            {
-                onReceiveFailure(action, status, param);
-            }
-        }
-        
-        protected void onReceiveSuccess(String action, Object param) {}
-        
-        protected void onReceiveFailure(String action, int status, Object param) {
-            if (baseActivity == null) return;
-            hideProgress();
-            showErrorDialog(param);
-        }
-        
-        protected void hideProgress() {
-            baseActivity.hideProgress();
-        }
-        
-        protected void showErrorDialog(Object error) {
-            Dialog dialog = new AlertDialog.Builder(baseActivity)
-            .setTitle(R.string.dialog_error_title)
-            .setMessage(Util.getString(error, null))
-            .setPositiveButton(android.R.string.ok, null)
-            .create();
-        
-            baseActivity.showDialog("dialog_error", dialog);
-        }
-    }
-    
     /**
      * 注册事件处理器<br>
      * Call it in {@link #onCreate(android.os.Bundle)}
      */
     public final void registerEventHandler(EventHandler handler) {
-        if (handler != null && this.handler == null)
+        if (this.handler == null && BaseActivity.registerEventHandler(getBaseActivity(), handler))
         {
-            String[] actions = handler.actions;
-            if (actions != null && actions.length > 0)
-            {
-                (this.handler = handler).baseActivity = getBaseActivity();
-                for (String action : actions)
-                {
-                    EventBus.getDefault().register(action, handler);
-                }
-            }
+            this.handler = handler;
         }
     }
     

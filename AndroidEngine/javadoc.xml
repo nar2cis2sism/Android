@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+    <property name="android.sdk" value="D:\Work\Java\Android\sdk" />
+    <target name="javadoc">
+        <javadoc
+            sourcepath="src"
+            packagenames="engine.android.*"
+            destdir="doc"
+            classpath="${android.sdk}\tools\support\annotations.jar;${android.sdk}\platforms\android-15\android.jar;libs/android-support-v4.jar"
+            encoding="UTF-8"
+            docencoding="GBK"
+            access="public"
+            nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" 
+            author="true" source="1.6" splitindex="true" use="true" version="true">
+            <link href="file:/${android.sdk}/docs/reference" />
+        </javadoc>
+    </target>
+</project>

@@ -300,11 +300,6 @@ public class ApplicationManager extends Application implements UncaughtException
          * 活动出栈
          */
         private void popupActivity(Activity activity) {
-            if (history.isEmpty())
-            {
-                return;
-            }
-
             Iterator<ActivityReference> iter = history.iterator();
             while (iter.hasNext())
             {

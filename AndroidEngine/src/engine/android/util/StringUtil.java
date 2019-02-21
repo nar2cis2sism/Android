@@ -1,4 +1,4 @@
-package engine.android.util;
+﻿package engine.android.util;
 
 import android.text.TextUtils;
 
@@ -294,6 +294,19 @@ public final class StringUtil {
 
     public static boolean equals(String a, String b) {
         return (a == null ? "" : a).equals(b == null ? "" : b);
+    }
+
+    /**
+     * 总有一些菜鸟把JSON格式拼错
+     */
+    public static String adjustJson(String json) {
+        if (TextUtils.isEmpty(json))
+        {
+            return json;
+        }
+        
+        return json.replace(":\"{", ":{").replace("}\"", "}")
+                   .replace("\\\"", "\"");
     }
 
     /**

@@ -1,4 +1,4 @@
-package engine.android.core.extra;
+﻿package engine.android.core.extra;
 
 import android.content.Context;
 import android.content.CursorLoader;
@@ -423,7 +423,7 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
     /**
      * 缓存View，提高效率
      */
-    public static final class ViewHolder {
+    public static class ViewHolder {
 
         private final View convertView;
 

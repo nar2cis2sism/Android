@@ -18,6 +18,7 @@ import android.content.pm.ProviderInfo;
 import android.content.pm.ResolveInfo;
 import android.content.pm.Signature;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -53,7 +54,7 @@ import java.util.concurrent.Callable;
  * @version N
  * @since 3/26/2012
  */
-@SuppressLint("InlinedApi")
+@SuppressLint({"InlinedApi", "deprecation"})
 public final class AndroidUtil {
 
     /**
@@ -97,7 +98,7 @@ public final class AndroidUtil {
     }
 
     /**
-     * 获取状态栏高度
+     * 获取状态栏高度（布局完成后才能获取到）
      */
     public static int getStatusBarHeight(Activity a) {
         // 包括标题栏，不包括状态栏
@@ -107,6 +108,14 @@ public final class AndroidUtil {
         decorView.getWindowVisibleDisplayFrame(outRect);
 
         return outRect.top;
+    }
+
+    /**
+     * 获取状态栏高度
+     */
+    public static int getStatusBarHeight(Resources resources) {
+        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+        return resources.getDimensionPixelSize(resourceId);
     }
 
     /**

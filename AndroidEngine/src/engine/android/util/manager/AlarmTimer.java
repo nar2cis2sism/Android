@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.SystemClock;
 
+import engine.android.util.AndroidUtil;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -108,17 +110,14 @@ public class AlarmTimer {
      */
     public void triggerAtTime(int alarmType, long triggerAtMillis, Runnable timeoutTask) {
         this.timeoutTask = timeoutTask;
-        am.set(alarmType, triggerAtMillis, operation);
-    }
-    
-    /**
-     * @param alarmType One of ELAPSED_REALTIME, ELAPSED_REALTIME_WAKEUP, RTC or
-     *             RTC_WAKEUP.
-     */
-    public void triggerAtTime(int alarmType, long triggerAtMillis, long intervalMillis,
-            Runnable timeoutTask) {
-        this.timeoutTask = timeoutTask;
-        am.setRepeating(alarmType, triggerAtMillis, intervalMillis, operation);
+        if (AndroidUtil.getVersion() < 19)
+        {
+            am.set(alarmType, triggerAtMillis, operation);
+        }
+        else
+        {
+            am.setExact(alarmType, triggerAtMillis, operation);
+        }
     }
 
     /**
@@ -211,7 +210,7 @@ public class AlarmTimer {
         }
 
         private void setAlarm() {
-            timer.am.set(AlarmManager.ELAPSED_REALTIME, getTimeoutTime(), timer.operation);
+            timer.triggerAtTime(AlarmManager.ELAPSED_REALTIME_WAKEUP, getTimeoutTime(), timer.timeoutTask);
         }
 
         private static long getCurrentTime() {
@@ -229,7 +228,6 @@ public class AlarmTimer {
             if (isRunning())
             {
                 lastEventTime.set(getCurrentTime());
-                setAlarm();
             }
         }
 
@@ -251,7 +249,7 @@ public class AlarmTimer {
                 long timeout = getTimeoutTime();
                 if (now < timeout)
                 {
-                    // If running but the timeout has been moved forward,reset
+                    // If running but the timeout has been moved forward, reset
                     setAlarm();
                 }
                 else

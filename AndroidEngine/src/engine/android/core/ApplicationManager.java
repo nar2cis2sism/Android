@@ -1,4 +1,4 @@
-package engine.android.core;
+﻿package engine.android.core;
 
 import static engine.android.core.util.LogFactory.LogUtil.getCallerStackFrame;
 import static engine.android.core.util.LogFactory.LogUtil.getClassAndMethod;
@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Process;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import java.lang.Thread.UncaughtExceptionHandler;
@@ -48,7 +49,7 @@ public class ApplicationManager extends Application implements UncaughtException
 
     public ApplicationManager() {
         session = new Session();
-        registerActivityLifecycleCallbacks(stack = new ActivityStack(this));
+        registerActivityLifecycleCallbacks((stack = new ActivityStack(this)).callback);
         if (isMainApp = instance == null)
         {
             // 主程序设置一次就行了
@@ -69,7 +70,7 @@ public class ApplicationManager extends Application implements UncaughtException
      */
     public final void init(Application app) {
         attachBaseContext(app.getBaseContext());
-        app.registerActivityLifecycleCallbacks(stack);
+        app.registerActivityLifecycleCallbacks(stack.callback);
         onCreate();
     }
     
@@ -141,34 +142,32 @@ public class ApplicationManager extends Application implements UncaughtException
     }
 
     /**
-     * 返回栈顶的活动(might be null)
+     * 获取活动堆栈
      */
-    public final Activity currentActivity() {
+    public ActivityStack getActivityStack() {
         ensureCallMethodOnMainThread();
-        return stack.currentActivity();
+        return stack;
     }
 
     /**
-     * 移除栈中所有的活动
+     * 返回栈顶的活动(might be null)
      */
-    public final void popupAllActivities() {
-        ensureCallMethodOnMainThread();
-        stack.clear();
+    public final Activity currentActivity() {
+        return getActivityStack().currentActivity();
     }
 
     /**
      * 程序退出
      */
     public final void exit() {
-        ensureCallMethodOnMainThread();
-        stack.exit();
+        getActivityStack().exit();
     }
 
     private class ExitTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
-            stack.clear();
+            stack.popupAllActivities();
         }
 
         @Override
@@ -245,7 +244,7 @@ public class ApplicationManager extends Application implements UncaughtException
         return false;
     }
 
-    private static class ActivityStack implements ActivityLifecycleCallbacks {
+    public static class ActivityStack {
         
         private final ApplicationManager am;
 
@@ -254,63 +253,13 @@ public class ApplicationManager extends Application implements UncaughtException
 
         private ExitTask exitTask;                              // 后台退出异步任务
         
-        public ActivityStack(ApplicationManager am) {
+        private ActivityStack(ApplicationManager am) {
             this.am = am;
         }
 
-        @Override
-        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-            if (exitTask != null)
-            {
-                exitTask.cancel(true);
-                exitTask = null;
-            }
-
-            pushActivity(activity);
-        }
-
-        @Override
-        public void onActivityStarted(Activity activity) {}
-
-        @Override
-        public void onActivityResumed(Activity activity) {}
-
-        @Override
-        public void onActivityPaused(Activity activity) {}
-
-        @Override
-        public void onActivityStopped(Activity activity) {}
-
-        @Override
-        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
-
-        @Override
-        public void onActivityDestroyed(Activity activity) {
-            popupActivity(activity);
-        }
-
         /**
-         * 活动入栈
+         * 返回栈顶的活动(might be null)
          */
-        private void pushActivity(Activity activity) {
-            history.addFirst(new ActivityReference(activity));
-        }
-
-        /**
-         * 活动出栈
-         */
-        private void popupActivity(Activity activity) {
-            Iterator<ActivityReference> iter = history.iterator();
-            while (iter.hasNext())
-            {
-                if (iter.next().get() == activity)
-                {
-                    iter.remove();
-                    break;
-                }
-            }
-        }
-
         public Activity currentActivity() {
             Activity a;
             while (!history.isEmpty())
@@ -318,7 +267,6 @@ public class ApplicationManager extends Application implements UncaughtException
                 if ((a = history.getFirst().get()) == null)
                 {
                     history.removeFirst();
-                    continue;
                 }
                 else
                 {
@@ -329,7 +277,78 @@ public class ApplicationManager extends Application implements UncaughtException
             return null;
         }
 
-        public void clear() {
+        /**
+         * 根据Activity的标题查找活动
+         */
+        public Activity findActivityWithTitle(CharSequence title) {
+            Activity a;
+            for (ActivityReference r : history)
+            {
+                if ((a = r.get()) != null)
+                {
+                    if (TextUtils.equals(a.getTitle(), title))
+                    {
+                        return a;
+                    }
+                }
+            }
+            
+            return null;
+        }
+
+        /**
+         * 移除特定活动之后的所有活动
+         */
+        public void popupActivitiesUntil(CharSequence title) {
+            Activity a;
+            Iterator<ActivityReference> iter = history.iterator();
+            while (iter.hasNext())
+            {
+                if ((a = iter.next().get()) != null)
+                {
+                    if (title != null && title.equals(a.getTitle()))
+                    {
+                        return;
+                    }
+                    
+                    a.finish();
+                }
+                else
+                {
+                    iter.remove();
+                }
+            }
+        }
+
+        /**
+         * 移除特定活动之前的所有活动
+         */
+        public void popupActivitiesBefore(CharSequence title) {
+            if (title == null)
+            {
+                return;
+            }
+            
+            boolean found = false;
+            Activity a;
+            Iterator<ActivityReference> iter = history.iterator();
+            while (iter.hasNext())
+            {
+                if (found & (a = iter.next().get()) != null)
+                {
+                    a.finish();
+                }
+                else if (title.equals(a.getTitle()))
+                {
+                    found = true;
+                }
+            }
+        }
+
+        /**
+         * 移除栈中所有的活动
+         */
+        public void popupAllActivities() {
             if (history.isEmpty())
             {
                 return;
@@ -347,13 +366,69 @@ public class ApplicationManager extends Application implements UncaughtException
             history.clear();
         }
 
-        public void exit() {
+        private void exit() {
             if (exitTask == null)
             {
                 // 后台退出任务
                 (exitTask = am.new ExitTask()).execute();
             }
         }
+
+        private final ActivityLifecycleCallbacks callback = new ActivityLifecycleCallbacks() {
+
+            @Override
+            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+                if (exitTask != null)
+                {
+                    exitTask.cancel(true);
+                    exitTask = null;
+                }
+
+                pushActivity(activity);
+            }
+
+            @Override
+            public void onActivityStarted(Activity activity) {}
+
+            @Override
+            public void onActivityResumed(Activity activity) {}
+
+            @Override
+            public void onActivityPaused(Activity activity) {}
+
+            @Override
+            public void onActivityStopped(Activity activity) {}
+
+            @Override
+            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
+
+            @Override
+            public void onActivityDestroyed(Activity activity) {
+                popupActivity(activity);
+            }
+
+            /**
+             * 活动入栈
+             */
+            private void pushActivity(Activity activity) {
+                history.addFirst(new ActivityReference(activity));
+            }
+
+            /**
+             * 活动出栈
+             */
+            private void popupActivity(Activity activity) {
+                Iterator<ActivityReference> iter = history.iterator();
+                while (iter.hasNext())
+                {
+                    if (iter.next().get() == activity)
+                    {
+                        iter.remove();
+                        break;
+                    }
+                }
+            }
+        };
 
         private static class ActivityReference extends WeakReference<Activity> {
 

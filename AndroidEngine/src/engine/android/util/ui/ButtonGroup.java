@@ -1,4 +1,4 @@
-package engine.android.util.ui;
+﻿package engine.android.util.ui;
 
 import android.widget.CompoundButton;
 
@@ -24,11 +24,19 @@ public class ButtonGroup {
      * 添加需要管理的按钮（支持单选和复选）
      */
     public void add(CompoundButton r) {
-        r.setOnCheckedChangeListener(new CheckedStateTracker(group.size()));
+        add(r, null);
+    }
+
+    /**
+     * 添加需要管理的按钮（支持单选和复选）
+     */
+    public void add(CompoundButton r, CompoundButton.OnCheckedChangeListener listener) {
+        listener = new CheckedStateTracker(group.size(), listener);
+        r.setOnCheckedChangeListener(listener);
         group.add(r);
         if (r.isChecked())
         {
-            r.setChecked(true);
+            listener.onCheckedChanged(r, true);
         }
     }
     
@@ -64,12 +72,20 @@ public class ButtonGroup {
 
         private final int checkedIndex;
         
-        public CheckedStateTracker(int checkedIndex) {
+        private final CompoundButton.OnCheckedChangeListener listener;
+        
+        public CheckedStateTracker(int checkedIndex, CompoundButton.OnCheckedChangeListener listener) {
             this.checkedIndex = checkedIndex;
+            this.listener = listener;
         }
         
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (listener != null)
+            {
+                listener.onCheckedChanged(buttonView, isChecked);
+            }
+            
             if (isChecked)
             {
                 if (checked != null)

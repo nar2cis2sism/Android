@@ -153,6 +153,7 @@ public class AsyncImageLoader {
                     // 图片下载完毕即放入缓存
                     imageCache.put(url, image);
                     done();
+                    lockMap.remove(url);
 
                     // 通知回调
                     Set<ImageCallback> callbacks = callbackMap.remove(url);

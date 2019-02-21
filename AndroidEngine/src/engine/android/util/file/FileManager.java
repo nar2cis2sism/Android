@@ -1,12 +1,10 @@
-package engine.android.util.file;
+﻿package engine.android.util.file;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.webkit.MimeTypeMap;
-
-import engine.android.util.io.IOUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,6 +23,8 @@ import java.nio.channels.FileChannel.MapMode;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
+import engine.android.util.io.IOUtil;
 
 /**
  * 文件管理器<p>
@@ -369,6 +369,7 @@ public final class FileManager {
      */
     public static boolean writeFile(File file, byte[] content, boolean append) {
         try {
+            createFileIfNecessary(file);
             FileOutputStream fos = null;
             try {
                 // The file will be created if it does not exist.
@@ -378,7 +379,7 @@ public final class FileManager {
             } finally {
                 if (fos != null) fos.close();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

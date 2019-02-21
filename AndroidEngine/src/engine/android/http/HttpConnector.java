@@ -421,6 +421,6 @@ public class HttpConnector {
 
     static
     {
-        LogFactory.addLogFile(HttpConnector.class, "http.txt");
+        LogFactory.addLogFile(HttpConnector.class, "network.txt");
     }
 }

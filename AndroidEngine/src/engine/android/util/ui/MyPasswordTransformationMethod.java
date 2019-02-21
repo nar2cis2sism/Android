@@ -11,8 +11,16 @@ public class MyPasswordTransformationMethod extends PasswordTransformationMethod
     private static final char ASTERISK = '*';
 
     private static MyPasswordTransformationMethod sInstance;
+    
+    private final char c;
 
-    private MyPasswordTransformationMethod() {}
+    private MyPasswordTransformationMethod() {
+        this(ASTERISK);
+    }
+    
+    public MyPasswordTransformationMethod(char c) {
+        this.c = c;
+    }
 
     public static MyPasswordTransformationMethod getInstance() {
         if (sInstance != null)
@@ -26,7 +34,7 @@ public class MyPasswordTransformationMethod extends PasswordTransformationMethod
         return new PasswordCharSequence(source);
     }
 
-    private static class PasswordCharSequence implements CharSequence {
+    private class PasswordCharSequence implements CharSequence {
 
         private final CharSequence mSource;
 
@@ -41,7 +49,7 @@ public class MyPasswordTransformationMethod extends PasswordTransformationMethod
 
         @Override
         public char charAt(int index) {
-            return ASTERISK;
+            return c;
         }
 
         @Override

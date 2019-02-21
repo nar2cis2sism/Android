@@ -11,7 +11,7 @@ import android.text.TextWatcher;
  * @version N
  * @since 3/26/2012
  */
-public abstract class MyTextWatcher implements TextWatcher {
+public class MyTextWatcher implements TextWatcher {
 
     private String text;									// 之前输入文本
 
@@ -50,14 +50,14 @@ public abstract class MyTextWatcher implements TextWatcher {
      * 
      * @param after 输入的文本
      */
-    protected abstract void changeFromEmpty(String after);
+    protected void changeFromEmpty(String after) {};
 
     /**
      * 输入改变（从有到无）
      * 
      * @param before 之前输入的文本
      */
-    protected abstract void changeToEmpty(String before);
+    protected void changeToEmpty(String before) {};
 
     /**
      * 输入改变（没有空文本）

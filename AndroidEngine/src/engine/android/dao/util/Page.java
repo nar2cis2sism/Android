@@ -16,7 +16,7 @@ public final class Page {
     private int totalPage;                      // 总页数
     private int currentPage;                    // 当前页数(default start from 1)
 
-    private int totalRecord;                    // 总记录条数
+    private int totalRecord = -1;               // 总记录条数
 
     private int beginRecord;                    // 起始记录索引(included)
     private int endRecord;                      // 结束记录索引(excluded)
@@ -31,8 +31,7 @@ public final class Page {
     }
 
     public Page(int pageSize, int totalRecord) {
-        checkPageSize(pageSize);
-        this.pageSize = pageSize;
+        checkPageSize(this.pageSize = pageSize);
         setTotalRecord(totalRecord);
     }
 

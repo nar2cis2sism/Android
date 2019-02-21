@@ -7,6 +7,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.StringBuilderPrinter;
 
+import engine.android.util.AndroidUtil;
+import engine.android.util.DeviceUtil;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Calendar;
@@ -49,8 +52,7 @@ public final class LogFactory {
         if (logEnabled.compareAndSet(!enable, enable) && logOpened.compareAndSet(false, true))
         {
             LOG.log(null, null, "程序启动", getMainApplication().getLaunchTime());
-            // 输出空行
-            LOG.log("", null);
+            LOG.log(DeviceUtil.getDeviceInfo(), AndroidUtil.getVersionName(getMainApplication()));
         }
     }
 

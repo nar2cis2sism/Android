@@ -13,13 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import engine.android.core.util.PresentManager;
 import engine.android.core.util.PresentManager.BasePresenter;
 import engine.android.util.extra.ReflectObject;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Fragment基类<p>
@@ -168,8 +168,8 @@ public abstract class BaseFragment extends Fragment {
      * {@link FragmentManager#getBackStackEntryCount()}方法返回结果不及时
      */
     private int getBackStackEntryCount() {
-        ReflectObject ref = new ReflectObject(getFragmentManager());
         try {
+            ReflectObject ref = new ReflectObject(getFragmentManager());
             List mBackStackIndices = (List) ref.get("mBackStackIndices");
             if (mBackStackIndices != null)
             {

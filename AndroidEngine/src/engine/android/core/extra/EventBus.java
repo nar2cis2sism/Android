@@ -3,6 +3,8 @@ package engine.android.core.extra;
 import android.os.Handler;
 import android.os.Looper;
 
+import engine.android.core.ApplicationManager;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -92,29 +94,24 @@ public final class EventBus {
     /**
      * Posts the given event to the event bus.
      */
-    public void post(Event event) {
-        handleEvent(event, false);
-    }
-    
-    private void handleEvent(final Event event, boolean mainThread) {
-        String action = event.action;
-        CopyOnWriteArrayList<EventHandler> observers = observersByAction.get(action);
+    public void post(final Event event) {
+        CopyOnWriteArrayList<EventHandler> observers = observersByAction.get(event.action);
         if (observers != null)
         {
-            for (EventHandler handler : observers)
+            for (final EventHandler handler : observers)
             {
                 if (handler instanceof EventProcessor)
                 {
-                    if (!mainThread) handler.handleEvent(event);
+                    handler.handleEvent(event);
                 }
                 else
                 {
-                    if (mainThread) handler.handleEvent(event);
+                    if (ApplicationManager.isMainThread()) handler.handleEvent(event);
                     else mainHandler.post(new Runnable() {
                         
                         @Override
                         public void run() {
-                            handleEvent(event, true);
+                            handler.handleEvent(event);
                         }
                     });
                 }

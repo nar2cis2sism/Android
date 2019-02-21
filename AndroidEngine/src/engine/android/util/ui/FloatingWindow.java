@@ -1,4 +1,4 @@
-package engine.android.util.ui;
+﻿package engine.android.util.ui;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
@@ -79,6 +79,10 @@ public class FloatingWindow {
     public void setSize(int width, int height) {
         wl.width = width;
         wl.height = height;
+    }
+    
+    public final View getContentView() {
+        return content;
     }
     
     public void show() {

@@ -7,19 +7,19 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
-
 import engine.android.core.annotation.BindDialog;
 import engine.android.core.annotation.IInjector;
 import engine.android.core.annotation.IInjector.ViewFinder;
 import engine.android.core.annotation.InjectView;
 import engine.android.core.annotation.OnClick;
 import engine.android.core.annotation.SavedState;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * 注入机制
@@ -299,7 +299,10 @@ class ReflectionInjector extends NoInjector {
                         view = (View) finder.findViewById(target, viewId);
                     }
                     
-                    view.setOnClickListener(onClickListener);
+                    if (view != null)
+                    {
+                        view.setOnClickListener(onClickListener);
+                    }
                 }
             }
         }

@@ -1,4 +1,4 @@
-package engine.android.util.manager;
+﻿package engine.android.util.manager;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -18,7 +18,9 @@ public class SoundPlayer {
 
     private SoundPool pool;                 // 声音池
 
-    private SparseIntArray map;             // 声音查询表
+    private SparseIntArray rawMap;          // 资源查询表
+
+    private SparseIntArray soundMap;        // 声音查询表
 
     private AudioManager am;                // 音频管理器
 
@@ -37,7 +39,8 @@ public class SoundPlayer {
     private void init() {
         // 第一个参数为允许同时播放的最大声音数量
         pool = new SoundPool(100, AudioManager.STREAM_MUSIC, 100);
-        map = new SparseIntArray();
+        rawMap = new SparseIntArray();
+        soundMap = new SparseIntArray();
 
         am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         maxVolume = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
@@ -51,7 +54,22 @@ public class SoundPlayer {
      * @param raw 声音文件引用
      */
     public void load(int id, int raw) {
-        map.append(id, pool.load(context, raw, 1));
+        rawMap.append(id, raw);
+        soundMap.append(id, pool.load(context, raw, 1));
+    }
+    
+    /**
+     * 卸载声音资源
+     * @param id 声音标识
+     */
+    public void unload(int id) {
+        rawMap.delete(id);
+        int index = soundMap.indexOfKey(id);
+        if (index >= 0)
+        {
+            pool.unload(soundMap.valueAt(index));
+            soundMap.removeAt(index);
+        }
     }
 
     /**
@@ -59,9 +77,32 @@ public class SoundPlayer {
      * 
      * @param id 声音标识
      * @param loop 循环播放次数（0为不循环，-1为无限循环）
+     * @return non-zero streamID if successful, zero if failed
      */
-    public void play(int id, int loop) {
-        pool.play(map.get(id), volume, volume, 1, loop, 1);
+    public int play(int id, int loop) {
+        int streamID = pool.play(soundMap.get(id), 1, 1, 1, loop, 1);
+        // 需要重新加载资源，否则播放一次后就没声音了
+        load(id, rawMap.get(id));
+        return streamID;
+    }
+    
+    /**
+     * 释放资源
+     */
+    public void release() {
+        pool.release();
+    }
+
+    public final SoundPool getPool() {
+        return pool;
+    }
+
+    /**
+     * 控制手机媒体音量
+     */
+    public void setVolume(int volume) {
+        this.volume = volume;
+        setupVolume();
     }
 
     /**
@@ -106,11 +147,6 @@ public class SoundPlayer {
 
     public int getMaxVolume() {
         return maxVolume;
-    }
-
-    public void setVolume(int volume) {
-        this.volume = volume;
-        setupVolume();
     }
 
     /**

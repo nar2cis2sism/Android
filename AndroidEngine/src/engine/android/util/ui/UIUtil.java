@@ -1,7 +1,9 @@
 package engine.android.util.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,15 +15,16 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import engine.android.util.manager.MyKeyboardManager;
 import engine.android.util.manager.MyKeyboardManager.KeyboardListener;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * UI工具库
@@ -30,6 +33,7 @@ import engine.android.util.manager.MyKeyboardManager.KeyboardListener;
  * @version N
  * @since 2/2/2015
  */
+@SuppressLint("InlinedApi")
 public final class UIUtil {
 
     /**
@@ -42,14 +46,14 @@ public final class UIUtil {
             return;
         }
 
+        int height = listView.getPaddingTop() + listView.getPaddingBottom();
         int size = adapter.getCount();
         if (size == 0)
         {
-            listView.getLayoutParams().height = 0;
+            listView.getLayoutParams().height = height;
             return;
         }
 
-        int height = listView.getPaddingTop() + listView.getPaddingBottom();
         View listItem;
         for (int i = 0; i < size; i++)
         {
@@ -58,8 +62,7 @@ public final class UIUtil {
             height += listItem.getMeasuredHeight();
         }
 
-        listView.getLayoutParams().height = height +
-                (listView.getDividerHeight() * (size - 1));
+        listView.getLayoutParams().height = height + listView.getDividerHeight() * (size - 1);
     }
 
     /**
@@ -280,5 +283,15 @@ public final class UIUtil {
         public void onClick(View v) {
             hideSoftInput(v);
         }
+    }
+    
+    public static PopupWindow createPopupWindow(View content) {
+        PopupWindow popup = new PopupWindow(content, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        // 点击 PopupWindow之外的区域后， PopupWindow会消失
+        popup.setBackgroundDrawable(new ColorDrawable());
+        popup.setFocusable(true);
+        popup.setOutsideTouchable(true);
+        
+        return popup;
     }
 }

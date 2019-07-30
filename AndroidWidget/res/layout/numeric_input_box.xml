@@ -1,0 +1,26 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <ImageView
+        android:id="@+id/decrement"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/numeric_decrement" />
+
+    <EditText
+        android:id="@+id/input"
+        android:layout_width="50dp"
+        android:layout_height="24dp"
+        android:background="#EEEEEE"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:inputType="number"
+        android:maxLength="3"
+        android:text="1" />
+
+    <ImageView
+        android:id="@+id/increment"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/numeric_increment" />
+    
+</merge>

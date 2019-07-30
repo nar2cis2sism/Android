@@ -1,4 +1,4 @@
-package engine.android.widget.common.wheel;
+﻿package engine.android.widget.common.wheel;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -42,35 +42,35 @@ public class WheelView extends View {
     /** Minimum delta for scrolling */
     private static final int MIN_DELTA_FOR_SCROLLING = 1;
 
-    /** Current value & label text color */
-    private static final int VALUE_TEXT_COLOR = 0xf0ff7a06;
-
-    /** Items text color */
-    private static final int ITEMS_TEXT_COLOR = 0xff777777;
-
-    /** Top and bottom shadows colors */
-    private static final int[] SHADOWS_COLORS = new int[] { 0xFFFFFFFF, 0x7FFFFFFF, 0x00FFFFFF };
-
-    /** Additional items height (is added to standard text item height) */
-    private static final int ADDITIONAL_ITEM_HEIGHT = 25;
-
-    /** Text size */
-    private static final int TEXT_SIZE = 40;
-
-    /** Top and bottom items offset (to hide that) */
-    private static final int ITEM_OFFSET = TEXT_SIZE / 5;
-
-    /** Additional width for items layout */
-    private static final int ADDITIONAL_ITEMS_SPACE = 20;
-
-    /** Label offset */
-    private static final int LABEL_OFFSET = 8;
-
-    /** Left and right padding value */
-    private static final int PADDING = 10;
-
     /** Default count of visible items */
     private static final int DEF_VISIBLE_ITEMS = 5;
+
+    /** Current value & label text color */
+    public int VALUE_TEXT_COLOR = 0xf0ff7a06;
+
+    /** Items text color */
+    public int ITEMS_TEXT_COLOR = 0xff777777;
+
+    /** Top and bottom shadows colors */
+    public int[] SHADOWS_COLORS = new int[] { 0xFFFFFFFF, 0x7FFFFFFF, 0x00FFFFFF };
+
+    /** Additional items height (is added to standard text item height) */
+    public int ADDITIONAL_ITEM_HEIGHT = 25;
+
+    /** Text size */
+    public int TEXT_SIZE = 40;
+
+    /** Top and bottom items offset (to hide that) */
+    public int ITEM_OFFSET = TEXT_SIZE / 5;
+
+    /** Additional width for items layout */
+    public int ADDITIONAL_ITEMS_SPACE = 20;
+
+    /** Label offset */
+    public int LABEL_OFFSET = 8;
+
+    /** Left and right padding value */
+    public int PADDING = 10;
 
     // Wheel Values
     private WheelAdapter adapter;

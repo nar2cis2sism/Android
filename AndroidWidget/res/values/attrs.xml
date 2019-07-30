@@ -24,4 +24,54 @@
     </declare-styleable>
     <attr name="LetterBar" format="reference" />
     
+    <declare-styleable name="FlowLayout">
+        
+        <attr name="numColumns" format="integer" />
+        <attr name="horizontalSpacing" format="dimension" />
+        <attr name="verticalSpacing" format="dimension" />
+        <attr name="android:gravity" />
+        
+    </declare-styleable>
+    
+    <declare-styleable name="HistogramChartView">
+        
+        <attr name="android:textSize" />
+        <attr name="android:textColor" />
+        <!-- 柱状图的宽度 -->
+        <attr name="chartWidth" format="dimension" />
+        <!-- 柱状图的颜色 -->
+        <attr name="chartColor" format="reference|color" />
+        <!-- 是否显示数值 -->
+        <attr name="showSize" format="boolean" />
+        <!-- 显示模式 -->
+        <attr name="mode">
+            <flag name="none" value="0" />
+            <!-- 数值越低，颜色越偏向红色 -->
+            <flag name="lowerSize" value="1" />
+            <!-- 是否显示动画加载效果 -->
+            <flag name="animation" value="2" />
+        </attr>
+        
+    </declare-styleable>
+    <attr name="HistogramChartView" format="reference" />
+    
+    <declare-styleable name="MyGallery">
+        
+        <!-- 最大旋转角度 -->
+        <attr name="maxDegree" format="integer" />
+        <!-- 最大缩放角度 -->
+        <attr name="maxZoom" format="integer" />
+        <!-- 样式 -->
+        <attr name="style">
+            <flag name="none" value="0" />
+            <!-- 旋转开关 -->
+            <flag name="rotate" value="1" />
+            <!-- 缩放开关 -->
+            <flag name="zoom" value="2" />
+            <!-- 透明开关 -->
+            <flag name="alpha" value="4" />
+        </attr>
+        
+    </declare-styleable>
+    
 </resources>

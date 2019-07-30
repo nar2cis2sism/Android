@@ -153,7 +153,7 @@ public class TitleBar extends RelativeLayout {
         return this;
     }
     
-    public CharSequence getTitle() {
-        return title.getText();
+    public TextView getTitle() {
+        return title;
     }
 }

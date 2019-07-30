@@ -1,4 +1,4 @@
-package engine.android.widget.common;
+﻿package engine.android.widget.common;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -89,6 +89,7 @@ public class BadgeView extends TextView {
         
         setIncludeFontPadding(false);
         setGravity(Gravity.CENTER);
+        setSingleLine();
 
         if (target != null)
         {
@@ -104,7 +105,8 @@ public class BadgeView extends TextView {
         FrameLayout layout = new FrameLayout(getContext());
         if (UIUtil.replace(target, layout, target.getLayoutParams()))
         {
-            layout.addView(target);
+            layout.addView(target, new FrameLayout.LayoutParams(
+                    LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
             layout.addView(this);
             setVisibility(View.GONE);
         }
@@ -304,6 +306,11 @@ public class BadgeView extends TextView {
      */
     public View getTarget() {
         return target;
+    }
+
+    public void setBadgeSize(int width, int height) {
+        badgeParams.width = width;
+        badgeParams.height = height;
     }
 
     /**

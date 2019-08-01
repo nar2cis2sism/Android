@@ -1,4 +1,4 @@
-package engine.android.plugin.util;
+﻿package engine.android.plugin.util;
 
 import android.app.ActivityThread;
 import android.content.res.AssetManager;
@@ -119,7 +119,7 @@ public class ApkLoader {
         AssetManager am = new AssetManager();
         am.addAssetPath(apkPath);
         return resources = new Resources(am, res.getDisplayMetrics(), 
-                res.getConfiguration(), res.getCompatibilityInfo());
+                res.getConfiguration(), res.getCompatibilityInfo(), null);
     }
     
     public DexFile getDexFile() throws Exception {

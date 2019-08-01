@@ -5,14 +5,11 @@ import android.content.Context;
 import android.os.FileUtils;
 import android.util.Singleton;
 
-import engine.android.core.ApplicationManager;
-import engine.android.util.extra.MyThreadFactory;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
+import engine.android.core.ApplicationManager;
 
 /**
  * 对外提供的插件访问类
@@ -64,15 +61,16 @@ public final class Plugin {
      * 从assets目录中加载插件包
      * 
      * @param assetsPath 插件包在assets目录下的路径
+     * @param reload 覆盖加载
      * @return Null表示插件未加载成功
      */
-    public static Plugin loadPluginFromAssets(String assetsPath) {
+    public static Plugin loadPluginFromAssets(String assetsPath, boolean reload) {
         PluginManager manager = getManager();
         
         try {
             String apkName = new File(assetsPath).getName();
             File apkFile = new File(environment.getPluginDir(), apkName);
-            if (!apkFile.exists())
+            if (reload || !apkFile.exists())
             {
                 InputStream is = null;
                 try {
@@ -184,68 +182,40 @@ public final class Plugin {
 
     /******************************* 插件之间通讯机制 *******************************/
     
-    private static final ExecutorService executor
-    = Executors.newCachedThreadPool(new MyThreadFactory("插件通讯"));
+    private HashMap<String, Action> actionMap;
     
-    private HashMap<String, PluginAction> actionMap;
-    
-    void registerAction(String action, PluginAction call) {
-        if (actionMap == null) actionMap = new HashMap<String, PluginAction>();
+    void registerAction(String action, Action call) {
+        if (actionMap == null) actionMap = new HashMap<String, Action>();
         actionMap.put(action, call);
     }
     
-    public <IN, OUT> OUT callAction(String action, IN param) throws Exception {
+    public <IN, OUT> void callAction(String action, IN param, Callback<OUT> callback) {
         if (actionMap != null)
         {
-            PluginAction call = actionMap.get(action);
+            Action call = actionMap.get(action);
             if (call != null)
             {
-                return (OUT) call.doAction(param);
+                call.doAction(param, callback);
+                return;
             }
         }
         
-        throw new Exception("No Action:" + action + " is registered.");
+        callback.doError(new Exception(String.format("No Action:%s is registered.", action)));
     }
     
-    public <IN, OUT> void callActionAsync(String action, IN param, Callback<OUT> callback) {
-        executor.execute(new ActionRunnable<IN, OUT>(action, param, callback));
-    }
-    
-    private class ActionRunnable<IN, OUT> implements Runnable {
+    public interface Action<IN, OUT> {
         
-        private final String action;
-        private final IN param;
-        private final Callback<OUT> callback;
-        
-        public ActionRunnable(String action, IN param, Callback<OUT> callback) {
-            this.action = action;
-            this.param = param;
-            this.callback = callback;
-        }
-
-        @Override
-        public void run() {
-            try {
-                callback.doResult((OUT) callAction(action, param));
-            } catch (Exception e) {
-                callback.doError(e);
-            }
-        }
-    }
-    
-    public interface PluginAction<IN, OUT> {
-        
-        OUT doAction(IN param) throws Exception;
+        void doAction(IN param, Callback<OUT> callback);
     }
     
     public interface Callback<OUT> {
         
         void doResult(OUT result);
         
-        void doError(Exception e);
+        void doError(Throwable t);
     }
     
-    public static <IN, OUT> void registerAction(Context context, String action, PluginAction<IN, OUT> call) {
+    public static <IN, OUT> void registerAction(Context context, String action, Action<IN, OUT> call) {
         getPlugin(context.getPackageName()).registerAction(action, call);
     }
 }

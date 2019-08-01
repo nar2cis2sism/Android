@@ -1,4 +1,4 @@
-package engine.android.plugin.proxy;
+﻿package engine.android.plugin.proxy;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -27,6 +27,7 @@ import com.android.internal.app.ResolverActivity;
 
 import engine.android.plugin.PluginEnvironment;
 import engine.android.plugin.util.IntentResolver;
+import engine.android.plugin.util.PackageParserProxy;
 import engine.android.plugin.util.PluginProxy;
 
 import java.io.File;
@@ -132,20 +133,15 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
     public PackageParser.Package scanPackage(File scanFile) throws Exception {
         int parseFlags = PackageParser.PARSE_MUST_BE_APK;
         
-        String scanPath = scanFile.getPath();
-        PackageParser pp = new PackageParser(scanPath);
-        final PackageParser.Package pkg = pp.parsePackage(scanFile,
-                scanPath, mMetrics, parseFlags);
+        PackageParserProxy p = new PackageParserProxy();
+        PackageParser.Package pkg = p.parsePackage(scanFile, parseFlags);
         if (pkg == null)
         {
             return null;
         }
         
         // Verify certificates against what was last scanned
-        if (!pp.collectCertificates(pkg, parseFlags))
-        {
-            throw new Exception("Failed verifying certificates for package:" + pkg.packageName);
-        }
+        p.collectCertificates(pkg, parseFlags);
         
         // Set application objects path explicitly.
         setApplicationInfoPaths(pkg);
@@ -155,7 +151,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
 
     private static void setApplicationInfoPaths(PackageParser.Package pkg) {
         ApplicationInfo applicationInfo = pkg.applicationInfo;
-        applicationInfo.publicSourceDir = applicationInfo.sourceDir = pkg.mScanPath;
+        applicationInfo.publicSourceDir = applicationInfo.sourceDir = pkg.codePath;
     }
 
     private PackageParser.Package scanPackage(PackageParser.Package pkg) throws Exception {
@@ -516,7 +512,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
             out.print(prefix); out.print(
                     Integer.toHexString(System.identityHashCode(filter.activity)));
                     out.print(' ');
-                    out.print(filter.activity.getComponentShortName());
+                    out.print(filter.activity.getComponentName());
                     out.print(" filter ");
                     out.println(Integer.toHexString(System.identityHashCode(filter)));
         }
@@ -661,7 +657,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
             out.print(prefix); out.print(
                     Integer.toHexString(System.identityHashCode(filter.service)));
                     out.print(' ');
-                    out.print(filter.service.getComponentShortName());
+                    out.print(filter.service.getComponentName());
                     out.print(" filter ");
                     out.println(Integer.toHexString(System.identityHashCode(filter)));
         }
@@ -726,6 +722,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args)
             throws Throwable {
+        try {
         String name = method.getName();
         if ("getPackageInfo".equals(name))
         {
@@ -742,7 +739,8 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
         else if ("getPackageUid".equals(name))
         {
             String packageName = (String) args[0];
-            int userId = (Integer) args[1];
+                int flags = (Integer) args[1];
+                int userId = (Integer) args[2];
             
             int uid = getPackageUid(packageName, userId);
             if (uid >= 0)
@@ -972,6 +970,9 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
                 return list;
             }
         }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
         
         return super.invoke(proxy, method, args);
     }
@@ -990,7 +991,7 @@ public class PackageManagerService extends PluginProxy<IPackageManager> {
     }
 
     private PackageInfo generatePackageInfo(PackageParser.Package p, int flags, int userId) {
-        return PackageParser.generatePackageInfo(p, null, flags, 0, 0, null, 
+        return PackageParserProxy.generatePackageInfo(p, null, flags, 0, 0, null, 
                 environment.getState(), userId);
     }
 

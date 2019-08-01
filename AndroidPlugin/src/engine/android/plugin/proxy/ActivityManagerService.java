@@ -1,4 +1,4 @@
-package engine.android.plugin.proxy;
+﻿package engine.android.plugin.proxy;
 
 import android.app.IActivityManager;
 import android.content.ComponentName;
@@ -22,6 +22,7 @@ public class ActivityManagerService extends PluginProxy<IActivityManager> {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args)
             throws Throwable {
+        try {
         String name = method.getName();
         if ("startActivity".equals(name))
         {
@@ -56,20 +57,39 @@ public class ActivityManagerService extends PluginProxy<IActivityManager> {
         {
             registerReceiver(args);
         }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
         
         return super.invoke(proxy, method, args);
     }
     
+    private int findArg(Object[] args, Class<?> argType) {
+        for (int i = 0; i < args.length; i++)
+        {
+            if (args[i] != null && args[i].getClass() == argType)
+            {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+    
     private void startActivity(Object[] args) {
-        Intent intent = (Intent) args[1];
-        String resolvedType = (String) args[2];
+        int index = findArg(args, Intent.class);
+        
+        Intent intent = (Intent) args[index];
+        String resolvedType = (String) args[index + 1];
         
         environment.interceptActivityIntent(intent, resolvedType);
     }
     
     private void startActivities(Object[] args) {
-        Intent[] intents = (Intent[]) args[1];
-        String[] resolvedTypes = (String[]) args[2];
+        int index = findArg(args, Intent[].class);
+        
+        Intent[] intents = (Intent[]) args[index];
+        String[] resolvedTypes = (String[]) args[index + 1];
         if (intents.length != resolvedTypes.length)
         {
             throw new IllegalArgumentException("intents are length different than resolvedTypes");
@@ -82,30 +102,38 @@ public class ActivityManagerService extends PluginProxy<IActivityManager> {
     }
     
     private ComponentName startService(Object[] args) {
-        Intent service = (Intent) args[1];
-        String resolvedType = (String) args[2];
+        int index = findArg(args, Intent.class);
+        
+        Intent service = (Intent) args[index];
+        String resolvedType = (String) args[index + 1];
         
         return environment.interceptServiceIntent(service, resolvedType);
     }
     
     private ComponentName stopService(Object[] args) {
-        Intent service = (Intent) args[1];
-        String resolvedType = (String) args[2];
+        int index = findArg(args, Intent.class);
+        
+        Intent service = (Intent) args[index];
+        String resolvedType = (String) args[index + 1];
 
         return environment.interceptServiceIntent(service, resolvedType);
     }
     
     private void bindService(Object[] args) {
-        Intent intent = (Intent) args[2];
-        String resolvedType = (String) args[3];
+        int index = findArg(args, Intent.class);
 
-        environment.interceptServiceIntent(intent, resolvedType);
+        Intent service = (Intent) args[index];
+        String resolvedType = (String) args[index + 1];
+
+        environment.interceptServiceIntent(service, resolvedType);
     }
 
     private void registerReceiver(Object[] args) {
-        String callerPackage = (String) args[1];
+        int index = findArg(args, String.class);
         
-        args[1] = environment.interceptReceiverPackage(callerPackage);
+        String callerPackage = (String) args[index];
+        
+        args[index] = environment.interceptReceiverPackage(callerPackage);
     }
     
     private boolean isPluginComponent(ComponentName name) {

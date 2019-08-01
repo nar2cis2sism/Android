@@ -1,0 +1,137 @@
+apply plugin: 'com.android.application'
+// 集成Mob
+apply plugin: 'com.mob.sdk'
+MobSDK {
+    appKey "299e43128bed6"
+    appSecret "5ef7b4781d5d0ff14efeae6e85e43b3e"
+
+    ShareSDK {
+        // 平台配置信息
+        devInfo {
+            SinaWeibo {
+                enable false
+                appKey "568898243"
+                appSecret "38a4f8204cc784f81f9f0daaf31e02e3"
+                callbackUri "http://www.sharesdk.cn"
+                shareByAppClient false
+            }
+            // 微信好友
+            Wechat {
+                appId "wxe735f79d7b24b0c9"
+                appSecret "32ad09addef1186979313229f05bcba4"
+            }
+            // 微信朋友圈
+            WechatMoments {
+                appId "wxe735f79d7b24b0c9"
+                appSecret "32ad09addef1186979313229f05bcba4"
+            }
+            QQ {
+                appId "101531758"
+                appKey "c0dc2a2c080df8b6be16134ebd3a50a5"
+                shareByAppClient true
+            }
+            Facebook {
+                enable false
+                appKey "1412473428822331"
+                appSecret "a42f4f3f867dc947b9ed6020c2e93558"
+                callbackUri "https://mob.com"
+            }
+        }
+    }
+}
+
+android {
+    signingConfigs {
+        authorize {
+            keyAlias 'tongxuezhanmoney'
+            keyPassword 'tongxuezhanmoney'
+            storeFile file('../tongxuezhan.jks')
+            storePassword 'tongxuezhanmoney'
+            v2SigningEnabled false
+        }
+    }
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
+    defaultConfig {
+        applicationId "engine.android.library"
+        minSdkVersion 17
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        flavorDimensions "versionCode"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath = true
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            //true 开启代码混淆
+            minifyEnabled false
+            // 移除无用的resource文件
+            shrinkResources false
+            useProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable true
+            signingConfig signingConfigs.authorize
+        }
+        release {
+            //true 开启代码混淆
+            minifyEnabled true
+            // 移除无用的resource文件
+            shrinkResources true
+            useProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable false
+            signingConfig signingConfigs.authorize
+        }
+    }
+
+    productFlavors {
+        authorize {
+            applicationId "com.tongxuezhan.tongxue"
+        }
+        publish {}
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "AndroidLibrary.apk"
+        }
+
+    }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+        maven { url "https://jitpack.io" }
+    }
+
+    lintOptions {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+
+    dexOptions {
+        preDexLibraries true
+        javaMaxHeapSize "4g"
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+            jni.srcDirs = []    // disable automatic ndk-build
+        }
+    }
+}
+
+dependencies {
+    debugCompile fileTree(include: ['*.jar'], dir: 'provide')
+    releaseProvided fileTree(include: ['*.jar'], dir: 'provide')
+    // 集成百度地图
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+}

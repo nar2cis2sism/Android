@@ -131,7 +131,7 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
             // 清除缓存数据
             MySession.setUser(null);
             
-            MyApp.getApp().popupAllActivities();
+            MyApp.getApp().getActivityStack().popupAllActivities();
             startFragment(LoginFragment.class);
         }
     }

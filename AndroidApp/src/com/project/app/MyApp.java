@@ -1,4 +1,4 @@
-package com.project.app;
+﻿package com.project.app;
 
 import com.project.app.config.MyConfiguration;
 import com.project.util.LogUploader;
@@ -33,10 +33,10 @@ public class MyApp extends ApplicationManager {
     public void onCreate() {
         // 配置环境变量
         AppGlobal.config(new MyConfiguration(this));
-        // 设置调试模式
-        if (isDebuggable()) AndroidUtil.setupStrictMode();
         // 开启日志
         LogFactory.enableLOG(true);
+        // 设置调试模式
+        if (isDebuggable()) AndroidUtil.setupStrictMode();
         
 //        LOG.log(getConfig().isOffline() ? "单机版" : "网络版");
     }

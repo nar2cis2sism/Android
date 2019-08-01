@@ -1,13 +1,17 @@
-package com.project.util;
+﻿package com.project.util;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.text.Html;
 import android.text.method.DigitsKeyListener;
 import android.text.method.KeyListener;
+import android.view.View;
+import android.widget.TextView;
 
 import com.daimon.yueba.R;
 
 import engine.android.framework.ui.BaseActivity;
+import engine.android.framework.util.HtmlImageGetter;
 import engine.android.util.secure.CryptoUtil;
 import engine.android.util.secure.HexUtil;
 import protocol.http.NavigationData.AppUpgradeInfo;
@@ -51,5 +55,26 @@ public class AppUtil {
         }
         
         activity.showDialog("upgrade", builder.create());
+    }
+    
+    /**
+     * 设置HTML文本（包含图片获取）
+     */
+    public static void setHtml(TextView text, String html) {
+        text.setText(Html.fromHtml(html, new HtmlImageGetter(text), null));
+    }
+    
+    /**
+     * 控件不可操作时置灰（半透明）
+     */
+    public static void setupAlpha(View view) {
+        if (view.isEnabled())
+        {
+            view.setAlpha(1);
+        }
+        else
+        {
+            view.setAlpha(0.5f);
+        }
     }
 }

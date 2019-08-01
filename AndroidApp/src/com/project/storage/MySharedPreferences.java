@@ -1,4 +1,4 @@
-package com.project.storage;
+﻿package com.project.storage;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -35,6 +35,10 @@ public class MySharedPreferences {
     
     private MySharedPreferences(Context context) {
         sp = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+    }
+
+    public void reset() {
+        sp.edit().clear().commit();
     }
 
     /*************************** 是否已显示过引导页 ***************************/

@@ -1,5 +1,6 @@
-package engine.android.framework.network.socket;
+﻿package engine.android.framework.network.socket;
 
+import android.app.AlarmManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,10 +12,10 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.os.SystemClock;
 
-import protocol.socket.SimpleData;
-
 import engine.android.framework.network.socket.SocketResponse.SocketTimeout;
 import engine.android.http.HttpConnector;
+import engine.android.util.manager.AlarmTimer;
+import protocol.socket.SimpleData;
 
 import java.util.concurrent.TimeUnit;
 
@@ -51,7 +52,7 @@ class SocketHandler {
         handler = new Handler(thread.getLooper(), timeout = new TimeoutManager());
         
         conn = new ConnectManager(context);
-        heartbeat = new HeartbeatManager();
+        heartbeat = new HeartbeatManager(context);
     }
     
     public void reconnect(long delay) {
@@ -108,6 +109,12 @@ class SocketHandler {
         
         private long interval;                               // 心跳包循环发送间隔，单位：毫秒
         private long lastTriggerTime = -1;
+
+        private final AlarmTimer timer;
+
+        public HeartbeatManager(Context context) {
+            timer = AlarmTimer.getInstance(context, getClass().getName());
+        }
         
         public void start(int interval) {
             this.interval = TimeUnit.SECONDS.toMillis(interval - TRIGGER_AHEAD);
@@ -116,7 +123,7 @@ class SocketHandler {
         
         public void stop() {
             lastTriggerTime = -1;
-            handler.removeCallbacks(this);
+            timer.cancel();
         }
         
         public void poke() {
@@ -127,22 +134,22 @@ class SocketHandler {
             
             if (lastTriggerTime == -1)
             {
-                lastTriggerTime = SystemClock.uptimeMillis();
+                lastTriggerTime = SystemClock.elapsedRealtime();
                 post();
             }
             else
             {
-                lastTriggerTime = SystemClock.uptimeMillis();
+                lastTriggerTime = SystemClock.elapsedRealtime();
             }
         }
         
         private void post() {
-            handler.postAtTime(this, lastTriggerTime + interval);
+            timer.triggerAtTime(AlarmManager.ELAPSED_REALTIME_WAKEUP, lastTriggerTime + interval, this);
         }
 
         @Override
         public void run() {
-            if (SystemClock.uptimeMillis() - lastTriggerTime < interval)
+            if (SystemClock.elapsedRealtime() - lastTriggerTime < interval)
             {
                 post();
             }

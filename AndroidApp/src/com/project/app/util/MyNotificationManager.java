@@ -1,9 +1,10 @@
-package com.project.app.util;
+﻿package com.project.app.util;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat.Builder;
 
 import com.daimon.yueba.R;
@@ -42,8 +43,12 @@ public class MyNotificationManager {
 
     private final NotificationManager nm;
 
+    private final Vibrator v;
+
     private MyNotificationManager(Context context) {
-        nm = (NotificationManager) (this.context = context).getSystemService(Context.NOTIFICATION_SERVICE);
+        this.context = context;
+        nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     private PendingIntent pendingActivityIntent(Intent intent) {
@@ -52,6 +57,22 @@ public class MyNotificationManager {
 
     public void clear() {
         nm.cancelAll();
+    }
+    
+    /**
+     * 需要声明权限<uses-permission android:name="android.permission.VIBRATE" />
+     * 
+     * @param milliseconds 震动时长，0表示取消震动
+     */
+    public void vibrate(long milliseconds) {
+        if (milliseconds > 0)
+        {
+            v.vibrate(milliseconds);
+        }
+        else
+        {
+            v.cancel();
+        }
     }
 
     /******************************** 华丽丽的分割线 ********************************/

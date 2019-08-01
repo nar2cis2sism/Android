@@ -1,4 +1,4 @@
-package engine.android.framework.network.socket;
+﻿package engine.android.framework.network.socket;
 
 import static engine.android.core.util.LogFactory.LOG.log;
 
@@ -6,6 +6,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
+import engine.android.core.ApplicationManager;
 import engine.android.core.extra.EventBus;
 import engine.android.core.extra.EventBus.Event;
 import engine.android.core.util.LogFactory;
@@ -20,6 +21,8 @@ import engine.android.socket.SocketConnector;
 import engine.android.socket.SocketConnector.SocketData;
 import engine.android.socket.SocketConnector.SocketReceiver;
 import engine.android.util.Util;
+import engine.android.util.file.FileManager;
+import engine.android.util.manager.SDCardManager;
 import engine.android.util.secure.CRCUtil;
 import engine.android.util.secure.HexUtil;
 import engine.android.util.secure.Obfuscate;
@@ -27,6 +30,7 @@ import protocol.util.ProtocolWrapper;
 import protocol.util.ProtocolWrapper.ProtocolEntity;
 import protocol.util.ProtocolWrapper.ProtocolEntity.ProtocolData;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -81,7 +85,7 @@ public class SocketManager implements SocketConnectionListener, Callback {
     
     public void setup(String host, int port) {
         if (TextUtils.isEmpty(token)) throw new RuntimeException("需要设置Token值");
-        if (socket != null) socket.close();
+        close();
         socket = new SocketConnector(host, port, config.getSocketTimeout(), !config.isOffline()) {
             
             @Override
@@ -139,6 +143,13 @@ public class SocketManager implements SocketConnectionListener, Callback {
         if (config.isOffline()) socket.setServlet(config.getSocketServlet());
         handler.setup(context); // 启动扩展功能
         socket.connect();
+    }
+    
+    /**
+     * 断开连接
+     */
+    public void close() {
+        if (socket != null) socket.close();
     }
     
     /**
@@ -236,6 +247,11 @@ public class SocketManager implements SocketConnectionListener, Callback {
             log("收到socket信令包", data.getClass().getSimpleName() + GsonUtil.toJson(data));
         }
         
+        if (ApplicationManager.isDebuggable(context) && !config.isOffline())
+        {
+            exportProtocolToFile(data);
+        }
+        
         if (msgId == 0)
         {
             // 推送消息
@@ -253,6 +269,19 @@ public class SocketManager implements SocketConnectionListener, Callback {
                 pendingDatas.removeAt(index);
             }
         }
+    }
+    
+    private void exportProtocolToFile(ProtocolData data) {
+        if (!SDCardManager.isEnabled())
+        {
+            return;
+        }
+        
+        File desDir = new File(SDCardManager.openSDCardAppDir(context), 
+                "protocols/socket");
+        
+        File file = new File(desDir, data.getClass().getSimpleName());
+        FileManager.writeFile(file, GsonUtil.toJson(data).getBytes(), false);
     }
 
     @Override

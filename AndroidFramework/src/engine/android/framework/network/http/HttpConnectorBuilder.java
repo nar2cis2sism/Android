@@ -1,11 +1,14 @@
-package engine.android.framework.network.http;
+﻿package engine.android.framework.network.http;
 
+import engine.android.framework.network.http.HttpConnectorBuilder.FormEntity.Form;
 import engine.android.http.HttpConnector;
 import engine.android.http.HttpRequest.HttpEntity;
 import protocol.util.EntityUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpConnectorBuilder {
     
@@ -113,5 +116,51 @@ public class HttpConnectorBuilder {
     
     public HttpConnectorBuilder setEntity(JsonEntity entity) {
         return setEntity(entity, jsonConverter);
+    }
+    
+    public interface FormEntity {
+        
+        void buildForm(Form form);
+        
+        public static class Form {
+            
+            private final HashMap<String, Object> map = new HashMap<String, Object>();
+            
+            public void addParameter(String key, Object value) {
+                map.put(key, value);
+            }
+        }
+    }
+    
+    private static final StringConverter<FormEntity> formConverter
+    = new StringConverter<FormEntity>() {
+
+        @Override
+        public String convert(FormEntity entity) {
+            Form form = new Form();
+            entity.buildForm(form);
+            
+            StringBuilder sb = new StringBuilder();
+            boolean first = true;
+            for (Map.Entry<String, Object> entry : form.map.entrySet())
+            {
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    sb.append("&");
+                }
+                
+                sb.append(entry.getKey()).append("=").append(entry.getValue());
+            }
+            
+            return sb.toString();
+        }
+    };
+    
+    public HttpConnectorBuilder setEntity(FormEntity entity) {
+        return setEntity(entity, formConverter);
     }
 }

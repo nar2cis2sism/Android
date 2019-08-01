@@ -1,4 +1,4 @@
-package engine.android.framework.ui.widget;
+﻿package engine.android.framework.ui.widget;
 
 import android.content.Context;
 import android.os.CountDownTimer;
@@ -54,8 +54,11 @@ public class SmsCodeButton extends Button {
         
         private static final int ONE_SECOND_MILLIS = 1000;
 
+        private CharSequence text;
+
         public SmsCodeTimer(long seconds) {
             super(seconds * ONE_SECOND_MILLIS, ONE_SECOND_MILLIS);
+            text = getText();
         }
 
         @Override
@@ -65,7 +68,7 @@ public class SmsCodeButton extends Button {
 
         @Override
         public void onFinish() {
-            setText(R.string.get_sms_code);
+            setText(text);
             setEnabled(true);
         }
     }

@@ -260,7 +260,7 @@ public final class UIUtil {
         }
 
         @Override
-        public void keyboardChanged(boolean isKeyboardShown) {
+        public void keyboardChanged(boolean isKeyboardShown, int keyBoardHeight) {
             if (isKeyboardShown)
             {
                 scrollView.post(this);

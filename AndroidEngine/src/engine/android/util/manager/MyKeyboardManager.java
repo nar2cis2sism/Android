@@ -19,6 +19,7 @@ public class MyKeyboardManager implements OnGlobalLayoutListener {
     private final int displayHeight;
 
     private boolean isKeyboardShown;
+    private int keyBoardHeight;
     private KeyboardListener listener;
 
     public MyKeyboardManager(Activity a) {
@@ -50,12 +51,12 @@ public class MyKeyboardManager implements OnGlobalLayoutListener {
     private boolean detectKeyboardVisible() {
         Rect outRect = new Rect();
         decorView.getWindowVisibleDisplayFrame(outRect);
-        return outRect.top + outRect.height() < displayHeight;
+        return (keyBoardHeight = displayHeight - outRect.height()) > 0;
     }
 
     public interface KeyboardListener {
 
-        void keyboardChanged(boolean isKeyboardShown);
+        void keyboardChanged(boolean isKeyboardShown, int keyBoardHeight);
     }
 
     @Override
@@ -65,7 +66,7 @@ public class MyKeyboardManager implements OnGlobalLayoutListener {
             isKeyboardShown = !isKeyboardShown;
             if (listener != null)
             {
-                listener.keyboardChanged(isKeyboardShown);
+                listener.keyboardChanged(isKeyboardShown, keyBoardHeight);
             }
         }
     }

@@ -27,15 +27,11 @@ public class AvatarImage {
     private final Bitmap avatar;
 
     public AvatarImage(Bitmap image) {
-        this(image, DEFAULT_BG_COLOR);
+        this(image, 0);
     }
 
-    public AvatarImage(Bitmap image, int bgColor) {
-        this(image, 0, bgColor);
-    }
-
-    public AvatarImage(Bitmap image, int size, int bgColor) {
-        avatar = createAvatarBitmap(image, size, bgColor);
+    public AvatarImage(Bitmap image, int size) {
+        avatar = createAvatarBitmap(image, size);
     }
 
     public AvatarImage(String text) {
@@ -54,31 +50,32 @@ public class AvatarImage {
         return avatar;
     }
 
-    private static Bitmap createAvatarBitmap(Bitmap image, int size, int bgColor) {
+    private static Bitmap createAvatarBitmap(Bitmap image, int size) {
         if (image == null)
         {
             return null;
         }
-
+        
         int width = image.getWidth();
         int height = image.getHeight();
+        int imageSize = Math.min(width, height);
         if (size == 0)
         {
-            size = Math.min(width, height);
+            size = imageSize;
         }
 
         Bitmap b = Bitmap.createBitmap(size, size, Config.ARGB_8888);
         Canvas c = new Canvas(b);
 
-        final Paint p = new Paint();
-        final Rect dst = new Rect(0, 0, size, size);
-        final RectF rf = new RectF(dst);
-        final Rect src = new Rect(dst);
-        src.offsetTo((width - size) / 2, (height - size) / 2);
+        Rect dst = new Rect(0, 0, size, size);
+        RectF rf = new RectF(dst);
+        Rect src = new Rect(0, 0, imageSize, imageSize);
+        src.offsetTo((width - imageSize) / 2, (height - imageSize) / 2);
 
+        Paint p = new Paint();
         p.setAntiAlias(true);
+        p.setColor(0xff424242);
         c.drawARGB(0, 0, 0, 0);
-        p.setColor(bgColor);
         c.drawOval(rf, p);
 
         p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
@@ -99,13 +96,11 @@ public class AvatarImage {
         Bitmap b = Bitmap.createBitmap(width, height, Config.ARGB_8888);
         Canvas c = new Canvas(b);
 
-        final Paint p = new Paint();
-        final RectF rf = new RectF(0, 0, width, height);
-
+        Paint p = new Paint();
         p.setAntiAlias(true);
-        c.drawARGB(0, 0, 0, 0);
         p.setColor(bgColor);
-        c.drawOval(rf, p);
+        c.drawARGB(0, 0, 0, 0);
+        c.drawOval(new RectF(0, 0, width, height), p);
         
         if (text.trim().length() > 0)
         {

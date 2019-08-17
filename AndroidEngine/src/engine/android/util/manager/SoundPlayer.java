@@ -60,6 +60,7 @@ public class SoundPlayer {
     
     /**
      * 卸载声音资源
+     * 
      * @param id 声音标识
      */
     public void unload(int id) {
@@ -82,7 +83,8 @@ public class SoundPlayer {
     public int play(int id, int loop) {
         int streamID = pool.play(soundMap.get(id), 1, 1, 1, loop, 1);
         // 需要重新加载资源，否则播放一次后就没声音了
-        load(id, rawMap.get(id));
+        int raw = rawMap.get(id);
+        if (raw != 0) load(id, raw);
         return streamID;
     }
     

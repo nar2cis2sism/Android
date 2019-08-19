@@ -1,4 +1,4 @@
-﻿package engine.android.util.manager;
+package engine.android.util.manager;
 
 import android.content.Context;
 import android.media.AudioManager;

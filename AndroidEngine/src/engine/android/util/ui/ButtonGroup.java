@@ -1,4 +1,4 @@
-﻿package engine.android.util.ui;
+package engine.android.util.ui;
 
 import android.widget.CompoundButton;
 

@@ -1,4 +1,4 @@
-﻿package engine.android.util;
+package engine.android.util;
 
 import android.text.TextUtils;
 

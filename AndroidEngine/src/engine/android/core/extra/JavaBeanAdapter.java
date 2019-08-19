@@ -1,4 +1,4 @@
-﻿package engine.android.core.extra;
+package engine.android.core.extra;
 
 import android.content.Context;
 import android.content.CursorLoader;

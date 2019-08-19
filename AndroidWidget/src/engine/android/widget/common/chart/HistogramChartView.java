@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.util.AttributeSet;
-import android.util.FloatMath;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -98,7 +97,7 @@ public class HistogramChartView extends View {
         }
         else
         {
-            int maxWidth = (int) FloatMath.ceil(Math.max(
+            int maxWidth = (int) Math.ceil(Math.max(
                     textPaint.measureText(String.valueOf(maxSize)), 
                     textPaint.measureText(unit)));
             width = Math.max(chartWidth, maxWidth);
@@ -120,7 +119,7 @@ public class HistogramChartView extends View {
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
     
         int height;
-        int maxHeight = (int) FloatMath.ceil(textPaint.getTextSize() * 2);
+        int maxHeight = (int) Math.ceil(textPaint.getTextSize() * 2);
         boolean recalculate = false;
         if (heightMode == MeasureSpec.EXACTLY)
         {

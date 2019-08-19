@@ -1,4 +1,4 @@
-﻿package engine.android.util.file;
+package engine.android.util.file;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;

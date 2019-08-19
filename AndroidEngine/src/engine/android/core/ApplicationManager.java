@@ -1,4 +1,4 @@
-﻿package engine.android.core;
+package engine.android.core;
 
 import static engine.android.core.util.LogFactory.LogUtil.getCallerStackFrame;
 import static engine.android.core.util.LogFactory.LogUtil.getClassAndMethod;

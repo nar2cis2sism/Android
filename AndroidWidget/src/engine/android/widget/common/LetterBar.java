@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.FloatMath;
 import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -260,7 +259,7 @@ public class LetterBar extends View {
         }
         else
         {
-            width = (int) FloatMath.ceil(paint.measureText("W"));
+            width = (int) Math.ceil(paint.measureText("W"));
             width += getPaddingLeft() + getPaddingRight();
             if (widthMode == MeasureSpec.AT_MOST && width > widthSize)
             {

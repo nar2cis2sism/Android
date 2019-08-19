@@ -10,7 +10,6 @@ import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.FloatMath;
 import android.view.View;
 
 /**
@@ -71,7 +70,7 @@ public class HistogramChartLayer extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         
-        textWidth = (int) FloatMath.ceil(textPaint.measureText(getTextValue(maxValue)));
+        textWidth = (int) Math.ceil(textPaint.measureText(getTextValue(maxValue)));
         segmentWidth = (getMeasuredWidth() - textWidth - horizontalGap) / count;
         segmentHeight = (getMeasuredHeight() - textHeight + verticalOffset) / lines;
     }

@@ -1,19 +1,17 @@
 package engine.android.util.image;
 
-import android.util.Pair;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-
 import engine.android.util.ui.ViewSize;
 import engine.android.util.ui.ViewSize.ViewHeightAdjuster;
 import engine.android.util.ui.ViewSize.ViewWidthAdjuster;
+
+import android.util.Pair;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 
 /**
  * A convenient utility to manager image's size.
  * 
  * @author Daimon
- * @version N
  * @since 5/28/2016
  */
 public class ImageSize {
@@ -90,14 +88,14 @@ public class ImageSize {
     }
     
     /**
-     * 根据图片尺寸调整视图大小（视图宽高必需有一个是确定的）
+     * 根据图片宽高比调整视图大小（视图宽高必需有一个是确定的）
      */
     public static void adjustViewSize(View view, ImageSize size) {
-        final ViewGroup.LayoutParams params = view.getLayoutParams();
+        LayoutParams params = view.getLayoutParams();
         if (params == null) return;
         
-        final boolean unknownWidth = params.width == LayoutParams.WRAP_CONTENT;
-        final boolean unknownHeight = params.height == LayoutParams.WRAP_CONTENT;
+        boolean unknownWidth = params.width == LayoutParams.WRAP_CONTENT;
+        boolean unknownHeight = params.height == LayoutParams.WRAP_CONTENT;
         
         if (unknownWidth && unknownHeight)
         {
@@ -114,7 +112,7 @@ public class ImageSize {
         }
     }
     
-    final ViewWidthAdjuster widthAdjuster = new ViewWidthAdjuster() {
+    private final ViewWidthAdjuster widthAdjuster = new ViewWidthAdjuster() {
         
         @Override
         public int adjustWidthByHeight(int height) {
@@ -122,7 +120,7 @@ public class ImageSize {
             return getWidth();
         }
     };
-    final ViewHeightAdjuster heightAdjuster = new ViewHeightAdjuster() {
+    private final ViewHeightAdjuster heightAdjuster = new ViewHeightAdjuster() {
         
         @Override
         public int adjustHeightByWidth(int width) {

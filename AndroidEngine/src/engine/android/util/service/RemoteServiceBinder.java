@@ -1,5 +1,7 @@
 package engine.android.util.service;
 
+import static engine.android.core.util.LogFactory.LOG.log;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -8,13 +10,10 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 
-import engine.android.core.util.LogFactory.LOG;
-
 /**
  * 远程服务的调用实现
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class RemoteServiceBinder<Service extends RemoteService> {
@@ -28,16 +27,16 @@ public class RemoteServiceBinder<Service extends RemoteService> {
         public void onServiceConnected(ComponentName name, IBinder binder) {
             try {
                 messenger = new Messenger(binder);
-                LOG.log(name.flattenToShortString());
+                log(name.flattenToShortString());
             } catch (Exception e) {
-                LOG.log(e);
+                log(e);
             }
         }
         
         @Override
         public void onServiceDisconnected(ComponentName name) {
             messenger = null;
-            LOG.log(name.flattenToShortString());
+            log(name.flattenToShortString());
         }
     };
     private Intent serviceIntent;

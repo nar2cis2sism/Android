@@ -13,7 +13,6 @@ import java.util.Collection;
  * 配合{@link JavaBeanAdapter}使用
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  * @see CursorLoader
  */
@@ -123,7 +122,6 @@ public abstract class JavaBeanLoader<D> extends AsyncTaskLoader<Collection<D>> {
     /**
      * Handles a request to completely reset the Loader.
      */
-
     @Override
     protected void onReset() {
         // Ensure the loader is stopped

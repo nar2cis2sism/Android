@@ -1,8 +1,12 @@
 package engine.android.util.ui;
 
-import android.annotation.SuppressLint;
+import engine.android.util.manager.MyKeyboardManager;
+import engine.android.util.manager.MyKeyboardManager.KeyboardListener;
+
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,15 +17,14 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewParent;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
-
-import engine.android.util.manager.MyKeyboardManager;
-import engine.android.util.manager.MyKeyboardManager.KeyboardListener;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,10 +33,8 @@ import java.util.List;
  * UI工具库
  * 
  * @author Daimon
- * @version N
  * @since 2/2/2015
  */
-@SuppressLint("InlinedApi")
 public final class UIUtil {
 
     /**
@@ -293,5 +294,42 @@ public final class UIUtil {
         popup.setOutsideTouchable(true);
         
         return popup;
+    }
+    
+    /**
+     * 控件不可操作时半透明
+     */
+    public static void setupAlpha(View view) {
+        if (view.isEnabled())
+        {
+            view.setAlpha(1);
+        }
+        else
+        {
+            view.setAlpha(0.5f);
+        }
+    }
+
+    /**
+     * 控件不可操作时置灰
+     */
+    public static void setupGray(ImageView view) {
+        if (view.isEnabled())
+        {
+            view.clearColorFilter();
+        }
+        else
+        {
+            ColorMatrix cm = new ColorMatrix();
+            cm.setSaturation(0);
+            view.setColorFilter(new ColorMatrixColorFilter(cm));
+        }
+    }
+
+    /**
+     * 判断是否在列表底部
+     */
+    public static boolean atBottom(AbsListView list) {
+        return list.getLastVisiblePosition() >= list.getCount() - 1;
     }
 }

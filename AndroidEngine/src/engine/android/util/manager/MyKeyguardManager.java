@@ -9,7 +9,6 @@ import android.content.Context;
  * 需要声明权限<uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2012
  */
 @SuppressWarnings("deprecation")

@@ -1,14 +1,14 @@
 package engine.android.http;
 
+import engine.android.core.util.LogFactory;
+import engine.android.core.util.LogFactory.LOG;
+import engine.android.http.HttpRequest.HttpEntity;
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Proxy;
 import android.text.TextUtils;
-
-import engine.android.core.util.LogFactory;
-import engine.android.core.util.LogFactory.LOG;
-import engine.android.http.HttpRequest.HttpEntity;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -25,7 +25,6 @@ import java.util.concurrent.locks.ReentrantLock;
  * 需要声明权限<uses-permission android:name="android.permission.INTERNET" />
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  * 
  * Daimon:HttpURLConnection
@@ -37,8 +36,10 @@ public class HttpConnector {
     public static final String CMWAP  = "10.0.0.172";              // 中国移动代理
 
     public static final String UNIWAP = "10.0.0.172";              // 中国联通代理
+    
+    private int id;                                                // 连接标识
 
-    private String name;                                           // 连接标识
+    private String name;                                           // 连接命名
 
     private Object tag;                                            // 标签属性
 
@@ -105,6 +106,16 @@ public class HttpConnector {
 
         return true;
     }
+    
+    public HttpConnector setId(int id) {
+        this.id = id;
+        return this;
+    }
+    
+    public int getId() {
+        if (id == 0) id = hashCode();
+        return id;
+    }
 
     /**
      * 设置请求名称
@@ -118,6 +129,15 @@ public class HttpConnector {
         return name;
     }
     
+    public HttpConnector setTag(Object tag) {
+        this.tag = tag;
+        return this;
+    }
+
+    public Object getTag() {
+        return tag;
+    }
+
     public HttpRequest getRequest() {
         return request;
     }
@@ -186,15 +206,6 @@ public class HttpConnector {
         return this;
     }
 
-    public Object getTag() {
-        return tag;
-    }
-
-    public HttpConnector setTag(Object tag) {
-        this.tag = tag;
-        return this;
-    }
-
     /**
      * 连接网络
      */
@@ -222,7 +233,6 @@ public class HttpConnector {
             if (!isCancelled())
             {
                 log(String.format("服务器响应时间--%dms", System.currentTimeMillis() - time));
-                
                 if (listener != null)
                 {
                     listener.connectAfter(this, response);
@@ -234,7 +244,6 @@ public class HttpConnector {
             if (!isCancelled())
             {
                 log(e);
-                
                 if (listener != null)
                 {
                     listener.connectError(this, e);
@@ -270,7 +279,6 @@ public class HttpConnector {
         String method = request.getMethod();
         HttpEntity entity = request.getEntity();
         Map<String, String> headers = request.getHeaders();
-        
         // 设置超时
         if (timeout > 0)
         {
@@ -278,24 +286,16 @@ public class HttpConnector {
             conn.setReadTimeout(timeout);
         }
 
+        conn.setRequestMethod(method);
         if (HttpRequest.METHOD_POST.equals(method))
         {
             conn.setDoOutput(true);
             conn.setUseCaches(false);
-            conn.addRequestProperty("Content-Type",
-                    "application/x-www-form-urlencoded");
-            conn.addRequestProperty("Content-Length",
-                    String.valueOf(entity.getContentLength()));
+            conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.addRequestProperty("Content-Length", String.valueOf(entity.getContentLength()));
         }
 
         conn.addRequestProperty("Host", getHost(request.getUrl()));
-        conn.setRequestMethod(method);
-
-        if (params != null)
-        {
-            params.setup(conn);
-        }
-
         if (headers != null && !headers.isEmpty())
         {
             for (Entry<String, String> entry : headers.entrySet())
@@ -304,6 +304,7 @@ public class HttpConnector {
             }
         }
 
+        if (params != null) params.setup(conn);
         if (entity != null)
         {
             OutputStream outputstream = conn.getOutputStream();
@@ -325,10 +326,8 @@ public class HttpConnector {
     public void cancel() {
         if (isCancelled.compareAndSet(false, true))
         {
+            if (!isConnected.get()) log("取消网络连接：" + request.getUrl());
             close();
-
-            if (!isConnected.get())
-                log("取消网络连接：" + request.getUrl());
         }
     }
 

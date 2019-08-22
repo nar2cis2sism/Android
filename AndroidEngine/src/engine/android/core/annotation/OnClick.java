@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
  * 为控件注入点击事件
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 @Target(ElementType.METHOD)

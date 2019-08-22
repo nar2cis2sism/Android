@@ -1,15 +1,15 @@
 package engine.android.util;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
+import engine.android.util.file.FileManager;
+import engine.android.util.file.FileUtils;
+import engine.android.util.os.ShellUtil;
+
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -18,11 +18,7 @@ import android.content.pm.ProviderInfo;
 import android.content.pm.ResolveInfo;
 import android.content.pm.Signature;
 import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.StrictMode;
@@ -30,12 +26,6 @@ import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-
-import engine.android.util.file.FileManager;
-import engine.android.util.file.FileUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -51,138 +41,22 @@ import java.util.concurrent.Callable;
  * Android系统工具类
  * 
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
-@SuppressLint({"InlinedApi", "deprecation"})
 public final class AndroidUtil {
 
     /**
-     * 设置全屏模式
-     * 
-     * @param noTitle 去掉标题栏
-     */
-    public static void setFullScreenMode(Activity a, boolean noTitle) {
-        a.getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        if (noTitle)
-        {
-            a.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        }
-    }
-
-    /**
-     * 设置横屏模式
-     */
-    public static void setLandscapeMode(Activity a) {
-        a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-    }
-
-    /**
-     * 设置屏幕常亮
-     */
-    public static void setKeepScreenOn(Activity a) {
-        a.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
-
-    /**
-     * 设置背景窗口模糊
-     * 
-     * @deprecated
-     */
-    public static void setBackWindowBlur(Activity a) {
-        a.getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_BLUR_BEHIND,
-                WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-    }
-
-    /**
-     * 获取状态栏高度（布局完成后才能获取到）
-     */
-    public static int getStatusBarHeight(Activity a) {
-        // 包括标题栏，不包括状态栏
-        View decorView = a.getWindow().getDecorView();
-        // 状态栏以下的屏幕区域
-        Rect outRect = new Rect();
-        decorView.getWindowVisibleDisplayFrame(outRect);
-
-        return outRect.top;
-    }
-
-    /**
-     * 获取状态栏高度
-     */
-    public static int getStatusBarHeight(Resources resources) {
-        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
-        return resources.getDimensionPixelSize(resourceId);
-    }
-
-    /**
-     * 获取标题栏高度
-     */
-    public static int getTitleBarHeight(Activity a) {
-        // 当前显示的View根（是一个FrameLayout对象，不包括标题栏）
-        View root = a.getWindow().findViewById(Window.ID_ANDROID_CONTENT);
-        // 状态栏以下的屏幕区域
-        Rect outRect = new Rect();
-        root.getWindowVisibleDisplayFrame(outRect);
-
-        return Math.max(0, outRect.height() - root.getHeight());
-    }
-
-    /**
-     * 获取ActionBar的高度
-     */
-    public static int getActionBarHeight(Context context) {
-        TypedValue outValue = new TypedValue();
-        context.getTheme().resolveAttribute(android.R.attr.actionBarSize, outValue, true);
-        return context.getResources().getDimensionPixelSize(outValue.resourceId);
-    }
-
-    /**
-     * 获取背景图
-     */
-    public static Drawable getWindowBackground(Context context) {
-        int[] attrs = { android.R.attr.windowBackground };
-
-        TypedValue outValue = new TypedValue();
-        context.getTheme().resolveAttribute(attrs[0], outValue, true);
-
-        TypedArray a = context.obtainStyledAttributes(outValue.resourceId, attrs);
-        Drawable windowBackground = a.getDrawable(0);
-        a.recycle();
-
-        return windowBackground;
-    }
-
-    /**
-     * 获取屏幕分辨率
-     */
-    public static DisplayMetrics getResolution(Activity a) {
-        DisplayMetrics dm = new DisplayMetrics();
-        a.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return dm;
-    }
-
-    /**
      * 获取手机SDK版本号<br>
-     * {@link android.os.Build.VERSION_CODES}<br>
      * 3---1.5<br>
      * 4---1.6<br>
      * 5---2.0<br>
      * 7---2.1<br>
-     * 8---2.2<br>
-     * 10--2.3.3<br>
      * 11---3.0<br>
-     * 12---3.1<br>
-     * 13---3.2<br>
      * 14---4.0<br>
-     * 15---4.0.3<br>
-     * 16---4.1.2<br>
      * 17---4.2.2<br>
-     * 18---4.3<br>
-     * 19---4.4.2<br>
+     * 19---4.4<br>
+     * 23---6.0<br>
+     * @see android.os.Build.VERSION_CODES
      */
     public static int getVersion() {
         return android.os.Build.VERSION.SDK_INT;
@@ -217,14 +91,15 @@ public final class AndroidUtil {
     /**
      * 获取系统权限
      */
-    public static boolean getRootPermission(ContextWrapper cw) throws Exception {
-        return ShellUtil.exeRootCommand("chmod 777 " + cw.getPackageCodePath());
+    public static boolean getRootPermission(Context context) throws Exception {
+        return ShellUtil.exeRootCommand("chmod 777 " + context.getPackageCodePath());
     }
 
     /**
      * 判断本程序是否正处于前台运行<br>
      * 需要声明权限<uses-permission android:name="android.permission.GET_TASKS" />
      */
+    @SuppressWarnings("deprecation")
     public static boolean atForeGround(Context context) {
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<RunningTaskInfo> list = am.getRunningTasks(1);
@@ -335,6 +210,7 @@ public final class AndroidUtil {
         int min = height;
         if (max < min)
         {
+            // Daimon:数据交换
             max = max ^ min;
             min = max ^ min;
             max = max ^ min;
@@ -563,7 +439,6 @@ public final class AndroidUtil {
     
     public static void setupStrictMode() {
         if (getVersion() < 11) return;
-        
         // StrictMode.enableDefaults()有bug
         // (android.os.StrictMode$InstanceCountViolation:instance=2;limit=1)
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()

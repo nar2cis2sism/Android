@@ -6,7 +6,6 @@ import java.util.HashMap;
  * 功能：缓存数据一定时间后过期
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class KeyExpiryMap<K, V> {

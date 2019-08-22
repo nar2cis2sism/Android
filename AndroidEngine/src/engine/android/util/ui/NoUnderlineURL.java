@@ -17,7 +17,6 @@ import android.widget.TextView.BufferType;
  * 链接去掉下划线
  * 
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
 public class NoUnderlineURL extends ClickableSpan {

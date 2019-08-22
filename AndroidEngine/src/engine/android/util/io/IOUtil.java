@@ -11,7 +11,6 @@ import java.io.Writer;
 
 /**
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
 public final class IOUtil {

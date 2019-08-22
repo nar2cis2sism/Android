@@ -14,7 +14,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * 功能：事件监听及发送机制
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public final class EventBus {

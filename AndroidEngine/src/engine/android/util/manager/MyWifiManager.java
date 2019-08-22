@@ -20,20 +20,19 @@ import java.util.List;
  * <uses-permission android:name="android.permission.WAKE_LOCK" />
  * 
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
 public class MyWifiManager {
 
     private final Context context;
 
-    private final WifiManager wm;						// Wifi管理器
+    private final WifiManager wm;               // Wifi管理器
 
-    private WifiLock lock;								// Wifi锁
+    private WifiLock lock;                      // Wifi锁
 
-    private BroadcastReceiver scanReceiver;				// Wifi扫描接收器
+    private BroadcastReceiver scanReceiver;     // Wifi扫描接收器
 
-    private BroadcastReceiver stateReceiver;			// Wifi状态接收器
+    private BroadcastReceiver stateReceiver;    // Wifi状态接收器
 
     public MyWifiManager(Context context) {
         wm = (WifiManager) (this.context = context.getApplicationContext())

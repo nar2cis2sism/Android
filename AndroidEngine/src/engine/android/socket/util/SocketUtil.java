@@ -5,7 +5,7 @@ import engine.android.util.secure.Obfuscate;
 
 public final class SocketUtil {
 
-    private static byte[] crypt_key;                                // 数据密钥
+    private static byte[] crypt_key;                // 数据密钥
 
     /**
      * 握手

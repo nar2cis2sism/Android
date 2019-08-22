@@ -9,7 +9,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,7 +17,6 @@ import java.util.Set;
  * a single secure String
  * 
  * @author Daimon
- * @version N
  * @since 3/22/2012
  */
 public class SecureSharedPreferences implements SharedPreferences {
@@ -64,8 +62,9 @@ public class SecureSharedPreferences implements SharedPreferences {
         return value != null ? value : defValue;
     }
 
-    public Set<String> getStringSet(String key, Set<String> defValues) {
-        @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
+    @Override
+    public synchronized Set<String> getStringSet(String key, Set<String> defValues) {
         Set<String> value = (Set<String>) map.get(key);
         return value != null ? value : defValues;
     }
@@ -156,51 +155,51 @@ public class SecureSharedPreferences implements SharedPreferences {
 
     private class Editor implements SharedPreferences.Editor {
 
-        private final List<Edit> list = new LinkedList<Edit>();
+        private final LinkedList<Edit> list = new LinkedList<Edit>();
 
         @Override
-        public android.content.SharedPreferences.Editor putString(String key, String value) {
+        public Editor putString(String key, String value) {
             list.add(new Put(key, value));
             return this;
         }
 
-        public android.content.SharedPreferences.Editor putStringSet(String key, Set<String> values) {
+        public Editor putStringSet(String key, Set<String> values) {
             list.add(new Put(key, values));
             return this;
         }
 
         @Override
-        public android.content.SharedPreferences.Editor putInt(String key, int value) {
+        public Editor putInt(String key, int value) {
             list.add(new Put(key, value));
             return this;
         }
 
         @Override
-        public android.content.SharedPreferences.Editor putLong(String key, long value) {
+        public Editor putLong(String key, long value) {
             list.add(new Put(key, value));
             return this;
         }
 
         @Override
-        public android.content.SharedPreferences.Editor putFloat(String key, float value) {
+        public Editor putFloat(String key, float value) {
             list.add(new Put(key, value));
             return this;
         }
 
         @Override
-        public android.content.SharedPreferences.Editor putBoolean(String key, boolean value) {
+        public Editor putBoolean(String key, boolean value) {
             list.add(new Put(key, value));
             return this;
         }
 
         @Override
-        public android.content.SharedPreferences.Editor remove(String key) {
+        public Editor remove(String key) {
             list.add(new Remove(key));
             return this;
         }
 
         @Override
-        public android.content.SharedPreferences.Editor clear() {
+        public Editor clear() {
             list.add(new Clear());
             return this;
         }
@@ -243,7 +242,7 @@ public class SecureSharedPreferences implements SharedPreferences {
 
     private static abstract class Edit {
 
-        abstract void edit(Map<String, Object> map);
+        public abstract void edit(Map<String, Object> map);
     }
 
     private static class Put extends Edit {
@@ -252,13 +251,13 @@ public class SecureSharedPreferences implements SharedPreferences {
 
         private final Object value;
 
-        Put(String key, Object value) {
+        public Put(String key, Object value) {
             this.key = key;
             this.value = value;
         }
 
         @Override
-        void edit(Map<String, Object> map) {
+        public void edit(Map<String, Object> map) {
             map.put(key, value);
         }
     }
@@ -267,12 +266,12 @@ public class SecureSharedPreferences implements SharedPreferences {
 
         private final String key;
 
-        Remove(String key) {
+        public Remove(String key) {
             this.key = key;
         }
 
         @Override
-        void edit(Map<String, Object> map) {
+        public void edit(Map<String, Object> map) {
             map.remove(key);
         }
     }
@@ -280,7 +279,7 @@ public class SecureSharedPreferences implements SharedPreferences {
     private static class Clear extends Edit {
 
         @Override
-        void edit(Map<String, Object> map) {
+        public void edit(Map<String, Object> map) {
             map.clear();
         }
     }

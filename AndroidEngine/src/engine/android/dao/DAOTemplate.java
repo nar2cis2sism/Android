@@ -2,10 +2,20 @@ package engine.android.dao;
 
 import static engine.android.core.util.LogFactory.LOG.log;
 import static engine.android.core.util.LogFactory.LogUtil.getCallerStackFrame;
+import static engine.android.core.util.LogFactory.LogUtil.getClassAndMethod;
 import static engine.android.dao.DAOUtil.checkNull;
 import static engine.android.dao.DAOUtil.extractFromCursor;
 
-import android.content.ContentProvider;
+import engine.android.core.util.LogFactory;
+import engine.android.dao.DAOUtil.DAOException;
+import engine.android.dao.annotation.DAOPrimaryKey;
+import engine.android.dao.annotation.DAOProperty;
+import engine.android.dao.annotation.DAOTable;
+import engine.android.dao.util.Page;
+import engine.android.util.file.FileManager;
+import engine.android.util.io.IOUtil;
+import engine.android.util.manager.SDCardManager;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -15,17 +25,6 @@ import android.database.sqlite.SQLiteProgram;
 import android.database.sqlite.SQLiteStatement;
 import android.text.TextUtils;
 import android.util.Pair;
-
-import engine.android.core.util.LogFactory;
-import engine.android.core.util.LogFactory.LogUtil;
-import engine.android.dao.DAOUtil.DAOException;
-import engine.android.dao.annotation.DAOPrimaryKey;
-import engine.android.dao.annotation.DAOProperty;
-import engine.android.dao.annotation.DAOTable;
-import engine.android.dao.util.Page;
-import engine.android.util.file.FileManager;
-import engine.android.util.io.IOUtil;
-import engine.android.util.manager.SDCardManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,14 +46,11 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * 操作数据库的模板，尽量面向对象，以简化DAO层<br>
  * 不支持多表联合操作，使用原生SQL语句或事务处理效率更高<br>
- * 支持{@link ContentProvider}操作（跨进程通讯）<br>
  * only support 1.NULL：空值。 2.INTEGER：带符号的整型，具体取决于存入数字的范围大小。
  * 3.REAL：浮点数字，存储为8-byte IEEE浮点数。 4.TEXT：字符串文本。 5.BLOB：二进制对象。
  * 
  * @author Daimon
- * @version N
  * @since 4/5/2015
- * 
  * @see http://www.w3cschool.cc/sqlite
  */
 public class DAOTemplate {
@@ -66,7 +62,6 @@ public class DAOTemplate {
      */
     public static SQLiteDatabase loadAssetsDB(Context context, String assetsPath) {
         File db_file = new File(SDCardManager.openSDCardAppDir(context), assetsPath);
-        
         if (!db_file.exists())
         {
             FileManager.createFileIfNecessary(db_file);
@@ -114,7 +109,6 @@ public class DAOTemplate {
     private boolean printLog = true;
 
     private final DAOHelper dao;
-
     private class DAOHelper extends SQLiteOpenHelper {
 
         private final DBUpdateListener listener;
@@ -149,13 +143,7 @@ public class DAOTemplate {
 
         @Override
         public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            log("", String.format("数据库版本由%d更新为%d", oldVersion, newVersion));
-            if (listener != null)
-            {
-                DAOTemplate.this.db.set(db);
-                listener.onUpdate(DAOTemplate.this, oldVersion, newVersion);
-                DAOTemplate.this.db.set(null);
-            }
+            onUpgrade(db, oldVersion, newVersion);
         }
     }
 
@@ -280,7 +268,6 @@ public class DAOTemplate {
     private CopyOnWriteArraySet<DAOObserver> getObservers(Table table,
             boolean createIfNotExist) {
         String key = table.getTableName();
-
         if (!listeners.contains(key) && createIfNotExist)
         {
             listeners.putIfAbsent(key, new CopyOnWriteArraySet<DAOObserver>());
@@ -300,7 +287,10 @@ public class DAOTemplate {
 
     public void unregisterListener(Class<?> c, DAOListener listener) {
         CopyOnWriteArraySet<DAOObserver> observers = getObservers(Table.getTable(c), false);
-        if (observers == null || observers.isEmpty()) return;
+        if (observers == null || observers.isEmpty())
+        {
+            return;
+        }
         
         if (listener == null)
         {
@@ -368,7 +358,6 @@ public class DAOTemplate {
         if (success)
         {
             if (pendingListeners.isEmpty()) return;
-            
             Iterator<DAOObserver> iter = pendingListeners.iterator();
             pendingListeners.clear();
             while (iter.hasNext()) iter.next().notifyChange();
@@ -471,7 +460,7 @@ public class DAOTemplate {
 
         SQLiteDatabase db = getDataBase();
         db.beginTransaction();
-        if (printLog) log(LogUtil.getClassAndMethod(getCallerStackFrame()), "事务开始");
+        if (printLog) log(getClassAndMethod(getCallerStackFrame()), "事务开始");
         try {
             if (transaction.execute(this))
             {
@@ -484,7 +473,7 @@ public class DAOTemplate {
             LOG_DAOException(new DAOException(e));
         } finally {
             db.endTransaction();
-            if (printLog) log(LogUtil.getClassAndMethod(getCallerStackFrame()), "事务结束:success=" + success);
+            if (printLog) log(getClassAndMethod(getCallerStackFrame()), "事务结束:success=" + success);
             dispatchChange(success);
         }
 
@@ -500,7 +489,6 @@ public class DAOTemplate {
      */
     public void createIndex(Class<?> c, String indexName, String... fields) {
         checkNull(indexName);
-
         if (fields == null || fields.length == 0)
         {
             throw new DAOException("请指定需要添加索引的字段", new NullPointerException());
@@ -514,9 +502,7 @@ public class DAOTemplate {
         .append(" ON ")
         .append(table.getTableName())
         .append(" (");
-        
         DAOClause.create(fields).appendTo(table, sql);
-
         sql.append(")");
 
         execute(sql.toString());
@@ -529,7 +515,6 @@ public class DAOTemplate {
      */
     public void deleteIndex(String indexName) {
         checkNull(indexName);
-
         execute("DROP INDEX " + indexName);
     }
 
@@ -540,7 +525,6 @@ public class DAOTemplate {
      */
     public void deleteView(String viewName) {
         checkNull(viewName);
-
         execute("DROP VIEW " + viewName);
     }
 
@@ -575,17 +559,14 @@ public class DAOTemplate {
         sql.append("CREATE TABLE IF NOT EXISTS ")
         .append(table.getTableName())
         .append("\n(\n");
-
         if (primaryKey != null)
         {
             sql.append("    ")
             .append(primaryKey.getColumn())
             .append(" ")
-            .append(primaryKey.asInteger() ?
-                    "INTEGER" : primaryKey.getDataType().getSimpleName())
+            .append(primaryKey.asInteger() ? "INTEGER" : primaryKey.getDataType().getSimpleName())
             .append(" PRIMARY KEY")
-            .append(primaryKey.isAutoincrement() ?
-                    " AUTOINCREMENT" : "")
+            .append(primaryKey.isAutoincrement() ? " AUTOINCREMENT" : "")
             .append(",\n");
         }
 
@@ -621,7 +602,6 @@ public class DAOTemplate {
         .append(oldName)
         .append(" RENAME TO ")
         .append(newName);
-
         execute(sql.toString());
     }
 
@@ -632,7 +612,6 @@ public class DAOTemplate {
      */
     public void updateTable(Class<?> c) {
         Table table = Table.getTable(c);
-        
         try {
             Cursor cursor = rawQuery("SELECT * FROM " + table.getTableName() + " LIMIT 0", null);
             if (cursor != null)
@@ -644,13 +623,13 @@ public class DAOTemplate {
                         int index = cursor.getColumnIndex(property.getColumn());
                         if (index == -1)
                         {
-                            sql .append("ALTER TABLE ")
-                                .append(table.getTableName())
-                                .append(" ADD COLUMN ")
-                                .append(property.getColumn())
-                                .append(" ")
-                                .append(property.getDataType().getSimpleName())
-                                .append(";");
+                            sql.append("ALTER TABLE ")
+                            .append(table.getTableName())
+                            .append(" ADD COLUMN ")
+                            .append(property.getColumn())
+                            .append(" ")
+                            .append(property.getDataType().getSimpleName())
+                            .append(";");
                         }
                     }
 
@@ -680,7 +659,7 @@ public class DAOTemplate {
                 dao.renameTable(table.getTableName(), tempTable);
                 dao.createTable(c);
                 dao.execute("INSERT INTO " + table.getTableName() +
-                        " SELECT * FROM " + tempTable);
+                            " SELECT * FROM " + tempTable);
                 dao.execute("DROP TABLE " + tempTable);
                 return true;
             }
@@ -694,7 +673,6 @@ public class DAOTemplate {
      */
     public void resetTable(Class<?> c) {
         Table table = Table.getTable(c);
-
         StringBuilder sql = new StringBuilder()
         .append("DELETE FROM ")
         .append(table.getTableName());
@@ -702,10 +680,10 @@ public class DAOTemplate {
         PrimaryKey primaryKey = table.getPrimaryKey();
         if (primaryKey.isAutoincrement())
         {
-            sql .append(";UPDATE sqlite_sequence SET seq=0 WHERE name='")
-                .append(table.getTableName())
-                .append("'")
-                .append(";VACUUM");
+            sql.append(";UPDATE sqlite_sequence SET seq=0 WHERE name='")
+            .append(table.getTableName())
+            .append("'")
+            .append(";VACUUM");
         }
 
         execute(sql.toString());
@@ -736,9 +714,7 @@ public class DAOTemplate {
      */
     public <T> boolean save(T obj) {
         checkNull(obj);
-
         Table table = Table.getTable(obj.getClass());
-
         try {
             StringBuilder sql = new StringBuilder()
             .append("INSERT INTO ")
@@ -746,21 +722,16 @@ public class DAOTemplate {
             .append("(");
 
             int i = 0;
-
             Collection<Property> properties = table.getPropertiesWithModifiablePrimaryKey();
-
             for (Property property : properties)
             {
-                sql .append(i++ > 0 ? "," : "")
-                    .append(property.getColumn());
+                sql.append(i++ > 0 ? "," : "")
+                .append(property.getColumn());
             }
             
             sql.append(") VALUES (");
-
             ArrayList<Object> bindArgs = new ArrayList<Object>(properties.size());
-
             i = 0;
-
             for (Property property : properties)
             {
                 sql.append(i++ > 0 ? ",?" : "?");
@@ -768,7 +739,6 @@ public class DAOTemplate {
             }
 
             sql.append(")");
-
             if (executeInsert(sql.toString(), bindArgs.toArray()) != -1)
             {
                 notifyChange(table, DAOListener.INSERT);
@@ -792,7 +762,6 @@ public class DAOTemplate {
         if (obj.length == 0) return false;
 
         Table table = Table.getTable(obj.getClass().getComponentType());
-
         try {
             StringBuilder sql = new StringBuilder(50 + 10 * obj.length)
             .append("INSERT INTO ")
@@ -800,23 +769,18 @@ public class DAOTemplate {
             .append("(");
 
             StringBuilder values = new StringBuilder(" VALUES ");
-
             int i = 0;
-
             Collection<Property> properties = table.getPropertiesWithModifiablePrimaryKey();
-
             for (Property property : properties)
             {
-                sql .append(i++ > 0 ? "," : "")
-                    .append(property.getColumn());
+                sql.append(i++ > 0 ? "," : "")
+                .append(property.getColumn());
             }
 
             ArrayList<Object> bindArgs = new ArrayList<Object>(properties.size() * obj.length);
-
             for (Object o : obj)
             {
                 i = 0;
-
                 for (Property property : properties)
                 {
                     values.append(i++ > 0 ? ",?" : "(?");
@@ -827,7 +791,6 @@ public class DAOTemplate {
             }
 
             sql.append(")").append(values).deleteCharAt(sql.length() - 1);
-
             if (executeInsert(sql.toString(), bindArgs.toArray()) != -1)
             {
                 notifyChange(table, DAOListener.INSERT);
@@ -871,19 +834,16 @@ public class DAOTemplate {
      * @param obj JavaBean对象，映射到数据库的一张表
      * @return 是否删除成功
      */
+    @SuppressWarnings("unchecked")
     public <T> boolean remove(T obj) {
         checkNull(obj);
-
-        @SuppressWarnings("unchecked")
         DAOEditBuilder<T> builder = new DAOEditBuilder<T>((Class<T>) obj.getClass());
-
         try {
             PrimaryKey primaryKey = builder.table.getPrimaryKey();
             if (primaryKey != null)
             {
                 return builder.where(DAOExpression
-                    .create(primaryKey.getColumn())
-                    .eq(primaryKey.getValue(obj)))
+                .create(primaryKey.getColumn()).eq(primaryKey.getValue(obj)))
                 .delete();
             }
         } catch (Exception e) {
@@ -900,19 +860,16 @@ public class DAOTemplate {
      * @param fields 需要修改的字段，不设置则修改所有字段
      * @return 是否更新成功
      */
+    @SuppressWarnings("unchecked")
     public <T> boolean update(T obj, String... fields) {
         checkNull(obj);
-
-        @SuppressWarnings("unchecked")
         DAOEditBuilder<T> builder = new DAOEditBuilder<T>((Class<T>) obj.getClass());
-
         try {
             PrimaryKey primaryKey = builder.table.getPrimaryKey();
             if (primaryKey != null)
             {
                 return builder.where(DAOExpression
-                    .create(primaryKey.getColumn())
-                    .eq(primaryKey.getValue(obj)))
+                .create(primaryKey.getColumn()).eq(primaryKey.getValue(obj)))
                 .update(obj, fields);
             }
         } catch (Exception e) {
@@ -924,7 +881,6 @@ public class DAOTemplate {
 
     private <T> boolean remove(DAOSQLBuilder<T> builder) {
         Table table = builder.table;
-
         try {
             StringBuilder sql = new StringBuilder()
             .append("DELETE FROM ")
@@ -947,9 +903,7 @@ public class DAOTemplate {
 
     private <T> boolean edit(DAOSQLBuilder<T> builder, T bean, String... fields) {
         checkNull(bean);
-
         Table table = builder.table;
-
         try {
             StringBuilder sql = new StringBuilder()
             .append("UPDATE ")
@@ -957,35 +911,30 @@ public class DAOTemplate {
             .append(" SET ");
 
             ArrayList<Object> bindArgs;
-
             int i = 0;
-
             if (fields == null || fields.length == 0)
             {
                 Collection<Property> properties = table.getPropertiesWithModifiablePrimaryKey();
-
                 bindArgs = new ArrayList<Object>(properties.size());
-
                 for (Property property : properties)
                 {
-                    sql .append(i++ > 0 ? "," : "")
-                        .append(property.getColumn())
-                        .append("=?");
+                    sql.append(i++ > 0 ? "," : "")
+                    .append(property.getColumn())
+                    .append("=?");
                     bindArgs.add(property.getValue(bean));
                 }
             }
             else
             {
                 bindArgs = new ArrayList<Object>(fields.length);
-
                 for (String field : fields)
                 {
                     Property property = table.getProperty(field);
                     if (property != null)
                     {
-                        sql .append(i++ > 0 ? "," : "")
-                            .append(property.getColumn())
-                            .append("=?");
+                        sql.append(i++ > 0 ? "," : "")
+                        .append(property.getColumn())
+                        .append("=?");
                         bindArgs.add(property.getValue(bean));
                     }
                 }
@@ -1032,11 +981,7 @@ public class DAOTemplate {
 
     private void processException(Exception t) {
         DAOException e = new DAOException(t);
-        if (getDataBase().inTransaction())
-        {
-            throw e;
-        }
-
+        if (getDataBase().inTransaction()) throw e;
         LOG_DAOException(e);
     }
 
@@ -1202,10 +1147,6 @@ public class DAOTemplate {
         
         private DAOClause() {}
 
-        public void add(DAOParam param) {
-            params.add(param);
-        }
-
         public static DAOClause create(String... params) {
             if (params == null || params.length == 0) return null;
 
@@ -1240,6 +1181,10 @@ public class DAOTemplate {
             }
 
             return clause;
+        }
+
+        public void add(DAOParam param) {
+            params.add(param);
         }
 
         public String[] build(Table table) {
@@ -1336,7 +1281,6 @@ public class DAOTemplate {
 
             protected void appendTo(Table table, StringBuilder sql, List<Object> whereArgs) {
                 super.appendTo(table, sql, whereArgs);
-
                 for (Pair<DAOExpression, String> child : children)
                 {
                     sql.append(child.second);
@@ -1619,8 +1563,7 @@ public class DAOTemplate {
             }
             else if (page != null)
             {
-                sql
-                .append(" LIMIT ")
+                sql.append(" LIMIT ")
                 .append(page.getBeginRecord())
                 .append(",")
                 .append(page.getPageSize());
@@ -1629,7 +1572,6 @@ public class DAOTemplate {
 
         private void appendSelection(StringBuilder sql, int constraint) {
             sql.append("SELECT ");
-
             if (constraint == CONSTRAINT_COUNT)
             {
                 sql.append("COUNT(*)");
@@ -1784,7 +1726,7 @@ public class DAOTemplate {
         {
             StringBuilder sb = new StringBuilder(sql);
             int i = 0, index = 0;
-
+            
             while ((index = sb.indexOf("?", index)) >= 0)
             {
                 String arg = String.valueOf(bindArgs[i++]);
@@ -1886,7 +1828,7 @@ class Table {
     private final HashMap<String, Property> propertiesByColumn =
             new HashMap<String, Property>(); // 列名为索引
 
-    public Table(Class<?> c) {
+    private Table(Class<?> c) {
         tableName = getTableName(c);
 
         Field[] fields = c.getDeclaredFields();

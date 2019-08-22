@@ -9,7 +9,6 @@ import android.util.SparseIntArray;
  * 音效播放器（超过大约5.6秒的声音就播放不出来）
  * 
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
 public class SoundPlayer {
@@ -36,6 +35,7 @@ public class SoundPlayer {
     /**
      * 初始化
      */
+    @SuppressWarnings("deprecation")
     private void init() {
         // 第一个参数为允许同时播放的最大声音数量
         pool = new SoundPool(100, AudioManager.STREAM_MUSIC, 100);

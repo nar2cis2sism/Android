@@ -6,11 +6,9 @@ import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 
 /**
- * 我的键盘管理器<br>
- * 需设置android:windowSoftInputMode="adjustResize"方有用
+ * 我的键盘管理器
  * 
  * @author Daimon
- * @version N
  * @since 7/16/2013
  */
 public class MyKeyboardManager implements OnGlobalLayoutListener {
@@ -32,14 +30,11 @@ public class MyKeyboardManager implements OnGlobalLayoutListener {
     }
 
     public boolean isKeyboardShown() {
-        if (listener != null)
-        {
-            return isKeyboardShown;
-        }
-
+        if (listener != null) return isKeyboardShown;
         return isKeyboardShown = detectKeyboardVisible();
     }
 
+    @SuppressWarnings("deprecation")
     public void setKeyboardListener(KeyboardListener listener) {
         decorView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
         if ((this.listener = listener) != null)

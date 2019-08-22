@@ -1,12 +1,12 @@
 package engine.android.util.ui;
 
-import android.util.Pair;
-import android.view.View;
-import android.widget.TextView;
-
 import engine.android.core.ApplicationManager;
 import engine.android.core.Forelet;
 import engine.android.core.Forelet.TextValidation;
+
+import android.util.Pair;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
  * 验证模块
  * 
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
 public class MyValidator {

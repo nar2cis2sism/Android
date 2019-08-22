@@ -1,6 +1,6 @@
 package engine.android.util.image;
 
-import static engine.android.util.RectUtil.getRect;
+import static engine.android.util.api.RectUtil.getRect;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -25,6 +25,7 @@ import android.graphics.Shader.TileMode;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.Html.ImageGetter;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView.ScaleType;
 
@@ -38,7 +39,6 @@ import java.util.Random;
  * 图像处理工具类
  * 
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
 public final class ImageUtil {
@@ -908,8 +908,34 @@ public final class ImageUtil {
     }
 
     /**
+     * 按照指定尺寸截取大图
+     * 
+     * @param size 如不指定则取屏幕尺寸
+     */
+    public static Bitmap clipLargeImage(Resources res, int resId, ImageSize size) {
+        if (size == null)
+        {
+            DisplayMetrics dm = res.getDisplayMetrics();
+            size = new ImageSize(dm.widthPixels, dm.heightPixels);
+        }
+        
+        int width = size.getWidth();
+        int height = size.getHeight();
+
+        Bitmap largeImage = BitmapFactory.decodeResource(res, resId);
+        largeImage = ImageUtil.zoom(largeImage, width, width * largeImage.getHeight() / largeImage.getWidth());
+
+        Bitmap image = Bitmap.createBitmap(width, height, largeImage.getConfig());
+        Canvas c = new Canvas(image);
+        c.drawBitmap(largeImage, 0, 0, null);
+
+        return image;
+    }
+
+    /**
      * 图片解码（为了节约内存，做了一些处理）
      */
+    @SuppressWarnings("deprecation")
     public static final class ImageDecoder {
 
         /**
@@ -1073,7 +1099,6 @@ public final class ImageUtil {
                 // width than height. In these cases the total pixels might still
                 // end up being too large to fit comfortably in memory, so we should
                 // be more aggressive with sample down the image.
-
                 final float totalPixels = w * h;
 
                 // Anything more than 2x the requested pixels we'll sample down further.

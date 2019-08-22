@@ -1,8 +1,8 @@
 package engine.android.http;
 
-import android.text.TextUtils;
-
 import engine.android.util.io.IOUtil;
+
+import android.text.TextUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,7 +16,6 @@ import java.util.Map;
  * Http响应体
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2015
  */
 public class HttpResponse {
@@ -74,11 +73,6 @@ public class HttpResponse {
             return null;
         }
         
-        if (list.size() == 1)
-        {
-            return list.get(0);
-        }
-        
         return TextUtils.join(",", list);
     }
     
@@ -99,7 +93,7 @@ public class HttpResponse {
         }
         
         try {
-            return Date.parse(date); // TODO: use HttpDate.parse()
+            return Date.parse(date);
         } catch (Exception e) {
             return defaultValue;
         }

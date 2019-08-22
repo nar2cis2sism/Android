@@ -9,7 +9,6 @@ import android.content.IntentFilter;
  * Home事件监听器
  * 
  * @author Daimon
- * @version N
  * @since 3/1/2013
  */
 public class HomeWatcher {

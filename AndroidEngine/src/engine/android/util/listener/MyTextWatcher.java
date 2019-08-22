@@ -8,12 +8,11 @@ import android.text.TextWatcher;
  * 自定义输入监听器
  * 
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
 public class MyTextWatcher implements TextWatcher {
 
-    private String text;									// 之前输入文本
+    private String text;                // 之前输入文本
 
     @Override
     public void afterTextChanged(Editable s) {

@@ -8,7 +8,6 @@ import java.util.LinkedList;
 
 /**
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
 public class ListViewState {
@@ -50,7 +49,7 @@ public class ListViewState {
     }
     
     /**
-     * 记录并保存当前列表的状态
+     * 记录并保存指定列表的状态
      */
     public void save(int index) {
         SavedState state = new SavedState();
@@ -61,11 +60,11 @@ public class ListViewState {
     }
     
     /**
-     * 恢复列表之前的状态
+     * 恢复指定列表之前的状态
      */
     public void restore(int index) {
         SavedState state = map.get(index);
-        if (state == null) state =  new SavedState();
+        if (state == null) state = new SavedState();
         listView.setSelectionFromTop(state.position, state.top);
     }
     

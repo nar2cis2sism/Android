@@ -12,12 +12,11 @@ import java.util.Map.Entry;
  * Xml节点组装
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public final class XmlNode {
 
-    public static final char QUOT = '"';
+    public static char QUOT = '"';
 
     private final String name;
 
@@ -67,16 +66,12 @@ public final class XmlNode {
     }
 
     private void appendXml(StringBuilder xml) {
-        xml
-        .append("<")
-        .append(name);
-
+        xml.append("<").append(name);
         if (attributes != null)
         {
             for (Entry<String, String> entry : attributes.entrySet())
             {
-                xml
-                .append(" ")
+                xml.append(" ")
                 .append(entry.getKey())
                 .append("=")
                 .append(QUOT)
@@ -93,8 +88,7 @@ public final class XmlNode {
                 child.appendXml(xml);
             }
 
-            xml
-            .append("</")
+            xml.append("</")
             .append(name)
             .append(">");
         }
@@ -104,8 +98,7 @@ public final class XmlNode {
         }
         else
         {
-            xml
-            .append(">")
+            xml.append(">")
             .append(context)
             .append("</")
             .append(name)

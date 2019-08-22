@@ -23,7 +23,6 @@ import java.util.zip.ZipOutputStream;
  * 不支持含有中文的文件名压缩
  * 
  * @author Daimon
- * @version N
  * @since 9/26/2012
  */
 public final class ZipUtil {
@@ -134,7 +133,6 @@ public final class ZipUtil {
         
         InputStream is = null;
         OutputStream os = null;
-
         try {
             Enumeration<? extends ZipEntry> e = zf.entries();
             while (e.hasMoreElements())

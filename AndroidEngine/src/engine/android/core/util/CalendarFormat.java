@@ -1,5 +1,6 @@
 package engine.android.core.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.format.DateUtils;
 
@@ -58,9 +59,9 @@ import java.util.regex.Pattern;
  * 扩展：星座解析，数字翻译，精确时间，时区转换
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
+@SuppressLint("InlinedApi")
 public final class CalendarFormat {
 
     private static final char PATTERN_INVALID = '\0';

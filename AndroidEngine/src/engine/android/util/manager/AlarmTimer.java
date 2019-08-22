@@ -6,9 +6,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build.VERSION;
 import android.os.SystemClock;
-
-import engine.android.util.AndroidUtil;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -19,7 +18,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * Thread-safe class that supports one or more alarm timers
  * 
  * @author Daimon
- * @version N
  * @since 3/21/2014
  */
 public class AlarmTimer {
@@ -110,7 +108,7 @@ public class AlarmTimer {
      */
     public void triggerAtTime(int alarmType, long triggerAtMillis, Runnable timeoutTask) {
         this.timeoutTask = timeoutTask;
-        if (AndroidUtil.getVersion() < 19)
+        if (VERSION.SDK_INT < 19)
         {
             am.set(alarmType, triggerAtMillis, operation);
         }
@@ -183,7 +181,7 @@ public class AlarmTimer {
             timer.clear();
         }
 
-        public final boolean isRunning() {
+        public boolean isRunning() {
             return isRunning.get();
         }
 
@@ -217,7 +215,7 @@ public class AlarmTimer {
             return SystemClock.elapsedRealtime();
         }
 
-        private final long getTimeoutTime() {
+        private long getTimeoutTime() {
             return lastEventTime.get() + timeout;
         }
 

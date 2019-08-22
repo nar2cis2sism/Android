@@ -1,11 +1,12 @@
 package engine.android.util.image;
 
+import engine.android.util.extra.MyThreadFactory;
+
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-
-import engine.android.util.extra.MyThreadFactory;
+import android.text.TextUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,7 +20,6 @@ import java.util.concurrent.TimeUnit;
  * 异步图片加载器
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class AsyncImageLoader {
@@ -29,11 +29,11 @@ public class AsyncImageLoader {
 
     private final ThreadPoolExecutor requestPool;                       // 图片下载线程池
 
-    private final ImageCache<Object> imageCache;                        // 图片缓存
+    private final ImageCache<ImageUrl> imageCache;                      // 图片缓存
 
-    private final ConcurrentHashMap<Object, ImageRequest> lockMap;      // 图片锁库(防止重复加载)
+    private final ConcurrentHashMap<ImageUrl, ImageRequest> lockMap;    // 图片锁库(防止重复加载)
 
-    private final HashMap<Object, Set<ImageCallback>> callbackMap;      // 回调查询表
+    private final HashMap<ImageUrl, Set<ImageCallback>> callbackMap;    // 回调查询表
 
     private final ImageHandler handler;                                 // 图片回调处理器
 
@@ -53,9 +53,9 @@ public class AsyncImageLoader {
                 new MyThreadFactory("图片下载"));
         requestPool.allowCoreThreadTimeOut(true);
 
-        imageCache = new ImageCache<Object>();
-        lockMap = new ConcurrentHashMap<Object, ImageRequest>();
-        callbackMap = new HashMap<Object, Set<ImageCallback>>();
+        imageCache = new ImageCache<ImageUrl>();
+        lockMap = new ConcurrentHashMap<ImageUrl, ImageRequest>();
+        callbackMap = new HashMap<ImageUrl, Set<ImageCallback>>();
         handler = new ImageHandler();
     }
 
@@ -71,7 +71,7 @@ public class AsyncImageLoader {
      * @param downloader 图片下载实现
      * @param callback 图片下载回调接口
      */
-    public Bitmap loadImage(Object url, ImageDownloader downloader, ImageCallback callback) {
+    public Bitmap loadImage(ImageUrl url, ImageDownloader downloader, ImageCallback callback) {
         Bitmap image = imageCache.get(url);
         if (image != null || downloader == null)
         {
@@ -93,7 +93,7 @@ public class AsyncImageLoader {
      * @param url 图片下载地址
      * @param image 如为Null表示重新下载图片
      */
-    public void updateImage(Object url, Bitmap image) {
+    public void updateImage(ImageUrl url, Bitmap image) {
         lockMap.remove(url);
         if (image == null)
         {
@@ -118,7 +118,7 @@ public class AsyncImageLoader {
     
     private class ImageRequest implements Runnable {
 
-        private final Object url;
+        private final ImageUrl url;
 
         private final ImageDownloader downloader;
 
@@ -128,7 +128,7 @@ public class AsyncImageLoader {
 
         private boolean isDone;
 
-        public ImageRequest(Object url, ImageDownloader downloader, ImageCallback callback) {
+        public ImageRequest(ImageUrl url, ImageDownloader downloader, ImageCallback callback) {
             this.url = url;
             this.downloader = downloader;
             this.callback = callback;
@@ -140,7 +140,6 @@ public class AsyncImageLoader {
             if (request == null)
             {
                 Bitmap image = downloader.imageLoading(url);
-
                 synchronized (this) {
                     if (this != lockMap.get(url))
                     {
@@ -149,12 +148,10 @@ public class AsyncImageLoader {
                         callbackMap.remove(url);
                         return;
                     }
-
                     // 图片下载完毕即放入缓存
                     imageCache.put(url, image);
                     done();
                     lockMap.remove(url);
-
                     // 通知回调
                     Set<ImageCallback> callbacks = callbackMap.remove(url);
                     if (callbacks == null || callbacks.isEmpty())
@@ -221,8 +218,7 @@ public class AsyncImageLoader {
         @Override
         public void handleMessage(Message msg) {
             ImageObj obj = (ImageObj) msg.obj;
-            ImageCallback[] callbacks = obj.callbacks;
-            for (ImageCallback callback : callbacks)
+            for (ImageCallback callback : obj.callbacks)
             {
                 callback.imageLoaded(obj.url, obj.image);
             }
@@ -230,20 +226,20 @@ public class AsyncImageLoader {
 
         private static class ImageObj {
 
-            public final Object url;
+            public final ImageUrl url;
 
             public final Bitmap image;
 
             public final ImageCallback[] callbacks;
 
-            public ImageObj(Object url, Bitmap image, ImageCallback[] callbacks) {
+            public ImageObj(ImageUrl url, Bitmap image, ImageCallback[] callbacks) {
                 this.url = url;
                 this.image = image;
                 this.callbacks = callbacks;
             }
         }
 
-        public void notifyCallback(Object url, Bitmap image, ImageCallback... callbacks) {
+        public void notifyCallback(ImageUrl url, Bitmap image, ImageCallback... callbacks) {
             obtainMessage(0, new ImageObj(url, image, callbacks)).sendToTarget();
         }
     }
@@ -259,7 +255,7 @@ public class AsyncImageLoader {
          * @param url 图片下载地址
          * @return 下载的图片
          */
-        Bitmap imageLoading(Object url);
+        Bitmap imageLoading(ImageUrl url);
     }
 
     /**
@@ -273,6 +269,93 @@ public class AsyncImageLoader {
          * @param url 图片下载地址
          * @param image 下载的图片
          */
-        void imageLoaded(Object url, Bitmap image);
+        void imageLoaded(ImageUrl url, Bitmap image);
+    }
+
+    /**
+     * 拼装图片URL
+     */
+    public static class ImageUrl {
+        
+        private final int type;
+
+        private final String url;
+
+        private final String crc;
+        
+        public ImageUrl(int type, String url, String crc) {
+            this.type = type;
+            this.url = url;
+            this.crc = crc;
+        }
+        
+        /**
+         * 图片类型
+         */
+        public int getType() {
+            return type;
+        }
+        
+        /**
+         * 下载地址
+         */
+        public String getDownloadUrl() {
+            return url;
+        }
+        
+        /**
+         * 版本校验
+         */
+        public String getCrc() {
+            return crc;
+        }
+
+        /**
+         * 缓存唯一性
+         */
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+            {
+                return true;
+            }
+            
+            if (o instanceof ImageUrl)
+            {
+                ImageUrl imageUrl = (ImageUrl) o;
+                return imageUrl.type == type
+                    && TextUtils.equals(imageUrl.url, url)
+                    && TextUtils.equals(imageUrl.crc, crc);
+            }
+
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hashCode = type;
+            if (!TextUtils.isEmpty(url))
+            {
+                hashCode += url.hashCode();
+            }
+            
+            if (!TextUtils.isEmpty(crc))
+            {
+                hashCode += crc.hashCode();
+            }
+            
+            return hashCode;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder()
+            .append("[")
+            .append("type=").append(type).append(",")
+            .append("url=").append(url).append(",")
+            .append("crc=").append(crc)
+            .append("]");
+            return sb.toString();
+        }
     }
 }

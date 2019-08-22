@@ -14,7 +14,6 @@ import javax.net.ssl.X509TrustManager;
  * Http参数设置
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2015
  */
 public class HttpParams {

@@ -1,4 +1,4 @@
-package engine.android.util;
+package engine.android.util.api;
 
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
@@ -9,7 +9,6 @@ import java.lang.reflect.TypeVariable;
  * 泛型的一些操作方法
  * 
  * @author Daimon
- * @version N
  * @since 2/2/2015
  */
 @SuppressWarnings("rawtypes")

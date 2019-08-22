@@ -10,7 +10,6 @@ import java.io.IOException;
  * 字节数据操作工具
  * 
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
 public final class ByteDataUtil {
@@ -76,7 +75,7 @@ public final class ByteDataUtil {
     /**
      * @param data The current data.
      * @param bit Location of bit to extract, indexed from 1 right to left.
-     * @return True if the bit is enable, false else.
+     * @return True if the bit is enabled, False else.
      */
     public static boolean hasBitMask(byte data, int bit) {
         byte b = 0x01;

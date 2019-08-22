@@ -13,8 +13,9 @@ import java.util.concurrent.ThreadFactory;
  * Socket代理（单机测试用）
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
+ * 
+ * Daimon:管道
  */
 public class SocketProxy {
 
@@ -32,21 +33,7 @@ public class SocketProxy {
         }
     });
 
-    final WrappedPipedInputStream pisReader;
-
-    final WrappedPipedOutputStream posReader;
-
-    final WrappedPipedInputStream pisWriter;
-
-    final WrappedPipedOutputStream posWriter;
-
-    final SocketServlet servlet;
-
-    boolean isRunning;                                 // 网络是否正在运行
-
-    boolean isClosed;                                  // 网络是否已关闭
-
-    final Runnable receive = new Runnable() {          // 网络接收线程
+    private final Runnable receive = new Runnable() {  // 网络接收线程
 
         @Override
         public void run() {
@@ -63,6 +50,20 @@ public class SocketProxy {
             }
         }
     };
+
+    public final WrappedPipedInputStream pisReader;
+
+    public final WrappedPipedOutputStream posReader;
+
+    public final WrappedPipedInputStream pisWriter;
+
+    public final WrappedPipedOutputStream posWriter;
+
+    public final SocketServlet servlet;
+
+    public boolean isRunning;                          // 网络是否正在运行
+
+    public boolean isClosed;                           // 网络是否已关闭
 
     SocketProxy(SocketServlet servlet) {
         this.servlet = servlet;
@@ -100,11 +101,6 @@ public class SocketProxy {
         threadPool.execute(receive);
     }
 
-    public interface SocketServlet {
-
-        void doServlet(InputStream in, OutputStream out);
-    }
-
     /**
      * 关闭网络连接
      */
@@ -113,7 +109,7 @@ public class SocketProxy {
         {
             return;
         }
-
+    
         isRunning = false;
         isClosed = true;
         if (pisReader != null)
@@ -122,29 +118,34 @@ public class SocketProxy {
                 pisReader._close();
             } catch (IOException e) {}
         }
-
+    
         if (posReader != null)
         {
             try {
                 posReader._close();
             } catch (IOException e) {}
         }
-
+    
         if (pisWriter != null)
         {
             try {
                 pisWriter._close();
             } catch (IOException e) {}
         }
-
+    
         if (posWriter != null)
         {
             try {
                 posWriter._close();
             } catch (IOException e) {}
         }
-
+    
         threadPool.shutdownNow();
+    }
+
+    public interface SocketServlet {
+
+        void doServlet(InputStream in, OutputStream out);
     }
 
     private class WrappedPipedInputStream extends PipedInputStream {

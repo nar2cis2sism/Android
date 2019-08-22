@@ -15,7 +15,6 @@ import java.io.StringWriter;
  * Json解析器
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public abstract class HttpJsonParser implements HttpParser {

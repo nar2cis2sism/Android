@@ -1,5 +1,7 @@
 package engine.android.http;
 
+import engine.android.util.io.IOUtil;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,13 +10,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-import engine.android.util.io.IOUtil;
-
 /**
  * Http请求体
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2015
  */
 public class HttpRequest {

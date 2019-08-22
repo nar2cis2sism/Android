@@ -1,18 +1,18 @@
 package engine.android.core;
 
-import android.app.Activity;
-import android.app.Dialog;
-import android.app.Fragment;
-import android.util.SparseArray;
-import android.view.View;
-import android.view.View.OnClickListener;
-
 import engine.android.core.annotation.BindDialog;
 import engine.android.core.annotation.IInjector;
 import engine.android.core.annotation.IInjector.ViewFinder;
 import engine.android.core.annotation.InjectView;
 import engine.android.core.annotation.OnClick;
 import engine.android.core.annotation.SavedState;
+
+import android.app.Activity;
+import android.app.Dialog;
+import android.app.Fragment;
+import android.util.SparseArray;
+import android.view.View;
+import android.view.View.OnClickListener;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -25,7 +25,6 @@ import java.util.Map;
  * 注入机制
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -41,7 +40,7 @@ public final class Injector {
     /**
      * 开启APT编译
      */
-    public static final void enableAptBuild() {
+    public static void enableAptBuild() {
         apt = true;
     }
 
@@ -267,7 +266,6 @@ class ReflectionInjector extends NoInjector {
         if (!onClickMethods.isEmpty())
         {
             OnClickListener onClickListener = new OnClickListener() {
-                
                 @Override
                 public void onClick(View v) {
                     try {
@@ -352,7 +350,7 @@ class ReflectionInjector extends NoInjector {
         }
     }
     
-    static void throwInjectException(Exception e) {
+    public static void throwInjectException(Exception e) {
         throw new RuntimeException("Inject error", e);
     }
 }

@@ -19,7 +19,6 @@ import javax.crypto.spec.SecretKeySpec;
  * 操作系统提供的各种算法工具
  * 
  * @author Daimon
- * @version N
  * @since 7/4/2013
  */
 public final class CryptoUtil {
@@ -65,9 +64,10 @@ public final class CryptoUtil {
             // 进行散列，对产生的散列码进行加密并返回
             return sign.sign();
         } catch (Exception e) {
-            // Should not be arrived.
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+        
+        return null;
     }
 
     public static boolean verifyAndDecrypt(PublicKey key, byte[] data, byte[] signature) {
@@ -81,9 +81,10 @@ public final class CryptoUtil {
             // 进行散列计算，比较计算所得散列码和解密的散列码是否一致
             return sign.verify(signature);
         } catch (Exception e) {
-            // Should not be arrived.
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+        
+        return false;
     }
 
     /************************* 对称加密算法 *************************/
@@ -128,8 +129,7 @@ public final class CryptoUtil {
         try {
             DESKeySpec keySpec = new DESKeySpec(seed);
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
-            SecretKey key = keyFactory.generateSecret(keySpec);
-            return key;
+            return keyFactory.generateSecret(keySpec);
         } catch (Exception e) {
             // Should not be arrived.
             throw new RuntimeException(e);
@@ -150,8 +150,9 @@ public final class CryptoUtil {
             cipher.init(cipherMode, key/* , new IvParameterSpec(iv) IV向量 */);
             return cipher.doFinal(data);
         } catch (Exception e) {
-            // Should not be arrived.
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+        
+        return null;
     }
 }

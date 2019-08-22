@@ -1,5 +1,8 @@
 package engine.android.util.manager;
 
+import engine.android.util.Util;
+import engine.android.util.file.FileManager;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,12 +10,8 @@ import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 
-import engine.android.util.Util;
-import engine.android.util.file.FileManager;
-
 import java.io.File;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * SDCard管理器（也有可能是内置存储器）<br>
@@ -21,14 +20,13 @@ import java.util.List;
  * <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
  * 
  * @author Daimon
- * @version N
  * @since 3/15/2012
  */
 public class SDCardManager {
 
     private final Context context;
 
-    private BroadcastReceiver receiver;							// SDCard状态监听器
+    private BroadcastReceiver receiver;             // SDCard状态监听器
 
     public SDCardManager(Context context) {
         this.context = context.getApplicationContext();
@@ -112,7 +110,7 @@ public class SDCardManager {
     }
 
     public static SDCardInfo[] getAvailableSDCard() {
-        List<SDCardInfo> list = new LinkedList<SDCardInfo>();
+        LinkedList<SDCardInfo> list = new LinkedList<SDCardInfo>();
         int index = 0;
         File file;
         while ((file = new File(String.format("/sys/block/mmcblk%d/device", index++))).exists())
@@ -142,11 +140,7 @@ public class SDCardManager {
          * 类型:SD
          */
         public String getType() {
-            if (type == null)
-            {
-                type = internal("type");
-            }
-
+            if (type == null) type = internal("type");
             return type;
         }
 
@@ -161,11 +155,7 @@ public class SDCardManager {
          * 厂商:SU16G
          */
         public String getName() {
-            if (name == null)
-            {
-                name = internal("name");
-            }
-
+            if (name == null) name = internal("name");
             return name;
         }
 
@@ -173,20 +163,12 @@ public class SDCardManager {
          * SD卡ID
          */
         public String getCid() {
-            if (cid == null)
-            {
-                cid = internal("cid");
-            }
-
+            if (cid == null) cid = internal("cid");
             return cid;
         }
 
         public String getCsd() {
-            if (csd == null)
-            {
-                csd = internal("csd");
-            }
-
+            if (csd == null) csd = internal("csd");
             return csd;
         }
 
@@ -194,11 +176,7 @@ public class SDCardManager {
          * 串号/序列号
          */
         public String getSerial() {
-            if (serial == null)
-            {
-                serial = internal("serial");
-            }
-
+            if (serial == null) serial = internal("serial");
             return serial;
         }
 
@@ -206,11 +184,7 @@ public class SDCardManager {
          * 生产日期:08/2011
          */
         public String getDate() {
-            if (date == null)
-            {
-                date = internal("date");
-            }
-
+            if (date == null) date = internal("date");
             return date;
         }
 

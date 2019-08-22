@@ -2,6 +2,10 @@ package engine.android.core;
 
 import static engine.android.core.Injector.inject;
 
+import engine.android.core.Forelet.FragmentTransaction;
+import engine.android.core.Forelet.Task;
+import engine.android.core.Forelet.Task.TaskExecutor;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -20,10 +24,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import engine.android.core.Forelet.FragmentTransaction;
-import engine.android.core.Forelet.Task;
-import engine.android.core.Forelet.Task.TaskExecutor;
-
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -37,7 +37,6 @@ import java.util.WeakHashMap;
  * 数据验证，Fragment事务，Activity导航，横竖屏切换等
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class Forelet extends Activity implements TaskCallback {
@@ -45,7 +44,6 @@ public class Forelet extends Activity implements TaskCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (savedInstanceState != null)
         {
             restoreDialogs(savedInstanceState);
@@ -68,16 +66,44 @@ public class Forelet extends Activity implements TaskCallback {
     @Override
     protected void onResume() {
         super.onResume();
-
         commitAllowed = true;
         commit();
     }
 
     @Override
+    protected final void onDestroy() {
+        if (isChangingConfigurations() || !isFinishing())
+        {
+            if (mTask != null) mTask.setup(null);
+            if (mProgress != null) mProgress.setup(null);
+            onDestroy(false);
+        }
+        else
+        {
+            cancelTask();
+            hideProgress();
+            onDestroy(true);
+        }
+        
+        mTask = null;
+        mProgress = null;
+        mTransaction = null;
+        closeDialogs();
+        clearValidation();
+        getHandler().removeCallbacksAndMessages(null);
+    
+        super.onDestroy();
+    }
+
+    /**
+     * @param finish True表示手动关闭Activity,False表示被系统杀掉
+     */
+    protected void onDestroy(boolean finish) {}
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         commitAllowed = false;
         super.onSaveInstanceState(outState);
-
         saveDialogs(outState);
         
         if (allowSaveInstanceState())
@@ -99,39 +125,6 @@ public class Forelet extends Activity implements TaskCallback {
     protected boolean allowSaveInstanceState() {
         return false;
     }
-
-    @Override
-    protected final void onDestroy() {
-        if (isChangingConfigurations() || !isFinishing())
-        {
-            if (mTask != null) mTask.setup(null);
-            if (mProgress != null) mProgress.setup(null);
-            
-            onDestroy(false);
-        }
-        else
-        {
-            cancelTask();
-            hideProgress();
-            
-            onDestroy(true);
-        }
-        
-        mTask = null;
-        mProgress = null;
-        mTransaction = null;
-
-        closeDialogs();
-        clearValidation();
-        getHandler().removeCallbacksAndMessages(null);
-
-        super.onDestroy();
-    }
-
-    /**
-     * @param finish True表示手动关闭Activity,False表示被系统杀掉
-     */
-    protected void onDestroy(boolean finish) {}
 
     @Override
     public void setContentView(int layoutResID) {
@@ -220,7 +213,6 @@ public class Forelet extends Activity implements TaskCallback {
         .setTitle(title)
         .setMessage(message)
         .setPositiveButton(ok, new DialogInterface.OnClickListener() {
-
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // dialog.dismiss();
@@ -228,7 +220,7 @@ public class Forelet extends Activity implements TaskCallback {
         })
         .create();
 
-        showDialog(getClass().getName() + title, dialog);
+        showDialog(getClass().getSimpleName() + title, dialog);
     }
 
     private void saveDialogs(Bundle outState) {
@@ -240,11 +232,10 @@ public class Forelet extends Activity implements TaskCallback {
         Bundle dialogState = new Bundle();
 
         Set<String> names = mDialogs.keySet();
-
         // save each dialog's state, gather the names
         for (String name : names)
         {
-            final Dialog dialog = mDialogs.get(name);
+            Dialog dialog = mDialogs.get(name);
             dialogState.putBoolean(SAVED_DIALOG_KEY_PREFIX + name, dialog.isShowing());
         }
 
@@ -254,14 +245,13 @@ public class Forelet extends Activity implements TaskCallback {
     }
 
     private void restoreDialogs(Bundle savedInstanceState) {
-        final Bundle dialogState = savedInstanceState.getBundle(SAVED_DIALOGS_TAG);
+        Bundle dialogState = savedInstanceState.getBundle(SAVED_DIALOGS_TAG);
         if (dialogState == null)
         {
             return;
         }
 
-        final String[] names = dialogState.getStringArray(SAVED_DIALOG_NAMES_KEY);
-
+        String[] names = dialogState.getStringArray(SAVED_DIALOG_NAMES_KEY);
         for (String name : names)
         {
             if (dialogState.getBoolean(SAVED_DIALOG_KEY_PREFIX + name))
@@ -381,7 +371,7 @@ public class Forelet extends Activity implements TaskCallback {
             }
         }
         
-        private int getId() {
+        protected int getId() {
             return hashCode();
         }
 
@@ -869,7 +859,6 @@ public class Forelet extends Activity implements TaskCallback {
                 // use NavUtils in the Support Package to ensure proper handling of Up.
                 onHomeUpPressed();
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -914,8 +903,9 @@ public class Forelet extends Activity implements TaskCallback {
      * 循环发送事件
      * 
      * @param period 循环周期
+     * @param now 立即执行/延迟执行
      */
-    public final void postSchedule(final Runnable r, final long period) {
+    public final void postSchedule(final Runnable r, final long period, boolean now) {
         getHandler().postDelayed(new Runnable() {
             
             @Override
@@ -923,7 +913,7 @@ public class Forelet extends Activity implements TaskCallback {
                 r.run();
                 getHandler().postDelayed(this, period);
             }
-        }, period);
+        }, now ? 0 : period);
     }
 }
 

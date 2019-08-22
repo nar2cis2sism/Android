@@ -16,7 +16,6 @@ import android.telephony.TelephonyManager;
  * <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
  * 
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
 public class MyPhoneStateListener extends PhoneStateListener {

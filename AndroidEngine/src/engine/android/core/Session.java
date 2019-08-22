@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * 功能：储存全局属性，支持多进程数据共享
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public final class Session {
@@ -76,11 +75,10 @@ public final class Session {
      */
     public Session setAttribute(String name, Object value) {
         attributes.put(name, value == null ? NULL_VALUE : value);
-
         if (isMultiProcess)
         {
             changeMap.put(name, new SessionData(SessionData.STATUS_SYNC));
-            recevier.sendBroadcast(name, serialize.serialize(value), SessionData.STATUS_UPDATE);
+            recevier.sendBroadcast(name, serialize.serialize(name, value), SessionData.STATUS_UPDATE);
         }
 
         return this;
@@ -94,7 +92,6 @@ public final class Session {
      */
     public Object removeAttribute(String name) {
         Object value = attributes.remove(name);
-
         if (isMultiProcess)
         {
             changeMap.put(name, new SessionData(SessionData.STATUS_SYNC));
@@ -127,12 +124,7 @@ public final class Session {
         checkChange(name);
 
         Object value = attributes.get(name);
-        if (value == null || value == NULL_VALUE)
-        {
-            return defaultValue;
-        }
-        
-        return (T) value;
+        return value == null || value == NULL_VALUE ? defaultValue : (T) value;
     }
 
     /**
@@ -150,7 +142,7 @@ public final class Session {
         }
         else if (data.status == SessionData.STATUS_UPDATE)
         {
-            Object value = serialize.deserialize(data.data);
+            Object value = serialize.deserialize(name, data.data);
             attributes.put(name, value == null ? NULL_VALUE : value);
         }
 
@@ -167,9 +159,9 @@ public final class Session {
      */
     public interface SessionDataSerializable {
 
-        byte[] serialize(Object value);
+        byte[] serialize(String name, Object value);
 
-        Object deserialize(byte[] data);
+        Object deserialize(String name, byte[] data);
     }
     
     private static class SessionData {
@@ -220,7 +212,12 @@ public final class Session {
                     changeMap.put(key, data = new SessionData());
                 }
                 
-                if (data.status != SessionData.STATUS_SYNC)
+                if (data.status == SessionData.STATUS_SYNC)
+                {
+                    data.status = SessionData.STATUS_NONE;
+                    data.data = null;
+                }
+                else
                 {
                     data.status = status;
                     data.data = value;

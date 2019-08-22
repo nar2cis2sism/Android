@@ -1,16 +1,15 @@
 package engine.android.http;
 
+import engine.android.http.HttpRequest.HttpEntity;
+
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
-
-import engine.android.http.HttpRequest.HttpEntity;
 
 /**
  * Http代理（单机测试用）
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class HttpProxy extends HttpConnector {

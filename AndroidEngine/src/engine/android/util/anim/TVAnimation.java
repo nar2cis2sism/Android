@@ -1,4 +1,4 @@
-package engine.android.util.ui;
+package engine.android.util.anim;
 
 import android.graphics.Matrix;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -9,7 +9,6 @@ import android.view.animation.Transformation;
  * 类似于电视开关的效果
  * 
  * @author Daimon
- * @version N
  * @since 8/20/2012
  */
 public class TVAnimation extends Animation {

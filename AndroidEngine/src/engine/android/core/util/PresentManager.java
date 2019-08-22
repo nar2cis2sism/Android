@@ -8,7 +8,6 @@ import java.util.LinkedHashMap;
  * 解耦设计
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public final class PresentManager {

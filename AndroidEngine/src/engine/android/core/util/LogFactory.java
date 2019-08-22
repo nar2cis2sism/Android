@@ -2,19 +2,25 @@ package engine.android.core.util;
 
 import static engine.android.core.ApplicationManager.getMainApplication;
 
+import engine.android.core.util.LogFactory.LogUtil;
+import engine.android.util.AndroidUtil;
+import engine.android.util.api.StringUtil;
+import engine.android.util.extra.MyThreadFactory;
+import engine.android.util.file.FileManager;
+import engine.android.util.io.IOUtil;
+import engine.android.util.os.DeviceUtil;
+
 import android.app.Application;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.StringBuilderPrinter;
-
-import engine.android.util.AndroidUtil;
-import engine.android.util.DeviceUtil;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Calendar;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -22,10 +28,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 功能：日志文件映射关系，开关与导出
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
-public final class LogFactory {
+public class LogFactory implements Runnable {
 
     private static File logDir;                                 // 日志输出目录
 
@@ -43,6 +48,14 @@ public final class LogFactory {
     = new ConcurrentHashMap<String, LogFile>();                 // 日志文件查询表
 
     private static final String DEFAULT_LOG_FILE = "log.txt";   // 默认日志输出文件
+    
+    private static final LinkedBlockingQueue<LogRecord> queue   // 日志输出队列
+    = new LinkedBlockingQueue<LogRecord>();
+    
+    private static final ExecutorService executor               // 日志输出单线程池
+    = Executors.newSingleThreadExecutor(new MyThreadFactory("log"));
+    
+    private LogFactory() {}
 
     /**
      * 开启/关闭日志记录<br>
@@ -53,6 +66,8 @@ public final class LogFactory {
         {
             LOG.log(null, null, "程序启动", getMainApplication().getLaunchTime());
             LOG.log(DeviceUtil.getDeviceInfo(), AndroidUtil.getVersionName(getMainApplication()));
+            // 启动日志线程
+            executor.execute(new LogFactory());
         }
     }
 
@@ -66,14 +81,21 @@ public final class LogFactory {
     /**
      * 获取日志输出目录
      */
-    private static File _getLogDir() {
+    public static File getLogDir() {
         if (logDir == null)
         {
-            logDir = getMainApplication().getDir("log", 0);
-            purge();
+            // 清理上一次的日志记录
+            FileManager.clearDir(logDir = getMainApplication().getDir("log", 0));
         }
 
         return logDir;
+    }
+
+    /**
+     * 导出日志文件
+     */
+    public boolean export(File dir) {
+        return FileManager.copyTo(dir, getLogDir().listFiles());
     }
 
     /**
@@ -93,7 +115,7 @@ public final class LogFactory {
             logFile = MAPPING_PREFIX + mapClass.getName();
         }
         
-        map.putIfAbsent(logClass.getName(), logFile);
+        addLogFile(logClass, logFile);
     }
 
     /**
@@ -125,181 +147,24 @@ public final class LogFactory {
         LogFile log = logs.get(logFile);
         if (log == null)
         {
-            logs.putIfAbsent(logFile, new LogFile(new File(_getLogDir(), logFile)));
+            logs.putIfAbsent(logFile, new LogFile(new File(getLogDir(), logFile)));
             log = logs.get(logFile);
         }
         
         return log;
     }
 
-    /**
-     * 清理上一次的日志记录
-     */
-    private static void purge() {
-        if (logDir.exists())
-        {
-            for (File f : logDir.listFiles())
-            {
-                delete(f);
-            }
-        }
-    }
-
-    /**
-     * 删除文件或目录（即使包含有文件）
-     */
-    private static void delete(File file) {
-        if (!file.exists())
-        {
-            return;
-        }
-
-        if (file.isDirectory())
-        {
-            for (File f : file.listFiles())
-            {
-                delete(f);
-            }
-
-            file.delete();
-        }
-        else
-        {
-            file.delete();
-        }
-    }
-
-    /**
-     * 需要导出日志时调用此方法获取日志目录（会阻塞当前线程）
-     */
-    public static File getLogDir() {
-        for (LogFile log : logs.values())
-        {
+    @Override
+    public void run() {
+        while (true) {
             try {
-                log.flush();
+                LogRecord log = queue.take();
+                if (log != null)
+                {
+                    getLogFile(log.className).LOG(log);
+                }
             } catch (Exception e) {
-                Log.w(LogFactory.class.getName(),
-                        String.format("Failed to flush Log:\n%s", log), e);
-            }
-        }
-        
-        return _getLogDir();
-    }
-
-    /**
-     * 日志文件
-     */
-    private static class LogFile implements Runnable {
-
-        private static final int CAPACITY = 10;
-
-        private final ConcurrentLinkedQueue<LogRecord> logs
-        = new ConcurrentLinkedQueue<LogRecord>();
-
-        private final File logFile;
-
-        private final AtomicBoolean isFlushing = new AtomicBoolean();
-
-        public LogFile(File logFile) {
-            this.logFile = logFile;
-        }
-
-        public void LOG(String tag, String message, long timeInMillis) {
-            logs.offer(new LogRecord(tag, message, timeInMillis));
-            if (logs.size() >= CAPACITY && isFlushing.compareAndSet(false, true))
-            {
-                new Thread(this, logFile.getName()).start();
-            }
-        }
-
-        public synchronized void flush() throws Exception {
-            if (logs.isEmpty()) return;
-            
-            FileWriter fw = null;
-            try {
-                fw = new FileWriter(logFile, true); // The file will be created
-                                                    // if it does not exist.
-                LogRecord record;
-                while ((record = logs.peek()) != null)
-                {
-                    fw.append(record.toString()).append('\n');
-                    logs.poll();
-                }
-            } finally {
-                if (fw != null)
-                {
-                    fw.close();
-                }
-            }
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            StringBuilderPrinter printer = new StringBuilderPrinter(sb);
-            LogRecord record;
-            while ((record = logs.poll()) != null)
-            {
-                printer.println(record.toString());
-            }
-
-            return sb.toString();
-        }
-
-        @Override
-        public void run() {
-            try {
-                flush();
-            } catch (Exception e) {
-                Log.w(getClass().getName(),
-                        String.format("Failed to write into Log (%s)",
-                                logFile.getName()), e);
-            }
-
-            isFlushing.set(false);
-        }
-
-        /**
-         * 日志记录
-         */
-        private static class LogRecord {
-
-            private static final Calendar CAL = Calendar.getInstance();
-
-            private final String tag;
-
-            private final String message;
-
-            private final long timeInMillis;
-
-            public LogRecord(String tag, String message, long timeInMillis) {
-                this.tag = tag;
-                this.message = message;
-                this.timeInMillis = timeInMillis;
-            }
-
-            @Override
-            public String toString() {
-                if (TextUtils.isEmpty(tag))
-                {
-                    if (TextUtils.isEmpty(message))
-                    {
-                        return "";
-                    }
-
-                    return String.format("%s|%s", getTime(), message);
-                }
-
-                return String.format("%s|%s|%s", getTime(), getTag(), message);
-            }
-
-            public String getTime() {
-                CAL.setTimeInMillis(timeInMillis);
-                return CalendarFormat.format(CAL, "MM-dd HH:mm:ss.SSS");
-            }
-
-            public String getTag() {
-                return LogUtil.getFixedText(tag, 40);
+                // Continue.
             }
         }
     }
@@ -357,11 +222,7 @@ public final class LogFactory {
             String msg = getMessage(message);
             if (isLogEnabled())
             {
-                LogFile log = getLogFile(className);
-                if (log != null)
-                {
-                    log.LOG(tag, msg, timeInMillis);
-                }
+                queue.offer(new LogRecord(className, tag, msg, timeInMillis));
             }
 
             if (getMainApplication().isDebuggable())
@@ -485,7 +346,87 @@ public final class LogFactory {
         }
 
         private static int length(String s) {
-            return s.replaceAll("[^\\x00-\\xff]", "**").length();
+            return StringUtil.getByteLength(s);
         }
+    }
+}
+
+/**
+ * 日志文件
+ */
+class LogFile {
+
+    private final File logFile;
+    
+    private FileWriter fw;
+
+    public LogFile(File logFile) {
+        this.logFile = logFile;
+    }
+
+    public void LOG(LogRecord record) {
+        try {
+            if (fw == null)
+            {
+                fw = new FileWriter(logFile, true); // The file will be created
+                                                    // if it does not exist.
+            }
+
+            fw.append(record.toString()).append('\n');
+            fw.flush();
+        } catch (Exception e) {
+            if (fw != null)
+            {
+                IOUtil.closeSilently(fw);
+                fw = null;
+            }
+        }
+    }
+}
+
+/**
+ * 日志记录
+ */
+class LogRecord {
+
+    private static final Calendar CAL = Calendar.getInstance();
+    
+    public final String className;
+
+    public final String tag;
+
+    public final String message;
+
+    public final long timeInMillis;
+
+    public LogRecord(String className, String tag, String message, long timeInMillis) {
+        this.className = className;
+        this.tag = tag;
+        this.message = message;
+        this.timeInMillis = timeInMillis;
+    }
+
+    @Override
+    public String toString() {
+        if (TextUtils.isEmpty(tag))
+        {
+            if (TextUtils.isEmpty(message))
+            {
+                return "";
+            }
+
+            return String.format("%s|%s", getTime(), message);
+        }
+
+        return String.format("%s|%s|%s", getTime(), getTag(), message);
+    }
+
+    public String getTime() {
+        CAL.setTimeInMillis(timeInMillis);
+        return CalendarFormat.format(CAL, "MM-dd HH:mm:ss.SSS");
+    }
+
+    public String getTag() {
+        return LogUtil.getFixedText(tag, 40);
     }
 }

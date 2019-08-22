@@ -1,12 +1,12 @@
 package engine.android.dao.util;
 
+import engine.android.dao.DAOTemplate;
+
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
-import engine.android.dao.DAOTemplate;
 
 /**
  * A loader that queries the {@link SQLiteDatabase} and returns a {@link Cursor}.
@@ -17,7 +17,6 @@ import engine.android.dao.DAOTemplate;
  * <p>It's the convenient utility for {@link DAOTemplate}.
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public abstract class CursorLoader extends AsyncTaskLoader<Cursor> {

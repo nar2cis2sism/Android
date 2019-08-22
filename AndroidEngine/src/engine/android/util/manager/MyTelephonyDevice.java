@@ -3,15 +3,15 @@ package engine.android.util.manager;
 import static engine.android.util.manager.SDCardManager.isEnabled;
 import static engine.android.util.manager.SDCardManager.openSDCardFile;
 
+import engine.android.util.file.FileManager;
+
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.content.Context;
+import android.os.Build.VERSION;
 import android.os.Environment;
 import android.os.StatFs;
 import android.telephony.TelephonyManager;
-
-import engine.android.util.AndroidUtil;
-import engine.android.util.file.FileManager;
 
 import java.io.File;
 import java.net.Inet4Address;
@@ -25,9 +25,9 @@ import java.util.Enumeration;
  * 需要声明权限<uses-permission android:name="android.permission.READ_PHONE_STATE" />
  * 
  * @author Daimon
- * @version N
  * @since 4/6/2012
  */
+@SuppressWarnings("deprecation")
 public class MyTelephonyDevice {
 
     /***** 外置存储卡目录名称 *****/
@@ -35,7 +35,7 @@ public class MyTelephonyDevice {
 
     private final Context context;
 
-    private final TelephonyManager tm;					// 电话管理器
+    private final TelephonyManager tm;              // 电话管理器
 
     public MyTelephonyDevice(Context context) {
         tm = (TelephonyManager) (this.context = context.getApplicationContext())
@@ -364,7 +364,7 @@ public class MyTelephonyDevice {
      * 获取文件系统总容量
      */
     public static long getTotalSpace(File file) {
-        if (AndroidUtil.getVersion() < 9)
+        if (VERSION.SDK_INT < 9)
         {
             StatFs sf = new StatFs(file.getPath());
             return 1l * sf.getBlockCount() * sf.getBlockSize();
@@ -377,7 +377,7 @@ public class MyTelephonyDevice {
      * 获取文件系统可用容量
      */
     public static long getUsableSpace(File file) {
-        if (AndroidUtil.getVersion() < 9)
+        if (VERSION.SDK_INT < 9)
         {
             StatFs sf = new StatFs(file.getPath());
             return 1l * sf.getAvailableBlocks() * sf.getBlockSize();
@@ -390,7 +390,7 @@ public class MyTelephonyDevice {
      * 获取文件系统剩余容量
      */
     public static long getFreeSpace(File file) {
-        if (AndroidUtil.getVersion() < 9)
+        if (VERSION.SDK_INT < 9)
         {
             StatFs sf = new StatFs(file.getPath());
             return 1l * sf.getFreeBlocks() * sf.getBlockSize();

@@ -5,13 +5,12 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 
 /**
- * A convenient utility to manager view's size.
+ * A convenient utility to manage view's size.
  * 
  * @author Daimon
- * @version N
  * @since 5/28/2016
  */
-public final class ViewSize {
+public class ViewSize {
     
     public final int width;
     public final int height;
@@ -87,6 +86,7 @@ public final class ViewSize {
             this.listenHeight = listenHeight;
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public void onGlobalLayout() {
             int width = view.getWidth();
@@ -103,13 +103,16 @@ public final class ViewSize {
                     observer.onSizeChanged(view, new ViewSize(this.width = width, this.height = height));
                 }
             }
-            else if ((listenWidth && width == this.width) || (listenHeight && height == this.height))
-            {
-                view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-            }
             else
             {
-                observer.onSizeChanged(view, new ViewSize(this.width = width, this.height = height));
+                if ((listenWidth && width == this.width) || (listenHeight && height == this.height))
+                {
+                    view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+                else
+                {
+                    observer.onSizeChanged(view, new ViewSize(this.width = width, this.height = height));
+                }
             }
         }
     }

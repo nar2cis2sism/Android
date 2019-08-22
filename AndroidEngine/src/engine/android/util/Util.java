@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -16,7 +17,6 @@ import java.util.concurrent.TimeUnit;
  * 工具类
  * 
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
 public final class Util {
@@ -273,5 +273,13 @@ public final class Util {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public static boolean isEmpty(Collection<?> collection) {
+        return collection != null && !collection.isEmpty();
+    }
+    
+    public static boolean isEmpty(Object[] array) {
+        return array != null && array.length > 0;
     }
 }

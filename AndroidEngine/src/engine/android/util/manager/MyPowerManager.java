@@ -14,7 +14,6 @@ import android.os.PowerManager.WakeLock;
  * <uses-permission android:name="android.permission.WAKE_LOCK" />
  * 
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
 public class MyPowerManager {
@@ -75,6 +74,7 @@ public class MyPowerManager {
     /**
      * 获取屏幕的状态（亮:暗）
      */
+    @SuppressWarnings("deprecation")
     public boolean isScreenOn() {
         return pm.isScreenOn();
     }

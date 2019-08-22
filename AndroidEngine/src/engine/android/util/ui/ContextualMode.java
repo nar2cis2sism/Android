@@ -10,7 +10,6 @@ import android.widget.AbsListView.MultiChoiceModeListener;
  * 上下文模式（列表长按事件）
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class ContextualMode implements MultiChoiceModeListener {
@@ -31,13 +30,8 @@ public class ContextualMode implements MultiChoiceModeListener {
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        if (actionMode != null)
-        {
-            return false;
-        }
-
+        if (actionMode != null) return false;
         (actionMode = mode).getMenuInflater().inflate(menuResource, menu);
-
         return true;
     }
 

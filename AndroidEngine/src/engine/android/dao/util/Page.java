@@ -4,7 +4,6 @@ package engine.android.dao.util;
  * 分页工具（辅助类）
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public final class Page {
@@ -27,7 +26,7 @@ public final class Page {
      * @param pageSize Must be > 0
      */
     public Page(int pageSize) {
-        this(pageSize, 0);
+        this(pageSize, Integer.MAX_VALUE);
     }
 
     public Page(int pageSize, int totalRecord) {

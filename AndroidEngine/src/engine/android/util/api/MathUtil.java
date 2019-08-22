@@ -1,8 +1,7 @@
-package engine.android.util;
+package engine.android.util.api;
 
 /**
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public final class MathUtil {

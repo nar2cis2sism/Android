@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
  * 功能：用于屏幕旋转时属性存储
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 @Target(ElementType.FIELD)

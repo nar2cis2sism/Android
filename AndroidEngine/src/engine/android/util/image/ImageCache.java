@@ -14,7 +14,6 @@ import java.util.Map;
  * 功能：防止内存溢出
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class ImageCache<Identifier> {
@@ -50,7 +49,7 @@ public class ImageCache<Identifier> {
                     Bitmap oldValue, Bitmap newValue) {
                 if (evicted)
                 {
-                    // 硬引用缓存区满，将一个最不经常使用的oldvalue推入到软引用缓存区
+                    // 硬引用缓存区满，将一个最不经常使用的oldValue推入到软引用缓存区
                     gc();
                     imageSoftCache.put(key, new ImageReference(key, oldValue));
                 }
@@ -70,14 +69,13 @@ public class ImageCache<Identifier> {
         };
 
         /** Daimon:LinkedHashMap **/
-        Map<Identifier, ImageReference> map = new LinkedHashMap<Identifier, ImageReference>(
-                cacheCapacity, .75F, true) {
+        LinkedHashMap<Identifier, ImageReference> map
+        = new LinkedHashMap<Identifier, ImageReference>(cacheCapacity, .75F, true) {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected boolean removeEldestEntry(
-                    java.util.Map.Entry<Identifier, ImageReference> eldest) {
+            protected boolean removeEldestEntry(Entry<Identifier, ImageReference> eldest) {
                 return size() > cacheCapacity;
             }
         };

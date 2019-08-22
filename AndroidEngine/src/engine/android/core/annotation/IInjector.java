@@ -6,7 +6,6 @@ import java.util.Map;
  * 注解处理器实现的接口
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public interface IInjector<T> {

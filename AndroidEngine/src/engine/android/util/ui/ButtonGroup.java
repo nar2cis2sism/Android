@@ -8,7 +8,6 @@ import java.util.LinkedList;
  * 只允许选中一个按钮的管理组件
  * 
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
 public class ButtonGroup {

@@ -6,7 +6,6 @@ import java.net.Socket;
  * Socket联网事件监听器
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public interface SocketConnectionListener {

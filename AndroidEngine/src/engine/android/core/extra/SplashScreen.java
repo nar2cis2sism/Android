@@ -10,7 +10,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 闪屏机制
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public final class SplashScreen {
@@ -117,7 +116,7 @@ public final class SplashScreen {
         showTime = duration;
     }
     
-    void over() {
+    private void over() {
         if (loadingOver.getAndSet(false) && !task.isCancelled())
         {
             callback.onSplashFinished();

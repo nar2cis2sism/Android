@@ -4,7 +4,6 @@ package engine.android.util.secure;
  * CRC校验生成工具
  * 
  * @author Daimon
- * @version N
  * @since 8/12/2010
  */
 public final class CRCUtil {
@@ -35,86 +34,75 @@ public final class CRCUtil {
             0xed46, 0x2150, 0xc427, 0x01bd, 0x0059, 0x9c1d, 0xa457 };
 
     /**
-     * 计算数据{data}区域[0..clen-1]段的CRC值 <br>
-     * CRC结果在data[clen]和data[clen+1]两个数据位
+     * 计算数据{data}区域[0..len-1]段的CRC值 <br>
+     * CRC结果在data[len]和data[len+1]两个数据位
      */
-    public final static byte[] generate(byte[] data, int clen) {
-        int crcs = calculate(data, clen);
-        if (clen + 2 > data.length) {
-            byte[] news = new byte[clen + 2];
-            System.arraycopy(data, 0, news, 0, clen);
-            news[clen] = (byte) ((crcs >>> 0) & 0xff);
-            news[clen + 1] = (byte) ((crcs >>> 8) & 0xff);
-            return news;
-        }
-        else {
-            data[clen] = (byte) ((crcs >>> 0) & 0xff);
-            data[clen + 1] = (byte) ((crcs >>> 8) & 0xff);
-            return data;
-        }
+    public static byte[] generate(byte[] data, int len) {
+        return generate(data, 0, len);
     }
 
     /**
-     * 计算数据{data}区域[boff..boff+clen-1]段的CRC值 <br>
-     * CRC结果在data[boff+clen]和data[boff+clen+1]两个数据位
+     * 计算数据{data}区域[offset..offset+len-1]段的CRC值 <br>
+     * CRC结果在data[offset+len]和data[offset+len+1]两个数据位
      */
-    public final static byte[] generate(byte[] data, int boff, int clen) {
-        int crcs = calculate(data, boff, clen);
-        if (clen + boff + 2 > data.length) {
-            byte[] news = new byte[clen + boff + 2];
-            System.arraycopy(data, 0, news, 0, data.length);
-            news[clen + boff] = (byte) ((crcs >>> 0) & 0xff);
-            news[clen + boff + 1] = (byte) ((crcs >>> 8) & 0xff);
-            return news;
+    public static byte[] generate(byte[] data, int offset, int len) {
+        int end = offset + len + 2;
+        if (data.length < end)
+        {
+            byte[] bs = new byte[end];
+            System.arraycopy(data, 0, bs, 0, data.length);
+            data = bs;
         }
-        else {
-            data[clen + boff] = (byte) ((crcs >>> 0) & 0xff);
-            data[clen + boff + 1] = (byte) ((crcs >>> 8) & 0xff);
-            return data;
-        }
+
+        int crc = calculate(data, offset, len);
+        data[offset + len] = (byte) ((crc >>> 0) & 0xff);
+        data[offset + len + 1] = (byte) ((crc >>> 8) & 0xff);
+        return data;
     }
 
     /**
-     * 验证{data}区域[0..clen-1]段的CRC值 <br>
-     * CRC保存在data[clen]和data[clen+1]两个数据位
+     * 验证{data}区域[0..len-1]段的CRC值 <br>
+     * CRC保存在data[len]和data[len+1]两个数据位
      */
-    public final static boolean validate(byte[] data, int clen) {
-        return validate(data, 0, clen);
+    public static boolean validate(byte[] data, int len) {
+        return validate(data, 0, len);
     }
 
     /**
-     * 验证{data}区域[boff..boff+clen-1]段的CRC值 <br>
-     * CRC保存在data[boff+clen]和data[boff+clen+1]两个数据位
+     * 验证{data}区域[offset..offset+len-1]段的CRC值 <br>
+     * CRC保存在data[offset+len]和data[offset+len+1]两个数据位
      */
-    public final static boolean validate(byte[] data, int boff, int clen) {
-        if (clen + boff + 2 > data.length) {
+    public static boolean validate(byte[] data, int offset, int len) {
+        if (data.length < offset + len + 2)
+        {
             return false;
         }
-        else {
-            int crcs = calculate(data, boff, clen);
-            int bool = (data[clen + boff] & 0xff) - ((crcs >>> 0) & 0xff);
-            return bool == 0 && ((data[clen + boff + 1] & 0xff) == ((crcs >>> 8) & 0xff));
-        }
+
+        int crc = calculate(data, offset, len);
+        return (data[offset + len] & 0xff) == ((crc >>> 0) & 0xff)
+        && ((data[offset + len + 1] & 0xff) == ((crc >>> 8) & 0xff));
     }
 
     /**
      * 计算{data}区域[0..len-1]段的CRC值
      */
-    public final static int calculate(byte[] data, int len) {
+    public static int calculate(byte[] data, int len) {
         return calculate(data, 0, len);
     }
 
     /**
-     * 计算{data}区域[boff..boff+len-1]段的CRC值
+     * 计算{data}区域[offset..offset+len-1]段的CRC值
      */
-    public final static int calculate(byte[] data, int boff, int len) {
+    public static int calculate(byte[] data, int offset, int len) {
         int crcIndex = 0, crcEntry = 0;
-        for (int idx = boff; idx < boff + len; idx++) {
-            crcEntry = CRC16table[crcIndex & 0xF | (data[idx] & 0x0f) << 0x4];
+        for (int i = offset, end = offset + len; i < end; i++)
+        {
+            crcEntry = CRC16table[crcIndex & 0xF | (data[i] & 0x0f) << 0x4];
             crcIndex = (crcIndex >>> 0x4 ^ crcEntry);
-            crcEntry = CRC16table[crcIndex & 0xF | data[idx] & 0xf0];
+            crcEntry = CRC16table[crcIndex & 0xF | data[i] & 0xf0];
             crcIndex = (crcIndex >>> 0x4 ^ crcEntry);
         }
+        
         return crcIndex;
     }
 }

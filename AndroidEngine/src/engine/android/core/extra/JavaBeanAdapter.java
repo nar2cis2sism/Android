@@ -27,7 +27,6 @@ import java.util.List;
 
 /**
  * @author Daimon
- * @version N
  * @since 6/6/2014
  * @see ArrayAdapter
  */
@@ -434,6 +433,10 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
             views = new SparseArray<View>();
         }
 
+        public View getConvertView() {
+            return convertView;
+        }
+
         public <T extends View> T getView(int viewId) {
             return retrieveView(viewId);
         }
@@ -476,8 +479,8 @@ public abstract class JavaBeanAdapter<T> extends BaseAdapter implements Filterab
             retrieveView(viewId).setVisibility(visibility);
         }
 
-        public View getConvertView() {
-            return convertView;
+        public void setEnabled(int viewId, boolean enabled) {
+            retrieveView(viewId).setEnabled(enabled);
         }
 
         @SuppressWarnings("unchecked")

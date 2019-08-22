@@ -1,6 +1,5 @@
-package engine.android.util;
+package engine.android.util.os;
 
-import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Build.VERSION;
 
@@ -10,12 +9,11 @@ import java.util.UUID;
  * Android设备工具类
  * 
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
-@SuppressLint("InlinedApi")
-public class DeviceUtil {
+public final class DeviceUtil {
 
+    @SuppressWarnings("deprecation")
     public static void test() {
         System.out.println("--------" + Build.BOARD); // "MLA-AL10"
         System.out.println("--------" + Build.BRAND); // "HUAWEI"

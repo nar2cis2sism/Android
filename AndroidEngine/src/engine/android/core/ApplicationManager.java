@@ -3,6 +3,8 @@ package engine.android.core;
 import static engine.android.core.util.LogFactory.LogUtil.getCallerStackFrame;
 import static engine.android.core.util.LogFactory.LogUtil.getClassAndMethod;
 
+import engine.android.core.util.LogFactory.LOG;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
@@ -22,15 +24,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import engine.android.core.util.LogFactory.LOG;
-
 /**
  * 应用程序管理器<p>
  * 功能：活动堆栈管理，程序退出，异常处理<br>
  * Note：由于多进程或者插件化模式下Application会启动多次，需特别注意一些逻辑的处理
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class ApplicationManager extends Application implements UncaughtExceptionHandler {
@@ -194,7 +193,7 @@ public class ApplicationManager extends Application implements UncaughtException
     }
 
     /**
-     * 显示消息提示（不推荐使用）
+     * 显示消息提示
      * 
      * @param message 提示信息
      */
@@ -264,7 +263,7 @@ public class ApplicationManager extends Application implements UncaughtException
             Activity a;
             while (!history.isEmpty())
             {
-                if ((a = history.getFirst().get()) == null)
+                if ((a = history.getFirst().get()) == null || a.isFinishing())
                 {
                     history.removeFirst();
                 }
@@ -284,12 +283,9 @@ public class ApplicationManager extends Application implements UncaughtException
             Activity a;
             for (ActivityReference r : history)
             {
-                if ((a = r.get()) != null)
+                if ((a = r.get()) != null && TextUtils.equals(a.getTitle(), title))
                 {
-                    if (TextUtils.equals(a.getTitle(), title))
-                    {
-                        return a;
-                    }
+                    return a;
                 }
             }
             
@@ -334,13 +330,20 @@ public class ApplicationManager extends Application implements UncaughtException
             Iterator<ActivityReference> iter = history.iterator();
             while (iter.hasNext())
             {
-                if (found & (a = iter.next().get()) != null)
+                if ((a = iter.next().get()) != null)
                 {
-                    a.finish();
+                    if (found)
+                    {
+                        a.finish();
+                    }
+                    else if (title.equals(a.getTitle()))
+                    {
+                        found = true;
+                    }
                 }
-                else if (title.equals(a.getTitle()))
+                else
                 {
-                    found = true;
+                    iter.remove();
                 }
             }
         }

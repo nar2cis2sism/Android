@@ -9,7 +9,6 @@ import engine.android.http.util.xml.SAXParserFactory.SAXParser.Node;
  * Xml解析器
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public abstract class HttpXmlParser implements HttpParser {
@@ -35,7 +34,7 @@ public abstract class HttpXmlParser implements HttpParser {
      */
     protected abstract Object parse(SAXParser parser, Node root) throws Exception;
 
-    protected static final void parseChildNode(SAXParser parser, Node node,
+    public static final void parseChildNode(SAXParser parser, Node node,
             HttpXmlNodeHandler childHandler) {
         if (node.getType() != Node.START)
         {

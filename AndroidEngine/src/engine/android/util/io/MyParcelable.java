@@ -7,7 +7,6 @@ import android.os.Parcelable;
  * 自定义数据传递对象
  * 
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
 public class MyParcelable implements Parcelable {
@@ -20,9 +19,9 @@ public class MyParcelable implements Parcelable {
     }
 
     /**
-     * 此处Parcelable.Creator的实例名必须为CREATOR且为public static，否则对象被传出时会抛出异常
+     * 此处Creator的实例名必须为CREATOR且为public static，否则对象被传出时会抛出异常
      */
-    public static final Parcelable.Creator<MyParcelable> CREATOR = new Creator<MyParcelable>() {
+    public static final Creator<MyParcelable> CREATOR = new Creator<MyParcelable>() {
 
         @Override
         public MyParcelable createFromParcel(Parcel source) {

@@ -1,6 +1,4 @@
-package engine.android.util;
-
-import android.text.TextUtils;
+package engine.android.util.os;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -9,7 +7,6 @@ import java.io.InputStreamReader;
 
 /**
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public final class ShellUtil {
@@ -51,11 +48,6 @@ public final class ShellUtil {
             dos = new DataOutputStream(process.getOutputStream());
             for (String command : commands)
             {
-                if (TextUtils.isEmpty(command))
-                {
-                    continue;
-                }
-
                 // Do not use dos.writeBytes(commmand), avoid chinese charset error
                 dos.write(command.getBytes());
                 dos.writeBytes("\n");
@@ -125,7 +117,7 @@ public final class ShellUtil {
         return success;
     }
 
-    public static final class CommandResult {
+    public static class CommandResult {
 
         private int result;
 

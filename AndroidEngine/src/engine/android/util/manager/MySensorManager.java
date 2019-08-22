@@ -12,7 +12,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * 我的手机动作感应管理器
  * 
  * @author Daimon
- * @version N
  * @since 11/7/2012
  */
 public class MySensorManager implements SensorEventListener {

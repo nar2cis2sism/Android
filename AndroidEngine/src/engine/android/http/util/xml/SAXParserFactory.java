@@ -1,9 +1,9 @@
 package engine.android.http.util.xml;
 
-import android.text.TextUtils;
-
 import engine.android.http.util.xml.SAXParserFactory.SAXParser.Node;
-import engine.android.util.StringUtil;
+import engine.android.util.api.StringUtil;
+
+import android.text.TextUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +16,6 @@ import java.util.concurrent.atomic.AtomicReference;
  * SAX解析器工厂
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public final class SAXParserFactory {
@@ -85,8 +84,7 @@ public final class SAXParserFactory {
             String name = node.getName();
             if (node.getType() != Node.END)
             {
-                String value = node.getContext();
-                map.put(name, value);
+                map.put(name, node.getContext());
             }
             else if (endTag != null && endTag.equals(name))
             {
@@ -96,13 +94,31 @@ public final class SAXParserFactory {
 
         return map;
     }
+    
+    /**
+     * Http发包收包接口（懒人工具）
+     */
+    public interface HttpPackage {
+
+        /**
+         * 发包请求
+         * 
+         * @param map key为发包的字段,value为发包的值
+         */
+        void request(Map<String, String> map);
+
+        /**
+         * 收包回应
+         * 
+         * @param map key为收包的字段,value为收包的值
+         */
+        void response(Map<String, String> map);
+    }
 
     /**
      * SAX解析器
      */
-    public static final class SAXParser {
-
-        public static final String ISO          = StringUtil.ISO;
+    public static class SAXParser {
 
         public static final String UTF_8        = StringUtil.UTF_8;
 
@@ -121,7 +137,6 @@ public final class SAXParserFactory {
          * 
          * @param encoding 编码格式
          */
-
         public void setEncoding(String encoding) {
             this.encoding = encoding;
         }
@@ -131,7 +146,6 @@ public final class SAXParserFactory {
          * 
          * @param decoding 解码格式
          */
-
         public void setDecoding(String decoding) {
             this.decoding = decoding;
         }
@@ -141,11 +155,7 @@ public final class SAXParserFactory {
         }
 
         public Node next() {
-            if (is == null)
-            {
-                return null;
-            }
-
+            if (is == null) return null;
             try {
                 char c;
                 while ((c = (char) is.read()) != (char) -1)
@@ -338,7 +348,7 @@ public final class SAXParserFactory {
             return StringUtil.toEncodingString(s, decoding, encoding);
         }
 
-        public static final class Node {
+        public static class Node {
 
             public static final byte START = 1;
 
@@ -406,11 +416,7 @@ public final class SAXParserFactory {
             }
 
             public String getAttribute(String name) {
-                if (attributes == null)
-                {
-                    return null;
-                }
-
+                if (attributes == null) return null;
                 return attributes.get(name);
             }
         }

@@ -15,7 +15,6 @@ import android.graphics.RectF;
  * 圆形头像图片
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class AvatarImage {

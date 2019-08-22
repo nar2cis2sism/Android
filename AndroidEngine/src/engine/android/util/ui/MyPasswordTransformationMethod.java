@@ -5,6 +5,9 @@ import android.view.View;
 
 /**
  * 显示'*'替代默认的'.'
+ * 
+ * @author Daimon
+ * @since 3/26/2012
  */
 public class MyPasswordTransformationMethod extends PasswordTransformationMethod {
 
@@ -23,9 +26,7 @@ public class MyPasswordTransformationMethod extends PasswordTransformationMethod
     }
 
     public static MyPasswordTransformationMethod getInstance() {
-        if (sInstance != null)
-            return sInstance;
-
+        if (sInstance != null) return sInstance;
         return sInstance = new MyPasswordTransformationMethod();
     }
 

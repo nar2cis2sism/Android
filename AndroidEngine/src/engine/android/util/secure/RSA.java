@@ -14,7 +14,6 @@ import java.security.PublicKey;
  * javax.crypto.IllegalBlockSizeException: Data must not be longer than 117 bytes
  * 
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
 public final class RSA {

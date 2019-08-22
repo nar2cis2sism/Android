@@ -1,9 +1,18 @@
 package engine.android.dao;
 
 import static engine.android.core.util.LogFactory.LOG.log;
+import static engine.android.core.util.LogFactory.LogUtil.getCallerStackFrame;
 import static engine.android.dao.DAOUtil.checkNull;
 import static engine.android.dao.DAOUtil.extractFromCursor;
 
+import engine.android.core.util.LogFactory;
+import engine.android.dao.DAOTemplate.DAOClause;
+import engine.android.dao.DAOTemplate.DAOExpression;
+import engine.android.dao.DAOTemplate.DAOSQLBuilder;
+import engine.android.dao.DAOUtil.DAOException;
+import engine.android.dao.util.Page;
+
+import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -12,19 +21,17 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import engine.android.core.util.LogFactory;
-import engine.android.core.util.LogFactory.LogUtil;
-import engine.android.dao.DAOTemplate.DAOClause;
-import engine.android.dao.DAOTemplate.DAOExpression;
-import engine.android.dao.DAOTemplate.DAOSQLBuilder;
-import engine.android.dao.DAOUtil.DAOException;
-import engine.android.dao.util.Page;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * 支持{@link ContentProvider}操作（跨进程通讯）
+ * 
+ * @author Daimon
+ * @since 4/5/2015
+ */
 public class ProviderTemplate {
 
     /**
@@ -66,7 +73,7 @@ public class ProviderTemplate {
     public boolean executeBatch(String authority, ProviderBatch batch) {
         boolean success = false;
 
-        if (printLog) log(LogUtil.getCallerStackFrame(), "批处理任务开始");
+        if (printLog) log(getCallerStackFrame(), "批处理任务开始");
         try {
             inBatch = true;
             if (batch.applyBatch(this))
@@ -81,7 +88,7 @@ public class ProviderTemplate {
         } finally {
             inBatch = false;
             operations.clear();
-            if (printLog) log(LogUtil.getCallerStackFrame(), "批处理任务结束:success=" + success);
+            if (printLog) log(getCallerStackFrame(), "批处理任务结束:success=" + success);
         }
 
         return success;
@@ -110,7 +117,6 @@ public class ProviderTemplate {
             if (obj.length == 1)
             {
                 ContentValues values = ProviderUtil.convert(obj[0]);
-
                 if (printLog)
                 {
                     Table table = Table.getTable(obj.getClass().getComponentType());
@@ -140,7 +146,6 @@ public class ProviderTemplate {
             else
             {
                 ContentValues[] valuesArray = ProviderUtil.convert(obj);
-
                 if (printLog)
                 {
                     Table table = Table.getTable(obj.getClass().getComponentType());
@@ -297,9 +302,9 @@ public class ProviderTemplate {
                 sql.append(TextUtils.join(",", projection));
             }
 
-            sql .append(" FROM ")
-                .append(table.getTableName())
-                .append(SQL_WHERE_LOG(selection, selectionArgs));
+            sql.append(" FROM ")
+            .append(table.getTableName())
+            .append(SQL_WHERE_LOG(selection, selectionArgs));
 
             log("query:" + uri, sql.toString());
         }
@@ -337,10 +342,19 @@ public class ProviderTemplate {
         return " WHERE " + sql;
     }
 
+    static
+    {
+        LogFactory.addLogFile(ProviderTemplate.class, DAOTemplate.class);
+    }
+
+    private static void LOG_ProviderException(ProviderException e) {
+        log("Provider操作异常", e);
+    }
+
     private static class ProviderSQLBuilder<T> extends DAOSQLBuilder<T> {
-
+    
         protected final Uri uri;
-
+    
         public ProviderSQLBuilder(Class<T> c, Uri uri) {
             super(c);
             this.uri = uri;
@@ -348,17 +362,17 @@ public class ProviderTemplate {
     }
 
     public class ProviderEditBuilder<T> extends ProviderSQLBuilder<T> {
-
+    
         ProviderEditBuilder(Class<T> c, Uri uri) {
             super(c, uri);
         }
-
+    
         @Override
         public ProviderEditBuilder<T> where(DAOExpression expression) {
             super.where(expression);
             return this;
         }
-
+    
         /**
          * 删除数据
          *
@@ -368,7 +382,7 @@ public class ProviderTemplate {
         public boolean delete() {
             return remove(uri, this);
         }
-
+    
         /**
          * 修改数据
          *
@@ -388,54 +402,54 @@ public class ProviderTemplate {
     public class ProviderQueryBuilder<T> extends ProviderSQLBuilder<T> {
         
         private DAOClause selection;                // 查询指定列
-
+    
         private DAOClause group;                    // 按条件进行分组
-
+    
         private DAOExpression having;               // 分组上设置条件
-
+    
         private DAOClause order;                    // 按指定顺序显示
-
+    
         private boolean orderDesc;                  // 按降序进行排列
-
+    
         private Page page;                          // 分页工具
-
+    
         ProviderQueryBuilder(Class<T> c, Uri uri) {
             super(c, uri);
         }
-
+    
         public ProviderQueryBuilder<T> select(Object... params) {
             selection = DAOClause.create(params);
             return this;
         }
-
+    
         @Override
         public ProviderQueryBuilder<T> where(DAOExpression expression) {
             super.where(expression);
             return this;
         }
-
+    
         public ProviderQueryBuilder<T> groupBy(Object... params) {
             group = DAOClause.create(params);
             return this;
         }
-
+    
         public ProviderQueryBuilder<T> having(DAOExpression expression) {
             having = expression;
             return this;
         }
-
+    
         public ProviderQueryBuilder<T> orderBy(Object... params) {
             orderDesc = false;
             order = DAOClause.create(params);
             return this;
         }
-
+    
         public ProviderQueryBuilder<T> orderDesc(Object... params) {
             orderDesc = true;
             order = DAOClause.create(params);
             return this;
         }
-
+    
         /**
          * 使用分页技术
          */
@@ -443,41 +457,40 @@ public class ProviderTemplate {
             this.page = page;
             return this;
         }
-
+    
         private static final int CONSTRAINT_COUNT = 1;
-
+    
         private static final int CONSTRAINT_LIMIT = 2;
         
         private String[] projection;
-
+    
         private final StringBuilder sql = new StringBuilder(120);
-
+    
         private final LinkedList<Object> args = new LinkedList<Object>();
-
+    
         private void build(int constraint) {
             StringBuilder sql = this.sql;
             LinkedList<Object> args = this.args;
-
+    
             appendSelection(constraint);
             appendWhere(sql, args);
             appendGroup(sql);
             appendHaving(sql, args);
             appendOrder(sql);
-
+    
             if (constraint == CONSTRAINT_LIMIT)
             {
                 sql.append(" LIMIT 1");
             }
             else if (page != null)
             {
-                sql
-                .append(" LIMIT ")
+                sql.append(" LIMIT ")
                 .append(page.getBeginRecord())
                 .append(",")
                 .append(page.getPageSize());
             }
         }
-
+    
         private void appendSelection(int constraint) {
             if (constraint == CONSTRAINT_COUNT)
             {
@@ -493,15 +506,15 @@ public class ProviderTemplate {
         public void appendWhere(StringBuilder sql, List<Object> args) {
             if (where != null) where.appendTo(table, sql, args);
         }
-
+    
         private void appendGroup(StringBuilder sql) {
             if (group != null) group.appendTo(table, sql.append(" GROUP BY "));
         }
-
+    
         private void appendHaving(StringBuilder sql, List<Object> args) {
             if (having != null) having.appendTo(table, sql.append(" HAVING "), args);
         }
-
+    
         private void appendOrder(StringBuilder sql) {
             if (order != null)
             {
@@ -509,20 +522,20 @@ public class ProviderTemplate {
                 if (orderDesc) sql.append(" DESC");
             }
         }
-
+    
         private String getSql() {
             String s = sql.toString();
             sql.setLength(0);
             return s;
         }
-
+    
         private String[] getArgs() {
             if (args.isEmpty()) return null;
             String[] strs = convertArgs(args);
             args.clear();
             return strs;
         }
-
+    
         /**
          * 获取符合条件数据的数量
          */
@@ -543,7 +556,7 @@ public class ProviderTemplate {
             
             return -1;
         }
-
+    
         /**
          * 返回结果集游标
          */
@@ -551,7 +564,7 @@ public class ProviderTemplate {
             build(0);
             return queryCursor();
         }
-
+    
         /**
          * 获取数据表里第一条满足条件的数据，如没有则返回Null
          */
@@ -573,7 +586,7 @@ public class ProviderTemplate {
             } catch (Exception e) {
                 processException(e);
             }
-
+    
             return null;
         }
         
@@ -592,7 +605,7 @@ public class ProviderTemplate {
                         {
                             list.add(extractFromCursor(cursor, table, c));
                         }
-
+    
                         return list;
                     } finally {
                         cursor.close();
@@ -601,7 +614,7 @@ public class ProviderTemplate {
             } catch (Exception e) {
                 processException(e);
             }
-
+    
             return null;
         }
         
@@ -611,37 +624,34 @@ public class ProviderTemplate {
     }
 
     public static final class ProviderUtil {
-
+    
         public static <T> ContentValues convert(T obj, String... fields) throws Exception {
             if (obj == null) return null;
             return bindObjectToContentValues(Table.getTable(obj.getClass()), obj, fields);
         }
-
+    
         public static <T> ContentValues[] convert(T[] obj, String... fields) throws Exception {
             if (obj == null) return null;
             if (obj.length == 0) return new ContentValues[0];
             if (obj.length == 1) return new ContentValues[] { convert(obj[0], fields) };
-
+    
             Table table = Table.getTable(obj.getClass().getComponentType());
             ContentValues[] cvs = new ContentValues[obj.length];
             for (int i = 0; i < cvs.length; i++)
             {
                 cvs[i] = bindObjectToContentValues(table, obj[i], fields);
             }
-
+    
             return cvs;
         }
-
+    
         private static ContentValues bindObjectToContentValues(Table table, Object obj,
                 String... fields) throws Exception {
             ContentValues cv;
-
             if (fields == null || fields.length == 0)
             {
                 Collection<Property> properties = table.getPropertiesWithModifiablePrimaryKey();
-
                 cv = new ContentValues(properties.size());
-
                 for (Property property : properties)
                 {
                     bindContentKeyValue(cv, property.getColumn(), property.getValue(obj));
@@ -650,7 +660,6 @@ public class ProviderTemplate {
             else
             {
                 cv = new ContentValues(fields.length);
-
                 for (String field : fields)
                 {
                     Property property = table.getProperty(field);
@@ -660,10 +669,10 @@ public class ProviderTemplate {
                     }
                 }
             }
-
+    
             return cv;
         }
-
+    
         private static void bindContentKeyValue(ContentValues cv, String key, Object value) {
             if (value == null)
             {
@@ -706,15 +715,6 @@ public class ProviderTemplate {
                 cv.put(key, value.toString());
             }
         }
-    }
-
-    static
-    {
-        LogFactory.addLogFile(ProviderTemplate.class, DAOTemplate.class);
-    }
-
-    private static void LOG_ProviderException(ProviderException e) {
-        log("Provider操作异常", e);
     }
 
     private static class ProviderException extends DAOException {

@@ -9,7 +9,6 @@ import java.lang.reflect.Modifier;
  * 反射对象
  * 
  * @author Daimon
- * @version N
  * @since 10/17/2012
  */
 public class ReflectObject {

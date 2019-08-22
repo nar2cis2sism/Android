@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
  * 控件注入
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 @Target(ElementType.FIELD)

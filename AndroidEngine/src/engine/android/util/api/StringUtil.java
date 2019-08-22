@@ -1,5 +1,7 @@
-package engine.android.util;
+package engine.android.util.api;
 
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -14,7 +16,6 @@ import java.util.Map;
  * 字符串及其编码工具
  * 
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
 public final class StringUtil {
@@ -57,7 +58,7 @@ public final class StringUtil {
     /**
      * 判断某个字符是否双字节（汉字）
      */
-    public static boolean isDoubleByte(CharSequence s, int index) {
+    public static boolean isDoubleByte(String s, int index) {
         int ascii = Character.codePointAt(s, index);
         if (ascii < 0 || ascii > 255)
         {
@@ -292,8 +293,20 @@ public final class StringUtil {
         return sb.toString();
     }
 
+    /**
+     * Null == ""
+     */
     public static boolean equals(String a, String b) {
         return (a == null ? "" : a).equals(b == null ? "" : b);
+    }
+
+    /**
+     * 兼容{@link SpannableStringBuilder#append(CharSequence, Object, int)}
+     */
+    public static void appendSpan(SpannableStringBuilder span, String s, Object what) {
+        int start = span.length();
+        span.append(s);
+        span.setSpan(what, start, span.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
     /**

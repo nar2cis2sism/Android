@@ -4,14 +4,12 @@ import engine.android.util.io.ByteDataUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 
 /**
  * 功能：记录对象属性的修改状态
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class ChangeStatus {
@@ -63,7 +61,7 @@ public class ChangeStatus {
      * 获取修改的属性数组
      */
     public String[] getChangedProperties() {
-        List<String> list = new ArrayList<String>(bitMap.size());
+        ArrayList<String> list = new ArrayList<String>(bitMap.size());
         for (Entry<String, Integer> entry : bitMap.entrySet())
         {
             if (hasBitMask(entry.getValue()))

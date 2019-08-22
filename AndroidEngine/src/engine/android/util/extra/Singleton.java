@@ -4,7 +4,6 @@ package engine.android.util.extra;
  * Singleton helper class for lazily initialization.
  * 
  * @author Daimon
- * @version N
  * @since 10/17/2012
  */
 public abstract class Singleton<T> {

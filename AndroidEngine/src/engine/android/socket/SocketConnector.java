@@ -1,12 +1,12 @@
 package engine.android.socket;
 
+import engine.android.socket.SocketProxy.SocketServlet;
+import engine.android.socket.util.SocketUtil;
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Proxy;
-
-import engine.android.socket.SocketProxy.SocketServlet;
-import engine.android.socket.util.SocketUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +28,6 @@ import java.util.concurrent.locks.ReentrantLock;
  * 需要声明权限<uses-permission android:name="android.permission.INTERNET" />
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class SocketConnector {
@@ -223,11 +222,7 @@ public class SocketConnector {
             socketLock.lock();
             try {
                 closeSocket();
-
-                if (listener != null)
-                {
-                    listener.onClosed();
-                }
+                if (listener != null) listener.onClosed();
             } finally {
                 socketLock.unlock();
             }
@@ -313,19 +308,16 @@ public class SocketConnector {
                 while (isRunning.get())
                 {
                     Object data = getReceiver().parseData(in);
-
                     if (data != null && listener != null)
                     {
                         listener.onReceive(data);
                     }
                 }
             } catch (Exception e) {
-                if (!isRunning.get())
+                if (isRunning.get())
                 {
-                    return;
+                    onError(e);
                 }
-
-                onError(e);
             }
         }
     }
@@ -337,7 +329,6 @@ public class SocketConnector {
                 while (isRunning.get())
                 {
                     SocketData data = take();
-
                     if (data != null)
                     {
                         data.wrapData(out);
@@ -346,12 +337,10 @@ public class SocketConnector {
                     }
                 }
             } catch (Exception e) {
-                if (!isRunning.get())
+                if (isRunning.get())
                 {
-                    return;
+                    onError(e);
                 }
-
-                onError(e);
             }
         }
     }
@@ -456,11 +445,7 @@ public class SocketConnector {
     }
     
     private void onConnected() {
-        if (listener != null)
-        {
-            listener.onConnected(socket);
-        }
-
+        if (listener != null) listener.onConnected(socket);
         // 建立网络收发线程
         isRunning = new AtomicBoolean(true);
         startThread(new Runnable() {

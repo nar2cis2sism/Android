@@ -1,5 +1,7 @@
 package engine.android.util.file;
 
+import engine.android.util.io.IOUtil;
+
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -24,14 +26,11 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import engine.android.util.io.IOUtil;
-
 /**
  * 文件管理器<p>
  * 功能：文件操作
  * 
  * @author Daimon
- * @version N
  * @since 9/26/2012
  */
 public final class FileManager {

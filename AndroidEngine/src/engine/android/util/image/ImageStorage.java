@@ -1,14 +1,13 @@
 package engine.android.util.image;
 
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
-
-import engine.android.core.util.LogFactory.LOG;
 import engine.android.util.file.FileManager;
 import engine.android.util.file.FileUtils;
 import engine.android.util.secure.CryptoUtil;
 import engine.android.util.secure.HexUtil;
+
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,7 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * 图片存储工具（存储于文件目录内）
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class ImageStorage {
@@ -122,7 +120,7 @@ public class ImageStorage {
                 }
             }
         } catch (Exception e) {
-            LOG.log(e);
+            e.printStackTrace();
         }
 
         return false;

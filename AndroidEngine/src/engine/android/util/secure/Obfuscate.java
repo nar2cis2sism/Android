@@ -6,7 +6,6 @@ import java.util.Random;
  * 混淆类
  * 
  * @author Daimon
- * @version N
  * @since 3/21/2012
  */
 public final class Obfuscate {

@@ -1,5 +1,9 @@
 package engine.android.core;
 
+import engine.android.core.util.PresentManager;
+import engine.android.core.util.PresentManager.BasePresenter;
+import engine.android.util.extra.ReflectObject;
+
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
@@ -13,10 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import engine.android.core.util.PresentManager;
-import engine.android.core.util.PresentManager.BasePresenter;
-import engine.android.util.extra.ReflectObject;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +26,6 @@ import java.util.List;
  * 功能：封装一些基础函数
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -43,9 +42,9 @@ public abstract class BaseFragment extends Fragment {
     public BaseFragment() {}
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
         if (activity instanceof Callbacks)
         {
             mCallbacks = (Callbacks) activity;
@@ -114,7 +113,6 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-    
         // Reset the active callback interface.
         mCallbacks = null;
     }
@@ -122,11 +120,7 @@ public abstract class BaseFragment extends Fragment {
     protected void setupActionBar(ActionBar actionBar) {}
 
     public final ActionBar getActionBar() {
-        if (getActivity() != null)
-        {
-            return getActivity().getActionBar();
-        }
-
+        if (getActivity() != null) return getActivity().getActionBar();
         return null;
     }
 

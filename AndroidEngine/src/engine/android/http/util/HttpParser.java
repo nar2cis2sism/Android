@@ -6,7 +6,6 @@ import engine.android.http.HttpResponse;
  * HTTP解析器
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public interface HttpParser {

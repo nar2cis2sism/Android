@@ -11,7 +11,6 @@ import android.view.WindowManager.LayoutParams;
  * 悬浮窗口控制
  *
  * @author Daimon
- * @version N
  * @since 3/26/2012
  */
 public class FloatingWindow {
@@ -36,7 +35,7 @@ public class FloatingWindow {
         Context context = (content = view).getContext();
         
         wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        wl = new WindowManager.LayoutParams();
+        wl = new LayoutParams();
         if (system)
         {
             context = context.getApplicationContext();
@@ -49,7 +48,6 @@ public class FloatingWindow {
         
         wl.flags = LayoutParams.FLAG_NOT_FOCUSABLE;
         wl.format = PixelFormat.TRANSLUCENT;
-        
         // 以屏幕左上角为原点，设置x、y初始值
         wl.gravity = Gravity.LEFT | Gravity.TOP;
         wl.x = 0;
@@ -68,6 +66,15 @@ public class FloatingWindow {
     
     public void setType(int type) {
         wl.type = type;
+    }
+    
+    public void setFullScreenMode() {
+        wl.flags |= LayoutParams.FLAG_FULLSCREEN;
+    }
+    
+    public void setDimMode(float dimAmount) {
+        wl.flags |= LayoutParams.FLAG_DIM_BEHIND;
+        wl.dimAmount = dimAmount;
     }
     
     public void setPosition(int gravity, int x, int y) {

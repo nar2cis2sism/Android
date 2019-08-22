@@ -1,10 +1,14 @@
 package engine.android.dao.util;
 
-import android.content.Context;
-
 import engine.android.dao.DAOTemplate;
 import engine.android.dao.DAOTemplate.DAOListener;
 
+import android.content.Context;
+
+/**
+ * @author Daimon
+ * @since 6/6/2014
+ */
 public abstract class JavaBeanLoader<D> extends engine.android.core.extra.JavaBeanLoader<D> {
 
     protected final DAOTemplate dao;

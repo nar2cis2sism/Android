@@ -6,7 +6,6 @@ package engine.android.util.secure;
  * 因为其无须授权即可使用，作为一种自由授权的加密方式在SSH、文件加密软件等被广泛地使用。
  * 
  * @author Daimon
- * @version N
  * @since 3/22/2012
  */
 public final class Blowfish {

@@ -4,9 +4,8 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
+import android.os.Build.VERSION;
 import android.view.OrientationEventListener;
-
-import engine.android.util.AndroidUtil;
 
 /**
  * 屏幕方向感应监听器
@@ -15,6 +14,7 @@ import engine.android.util.AndroidUtil;
  * @version N
  * @since 3/1/2013
  */
+@SuppressWarnings("deprecation")
 public abstract class MyOrientationEventListener extends OrientationEventListener {
 
     public static enum ScreenOrientation {
@@ -31,9 +31,9 @@ public abstract class MyOrientationEventListener extends OrientationEventListene
                     return SCREEN_ORIENTATION_UNSPECIFIED;
                 case ActivityInfo.SCREEN_ORIENTATION_PORTRAIT:
                     return SCREEN_ORIENTATION_PORTRAIT;
-                case 8/* ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE */:
+                case ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE:
                     return SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
-                case 9/* ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT */:
+                case ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT:
                     return SCREEN_ORIENTATION_REVERSE_PORTRAIT;
                 case ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE:
                     return SCREEN_ORIENTATION_LANDSCAPE;
@@ -60,7 +60,7 @@ public abstract class MyOrientationEventListener extends OrientationEventListene
     }
 
     private void init() {
-        if (AndroidUtil.getVersion() >= 9 && Camera.getNumberOfCameras() > 0)
+        if (VERSION.SDK_INT >= 9 && Camera.getNumberOfCameras() > 0)
         {
             final CameraInfo cameraInfo = new CameraInfo();
             Camera.getCameraInfo(0, cameraInfo);
@@ -95,7 +95,6 @@ public abstract class MyOrientationEventListener extends OrientationEventListene
             if (orientationCompensation != null)
             {
                 orientation = orientationCompensation.compensateOrientation(orientation);
-
                 // normalize to 0 - 359 range
                 while (orientation >= 360)
                 {

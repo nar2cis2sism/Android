@@ -6,7 +6,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 同步锁
  * 
  * @author Daimon
- * @version N
  * @since 5/14/2012
  */
 public class SyncLock {

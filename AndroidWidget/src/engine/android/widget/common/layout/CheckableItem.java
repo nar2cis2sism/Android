@@ -1,18 +1,17 @@
 package engine.android.widget.common.layout;
 
+import engine.android.widget.R;
+
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.Checkable;
 import android.widget.FrameLayout;
 
-import engine.android.widget.R;
-
 /**
  * 可多选的控件
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class CheckableItem extends FrameLayout implements Checkable {
@@ -32,6 +31,7 @@ public class CheckableItem extends FrameLayout implements Checkable {
         super(context, attrs);
     }
     
+    @SuppressWarnings("deprecation")
     @Override
     public void setBackgroundDrawable(Drawable background) {
         super.setBackgroundDrawable(background);
@@ -67,7 +67,7 @@ public class CheckableItem extends FrameLayout implements Checkable {
     
     @Override
     protected int[] onCreateDrawableState(int extraSpace) {
-        final int[] drawableState = super.onCreateDrawableState(extraSpace + 1);
+        int[] drawableState = super.onCreateDrawableState(extraSpace + 1);
         if (isChecked()) mergeDrawableStates(drawableState, CHECKED_STATE_SET);
         return drawableState;
     }

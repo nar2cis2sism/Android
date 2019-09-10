@@ -4,7 +4,6 @@ package engine.android.widget.common.wheel;
  * Wheel scrolled listener interface.
  * 
  * @author Daimon
- * @version N
  * @since 8/21/2012
  */
 public interface OnWheelScrollListener {

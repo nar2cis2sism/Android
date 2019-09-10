@@ -4,7 +4,6 @@ package engine.android.widget.common.wheel;
  * Wheel changed listener interface.
  * 
  * @author Daimon
- * @version N
  * @since 8/21/2012
  */
 public interface OnWheelChangedListener {

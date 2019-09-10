@@ -1,5 +1,7 @@
 package engine.android.widget.common.layout;
 
+import engine.android.widget.R;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -7,13 +9,10 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 
-import engine.android.widget.R;
-
 /**
  * 流式布局
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class FlowLayout extends ViewGroup {
@@ -36,15 +35,11 @@ public class FlowLayout extends ViewGroup {
 
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout);
         
-        numColumns = a.getInteger(R.styleable.FlowLayout_numColumns, 1);
-        horizontalSpacing = a.getDimensionPixelSize(R.styleable.FlowLayout_horizontalSpacing, 0);
-        verticalSpacing = a.getDimensionPixelSize(R.styleable.FlowLayout_verticalSpacing, 0);
-
-        int index = a.getInt(R.styleable.FlowLayout_android_gravity, -1);
-        if (index >= 0)
-        {
-            setGravity(index);
-        }
+        numColumns = a.getInteger(R.styleable.FlowLayout_android_numColumns, 1);
+        horizontalSpacing = a.getDimensionPixelSize(R.styleable.FlowLayout_android_horizontalSpacing, 0);
+        verticalSpacing = a.getDimensionPixelSize(R.styleable.FlowLayout_android_verticalSpacing, 0);
+        int index = a.getInt(R.styleable.FlowLayout_android_gravity, 0);
+        if (index > 0) setGravity(index);
         
         a.recycle();
     }
@@ -95,7 +90,6 @@ public class FlowLayout extends ViewGroup {
         
         widthMeasureSpec = MeasureSpec.makeMeasureSpec(itemWidth, widthMode);
         heightMeasureSpec = MeasureSpec.makeMeasureSpec(itemHeight, heightMode);
-
         measureChildren(widthMeasureSpec, heightMeasureSpec);
         
         int width = widthSize;

@@ -16,7 +16,6 @@ import java.util.Observer;
  * 图片缩放控件
  * 
  * @author Daimon
- * @version N
  * @since 12/15/2013
  */
 public class ZoomImageView extends View implements Observer {
@@ -71,7 +70,8 @@ public class ZoomImageView extends View implements Observer {
     private void calculateAspectQuotient() {
         if (image != null)
         {
-            aspect_quotient = ((float) image.getWidth() / image.getHeight()) / ((float) getWidth() / getHeight());
+            aspect_quotient = ((float) image.getWidth() / image.getHeight())
+                            / ((float) getWidth() / getHeight());
         }
     }
 
@@ -154,10 +154,12 @@ public class ZoomImageView extends View implements Observer {
         invalidate();
     }
 
+    /**
+     * Daimon:多点触控
+     */
     private class OnTouchEvent {
 
         private float lastMotionX;
-
         private float lastMotionY;
 
         private float gap;
@@ -184,8 +186,6 @@ public class ZoomImageView extends View implements Observer {
                         state.notifyDataChanged();
                         lastMotionX = x;
                         lastMotionY = y;
-                        break;
-                    case MotionEvent.ACTION_UP:
                         break;
                 }
             }
@@ -234,12 +234,12 @@ public class ZoomImageView extends View implements Observer {
      * 
      * Daimon:Observable
      */
-    public static final class ZoomState extends Observable {
+    public static class ZoomState extends Observable {
 
         private float zoom;                     // 缩放比例(A value of 1.0 means the content fits the view)
 
-        private float panX, panY;               // 缩放窗口中心位置坐标(relative to the content)
-        
+        private float panX,panY;                // 缩放窗口中心位置坐标(relative to the content)
+
         float maxZoom,minZoom;                  // 缩放范围控制
 
         ZoomState() {
@@ -264,7 +264,7 @@ public class ZoomImageView extends View implements Observer {
                 setChanged();
             }
         }
-        
+
         public void setZoomRange(float maxZoom, float minZoom) {
             this.maxZoom = maxZoom;
             this.minZoom = minZoom;

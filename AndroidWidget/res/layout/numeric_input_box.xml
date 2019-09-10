@@ -12,9 +12,9 @@
         android:layout_height="24dp"
         android:background="#EEEEEE"
         android:gravity="center"
+        android:maxLength="3"
         android:includeFontPadding="false"
         android:inputType="number"
-        android:maxLength="3"
         android:text="1" />
 
     <ImageView

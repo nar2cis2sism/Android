@@ -1,4 +1,6 @@
-package engine.android.widget.common.list;
+﻿package engine.android.widget.common.list;
+
+import engine.android.widget.R;
 
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
@@ -7,28 +9,30 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.animation.RotateAnimation;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import engine.android.widget.R;
-
 /**
- * 下拉刷新列表
+ * 下拉刷新&上拉加载列表
  * 
  * @author Daimon
- * @version N
  * @since 7/30/2012
  */
-public class RefreshListView extends ListView {
+public class RefreshListView extends ListView implements OnScrollListener {
 
     private static final int NONE = 0;
     private static final int PULL_TO_REFRESH = 1;
     private static final int RELEASE_TO_REFRESH = 2;
     private static final int REFRESHING = 3;
+    
     private int refreshState = -1;
+    private boolean isLoading;
 
     private RotateAnimation pullAnim;
     private RotateAnimation releaseAnim;
@@ -38,18 +42,23 @@ public class RefreshListView extends ListView {
     private ProgressBar refreshProgress;
     private TextView refreshText;
 
+    private FrameLayout loadLayout;
+    private TextView loadText;
+
     private int refreshLayout_originalTopPadding;
     private int refreshLayout_height;
     private ValueAnimator refreshLayout_anim;
     private int touchY;
     
     private OnRefreshListener refreshListener;
+    private OnLoadListener loadListener;
+    private OnScrollListener scrollListener;
     
     private boolean isRefreshable;
+    private boolean isLoadable;
     
     public RefreshListView(Context context) {
-        super(context);
-        init(context);
+        this(context, null);
     }
 
     public RefreshListView(Context context, AttributeSet attrs) {
@@ -75,13 +84,23 @@ public class RefreshListView extends ListView {
         refreshProgress = (ProgressBar) refreshLayout.findViewById(R.id.progress);
         refreshText = (TextView) refreshLayout.findViewById(R.id.text);
         
+        loadLayout = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.refresh_footer, this, false);
+        loadText = (TextView) loadLayout.findViewById(R.id.text);
+        
         refreshLayout_originalTopPadding = refreshLayout.getPaddingTop();
         refreshLayout.measure(0, 0);
         refreshLayout_height = refreshLayout.getMeasuredHeight();
         
-        addHeaderView(refreshLayout);
+        addHeaderView(refreshLayout, null, false);
+        addFooterView(loadLayout);
         
         resetHeader(false);
+        super.setOnScrollListener(this);
+    }
+
+    @Override
+    public void setOnScrollListener(OnScrollListener l) {
+        scrollListener = l;
     }
     
     public void setRefreshEnabled(boolean enabled) {
@@ -97,6 +116,40 @@ public class RefreshListView extends ListView {
         isRefreshable = (this.refreshListener = refreshListener) != null;
     }
     
+    public void setLoadable(boolean enabled) {
+        if (isLoadable = enabled)
+        {
+            loadText.setText(R.string.refresh_load);
+            loadText.setVisibility(VISIBLE);
+        }
+        else
+        {
+            if (isLoading)
+            {
+                loadText.setText(R.string.refresh_no_more_data);
+            }
+            else
+            {
+                loadText.setVisibility(GONE);
+            }
+        }
+
+        onLoad(false);
+    }
+
+    public boolean isLoading() {
+        return isLoading;
+    }
+
+    /**
+     * Register a callback to be invoked when this list should be loaded.
+     *
+     * @param loadListener The callback to run.
+     */
+    public void setOnLoadListener(OnLoadListener loadListener) {
+        this.loadListener = loadListener;
+    }
+
     /**
      * Start/Stop to refresh for external call.
      */
@@ -159,6 +212,7 @@ public class RefreshListView extends ListView {
                 case MotionEvent.ACTION_CANCEL:
                     if (refreshState == RELEASE_TO_REFRESH)
                     {
+                        onLoad(false);
                         // Initiate the refresh
                         prepareForRefresh();
                     }
@@ -238,10 +292,9 @@ public class RefreshListView extends ListView {
             for (int p = 0; p < pointerCount; p++)
             {
                 int historicalY = (int) ev.getHistoricalY(p, h);
-                
                 // Calculate the padding to apply, we divide by 1.7 to
                 // simulate a more resistant effect during pull.
-                int topPadding = (int) ((historicalY - touchY) / 1.7);
+                int topPadding = (int) ((historicalY - touchY) / 1.7f);
                 setHeaderPadding(refreshLayout_originalTopPadding - 
                         refreshLayout_height + topPadding);
             }
@@ -271,6 +324,28 @@ public class RefreshListView extends ListView {
         refreshProgress.setVisibility(GONE);
     }
     
+    private void onLoad(boolean loading) {
+        if (isLoading = loading)
+        {
+            loadText.setText(R.string.refresh_loading);
+            if (loadListener != null) loadListener.onLoad();
+        }
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if (scrollListener != null) scrollListener.onScrollStateChanged(view, scrollState);
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        if (scrollListener != null) scrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+        if (isLoadable && !isLoading && firstVisibleItem + visibleItemCount >= totalItemCount)
+        {
+            onLoad(true);
+        }
+    }
+
     /**
      * Interface definition for a callback to be invoked 
      * when list should be refreshed.
@@ -281,5 +356,17 @@ public class RefreshListView extends ListView {
          * Called when the list should be refreshed in UI thread
          */
         void onRefresh();
+    }
+
+    /**
+     * Interface definition for a callback to be invoked
+     * when list should be loaded.
+     */
+    public interface OnLoadListener {
+
+        /**
+         * Called when the list should be loaded in UI thread
+         */
+        void onLoad();
     }
 }

@@ -1,4 +1,6 @@
-package engine.android.widget.component;
+﻿package engine.android.widget.component.input;
+
+import engine.android.widget.R;
 
 import android.content.Context;
 import android.text.Editable;
@@ -11,29 +13,26 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import engine.android.widget.R;
-
 /**
- * 数字输入框
+ * 数字加减输入框
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class NumericInputBox extends LinearLayout implements OnClickListener, TextWatcher {
     
-    private static final int MIN_NUMBER = 1;
-    private static final int MAX_NUMBER = 99;
+    public ImageView decrement;
+    public EditText input;
+    public ImageView increment;
     
-    private ImageView decrement;
-    private EditText input;
-    private ImageView increment;
-    
+    private int minNumber = 1;
+    private int maxNumber = 99;
     private int number;
     
+    private OnChangeListener listener;
+    
     public NumericInputBox(Context context) {
-        super(context);
-        init(context);
+        this(context, null);
     }
 
     public NumericInputBox(Context context, AttributeSet attrs) {
@@ -52,11 +51,17 @@ public class NumericInputBox extends LinearLayout implements OnClickListener, Te
         input.addTextChangedListener(this);
         increment.setOnClickListener(this);
         
-        setNumber(MIN_NUMBER);
+        setNumber(number);
     }
-    
-    public EditText input() {
-        return input;
+
+    public void setRange(int minNumber, int maxNumber) {
+        this.minNumber = minNumber;
+        this.maxNumber = maxNumber;
+        setNumber(number);
+    }
+
+    public void setListener(OnChangeListener listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -80,29 +85,44 @@ public class NumericInputBox extends LinearLayout implements OnClickListener, Te
     @Override
     public void afterTextChanged(Editable s) {
         try {
-            setNumber(number = Integer.parseInt(s.toString()));
+            setNumber(Integer.parseInt(s.toString()));
         } catch (NumberFormatException e) {
-            setNumber(MIN_NUMBER);
+            setNumber(minNumber);
         }
     }
     
     private void setNumber(int num) {
-        if (num > MAX_NUMBER)
+        if (num > maxNumber)
         {
-            num = MAX_NUMBER;
+            num = maxNumber;
         }
-        else if (num < MIN_NUMBER)
+        else if (num < minNumber)
         {
-            num = MIN_NUMBER;
+            num = minNumber;
         }
         
         if (num != number)
         {
-            input.setText(String.valueOf(number = num));
+            boolean change = true;
+            if (listener != null)
+            {
+                change = listener.onChanged(number, num);
+            }
+
+            if (change) number = num;
+            input.setTextKeepState(String.valueOf(number));
         }
     }
     
     public int getNumber() {
         return number;
+    }
+
+    public interface OnChangeListener {
+
+        /**
+         * @return 是否允许改变
+         */
+        boolean onChanged(int before, int after);
     }
 }

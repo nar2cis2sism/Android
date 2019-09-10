@@ -1,5 +1,7 @@
 package engine.android.widget.component;
 
+import engine.android.widget.R;
+
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -11,14 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import engine.android.widget.R;
-
 /**
  * 标题栏<br>
  * PS:使用布局title_bar解析
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class TitleBar extends RelativeLayout {

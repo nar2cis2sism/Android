@@ -1,5 +1,7 @@
 package engine.android.widget.extra;
 
+import engine.android.core.extra.FragmentPagerAdapter;
+
 import android.app.Fragment;
 import android.app.Fragment.InstantiationException;
 import android.app.FragmentManager;
@@ -10,13 +12,10 @@ import android.view.MotionEvent;
 
 import java.util.ArrayList;
 
-import engine.android.core.extra.FragmentPagerAdapter;
-
 /**
  * 自定义可滑动控制
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class ViewPager extends android.support.v4.view.ViewPager {
@@ -48,19 +47,6 @@ public class ViewPager extends android.support.v4.view.ViewPager {
     }
     
     public static class ViewPagerAdapter extends FragmentPagerAdapter {
-        
-        private class PageInfo {
-            
-            public final String tag;
-            public final Class<? extends Fragment> c;
-            public final Bundle args;
-            
-            public PageInfo(String tag, Class<? extends Fragment> c, Bundle args) {
-                this.tag = tag;
-                this.c = c;
-                this.args = args;
-            }
-        }
         
         private final ArrayList<PageInfo> pages;
 
@@ -106,6 +92,19 @@ public class ViewPager extends android.support.v4.view.ViewPager {
                 throw new InstantiationException("Unable to instantiate fragment " + clazz.getName()
                         + ": make sure class name exists, is public, and has an"
                         + " empty constructor that is public", e);
+            }
+        }
+
+        private class PageInfo {
+            
+            public final String tag;
+            public final Class<? extends Fragment> c;
+            public final Bundle args;
+            
+            public PageInfo(String tag, Class<? extends Fragment> c, Bundle args) {
+                this.tag = tag;
+                this.c = c;
+                this.args = args;
             }
         }
     }

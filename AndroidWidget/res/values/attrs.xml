@@ -4,31 +4,31 @@
     <declare-styleable name="PageIndicator">
         
         <!-- 指示器个数 -->
-        <attr name="count" format="integer" />
+        <attr name="Page_count" format="integer" />
         <!-- 指示器布局 -->
-        <attr name="layout" format="reference" />
+        <attr name="android:layout" />
         
     </declare-styleable>
     
     <declare-styleable name="LetterBar">
         
         <!-- A drawable to use as the background. -->
-        <attr name="background" format="reference|color" />
+        <attr name="android:background" />
         <!-- Size of the Letter. -->
-        <attr name="textSize" format="dimension" />
+        <attr name="android:textSize" />
         <!-- Letter color. -->
-        <attr name="textColor" format="reference|color" />
+        <attr name="android:textColor" />
         <!-- Color of the letter selection highlight. -->
-        <attr name="textColorHighlight" format="reference|color" />
+        <attr name="android:textColorHighlight" />
         
     </declare-styleable>
     <attr name="LetterBar" format="reference" />
     
     <declare-styleable name="FlowLayout">
         
-        <attr name="numColumns" format="integer" />
-        <attr name="horizontalSpacing" format="dimension" />
-        <attr name="verticalSpacing" format="dimension" />
+        <attr name="android:numColumns" />
+        <attr name="android:horizontalSpacing" />
+        <attr name="android:verticalSpacing" />
         <attr name="android:gravity" />
         
     </declare-styleable>
@@ -38,13 +38,13 @@
         <attr name="android:textSize" />
         <attr name="android:textColor" />
         <!-- 柱状图的宽度 -->
-        <attr name="chartWidth" format="dimension" />
+        <attr name="Histogram_width" format="dimension" />
         <!-- 柱状图的颜色 -->
-        <attr name="chartColor" format="reference|color" />
+        <attr name="Histogram_color" format="reference|color" />
         <!-- 是否显示数值 -->
-        <attr name="showSize" format="boolean" />
+        <attr name="Histogram_showSize" format="boolean" />
         <!-- 显示模式 -->
-        <attr name="mode">
+        <attr name="Histogram_mode">
             <flag name="none" value="0" />
             <!-- 数值越低，颜色越偏向红色 -->
             <flag name="lowerSize" value="1" />
@@ -58,11 +58,11 @@
     <declare-styleable name="MyGallery">
         
         <!-- 最大旋转角度 -->
-        <attr name="maxDegree" format="integer" />
+        <attr name="Gallery_maxDegree" format="integer" />
         <!-- 最大缩放角度 -->
-        <attr name="maxZoom" format="integer" />
+        <attr name="Gallery_maxZoom" format="integer" />
         <!-- 样式 -->
-        <attr name="style">
+        <attr name="Gallery_style">
             <flag name="none" value="0" />
             <!-- 旋转开关 -->
             <flag name="rotate" value="1" />
@@ -71,6 +71,13 @@
             <!-- 透明开关 -->
             <flag name="alpha" value="4" />
         </attr>
+        
+    </declare-styleable>
+    
+    <declare-styleable name="MaxSizeLayout">
+        
+        <attr name="android:maxWidth" />
+        <attr name="android:maxHeight" />
         
     </declare-styleable>
     

@@ -9,7 +9,6 @@ import android.view.View;
  * 自定义View模板
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class CustomView extends View {
@@ -24,20 +23,15 @@ public class CustomView extends View {
         init(context);
     }
 
-    public CustomView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context);
-    }
-    
     protected void init(Context context) {}
-    
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = getDesiredSize(getSuggestedMinimumWidth(), widthMeasureSpec);
         int height = getDesiredSize(getSuggestedMinimumHeight(), heightMeasureSpec);
         setMeasuredDimension(width, height);
     }
-    
+
     /**
      * @see {@link #getDefaultSize(int, int)}
      */
@@ -54,12 +48,12 @@ public class CustomView extends View {
                 result = specSize;
                 break;
         }
-        
+
         return result;
     }
-    
+
     public static abstract class TouchEventDelegate implements OnTouchListener {
-        
+
         protected int lastMotionX;
         protected int lastMotionY;
 
@@ -73,7 +67,7 @@ public class CustomView extends View {
 
             int x = (int) event.getX();
             int y = (int) event.getY();
-            
+
             switch (action) {
                 case MotionEvent.ACTION_DOWN:
                     return handleActionDown(event, lastMotionX = x, lastMotionY = y);
@@ -86,7 +80,7 @@ public class CustomView extends View {
                     handleActionUp(event, x, y);
                     break;
             }
-            
+
             return true;
         }
 

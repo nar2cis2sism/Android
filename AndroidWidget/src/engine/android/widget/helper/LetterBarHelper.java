@@ -1,9 +1,9 @@
 package engine.android.widget.helper;
 
-import android.widget.ListView;
+import engine.android.widget.common.text.LetterBar;
+import engine.android.widget.common.text.LetterBar.OnLetterChangedListener;
 
-import engine.android.widget.common.LetterBar;
-import engine.android.widget.common.LetterBar.OnLetterChangedListener;
+import android.widget.ListView;
 
 import java.util.HashMap;
 
@@ -11,14 +11,13 @@ import java.util.HashMap;
  * 字母搜索控件辅助类
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class LetterBarHelper implements OnLetterChangedListener {
 
     // 字母索引表
-    private final HashMap<String, Integer> letterMap;
     private final LetterBar letterBar;
+    private final HashMap<String, Integer> letterMap;
     private ListView listView;
     
     public LetterBarHelper(LetterBar letterBar) {

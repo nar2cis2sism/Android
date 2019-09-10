@@ -1,10 +1,10 @@
 <resources>
 
     <style name="LetterBar">
-        <item name="background">#40222222</item>
-        <item name="textSize">12sp</item>
-        <item name="textColor">#666666</item>
-        <item name="textColorHighlight">#3399ff</item>
+        <item name="android:background">#40222222</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#666666</item>
+        <item name="android:textColorHighlight">#3399ff</item>
     </style>
 
     <style name="choose_button_item">

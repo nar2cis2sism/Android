@@ -1,5 +1,8 @@
-package engine.android.widget.common;
+package engine.android.widget.common.button;
 
+import engine.android.widget.R;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -17,14 +20,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.Checkable;
 import android.widget.ToggleButton;
 
-import engine.android.widget.R;
-
 /**
  * Displays checked/unchecked states as a switcher.
  * 
  * @author Daimon
- * @version N
  * @since 4/15/2013
+ * 
  * @see {@link ToggleButton}
  */
 public class ToggleSwitcher extends View implements Checkable {
@@ -56,18 +57,18 @@ public class ToggleSwitcher extends View implements Checkable {
     
     private boolean mChecked;
     private boolean mBroadcasting;
+
     private OnSwitchChangeListener mOnSwitchChangeListener;
 
     public ToggleSwitcher(Context context) {
-        super(context);
-        init(context);
+        this(context, null);
     }
-    
+
     public ToggleSwitcher(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
-    
+
     private void init(Context context) {
         Resources res = context.getResources();
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -79,7 +80,7 @@ public class ToggleSwitcher extends View implements Checkable {
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mClickTimeout = ViewConfiguration.getPressedStateDuration() + ViewConfiguration.getTapTimeout();
     }
-    
+
     @Override
     public void setEnabled(boolean enabled) {
         mAlpha = enabled ? NO_ALPHA : NO_ALPHA / 2;
@@ -93,19 +94,18 @@ public class ToggleSwitcher extends View implements Checkable {
             mChecked = checked;
             refreshDrawableState();
             invalidate();
-            
             // Avoid infinite recursions if setChecked() is called from a listener
             if (mBroadcasting)
             {
                 return;
             }
-            
+
             mBroadcasting = true;
             if (mOnSwitchChangeListener != null)
             {
                 mOnSwitchChangeListener.onSwitchChanged(this, mChecked);
             }
-            
+
             mBroadcasting = false;
         }
     }
@@ -129,10 +129,10 @@ public class ToggleSwitcher extends View implements Checkable {
         int width = mMask.getWidth();
         int height = mMask.getHeight();
         setMeasuredDimension(width, height);
-        
+
         int thumbWidth = mThumbNormal.getWidth();
         int thumbHeight = mThumbNormal.getHeight();
-        
+
         width -= getPaddingLeft() + getPaddingRight();
         int dx = width - thumbWidth;
         if (dx > 0)
@@ -150,11 +150,12 @@ public class ToggleSwitcher extends View implements Checkable {
             mThumbLeft = width - thumbWidth;
             mThumbRight = mThumbLeft + thumbWidth;
         }
-        
+
         height -= getPaddingTop() + getPaddingBottom();
         mTop = (height - thumbHeight) / 2 + getPaddingTop();
     }
-    
+
+    @SuppressLint("WrongCall")
     @Override
     public void draw(Canvas canvas) {
         int saveCount = canvas.saveLayerAlpha(null, mAlpha, Canvas.ALL_SAVE_FLAG);
@@ -168,39 +169,40 @@ public class ToggleSwitcher extends View implements Checkable {
         {
             return;
         }
-        
+
         if (mAnimationStartTime != ANIMATION_NONE)
         {
             long animTime = AnimationUtils.currentAnimationTimeMillis() - mAnimationStartTime;
-            mPosition = (int) (mAnimationStartPosition + ANIMATION_SPEED * (mChecked ? -animTime : animTime) / 1000);
+            mPosition = (int) (mAnimationStartPosition + ANIMATION_SPEED
+                      * (mChecked ? -animTime : animTime) / 1000);
             if (mPosition < mPositionLeft)
             {
                 mPosition = mPositionLeft;
             }
-            
+
             if (mPosition > mPositionRight)
             {
                 mPosition = mPositionRight;
             }
-            
+
             boolean finish = mPosition == (mChecked ? mPositionLeft : mPositionRight);
-            if (!finish)
+            if (finish)
             {
-                invalidate();
+                mAnimationStartTime = ANIMATION_NONE;
             }
             else
             {
-                mAnimationStartTime = ANIMATION_NONE;
+                invalidate();
             }
         }
         else if (!isPressed())
         {
             mPosition = mChecked ? mPositionLeft : mPositionRight;
         }
-        
+
         _draw(canvas);
     }
-    
+
     private void _draw(Canvas canvas) {
         int left = getPaddingLeft() + mPosition;
         // 绘制蒙板
@@ -214,14 +216,14 @@ public class ToggleSwitcher extends View implements Checkable {
         // 绘制滑块
         canvas.drawBitmap(isPressed() ? mThumbPressed : mThumbNormal, left, mTop, mPaint);
     }
-    
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (!isEnabled())
         {
             return false;
         }
-        
+
         if (mAnimationStartTime == ANIMATION_NONE)
         {
             int x = (int) event.getX();
@@ -233,7 +235,7 @@ public class ToggleSwitcher extends View implements Checkable {
                         mLastMotionX = x;
                         setPressed(true);
                     }
-                
+
                     break;
                 case MotionEvent.ACTION_MOVE:
                     if (isPressed())
@@ -243,12 +245,12 @@ public class ToggleSwitcher extends View implements Checkable {
                         {
                             position = mPositionLeft;
                         }
-                        
+
                         if (position > mPositionRight)
                         {
                             position = mPositionRight;
                         }
-                        
+
                         if (mPosition != position)
                         {
                             mPosition = position;
@@ -256,10 +258,11 @@ public class ToggleSwitcher extends View implements Checkable {
                             invalidate();
                         }
                     }
-                    
+
                     break;
                 case MotionEvent.ACTION_UP:
-                    if (Math.abs(x - mDownX) < mTouchSlop && event.getEventTime() - event.getDownTime() < mClickTimeout)
+                    if (Math.abs(x - mDownX) < mTouchSlop
+                    &&  event.getEventTime() - event.getDownTime() < mClickTimeout)
                     {
                         performClick();
                         setPressed(false);
@@ -275,16 +278,16 @@ public class ToggleSwitcher extends View implements Checkable {
                     break;
             }
         }
-        
+
         return true;
     }
-    
+
     @Override
     public void setPressed(boolean pressed) {
         super.setPressed(pressed);
         invalidate();
     }
-    
+
     private void snapToSwitch(boolean switchOn) {
         setChecked(switchOn);
         startParkingAnimation();
@@ -294,7 +297,7 @@ public class ToggleSwitcher extends View implements Checkable {
         mAnimationStartTime = AnimationUtils.currentAnimationTimeMillis();
         mAnimationStartPosition = mPosition;
     }
-    
+
     @Override
     public boolean performClick() {
         /* When clicked, toggle the state */
@@ -308,7 +311,7 @@ public class ToggleSwitcher extends View implements Checkable {
      * of a ToggleSwitcher changed.
      */
     public interface OnSwitchChangeListener {
-        
+
         /**
          * Called when the checked state of a ToggleSwitcher has changed.
          * 

@@ -1,5 +1,9 @@
 package engine.android.widget.common.layout;
 
+import engine.android.util.ui.ButtonGroup;
+import engine.android.util.ui.ButtonGroup.OnCheckedChangeListener;
+import engine.android.widget.R;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -7,15 +11,10 @@ import android.view.LayoutInflater;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 
-import engine.android.util.ui.ButtonGroup;
-import engine.android.util.ui.ButtonGroup.OnCheckedChangeListener;
-import engine.android.widget.R;
-
 /**
  * 页面指示器
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class PageIndicator extends LinearLayout {
@@ -29,18 +28,18 @@ public class PageIndicator extends LinearLayout {
     public PageIndicator(Context context) {
         this(context, null);
     }
-    
+
     public PageIndicator(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
 
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PageIndicator);
 
-        int count = a.getInteger(R.styleable.PageIndicator_count, 0);
-        layoutRes = a.getResourceId(R.styleable.PageIndicator_layout, R.layout.page_indicator_item);
-        
+        int count = a.getInteger(R.styleable.PageIndicator_Page_count, 0);
+        layoutRes = a.getResourceId(R.styleable.PageIndicator_android_layout, R.layout.page_indicator_item);
+
         a.recycle();
-        
+
         if (count > 0)
         {
             for (int i = 0; i < count; i++)
@@ -51,7 +50,7 @@ public class PageIndicator extends LinearLayout {
             }
         }
     }
-    
+
     private void init(Context context) {
         inflater = LayoutInflater.from(context);
         group = new ButtonGroup();
@@ -63,13 +62,13 @@ public class PageIndicator extends LinearLayout {
         {
             return;
         }
-        
+
         if (childCount != 0)
         {
             removeAllViews();
             group = new ButtonGroup();
         }
-        
+
         for (int i = 0; i < count; i++)
         {
             CompoundButton indicator = (CompoundButton) inflater.inflate(layoutRes, this, false);
@@ -77,7 +76,7 @@ public class PageIndicator extends LinearLayout {
             group.add(indicator);
         }
     }
-    
+
     public void check(int index) {
         group.check(index);
     }

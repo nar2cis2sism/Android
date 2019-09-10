@@ -1,5 +1,7 @@
 package engine.android.widget.common.chart;
 
+import engine.android.widget.R;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -9,13 +11,10 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
-import engine.android.widget.R;
-
 /**
  * 柱状图
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class HistogramChartView extends View {
@@ -38,6 +37,8 @@ public class HistogramChartView extends View {
     private int centerX;
     private int startY;
     private int endY;
+    
+    public int verticalSpace = 5;           // 柱状图与文本的垂直间距
 
     public HistogramChartView(Context context) {
         this(context, null);
@@ -59,10 +60,10 @@ public class HistogramChartView extends View {
         
         int textSize = a.getDimensionPixelSize(R.styleable.HistogramChartView_android_textSize, 18);
         int textColor = a.getColor(R.styleable.HistogramChartView_android_textColor, 0);
-        chartWidth = a.getDimensionPixelSize(R.styleable.HistogramChartView_chartWidth, 30);
-        chartColor = a.getColor(R.styleable.HistogramChartView_chartColor, -1);
-        showSize = a.getBoolean(R.styleable.HistogramChartView_showSize, true);
-        int mode = a.getInt(R.styleable.HistogramChartView_mode, 0);
+        chartWidth = a.getDimensionPixelSize(R.styleable.HistogramChartView_Histogram_width, 30);
+        chartColor = a.getColor(R.styleable.HistogramChartView_Histogram_color, -1);
+        showSize = a.getBoolean(R.styleable.HistogramChartView_Histogram_showSize, true);
+        int mode = a.getInt(R.styleable.HistogramChartView_Histogram_mode, 0);
         lowerSizeMode = (mode & 1) != 0;
         animationMode = (mode & 2) != 0;
         
@@ -82,7 +83,7 @@ public class HistogramChartView extends View {
         setMeasuredDimension(width, height);
         
         centerX = width / 2;
-        endY = height - (int) textPaint.getTextSize() - 5;
+        endY = height - (int) textPaint.getTextSize() - verticalSpace;
         setSize(size);
     }
     
@@ -101,7 +102,6 @@ public class HistogramChartView extends View {
                     textPaint.measureText(String.valueOf(maxSize)), 
                     textPaint.measureText(unit)));
             width = Math.max(chartWidth, maxWidth);
-            
             // Check against our minimum width
             width = Math.max(width, getSuggestedMinimumWidth());
             
@@ -119,7 +119,7 @@ public class HistogramChartView extends View {
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
     
         int height;
-        int maxHeight = (int) Math.ceil(textPaint.getTextSize() * 2);
+        int delta = (int) Math.ceil((textPaint.getTextSize() + verticalSpace) * 2);
         boolean recalculate = false;
         if (heightMode == MeasureSpec.EXACTLY)
         {
@@ -128,8 +128,7 @@ public class HistogramChartView extends View {
         }
         else
         {
-            height = chartHeight + maxHeight + 10;
-            
+            height = chartHeight + delta;
             if (height < getSuggestedMinimumHeight())
             {
                 height = getSuggestedMinimumHeight();
@@ -145,7 +144,7 @@ public class HistogramChartView extends View {
         
         if (recalculate)
         {
-            chartHeight = height - maxHeight - 10;
+            chartHeight = height - delta;
         }
         
         return height;
@@ -160,7 +159,7 @@ public class HistogramChartView extends View {
         
         if (showSize)
         {
-            canvas.drawText(String.valueOf(size), centerX, startY - 5, textPaint);
+            canvas.drawText(String.valueOf(size), centerX, startY - verticalSpace, textPaint);
         }
         
         canvas.drawText(unit, centerX, getHeight() - 2, textPaint);
@@ -221,10 +220,6 @@ public class HistogramChartView extends View {
         }
     }
     
-    public int getSize() {
-        return size;
-    }
-    
     public HistogramChartView setSize(int size) {
         if (size < 0)
         {
@@ -243,6 +238,10 @@ public class HistogramChartView extends View {
         return this;
     }
     
+    public int getSize() {
+        return size;
+    }
+
     private void setupChartColor(int percent) {
         if (chartColor != -1)
         {
@@ -266,7 +265,10 @@ public class HistogramChartView extends View {
         {
             if (percent >= 80)
             {
-                chartPaint.setARGB(255, (percent < 100) ? (110 + percent + 45) : 255, (percent < 100) ? 210 - (percent + 45) : 0, 20);
+                chartPaint.setARGB(255, 
+                        (percent < 100) ? (110 + percent + 45) : 255, 
+                        (percent < 100) ? 210 - (percent + 45) : 0, 
+                        20);
             }
             else if (percent >= 50)
             {

@@ -1,28 +1,25 @@
 package engine.android.widget.common.wheel;
 
-import engine.android.util.StringUtil;
+import engine.android.util.api.StringUtil;
 
 /**
  * Numeric wheel adapter
  * 
  * @author Daimon
- * @version N
  * @since 8/21/2012
  */
 public class NumericWheelAdapter implements WheelAdapter {
     
     /** The default min value */
     private static final int DEFAULT_MIN_VALUE = 0;
-
     /** The default max value */
     private static final int DEFAULT_MAX_VALUE = 9;
     
     // Values
-    private int minValue;
-    private int maxValue;
-    
+    private final int minValue;
+    private final int maxValue;
     // format
-    private String format;
+    private final String format;
     
     public NumericWheelAdapter() {
         this(DEFAULT_MIN_VALUE, DEFAULT_MAX_VALUE);

@@ -1,5 +1,7 @@
 package engine.android.widget.extra;
 
+import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -11,13 +13,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
-
 /**
  * 自定义ExpandableListView，因为其存在些许bug.
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class MyExpandableListView extends ExpandableListView {
@@ -57,8 +56,7 @@ public class MyExpandableListView extends ExpandableListView {
     }
     
     private void setOnGroupExpandListener() {
-        super.setOnGroupExpandListener(hasFlag(FLAG_COLLAPSE_OTHER)
-                ? listener : mOnGroupExpandListener);
+        super.setOnGroupExpandListener(hasFlag(FLAG_COLLAPSE_OTHER) ? listener : mOnGroupExpandListener);
     }
     
     @Override
@@ -68,8 +66,7 @@ public class MyExpandableListView extends ExpandableListView {
     }
     
     private void setOnGroupClickListener() {
-        super.setOnGroupClickListener(hasFlag(FLAG_NO_SCROLL)
-                ? listener : mOnGroupClickListener);
+        super.setOnGroupClickListener(hasFlag(FLAG_NO_SCROLL) ? listener : mOnGroupClickListener);
     }
     
     private final Listener listener = new Listener();
@@ -102,7 +99,6 @@ public class MyExpandableListView extends ExpandableListView {
             {
                 parent.expandGroup(groupPosition);
             }
-
             // 系统默认滑动到展开项，返回true阻止
             return true;
         }
@@ -180,12 +176,12 @@ public class MyExpandableListView extends ExpandableListView {
 
         @Override
         public long getGroupId(int groupPosition) {
-            return 0;
+            return groupPosition;
         }
 
         @Override
         public long getChildId(int groupPosition, int childPosition) {
-            return 0;
+            return childPosition;
         }
 
         @Override

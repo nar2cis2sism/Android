@@ -4,7 +4,7 @@ import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 
 /**
- * 显示'*'替代默认的'.'
+ * 显示'*'替代默认的'·'
  * 
  * @author Daimon
  * @since 3/26/2012

@@ -1,4 +1,7 @@
-package engine.android.widget.component;
+package engine.android.widget.component.input;
+
+import engine.android.util.listener.MyTextWatcher;
+import engine.android.widget.R;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -9,23 +12,19 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import engine.android.util.listener.MyTextWatcher;
-import engine.android.widget.R;
-
 /**
  * 会话栏<br>
  * PS:使用布局conversation_bar解析
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class ConversationBar extends LinearLayout {
     
-    private static final int MODE_NONE = 0;
-    private static final int MODE_VOICE = 1;
-    private static final int MODE_EMOTION = 2;
-    private static final int MODE_MORE = 3;
+    private static final int MODE_NONE      = 0;
+    private static final int MODE_VOICE     = 1;
+    private static final int MODE_EMOTION   = 2;
+    private static final int MODE_MORE      = 3;
     
     private ImageView voice;
     private EditText input;
@@ -130,6 +129,6 @@ public class ConversationBar extends LinearLayout {
     
     public interface Callback {
         
-        public void onSendMessage(CharSequence message);
+        void onSendMessage(CharSequence message);
     }
 }

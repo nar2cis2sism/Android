@@ -12,7 +12,6 @@ import android.util.AttributeSet;
  * 内切圆图片
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class OvalImageView extends MaskImageView {

@@ -1,10 +1,11 @@
 <resources>
 
-    <string name="search">搜索</string>
-    
     <string name="refresh_pull">下拉可以刷新</string>
     <string name="refresh_release">松开即可刷新</string>
     <string name="refresh_progress">正在刷新&#8230;</string>
     <string name="refresh_completed">刷新完成</string>
+    <string name="refresh_load">上拉加载数据</string>
+    <string name="refresh_no_more_data">没有更多数据了</string>
+    <string name="refresh_loading">正在加载&#8230;</string>
 
 </resources>

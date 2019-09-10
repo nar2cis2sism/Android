@@ -1,4 +1,8 @@
-package engine.android.widget.common;
+﻿package engine.android.widget.common.text;
+
+import engine.android.util.ui.FloatingWindow;
+import engine.android.widget.R;
+import engine.android.widget.base.CustomView.TouchEventDelegate;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -15,17 +19,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
-import engine.android.util.ui.FloatingWindow;
-import engine.android.widget.R;
-import engine.android.widget.base.CustomView.TouchEventDelegate;
-
 import java.util.Arrays;
 
 /**
  * 字母搜索控件
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class LetterBar extends View {
@@ -59,29 +58,33 @@ public class LetterBar extends View {
     }
 
     public LetterBar(Context context, AttributeSet attrs) {
-        this(context, attrs, R.attr.LetterBar);
+        this(context, attrs, R.attr.LetterBar, R.style.LetterBar);
     }
 
-    public LetterBar(Context context, AttributeSet attrs, int defStyleAttr) {
+    public LetterBar(Context context, int defStyleRes) {
+        this(context, null, R.attr.LetterBar, defStyleRes);
+    }
+
+    private LetterBar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr);
 
         final TypedArray a = context.obtainStyledAttributes(
-                attrs, R.styleable.LetterBar, defStyleAttr, R.style.LetterBar);
-        
-        background = a.getDrawable(R.styleable.LetterBar_background);
-        int textSize = a.getDimensionPixelSize(R.styleable.LetterBar_textSize, 0);
-        int textColor = a.getColor(R.styleable.LetterBar_textColor, 0);
-        textColorHighlight = a.getColor(R.styleable.LetterBar_textColorHighlight, 0);
-        
+                attrs, R.styleable.LetterBar, defStyleAttr, defStyleRes);
+
+        background = a.getDrawable(R.styleable.LetterBar_android_background);
+        int textSize = a.getDimensionPixelSize(R.styleable.LetterBar_android_textSize, 0);
+        int textColor = a.getColor(R.styleable.LetterBar_android_textColor, 0);
+        textColorHighlight = a.getColor(R.styleable.LetterBar_android_textColorHighlight, 0);
+
         a.recycle();
-        
+
         paint = new Paint();
         paint.setAntiAlias(true);
         paint.setTextAlign(Align.CENTER);
         paint.setTextSize(textSize);
         paint.setColor(textColor);
     }
-    
+
     public void setTextSize(float size) {
         setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
     }
@@ -102,7 +105,7 @@ public class LetterBar extends View {
             }
         }
     }
-    
+
     public void setTextColor(int color) {
         if (color != paint.getColor())
         {
@@ -110,7 +113,7 @@ public class LetterBar extends View {
             if (showLetters != null) invalidate();
         }
     }
-    
+
     public void setTextColorHighlight(int color) {
         if (color != textColorHighlight)
         {
@@ -118,11 +121,11 @@ public class LetterBar extends View {
             if (showLetters != null) invalidate();
         }
     }
-    
+
     public String[] getLetters() {
         return letters;
     }
-    
+
     public void setLetters(String[] letters) {
         this.letters = letters;
         if (showLetters != null)
@@ -131,37 +134,37 @@ public class LetterBar extends View {
             invalidate();
         }
     }
-    
+
     public void replaceLetter(int index, Drawable drawable) {
         if (replaceMap == null) replaceMap = new SparseArray<Drawable>();
         replaceMap.append(index, drawable);
         if (showLetters != null) invalidate();
     }
-    
+
     public void replaceLetter(String letter, Drawable drawable) {
         int index = Arrays.binarySearch(letters, letter, null);
         if (index < 0)
         {
             throw new IndexOutOfBoundsException("Letter is not exists.");
         }
-        
+
         replaceLetter(index, drawable);
     }
-    
+
     private Drawable replacedLetter(int index) {
         if (replaceMap == null) return null;
         return replaceMap.get(index);
     }
-    
+
     public void setOnLetterChangedListener(OnLetterChangedListener listener) {
         this.listener = listener;
     }
-    
+
     public void setOverlay(TextView overlay) {
         if (overlayWindow != null) overlayWindow.hide();
         overlayWindow = new FloatingWindow(this.overlay = overlay);
     }
-    
+
     private void initOverlay() {
         if (overlayWindow == null)
         {
@@ -170,15 +173,15 @@ public class LetterBar extends View {
             overlay.setGravity(Gravity.CENTER);
             overlay.setTextSize(48);
             overlay.setTextColor(Color.parseColor("#5077c5"));
-            
+
             overlayWindow = new FloatingWindow(this.overlay = overlay);
-            overlayWindow.setPosition(Gravity.CENTER, 0, 0);
             int size = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_SP, 70, getResources().getDisplayMetrics());
+                    TypedValue.COMPLEX_UNIT_DIP, 70, getResources().getDisplayMetrics());
             overlayWindow.setSize(size, size);
+            overlayWindow.setPosition(Gravity.CENTER, 0, 0);
         }
     }
-    
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
@@ -188,9 +191,8 @@ public class LetterBar extends View {
 
         int width;
         int height;
-        
+
         showLetters = letters;
-        
         boolean recalculate = false;
         if (heightMode == MeasureSpec.EXACTLY)
         {
@@ -206,7 +208,7 @@ public class LetterBar extends View {
                 recalculate = true;
             }
         }
-        
+
         int measureHeight = height;
         if (recalculate)
         {
@@ -216,9 +218,10 @@ public class LetterBar extends View {
             {
                 int lineHeight = height / showLetters.length;
                 float textSize = paint.getTextSize();
-                do { paint.setTextSize(++textSize); }
-                while (getLineHeight() <= lineHeight);
-                
+                do {
+                    paint.setTextSize(++textSize);
+                } while (getLineHeight() <= lineHeight);
+
                 paint.setTextSize(--textSize);
                 topMargin = (height - getLineHeight() * showLetters.length) >> 1;
             }
@@ -240,7 +243,7 @@ public class LetterBar extends View {
                             showLetters[i] = letters[(i % num) + 9 * (i / num)];
                         }
                     }
-                    
+
                     for (int i = size; i < length; i++)
                     {
                         showLetters[i] = letters[letters.length - (length - i)];
@@ -252,7 +255,7 @@ public class LetterBar extends View {
                 }
             }
         }
-        
+
         if (widthMode == MeasureSpec.EXACTLY)
         {
             width = widthSize;
@@ -266,39 +269,39 @@ public class LetterBar extends View {
                 width = widthSize;
             }
         }
-        
+
         setMeasuredDimension(width, measureHeight);
     }
-    
+
     private int getLineHeight() {
         return paint.getFontMetricsInt(null);
     }
-    
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         background.setBounds(0, 0, w, h);
     }
-    
+
     @Override
     protected void onDraw(Canvas canvas) {
         if (showLetters == null)
         {
             return;
         }
-        
+
         if (showBg)
         {
             background.draw(canvas);
         }
-        
+
         int x = getPaddingLeft();
         int width = getWidth() - x - getPaddingRight();
         int centerX = x + (width >> 1);
-        
+
         int y = getStartY();
         int dy = getLineHeight();
         int halfSize = dy >> 1;
-        
+
         for (int i = 0, len = showLetters.length; i < len; i++, y += dy)
         {
             Drawable drawable = replacedLetter(i);
@@ -313,11 +316,11 @@ public class LetterBar extends View {
             }
         }
     }
-    
+
     private int getStartY() {
         return getPaddingTop() + topMargin;
     }
-    
+
     private void drawLetter(int index, Canvas canvas, float centerX, float y, Paint paint) {
         if (index == selectedIndex)
         {
@@ -331,7 +334,7 @@ public class LetterBar extends View {
             canvas.drawText(showLetters[index], centerX, y, paint);
         }
     }
-    
+
     private void notifySelectChanged(int index) {
         initOverlay();
         if ((selectedIndex = index) == -1)
@@ -348,33 +351,33 @@ public class LetterBar extends View {
             }
         }
     }
-    
+
     private boolean setSelected(int y) {
         int dy = y - getStartY();
         if (dy < 0) dy = 0;
-        
+
         int index = dy / getLineHeight();
         if (index >= showLetters.length)
         {
             index = showLetters.length - 1;
         }
-        
+
         if (index == selectedIndex || showLetters[index].equals(INVALID_LETTER))
         {
             return false;
         }
-        
+
         notifySelectChanged(index);
         return true;
     }
-    
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return delegate.onTouchEvent(event);
     }
-    
+
     private final TouchEventDelegate delegate = new TouchEventDelegate() {
-        
+
         @Override
         public boolean handleActionDown(MotionEvent event, int x, int y) {
             showBg = true;
@@ -382,11 +385,11 @@ public class LetterBar extends View {
             invalidate();
             return true;
         }
-        
+
         @Override
         public void handleActionMove(MotionEvent event, int x, int y) {
             if (!showBg) return;
-            
+
             if (background.getBounds().contains(x, y))
             {
                 if (setSelected(y)) invalidate();
@@ -396,16 +399,16 @@ public class LetterBar extends View {
                 reset();
             }
         }
-        
+
         @Override
         public void handleActionUp(MotionEvent event, int x, int y) {
             reset();
         }
-        
+
         public void handleActionCancel(MotionEvent event) {
             reset();
         };
-        
+
         private void reset() {
             if (showBg)
             {
@@ -415,9 +418,9 @@ public class LetterBar extends View {
             }
         }
     };
-    
+
     public interface OnLetterChangedListener {
-        
+
         void onLetterChanged(String letter);
     }
 }

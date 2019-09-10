@@ -1,4 +1,6 @@
-﻿package engine.android.widget.common;
+﻿package engine.android.widget.common.text;
+
+import engine.android.util.ui.UIUtil;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -18,13 +20,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import engine.android.util.ui.UIUtil;
-
 /**
  * 徽章效果
  * 
  * @author Daimon
- * @version N
  * @since 5/7/2014
  */
 public class BadgeView extends TextView {
@@ -72,7 +71,6 @@ public class BadgeView extends TextView {
 
         fadeIn = AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in);
         fadeOut = AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_out);
-
         // apply defaults
         badgePosition = DEFAULT_POSITION;
         badgeParams = new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -86,7 +84,7 @@ public class BadgeView extends TextView {
             int paddingPixels = dp2px(DEFAULT_LR_PADDING_DIP);
             setPadding(paddingPixels, 0, paddingPixels, 0);
         }
-        
+
         setIncludeFontPadding(false);
         setGravity(Gravity.CENTER);
         setSingleLine();
@@ -105,13 +103,12 @@ public class BadgeView extends TextView {
         FrameLayout layout = new FrameLayout(getContext());
         if (UIUtil.replace(target, layout, target.getLayoutParams()))
         {
-            layout.addView(target, new FrameLayout.LayoutParams(
-                    LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+            layout.addView(target, new FrameLayout.LayoutParams(target.getLayoutParams()));
             layout.addView(this);
             setVisibility(View.GONE);
         }
     }
-    
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         if (fixSize)
@@ -126,23 +123,23 @@ public class BadgeView extends TextView {
                 {
                     width = Math.min(width, widthSize);
                 }
-                
+
                 widthMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
             }
 
             heightMeasureSpec = widthMeasureSpec;
         }
-        
+
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
-    
+
     private int measureWidth() {
         CharSequence text = getText();
         if (TextUtils.isEmpty(text))
         {
             return Math.max(getSuggestedMinimumWidth(), dp2px(DEFAULT_WIDTH_DIP));
         }
-        
+
         return getLineHeight() + dp2px(6);
     }
 
@@ -167,6 +164,7 @@ public class BadgeView extends TextView {
      * 
      * @param anim Animation to apply to the view when made visible.
      */
+    @SuppressWarnings("deprecation")
     public void show(Animation anim) {
         if (getBackground() == null)
         {
@@ -222,7 +220,6 @@ public class BadgeView extends TextView {
      */
     public void hide(Animation anim) {
         setVisibility(View.GONE);
-
         if (anim != null)
         {
             startAnimation(anim);
@@ -362,7 +359,7 @@ public class BadgeView extends TextView {
             drawable = new ShapeDrawable(new RoundRectShape(
                     new float[] { r, r, r, r, r, r, r, r }, null, null));
         }
-        
+
         drawable.getPaint().setColor(badgeColor);
         return drawable;
     }

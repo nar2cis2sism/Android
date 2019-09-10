@@ -15,7 +15,6 @@ import android.widget.ImageView;
  * 自定义遮罩图片
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public abstract class MaskImageView extends ImageView {
@@ -28,8 +27,7 @@ public abstract class MaskImageView extends ImageView {
     private Paint paint;
 
     public MaskImageView(Context context) {
-        super(context);
-        init();
+        this(context, null);
     }
 
     public MaskImageView(Context context, AttributeSet attrs) {
@@ -48,7 +46,6 @@ public abstract class MaskImageView extends ImageView {
     @Override
     protected void onDraw(Canvas canvas) {
         Drawable drawable = getDrawable();
-
         if (drawable == null)
         {
             return;
@@ -56,7 +53,6 @@ public abstract class MaskImageView extends ImageView {
 
         int drawableWidth = drawable.getIntrinsicWidth();
         int drawableHeight = drawable.getIntrinsicHeight();
-
         if (drawableWidth == 0 || drawableHeight == 0)
         {
             // nothing to draw (empty bounds)

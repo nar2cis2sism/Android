@@ -1,18 +1,17 @@
 package engine.android.widget.common.layout;
 
+import engine.android.widget.base.CustomViewGroup;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 
-import engine.android.widget.base.CustomViewGroup;
-
 /**
  * 滑动布局
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class FlingLayout extends CustomViewGroup {
@@ -34,7 +33,7 @@ public class FlingLayout extends CustomViewGroup {
     public FlingLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
-    
+
     @Override
     protected void init(Context context) {
         super.init(context);
@@ -60,7 +59,7 @@ public class FlingLayout extends CustomViewGroup {
             }
         }
     }
-    
+
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         // Calculate our view width
@@ -89,23 +88,23 @@ public class FlingLayout extends CustomViewGroup {
             scrollTo((currentItem = getValidItem(currentItem)) * width, 0);
         }
     }
-    
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         return delegate.onInterceptTouchEvent(ev);
     }
-    
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return delegate.onTouchEvent(event);
     }
-    
+
     private final TouchEventDelegate delegate = new TouchEventDelegate() {
-        
+
         public boolean interceptActionDown(MotionEvent event, int x, int y) {
             return abortScroll();
         };
-        
+
         public boolean interceptActionMove(MotionEvent event, int x, int y) {
             return Math.abs(lastMotionX - x) > touchSlop;
         };
@@ -137,7 +136,7 @@ public class FlingLayout extends CustomViewGroup {
                 snapToDestination();
             }
         }
-        
+
         public void handleActionCancel(MotionEvent event) {
             snapToDestination();
         };
@@ -153,13 +152,13 @@ public class FlingLayout extends CustomViewGroup {
         {
             scrollX = Math.max(scrollX, 0);
         }
-        
+
         if (scrollX != getScrollX())
         {
             scrollTo(scrollX, getScrollY());
         }
     }
-    
+
     /**
      * Get the valid item in case out of range.
      */
@@ -181,7 +180,7 @@ public class FlingLayout extends CustomViewGroup {
             if (currentItem != item) notifyOnViewChanged(currentItem = item);
         }
     }
-    
+
     private void notifyOnViewChanged(int item) {
         if (listener != null) listener.OnViewChanged(item);
     }

@@ -1,4 +1,6 @@
-package engine.android.widget.common.image;
+﻿package engine.android.widget.common.image;
+
+import engine.android.util.io.IOUtil;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -10,15 +12,12 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 
-import engine.android.util.io.IOUtil;
-
 import java.io.InputStream;
 
 /**
  * Gif播放控件
  * 
  * @author Daimon
- * @version N
  * @since 5/7/2014
  */
 public class GIFView extends ImageView {
@@ -29,9 +28,10 @@ public class GIFView extends ImageView {
     private long startTime;
     private boolean isPlaying = true;
 
+    private float scaleX = 1,scaleY = 1;
+
     public GIFView(Context context) {
-        super(context);
-        init();
+        this(context, null);
     }
 
     public GIFView(Context context, AttributeSet attrs) {
@@ -91,6 +91,16 @@ public class GIFView extends ImageView {
     }
 
     @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        if (movie != null && getScaleType() == ScaleType.FIT_XY)
+        {
+            scaleX = getMeasuredWidth() * 1.0f / movie.width();
+            scaleY = getMeasuredHeight() * 1.0f / movie.height();
+        }
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         if (movie != null)
         {
@@ -130,9 +140,13 @@ public class GIFView extends ImageView {
             canvas.save();
 
             canvas.translate(paddingLeft, paddingTop);
-
             if (matrix != null)
             {
+                if (getScaleType() == ScaleType.FIT_XY)
+                {
+                    matrix.setScale(scaleX, scaleY);
+                }
+
                 canvas.concat(matrix);
             }
 

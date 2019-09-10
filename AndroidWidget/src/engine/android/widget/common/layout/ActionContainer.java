@@ -13,16 +13,14 @@ import android.widget.TextView;
  * 提供一个动态添加操作按钮的布局
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class ActionContainer extends LinearLayout {
     
-    private LinearLayout.LayoutParams params;
+    private LayoutParams params;
 
     public ActionContainer(Context context) {
-        super(context);
-        init(context);
+        this(context, null);
     }
 
     public ActionContainer(Context context, AttributeSet attrs) {
@@ -32,7 +30,7 @@ public class ActionContainer extends LinearLayout {
     
     private void init(Context context) {
         setGravity(Gravity.CENTER_VERTICAL);
-        params = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1);
+        params = new LayoutParams(0, LayoutParams.WRAP_CONTENT, 1);
     }
     
     public void addAction(View action) {

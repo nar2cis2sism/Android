@@ -1,4 +1,4 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+﻿<merge xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <LinearLayout
         android:orientation="horizontal"
@@ -9,19 +9,41 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp" >
 
-	    <EditText
-	        android:id="@+id/input"
-	        android:layout_width="0px"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
-	        android:background="@null"
-	        android:drawablePadding="16dp"
-	        android:singleLine="true" />
+        <EditText
+            android:id="@+id/input"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:layout_marginRight="5dp"
+            android:drawablePadding="16dp"
+            android:singleLine="true" />
 
-	    <View
-	        android:id="@+id/placeholder"
-	        android:layout_width="0px"
-	        android:layout_height="0px" />
+        <ImageView
+            android:id="@+id/clear"
+            android:visibility="gone"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:padding="4dp"
+            android:src="@drawable/input_clear" />
+
+        <ImageView
+            android:id="@+id/eye"
+            android:visibility="gone"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:padding="4dp"
+            android:src="@drawable/password_eye" />
+
+        <engine.android.widget.common.button.SmsCodeButton
+            android:id="@+id/sms_code"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_sms"
+            android:textSize="14sp"
+            android:textColor="@color/btn_sms"
+            android:text="发送验证码" />
         
     </LinearLayout>
 
@@ -29,5 +51,5 @@
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:background="#a2a2a2" />
-    
+
 </merge>

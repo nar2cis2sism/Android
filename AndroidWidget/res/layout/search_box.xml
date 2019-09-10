@@ -1,4 +1,4 @@
-<engine.android.widget.component.SearchBox xmlns:android="http://schemas.android.com/apk/res/android"
+<engine.android.widget.component.input.SearchBox xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/search_box_bg"
@@ -19,18 +19,11 @@
         android:layout_weight="1"
         android:background="@null"
         android:layout_marginLeft="5dp"
-        
-        android:hint="@string/search"
+        android:layout_marginRight="5dp"
         android:imeOptions="actionSearch"
-        
         android:singleLine="true"
-        android:maxLength="64" />
-
-    <ImageView
-        android:id="@+id/search_voice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/search_voice" />
+        android:maxLength="64"
+        android:hint="@android:string/search_go" />
 
     <ImageView
         android:id="@+id/search_clear"
@@ -38,5 +31,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/search_clear" />
+
+    <ImageView
+        android:id="@+id/search_voice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/search_voice" />
     
-</engine.android.widget.component.SearchBox>
+</engine.android.widget.component.input.SearchBox>

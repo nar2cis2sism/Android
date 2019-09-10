@@ -15,7 +15,6 @@ import android.widget.ListView;
  * The pinned header can be pushed up and dissolved as needed.
  * 
  * @author Daimon
- * @version N
  * @since 7/30/2012
  */
 public class PinnedHeaderListView extends ListView implements OnScrollListener {
@@ -54,13 +53,13 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
         super(context, attrs);
     }
 
+    public void setPinnedHeaderView(int resId) {
+        setPinnedHeaderView(LayoutInflater.from(getContext()).inflate(resId, this, false));
+    }
+
     public void setPinnedHeaderView(View view) {
         setVerticalFadingEdgeEnabled((pinnedHeaderView = view) == null);
         requestLayout();
-    }
-
-    public void setPinnedHeaderView(int resId) {
-        setPinnedHeaderView(LayoutInflater.from(getContext()).inflate(resId, this, false));
     }
 
     @Override
@@ -121,78 +120,6 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
         }
     }
 
-    private void configurePinnedHeader(int position) {
-        if (pinnedHeaderView == null || adapter == null)
-        {
-            return;
-        }
-
-        switch (pinnedHeaderState) {
-            case PINNED_HEADER_GONE:
-                pinnedHeaderViewVisible = false;
-                break;
-            case PINNED_HEADER_VISIBLE:
-                adapter.configurePinnedHeader(pinnedHeaderView, position, 1.0f);
-                if (pinnedHeaderView.getTop() != 0)
-                {
-                    pinnedHeaderView.layout(0, 0, pinnedHeaderViewWidth, pinnedHeaderViewHeight);
-                }
-
-                pinnedHeaderViewVisible = true;
-                break;
-            case PINNED_HEADER_PUSHED_UP:
-                View firstView = getChildAt(0);
-                if (firstView != null)
-                {
-                    int bottom = firstView.getBottom();
-                    int y = 0;
-                    float ratio = 1.0f;
-                    if (bottom < pinnedHeaderViewHeight)
-                    {
-                        y = bottom - pinnedHeaderViewHeight;
-                        if (pinnedHeaderViewHeight > 0)
-                        {
-                            ratio = ratio * bottom / pinnedHeaderViewHeight;
-                        }
-                    }
-
-                    adapter.configurePinnedHeader(pinnedHeaderView, position, ratio);
-                    if (pinnedHeaderView.getTop() != y)
-                    {
-                        pinnedHeaderView.layout(0, y, pinnedHeaderViewWidth, y + pinnedHeaderViewHeight);
-                    }
-
-                    pinnedHeaderViewVisible = true;
-                }
-
-                break;
-        }
-    }
-
-    /**
-     * Adapter interface.The list adapter must implement this interface.
-     */
-    public interface PinnedHeaderAdapter {
-
-        /**
-         * Computes the desired state of the pinned header for the given
-         * position of the first visible list item.
-         * 
-         * @param position position of the first visible list item.
-         * @return true indicates the pinned header view needs to push up.
-         */
-        public boolean getPinnedHeaderState(int position);
-
-        /**
-         * Configures the pinned header view to match the first visible list item.
-         * 
-         * @param header pinned header view.
-         * @param position position of the first visible list item.
-         * @param visibleRatio visible ratio, between 0.0 and 1.0.
-         */
-        public void configurePinnedHeader(View header, int position, float visibleRatio);
-    }
-
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
         if (onScrollListener != null)
@@ -211,15 +138,15 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 
         if (totalItemCount > 0)
         {
-            int index = firstVisibleItem - getHeaderViewsCount();
-            if (index < 0)
+            int position = firstVisibleItem - getHeaderViewsCount();
+            if (position < 0)
             {
                 pinnedHeaderState = PINNED_HEADER_GONE;
             }
             else
             {
                 if (firstVisibleItem < totalItemCount - 1
-                &&  adapter.getPinnedHeaderState(index))
+                &&  adapter.getPinnedHeaderState(position))
                 {
                     pinnedHeaderState = PINNED_HEADER_PUSHED_UP;
                 }
@@ -229,7 +156,79 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
                 }
             }
 
-            configurePinnedHeader(index);
+            configurePinnedHeader(position);
         }
+    }
+
+    private void configurePinnedHeader(int position) {
+        if (pinnedHeaderView == null || adapter == null)
+        {
+            return;
+        }
+    
+        switch (pinnedHeaderState) {
+            case PINNED_HEADER_GONE:
+                pinnedHeaderViewVisible = false;
+                break;
+            case PINNED_HEADER_VISIBLE:
+                adapter.configurePinnedHeader(pinnedHeaderView, position, 1.0f);
+                if (pinnedHeaderView.getTop() != 0)
+                {
+                    pinnedHeaderView.layout(0, 0, pinnedHeaderViewWidth, pinnedHeaderViewHeight);
+                }
+    
+                pinnedHeaderViewVisible = true;
+                break;
+            case PINNED_HEADER_PUSHED_UP:
+                View firstView = getChildAt(0);
+                if (firstView != null)
+                {
+                    int bottom = firstView.getBottom();
+                    int y = 0;
+                    float ratio = 1.0f;
+                    if (bottom < pinnedHeaderViewHeight)
+                    {
+                        y = bottom - pinnedHeaderViewHeight;
+                        if (pinnedHeaderViewHeight > 0)
+                        {
+                            ratio = ratio * bottom / pinnedHeaderViewHeight;
+                        }
+                    }
+    
+                    adapter.configurePinnedHeader(pinnedHeaderView, position, ratio);
+                    if (pinnedHeaderView.getTop() != y)
+                    {
+                        pinnedHeaderView.layout(0, y, pinnedHeaderViewWidth, y + pinnedHeaderViewHeight);
+                    }
+    
+                    pinnedHeaderViewVisible = true;
+                }
+    
+                break;
+        }
+    }
+
+    /**
+     * Adapter interface.The list adapter must implement this interface.
+     */
+    public interface PinnedHeaderAdapter {
+    
+        /**
+         * Computes the desired state of the pinned header for the given
+         * position of the first visible list item.
+         * 
+         * @param position position of the first visible list item.
+         * @return True indicates the pinned header view needs to push up.
+         */
+        public boolean getPinnedHeaderState(int position);
+    
+        /**
+         * Configures the pinned header view to match the first visible list item.
+         * 
+         * @param header pinned header view.
+         * @param position position of the first visible list item.
+         * @param visibleRatio visible ratio, between 0.0 and 1.0.
+         */
+        public void configurePinnedHeader(View header, int position, float visibleRatio);
     }
 }

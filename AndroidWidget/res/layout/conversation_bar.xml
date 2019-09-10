@@ -1,4 +1,4 @@
-<engine.android.widget.component.ConversationBar xmlns:android="http://schemas.android.com/apk/res/android"
+<engine.android.widget.component.input.ConversationBar xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/conversation_bar_bg"
@@ -7,10 +7,10 @@
     <!-- 语音/键盘切换 -->
     <ImageView
         android:id="@+id/voice"
+        android:focusableInTouchMode="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/conversation_voice"
-        android:focusableInTouchMode="true" />
+        android:src="@drawable/conversation_voice" />
 
     <!-- 输入框 -->
     <EditText
@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginBottom="2dp"
+        android:maxLines="5"
         android:textSize="16sp" />
 
     <!-- 录音按钮 -->
@@ -35,8 +36,8 @@
         android:paddingRight="8dp"
         android:paddingTop="2dp"
         android:paddingBottom="2dp"
-        android:text="按住 说话"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        android:text="按住 说话" />
 
     <!-- 表情/键盘切换 -->
     <ImageView
@@ -65,7 +66,7 @@
         android:paddingRight="8dp"
         android:paddingTop="2dp"
         android:paddingBottom="2dp"
-        android:text="发送"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        android:text="发送" />
     
-</engine.android.widget.component.ConversationBar>
+</engine.android.widget.component.input.ConversationBar>

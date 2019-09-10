@@ -8,7 +8,6 @@ import android.widget.GridView;
  * 不能滑动的GridView
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class NoScrollGridView extends GridView {

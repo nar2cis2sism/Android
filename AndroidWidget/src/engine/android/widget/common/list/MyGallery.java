@@ -1,5 +1,7 @@
 package engine.android.widget.common.list;
 
+import engine.android.widget.R;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Camera;
@@ -9,21 +11,19 @@ import android.view.View;
 import android.view.animation.Transformation;
 import android.widget.Gallery;
 
-import engine.android.widget.R;
-
 /**
  * 自定义画廊
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
+ * 
+ * Daimon:Camera
  */
 @SuppressWarnings("deprecation")
 public class MyGallery extends Gallery {
     
     private int maxDegree = 60;                     // 最大旋转角度
-    
-    private int maxZoom = 0;                        // 最大缩放角度[正数表示缩小，反之亦然]
+    private int maxZoom = 0;                        // 最大缩放角度（正数表示缩小，反之亦然）
     
     private boolean enableRotate;                   // 旋转开关
     private boolean enableZoom;                     // 缩放开关
@@ -42,9 +42,9 @@ public class MyGallery extends Gallery {
 
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MyGallery);
         
-        maxDegree = a.getInteger(R.styleable.MyGallery_maxDegree, maxDegree);
-        maxZoom = a.getInteger(R.styleable.MyGallery_maxZoom, maxZoom);
-        setStyle(a.getInt(R.styleable.MyGallery_style, 0));
+        maxDegree = a.getInteger(R.styleable.MyGallery_Gallery_maxDegree, maxDegree);
+        maxZoom = a.getInteger(R.styleable.MyGallery_Gallery_maxZoom, maxZoom);
+        setStyle(a.getInt(R.styleable.MyGallery_Gallery_style, 0));
         
         a.recycle();
         
@@ -66,6 +66,13 @@ public class MyGallery extends Gallery {
         enableAlpha = (style & 4) != 0;
     }
     
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        // 获取画廊的水平中点
+        centerX = (getWidth() - getPaddingLeft() - getPaddingRight()) / 2 + getPaddingLeft();
+        super.onSizeChanged(w, h, oldw, oldh);
+    }
+
     @Override
     protected boolean getChildStaticTransformation(View child, Transformation t) {
         int childWidth = child.getWidth();
@@ -117,7 +124,6 @@ public class MyGallery extends Gallery {
         {
             child.setAlpha(1 - rotation * 2.5f / 255);
         }
-        
         // 在Y轴上旋转，对应图片竖向向里翻转
         // 如果在X轴上旋转，则对应图片横向向里翻转
         if (enableRotate)
@@ -129,12 +135,5 @@ public class MyGallery extends Gallery {
         m.preTranslate(-halfWidth, -halfHeight);
         m.postTranslate(halfWidth, halfHeight);
         camera.restore();
-    }
-    
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        // 获取画廊的水平中点
-        centerX = (getWidth() - getPaddingLeft() - getPaddingRight()) / 2 + getPaddingLeft();
-        super.onSizeChanged(w, h, oldw, oldh);
     }
 }

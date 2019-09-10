@@ -1,8 +1,10 @@
-package engine.android.widget.component;
+package engine.android.widget.component.input;
+
+import engine.android.util.listener.MyTextWatcher;
+import engine.android.widget.R;
 
 import android.content.Context;
 import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
@@ -14,15 +16,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import engine.android.util.listener.MyTextWatcher;
-import engine.android.widget.R;
-
 /**
  * 搜索框<br>
  * PS:使用布局search_box解析
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class SearchBox extends LinearLayout implements OnClickListener {
@@ -32,8 +30,6 @@ public class SearchBox extends LinearLayout implements OnClickListener {
     private ImageView search_voice;
     private ImageView search_clear;
     
-    private boolean showVoiceIcon = true;
-
     public SearchBox(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -46,7 +42,7 @@ public class SearchBox extends LinearLayout implements OnClickListener {
         search_clear = (ImageView) findViewById(R.id.search_clear);
         
         search_voice.setOnClickListener(this);
-        new ClearAction();
+        new InputAction(search_text).bindClear(search_clear);
     }
 
     @Override
@@ -63,7 +59,7 @@ public class SearchBox extends LinearLayout implements OnClickListener {
     }
     
     public void showVoiceIcon(boolean show) {
-        search_voice.setVisibility((showVoiceIcon = show) ? VISIBLE : GONE);
+        search_voice.setVisibility(show ? VISIBLE : GONE);
     }
     
     public EditText getSearchEditText() {
@@ -74,13 +70,7 @@ public class SearchBox extends LinearLayout implements OnClickListener {
      * 设置搜索器
      */
     public void setSearchProvider(final SearchProvider searchProvider) {
-        search_text.addTextChangedListener(new TextWatcher() {
-            
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        search_text.addTextChangedListener(new MyTextWatcher() {
             
             @Override
             public void afterTextChanged(Editable s) {
@@ -93,7 +83,7 @@ public class SearchBox extends LinearLayout implements OnClickListener {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH)
                 {
-                    searchProvider.search(search_text.getText().toString(), true);
+                    searchProvider.search(v.getText().toString(), true);
                     return true;
                 }
                 
@@ -105,35 +95,21 @@ public class SearchBox extends LinearLayout implements OnClickListener {
     public interface SearchProvider {
         
         /**
-         * 
          * @param key 搜索关键字
          * @param imeAction 键盘上的搜索按钮点击事件
          */
         void search(String key, boolean imeAction);
     }
     
-    private class ClearAction extends MyTextWatcher implements OnClickListener {
+    private static class InputAction extends InputBox.InputAction {
+
+        public InputAction(EditText input) {
+            super(input);
+        }
         
-        public ClearAction() {
-            search_clear.setOnClickListener(this);
-            search_text.addTextChangedListener(this);
-        }
-
         @Override
-        protected void changeFromEmpty(String after) {
-            if (showVoiceIcon) search_voice.setVisibility(View.GONE);
-            search_clear.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void changeToEmpty(String before) {
-            if (showVoiceIcon) search_voice.setVisibility(View.VISIBLE);
-            search_clear.setVisibility(View.GONE);
-        }
-
-        @Override
-        public void onClick(View v) {
-            search_text.setText(null);
+        public void onFocusChange(View v, boolean hasFocus) {
+            // Do nothing.
         }
     }
 }

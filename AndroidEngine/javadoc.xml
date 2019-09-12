@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="javadoc">
-    <property name="android.sdk" value="D:\Work\Java\Android\sdk" />
+    
+    <property environment="env" />
+    <condition property="android.sdk" value="${env.ANDROID_HOME}">
+        <isset property="env.ANDROID_HOME" />
+    </condition>
+    
     <target name="javadoc">
         <javadoc
             sourcepath="src"

@@ -12,12 +12,15 @@ engine.android.http.util.xml
 engine.android.socket
 engine.android.socket.util
 engine.android.util
+engine.android.util.anim
+engine.android.util.api
 engine.android.util.extra
 engine.android.util.file
 engine.android.util.image
 engine.android.util.io
 engine.android.util.listener
 engine.android.util.manager
+engine.android.util.os
 engine.android.util.secure
 engine.android.util.service
 engine.android.util.ui

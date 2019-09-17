@@ -2,10 +2,6 @@
 
 import static engine.android.core.util.LogFactory.LOG.log;
 
-import android.content.Context;
-import android.text.TextUtils;
-import android.util.SparseArray;
-
 import engine.android.core.ApplicationManager;
 import engine.android.core.extra.EventBus;
 import engine.android.core.extra.EventBus.Event;
@@ -26,6 +22,11 @@ import engine.android.util.manager.SDCardManager;
 import engine.android.util.secure.CRCUtil;
 import engine.android.util.secure.HexUtil;
 import engine.android.util.secure.Obfuscate;
+
+import android.content.Context;
+import android.text.TextUtils;
+import android.util.SparseArray;
+
 import protocol.util.ProtocolWrapper;
 import protocol.util.ProtocolWrapper.ProtocolEntity;
 import protocol.util.ProtocolWrapper.ProtocolEntity.ProtocolData;
@@ -36,14 +37,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Socket连接管理器
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class SocketManager implements SocketConnectionListener, Callback {
@@ -55,6 +56,8 @@ public class SocketManager implements SocketConnectionListener, Callback {
     private final SocketHandler handler;
     
     private final SparseArray<SocketAction> pendingDatas = new SparseArray<SocketAction>();
+
+    private final ExecutorService receiveExecutor = Executors.newSingleThreadExecutor();
     
     private SocketConnector socket;
     
@@ -85,7 +88,7 @@ public class SocketManager implements SocketConnectionListener, Callback {
     
     public void setup(String host, int port) {
         if (TextUtils.isEmpty(token)) throw new RuntimeException("需要设置Token值");
-        close();
+        if (socket != null) socket.close();
         socket = new SocketConnector(host, port, config.getSocketTimeout(), !config.isOffline()) {
             
             @Override
@@ -149,14 +152,18 @@ public class SocketManager implements SocketConnectionListener, Callback {
      * 断开连接
      */
     public void close() {
-        if (socket != null) socket.close();
+        if (socket != null)
+        {
+            socket.close();
+            token = null;
+        }
     }
     
     /**
      * 重连接
      */
     void reconnect() {
-        socket.connect();
+        if (token != null) socket.connect();
     }
 
     @Override
@@ -189,19 +196,13 @@ public class SocketManager implements SocketConnectionListener, Callback {
     @Override
     public void onReceive(Object data) {
         log("收到socket信令包", data);
-        config.getSocketThreadPool().execute(new SocketParser((ProtocolEntity) data));
+        receiveExecutor.execute(new SocketParser((ProtocolEntity) data));
     }
 
     @Override
     public void onError(Exception e) {
         log(e);
         socket.close();
-        
-        if (e instanceof SocketException)
-        {
-            return;
-        }
-        
         // 自动重连
         handler.reconnect(Util.getRandom(2000, 5000));
     }
@@ -216,8 +217,8 @@ public class SocketManager implements SocketConnectionListener, Callback {
         int index = pendingDatas.indexOfKey(msgId);
         if (index >= 0)
         {
-            timeout.timeout(this);
             pendingDatas.removeAt(index);
+            timeout.timeout(this);
         }
     }
 
@@ -264,10 +265,8 @@ public class SocketManager implements SocketConnectionListener, Callback {
         if (index >= 0)
         {
             SocketResponse response = pendingDatas.valueAt(index).response;
-            if (response != null && response.response(data, this))
-            {
-                pendingDatas.removeAt(index);
-            }
+            if (response != null) response.response(cmd, data, this);
+            pendingDatas.removeAt(index);
         }
     }
     
@@ -277,9 +276,7 @@ public class SocketManager implements SocketConnectionListener, Callback {
             return;
         }
         
-        File desDir = new File(SDCardManager.openSDCardAppDir(context), 
-                "protocols/socket");
-        
+        File desDir = new File(SDCardManager.openSDCardAppDir(context), "protocols/socket");
         File file = new File(desDir, data.getClass().getSimpleName());
         FileManager.writeFile(file, GsonUtil.toJson(data).getBytes(), false);
     }
@@ -295,8 +292,6 @@ public class SocketManager implements SocketConnectionListener, Callback {
         EventBus.getDefault().post(new Event(action, status, param));
     }
 
-    private static final AtomicInteger ID_GENERATOR = new AtomicInteger(1);
-    
     private class SocketRequest implements SocketData {
         
         private final ProtocolEntity entity;
@@ -306,7 +301,7 @@ public class SocketManager implements SocketConnectionListener, Callback {
         private byte[] byteArray;
         
         public SocketRequest(ProtocolData data) {
-            entity = ProtocolEntity.newInstance(ID_GENERATOR.getAndIncrement(), data);
+            entity = ProtocolEntity.newInstance(data.hashCode(), data);
         }
         
         public void init() {
@@ -383,13 +378,15 @@ public class SocketManager implements SocketConnectionListener, Callback {
         }
 
         SocketRequest request = new SocketRequest(data);
-        SocketAction action = new SocketAction(request, response);
+        int id = request.getMsgId();
+        if (pendingDatas.indexOfKey(id) < 0)
+        {
+            SocketAction action = new SocketAction(request, response);
+            pendingDatas.append(id, action);
+            config.getSocketThreadPool().execute(action);
+        }
         
-        int msgId = request.getMsgId();
-        pendingDatas.append(msgId, action);
-        
-        config.getSocketThreadPool().execute(action);
-        return msgId;
+        return id;
     }
     
     /**
@@ -425,6 +422,6 @@ public class SocketManager implements SocketConnectionListener, Callback {
     
     static
     {
-        LogFactory.addLogFile(SocketManager.class, "socket.txt");
+        LogFactory.addLogFile(SocketManager.class, HttpConnector.class);
     }
 }

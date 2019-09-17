@@ -1,4 +1,12 @@
-package engine.android.framework.ui.extra.region;
+package engine.android.framework.ui.fragment.region;
+
+import engine.android.framework.R;
+import engine.android.framework.ui.BaseListFragment;
+import engine.android.framework.ui.activity.SinglePaneActivity;
+import engine.android.framework.ui.activity.SinglePaneActivity.OnBackListener;
+import engine.android.util.AndroidUtil;
+import engine.android.util.ui.ListViewState;
+import engine.android.widget.component.TitleBar;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,18 +16,11 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
-import engine.android.framework.R;
-import engine.android.framework.ui.BaseListFragment;
-import engine.android.framework.ui.extra.SinglePaneActivity;
-import engine.android.framework.ui.extra.SinglePaneActivity.OnBackListener;
-import engine.android.util.AndroidUtil;
-import engine.android.util.ui.ListViewState;
-import engine.android.widget.component.TitleBar;
-
 /**
  * 地区选择界面（需用{@link SinglePaneActivity}为容器以拦截后退事件）
  * 
  * @author Daimon
+ * @since 6/6/2014
  */
 public class RegionFragment extends BaseListFragment implements OnBackListener {
     
@@ -52,9 +53,11 @@ public class RegionFragment extends BaseListFragment implements OnBackListener {
     @Override
     protected void setupListView(ListView listView) {
         View header = new View(getContext());
-        header.setLayoutParams(new AbsListView.LayoutParams(LayoutParams.MATCH_PARENT, AndroidUtil.dp2px(getContext(), 16)));
+        header.setLayoutParams(new AbsListView.LayoutParams(
+                LayoutParams.MATCH_PARENT, AndroidUtil.dp2px(getContext(), 16)));
         View footer = new View(getContext());
-        footer.setLayoutParams(new AbsListView.LayoutParams(LayoutParams.MATCH_PARENT, AndroidUtil.dp2px(getContext(), 32)));
+        footer.setLayoutParams(new AbsListView.LayoutParams(
+                LayoutParams.MATCH_PARENT, AndroidUtil.dp2px(getContext(), 32)));
         
         listView.addHeaderView(header, null, false);
         listView.addFooterView(footer, null, false);
@@ -89,6 +92,11 @@ public class RegionFragment extends BaseListFragment implements OnBackListener {
         return presenter.onBackPressed();
     }
     
+    public void notifyDataChanged(Region region) {
+        super.notifyDataChanged(region);
+        finish();
+    }
+    
     /**
      * 监听地区变化
      * 
@@ -97,9 +105,4 @@ public class RegionFragment extends BaseListFragment implements OnBackListener {
     public void setListener(Region region, Listener<Region> listener) {
         super.setListener(region, listener);
     };
-    
-    public void notifyDataChanged(Region region) {
-        super.notifyDataChanged(region);
-        finish();
-    }
 }

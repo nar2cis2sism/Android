@@ -2,7 +2,7 @@
 
 import engine.android.util.listener.MyTextWatcher;
 import engine.android.widget.R;
-import engine.android.widget.common.button.SmsCodeButton;
+import engine.android.widget.common.button.CountDownButton;
 
 import android.content.Context;
 import android.text.InputFilter;
@@ -39,7 +39,7 @@ public class InputBox extends LinearLayout {
     public EditText input;
     public ImageView clear;
     public ImageView eye;
-    public SmsCodeButton sms_code;
+    public CountDownButton sms_code;
 
     private InputAction action;
 
@@ -59,7 +59,7 @@ public class InputBox extends LinearLayout {
         input = (EditText) findViewById(R.id.input);
         clear = (ImageView) findViewById(R.id.clear);
         eye = (ImageView) findViewById(R.id.eye);
-        sms_code = (SmsCodeButton) findViewById(R.id.sms_code);
+        sms_code = (CountDownButton) findViewById(R.id.sms_code);
         action = new InputAction(input);
     }
 

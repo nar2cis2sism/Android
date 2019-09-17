@@ -1,36 +1,26 @@
-﻿package engine.android.framework.ui.widget;
+package engine.android.widget.common.button;
 
 import android.content.Context;
 import android.os.CountDownTimer;
 import android.util.AttributeSet;
 import android.widget.Button;
 
-import engine.android.framework.R;
-
 /**
- * “获取验证码”的按钮
+ * 倒计时按钮
  *
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
-public class SmsCodeButton extends Button {
+public class CountDownButton extends Button {
     
-    private SmsCodeTimer timer;
+    private CountDownTimer timer;
 
-    public SmsCodeButton(Context context) {
+    public CountDownButton(Context context) {
         super(context);
-        init(context);
     }
 
-    public SmsCodeButton(Context context, AttributeSet attrs) {
+    public CountDownButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
-    }
-    
-    private void init(Context context) {
-        setBackgroundResource(R.drawable.btn_yellow);
-        setText(R.string.get_sms_code);
     }
     
     @Override
@@ -43,27 +33,35 @@ public class SmsCodeButton extends Button {
         if (timer != null) timer.cancel();
     }
     
-    public void n秒后可重新获取验证码(int n) {
+    /**
+     * 开始倒计时（期间不可操作）
+     * 
+     * @param time 倒计时时间，以秒为单位
+     * @param format 文本显示格式化
+     */
+    public void start(int time, String format) {
         setEnabled(false);
         cancelTimer();
-        timer = new SmsCodeTimer(n);
-        timer.start();
+        timer = new SmsCodeTimer(time, format).start();
     }
     
     private class SmsCodeTimer extends CountDownTimer {
         
         private static final int ONE_SECOND_MILLIS = 1000;
+        
+        private final CharSequence text;
+        
+        private final String format;
 
-        private CharSequence text;
-
-        public SmsCodeTimer(long seconds) {
+        public SmsCodeTimer(long seconds, String format) {
             super(seconds * ONE_SECOND_MILLIS, ONE_SECOND_MILLIS);
             text = getText();
+            this.format = format;
         }
 
         @Override
         public void onTick(long millisUntilFinished) {
-            setText(getResources().getString(R.string.get_sms_code_timer, millisUntilFinished / ONE_SECOND_MILLIS));
+            setText(String.format(format, millisUntilFinished / ONE_SECOND_MILLIS));
         }
 
         @Override

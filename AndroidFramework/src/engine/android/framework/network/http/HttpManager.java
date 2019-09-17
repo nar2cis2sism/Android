@@ -2,12 +2,6 @@
 
 import static engine.android.core.util.LogFactory.LOG.log;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Proxy;
-import android.util.SparseArray;
-
 import engine.android.core.ApplicationManager;
 import engine.android.core.extra.EventBus;
 import engine.android.core.extra.EventBus.Event;
@@ -27,6 +21,13 @@ import engine.android.http.util.HttpParser;
 import engine.android.util.Util;
 import engine.android.util.file.FileManager;
 import engine.android.util.manager.SDCardManager;
+
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Proxy;
+import android.util.SparseArray;
+
 import protocol.util.EntityUtil;
 
 import java.io.File;
@@ -43,7 +44,6 @@ import java.util.concurrent.Callable;
  * <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class HttpManager implements HttpConnectionListener, ConnectionStatus {
@@ -107,7 +107,7 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
                     exportProtocolToFile(conn, response.getContent());
                 }
                 
-                HttpAction action = request.get(conn.hashCode());
+                HttpAction action = request.get(conn.getId());
                 if (action == null || conn.isCancelled())
                 {
                     return;
@@ -159,9 +159,7 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
             return;
         }
         
-        File desDir = new File(SDCardManager.openSDCardAppDir(context), 
-                "protocols/http");
-        
+        File desDir = new File(SDCardManager.openSDCardAppDir(context), "protocols/http");
         File file = new File(desDir, conn.getName());
         FileManager.writeFile(file, EntityUtil.toString(content).getBytes(), false);
     }
@@ -199,6 +197,7 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
         }
         
         return conn
+        .setId(action.hashCode())
         .setName(action)
         .setTimeout(config.getHttpTimeout())
         .setListener(this);
@@ -219,7 +218,7 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
             try {
                 return conn.connect();
             } finally {
-                request.remove(conn.hashCode());
+                request.remove(conn.getId());
             }
         }
         
@@ -239,15 +238,15 @@ public class HttpManager implements HttpConnectionListener, ConnectionStatus {
             log(conn.getName(), "发送请求--" + Util.getString(conn.getRequest().getEntity(), ""));
         }
         
-        int hash = conn.hashCode();
-        if (request.indexOfKey(hash) < 0)
+        int id = conn.getId();
+        if (request.indexOfKey(id) < 0)
         {
             HttpAction action = new HttpAction(conn, parser);
-            request.append(hash, action);
+            request.append(id, action);
             config.getHttpThreadPool().submit(action);
         }
         
-        return hash;
+        return id;
     }
     
     /**

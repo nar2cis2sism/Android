@@ -1,20 +1,19 @@
 package engine.android.framework.app;
 
-import android.content.Context;
-
-import java.util.HashMap;
-
 import engine.android.core.ApplicationManager;
 import engine.android.framework.app.image.ImageManager;
 import engine.android.framework.network.http.HttpManager;
 import engine.android.framework.network.socket.SocketManager;
-import engine.android.util.StringUtil;
+import engine.android.util.api.StringUtil;
+
+import android.content.Context;
+
+import java.util.HashMap;
 
 /**
  * 提供应用程序公用的功能组件
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2016
  */
 public abstract class AppGlobal {

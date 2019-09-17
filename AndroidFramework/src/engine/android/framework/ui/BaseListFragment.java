@@ -1,4 +1,8 @@
-package engine.android.framework.ui;
+﻿package engine.android.framework.ui;
+
+import engine.android.core.extra.JavaBeanAdapter;
+import engine.android.core.extra.JavaBeanLoader;
+import engine.android.framework.R;
 
 import android.app.ListFragment;
 import android.content.Loader;
@@ -17,15 +21,10 @@ import android.widget.TextView;
 
 import java.util.Collection;
 
-import engine.android.core.extra.JavaBeanAdapter;
-import engine.android.core.extra.JavaBeanLoader;
-import engine.android.framework.R;
-
 /**
  * 封装一个列表视图，copy from{@link ListFragment}，仔细比对会有少许改动
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class BaseListFragment extends BaseFragment {
@@ -60,7 +59,6 @@ public class BaseListFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ensureList();
         super.onViewCreated(view, savedInstanceState);
-        
         setupListView(mList);
     }
 
@@ -307,10 +305,18 @@ public class BaseListFragment extends BaseFragment {
     /******************************* 华丽丽的分割线 *******************************/
 
     /**
+     * 恢复列表初始状态
+     */
+    public static void resetList(ListView listView) {
+        listView.clearChoices();
+        listView.setSelection(0);
+    }
+
+    /**
      * 内嵌布局替换ListView<br>
      * 一般在{@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}里面调用
      */
-    protected static final void replaceListView(View root, int layoutId) {
+    protected static void replaceListView(View root, int layoutId) {
         View listView = root.findViewById(android.R.id.list);
         ViewGroup listContainer = (ViewGroup) listView.getParent();
         listContainer.removeView(listView);
@@ -322,7 +328,7 @@ public class BaseListFragment extends BaseFragment {
      * 内嵌布局注入到ListContainer中，与上面不同的是需要自定义EmptyView<br>
      * 一般在{@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}里面调用
      */
-    protected static final void injectListContainer(View root, int layoutId) {
+    protected static void injectListContainer(View root, int layoutId) {
         View listView = root.findViewById(android.R.id.list);
         ViewGroup listContainer = (ViewGroup) listView.getParent();
         listContainer.removeAllViews();

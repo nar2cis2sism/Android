@@ -1,18 +1,22 @@
-package engine.android.framework.ui;
-
-import android.app.Activity;
-import android.app.Fragment;
-import android.os.Bundle;
-import android.view.View.OnClickListener;
-import android.widget.TextView;
+﻿package engine.android.framework.ui;
 
 import engine.android.core.Forelet.ProgressSetting;
 import engine.android.core.extra.EventBus;
 import engine.android.framework.R;
 import engine.android.framework.ui.BaseActivity.EventHandler;
-import engine.android.framework.ui.extra.SinglePaneActivity;
+import engine.android.framework.ui.activity.SinglePaneActivity;
 import engine.android.framework.util.GsonUtil;
+import engine.android.util.AndroidUtil;
+import engine.android.util.ui.UIUtil;
 import engine.android.widget.component.TitleBar;
+
+import android.app.Activity;
+import android.app.Fragment;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.TextView;
 
 public abstract class BaseFragment extends engine.android.core.BaseFragment {
     
@@ -20,22 +24,25 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment {
     
     private boolean menuVisible = true;
     
+    private Boolean 沉浸式状态栏_深色字体;
+    
+    public void apply沉浸式状态栏() {
+        apply沉浸式状态栏(false);
+    }
+
+    public void apply沉浸式状态栏(boolean 深色字体) {
+        沉浸式状态栏_深色字体 = 深色字体;
+    }
+    
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        
         if (activity instanceof BaseActivity)
         {
             baseActivity = (BaseActivity) activity;
         }
     }
-    
-    @Override
-    public void onDetach() {
-        baseActivity = null;
-        super.onDetach();
-    }
-    
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         if (menuVisible) setupTitleBar();
@@ -53,6 +60,7 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment {
         if (titleBar != null)
         {
             setupTitleBar(titleBar.reset());
+            if (沉浸式状态栏_深色字体 != null) baseActivity.apply沉浸式状态栏(沉浸式状态栏_深色字体);
         }
     }
     
@@ -65,26 +73,42 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment {
     public final BaseActivity getBaseActivity() {
         return baseActivity;
     }
+    
+    @Override
+    public Context getContext() {
+        if (baseActivity != null) return baseActivity;
+        return super.getContext();
+    }
 
     /******************************* EventBus *******************************/
     
     private EventHandler handler;
-    
+
     /**
-     * 注册事件处理器<br>
-     * Call it in {@link #onCreate(android.os.Bundle)}
+     * 注册事件处理器
      */
-    public final void registerEventHandler(EventHandler handler) {
-        if (this.handler == null && BaseActivity.registerEventHandler(getBaseActivity(), handler))
+    protected EventHandler registerEventHandler() {
+        return null;
+    }
+    
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if ((handler = registerEventHandler()) != null)
         {
-            this.handler = handler;
+            BaseActivity.registerEventHandler(handler, getBaseActivity());
         }
     }
     
     @Override
-    public void onDestroy() {
+    public void onDestroyView() {
         if (handler != null) EventBus.getDefault().unregister(handler);
-        super.onDestroy();
+        super.onDestroyView();
+        View focus = getActivity().getCurrentFocus();
+        if (focus != null)
+        {
+            UIUtil.hideSoftInput(focus);
+        }
     }
     
     /**
@@ -110,6 +134,26 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment {
         }
     }
 
+    /******************************* 华丽丽的分割线 *******************************/
+    
+    public TextView newTextAction(CharSequence text, OnClickListener listener) {
+        TextView tv = new TextView(getContext());
+        int padding = AndroidUtil.dp2px(getContext(), 6);
+        tv.setPadding(padding, padding, padding, padding);
+        tv.setTextColor(getResources().getColorStateList(R.color.title_bar_action));
+        tv.setText(text);
+        if (listener != null) tv.setOnClickListener(listener);
+        return tv;
+    }
+    
+    public void showProgress(int msgResId) {
+        showProgress(getText(msgResId));
+    }
+    
+    public void showProgress(CharSequence message) {
+        baseActivity.showProgress(ProgressSetting.getDefault().setMessage(message), 100);
+    }
+
     /**
      * Provide a convenient way to start fragment wrapped in {@link SinglePaneActivity}
      * (需要在Manifest中注册)
@@ -124,19 +168,5 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment {
      */
     public void startFragment(Class<? extends Fragment> fragmentCls, Bundle args) {
         startActivity(SinglePaneActivity.buildIntent(getContext(), fragmentCls, args));
-    }
-
-    /******************************* 华丽丽的分割线 *******************************/
-    
-    protected void showProgress(CharSequence message) {
-        baseActivity.showProgress(ProgressSetting.getDefault().setMessage(message));
-    }
-    
-    protected TextView newTextAction(CharSequence text, OnClickListener listener) {
-        TextView tv = new TextView(getContext());
-        tv.setText(text);
-        tv.setTextColor(getResources().getColorStateList(R.color.title_bar_action));
-        if (listener != null) tv.setOnClickListener(listener);
-        return tv;
     }
 }

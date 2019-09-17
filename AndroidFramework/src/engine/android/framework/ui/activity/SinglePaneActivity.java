@@ -1,4 +1,7 @@
-package engine.android.framework.ui.extra;
+package engine.android.framework.ui.activity;
+
+import engine.android.framework.R;
+import engine.android.framework.ui.BaseActivity;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -10,14 +13,10 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 
-import engine.android.framework.R;
-import engine.android.framework.ui.BaseActivity;
-
 /**
  * 提供一个通用界面（显示单个Fragment）
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class SinglePaneActivity extends BaseActivity {
@@ -37,11 +36,7 @@ public class SinglePaneActivity extends BaseActivity {
         Intent intent = new Intent(context, SinglePaneActivity.class)
         .putExtra(EXTRA_FRAGMENT_CLASS_NAME, fragmentCls.getName());
         
-        if (args != null)
-        {
-            intent.putExtras(args);
-        }
-        
+        if (args != null) intent.putExtras(args);
         return intent;
     }
 
@@ -51,8 +46,7 @@ public class SinglePaneActivity extends BaseActivity {
         
         View content = new FrameLayout(this);
         content.setId(CONTENT_ID);
-        setContentView(content, new LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        setContentView(content, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         
         if (savedInstanceState == null)
         {

@@ -2,22 +2,21 @@ package engine.android.framework.ui.widget;
 
 import static engine.android.widget.base.CustomView.getDesiredSize;
 
+import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
+import engine.android.framework.R;
+import engine.android.framework.app.AppGlobal;
+import engine.android.util.image.AsyncImageLoader.ImageUrl;
+import engine.android.util.ui.UIUtil;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 
-import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
-import engine.android.framework.R;
-import engine.android.framework.app.AppGlobal;
-import engine.android.framework.app.image.ImageManager.ImageUrl;
-import engine.android.util.ui.UIUtil;
-
 /**
  * 头像显示控件
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class AvatarImageView extends ImageView {
@@ -40,9 +39,8 @@ public class AvatarImageView extends ImageView {
     /**
      * 显示头像
      * 
-     * @param view 需要显示的地方
+     * @param view 需要显示的地方（将被替换成{@link AvatarImageView}）
      * @param url 头像的下载地址
-     * @return 将被替换成{@link AvatarImageView}
      */
     public static AvatarImageView display(View view, ImageUrl url) {
         AvatarImageView avatar;

@@ -1,11 +1,4 @@
-package engine.android.framework.ui.extra.region;
-
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.provider.BaseColumns;
-
-import java.io.File;
-import java.io.FileOutputStream;
+package engine.android.framework.ui.fragment.region;
 
 import engine.android.dao.annotation.DAOPrimaryKey;
 import engine.android.dao.annotation.DAOProperty;
@@ -13,6 +6,13 @@ import engine.android.dao.annotation.DAOTable;
 import engine.android.util.file.FileManager;
 import engine.android.util.io.IOUtil;
 import engine.android.util.manager.SDCardManager;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.provider.BaseColumns;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * 地区
@@ -44,13 +44,12 @@ class RegionDataBase {
     public static final String DATABASE = "region.db";
     public static final String TABLE = "area";
     
-    public static final SQLiteDatabase open(Context context) {
+    public static SQLiteDatabase open(Context context) {
         return loadDB(context, DATABASE);
     }
     
     private static SQLiteDatabase loadDB(Context context, String name) {
         File db_file = new File(SDCardManager.openSDCardAppDir(context), name);
-        
         if (!db_file.exists())
         {
             FileManager.createFileIfNecessary(db_file);

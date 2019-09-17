@@ -872,7 +872,7 @@ public class Forelet extends Activity implements TaskCallback {
         }
         else
         {
-            finish();
+            onBackPressed();
         }
     }
 

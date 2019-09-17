@@ -1,8 +1,4 @@
-package engine.android.framework.ui.extra.region;
-
-import android.content.Context;
-import android.database.Cursor;
-import android.text.TextUtils;
+package engine.android.framework.ui.fragment.region;
 
 import engine.android.core.BaseFragment.Presenter;
 import engine.android.core.extra.JavaBeanAdapter.JavaBeanCursorAdapter;
@@ -10,6 +6,10 @@ import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
 import engine.android.dao.DAOTemplate;
 import engine.android.framework.R;
 import engine.android.util.ui.CursorLoader;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.text.TextUtils;
 
 class RegionPresenter extends Presenter<RegionFragment> {
     

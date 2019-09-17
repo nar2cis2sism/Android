@@ -1,32 +1,36 @@
-package engine.android.framework.ui;
-
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.LinearLayout;
-import android.widget.Toast;
+﻿package engine.android.framework.ui;
 
 import engine.android.core.Forelet;
 import engine.android.core.extra.EventBus;
 import engine.android.core.extra.EventBus.Event;
 import engine.android.framework.R;
 import engine.android.framework.app.AppGlobal;
-import engine.android.framework.network.ConnectionStatus;
 import engine.android.framework.network.http.HttpManager;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
 import engine.android.framework.network.socket.SocketManager;
 import engine.android.framework.network.socket.SocketManager.SocketBuilder;
 import engine.android.http.HttpConnector;
-import engine.android.util.Util;
+import engine.android.util.os.PermissionUtil;
+import engine.android.util.os.PermissionUtil.PermissionCallback;
+import engine.android.util.os.WindowUtil;
+import engine.android.util.ui.UIUtil;
 import engine.android.widget.component.TitleBar;
 
-public class BaseActivity extends NetworkActivity {
+import android.content.Context;
+import android.os.Bundle;
+import android.util.SparseArray;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
+public class BaseActivity extends NetworkActivity implements PermissionCallback {
     
     private LinearLayout root;
+    
+    private View status_bar;
     
     private TitleBar title_bar;
     
@@ -46,13 +50,33 @@ public class BaseActivity extends NetworkActivity {
             
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                onHomeUpPressed();
             }
         });
     }
     
     public final TitleBar getTitleBar() {
         return title_bar;
+    }
+
+    /**
+     * PS：状态栏随标题栏变化
+     */
+    @SuppressWarnings("deprecation")
+    public void apply沉浸式状态栏(boolean 深色字体) {
+        if (status_bar == null & WindowUtil.沉浸式状态栏(getWindow(), 深色字体))
+        {
+            status_bar = new View(this);
+            status_bar.setLayoutParams(new LinearLayout.LayoutParams(
+                    LayoutParams.MATCH_PARENT, WindowUtil.getStatusBarHeight(getResources())));
+            root.addView(status_bar, 0);
+        }
+
+        if (status_bar != null)
+        {
+            status_bar.setBackgroundDrawable(title_bar.getBackground());
+            status_bar.setVisibility(title_bar.getVisibility());
+        }
     }
 
     @Override
@@ -64,6 +88,7 @@ public class BaseActivity extends NetworkActivity {
     public void setContentView(View view) {
         root.removeAllViewsInLayout();
         
+        if (status_bar != null) root.addView(status_bar);
         root.addView(title_bar);
         root.addView(view);
         
@@ -76,28 +101,74 @@ public class BaseActivity extends NetworkActivity {
         setContentView(view);
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN)
+        {
+            View focus = getCurrentFocus();
+            if (focus != null)
+            {
+                UIUtil.hideSoftInput(focus);
+            }
+        }
+
+        return super.onTouchEvent(event);
+    }
+
+    /******************************* 应用权限 *******************************/
+
+    public interface PermissionCallback {
+
+        void onGrant(PermissionUtil permission, boolean success);
+    }
+
+    private PermissionUtil permission;
+    private SparseArray<PermissionCallback> callback;
+
+    /**
+     * 申请权限
+     */
+    public void requestPermission(PermissionCallback call, String... permissions) {
+        int requestCode = call == null ? 0 : call.hashCode();
+        if (callback == null) callback = new SparseArray<PermissionCallback>();
+        callback.append(requestCode, call);
+
+        if (permission == null) permission = new PermissionUtil(this);
+        permission.requestPermission(requestCode, permissions);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        PermissionCallback call = callback.get(requestCode);
+        if (call != null) call.onGrant(permission, permission.onRequestPermissionsResult(grantResults));
+    }
+
     /******************************* EventBus *******************************/
     
     private EventHandler handler;
-    
+
     /**
-     * 注册事件处理器<br>
-     * Call it in {@link #onCreate(android.os.Bundle)}
+     * 注册事件处理器
      */
-    public final void registerEventHandler(EventHandler handler) {
-        if (this.handler == null && registerEventHandler(this, handler))
-        {
-            this.handler = handler;
-        }
-    }
-    
-    @Override
-    protected void onDestroy(boolean finish) {
-        if (handler != null) EventBus.getDefault().unregister(handler);
-        super.onDestroy(finish);
+    protected EventHandler registerEventHandler() {
+        return null;
     }
 
-    public static class EventHandler implements engine.android.core.extra.EventBus.EventHandler {
+    @Override
+    public void onAttachedToWindow() {
+        if ((handler = registerEventHandler()) != null)
+        {
+            registerEventHandler(handler, this);
+        }
+    }
+
+    @Override
+    public void onDetachedFromWindow() {
+        if (handler != null) EventBus.getDefault().unregister(handler);
+        super.onDetachedFromWindow();
+    }
+    
+    public static abstract class EventHandler implements EventBus.EventHandler {
         
         private final String[] events;
         
@@ -113,7 +184,7 @@ public class BaseActivity extends NetworkActivity {
         }
         
         protected void onReceive(String action, int status, Object param) {
-            if (status == ConnectionStatus.SUCCESS)
+            if (status == 0)
             {
                 onReceiveSuccess(action, param);
             }
@@ -123,30 +194,22 @@ public class BaseActivity extends NetworkActivity {
             }
         }
         
-        protected void onReceiveSuccess(String action, Object param) {}
+        protected abstract void onReceiveSuccess(String action, Object param);
         
         protected void onReceiveFailure(String action, int status, Object param) {
             if (baseActivity != null)
             {
                 baseActivity.hideProgress();
-                baseActivity.showDialog("dialog_error", onCreateErrorDialog(param));
+                Toast.makeText(baseActivity, String.valueOf(param), Toast.LENGTH_SHORT).show();
             }
         }
         
         protected final void hideProgress() {
-            baseActivity.hideProgress();
-        }
-        
-        protected Dialog onCreateErrorDialog(Object error) {
-            return new AlertDialog.Builder(baseActivity)
-            .setTitle(R.string.dialog_error_title)
-            .setMessage(Util.getString(error, null))
-            .setPositiveButton(android.R.string.ok, null)
-            .create();
+            if (baseActivity != null) baseActivity.hideProgress();
         }
     }
-    
-    static boolean registerEventHandler(BaseActivity activity, EventHandler handler) {
+
+    public static void registerEventHandler(EventHandler handler, BaseActivity activity) {
         if (handler != null)
         {
             String[] events = handler.events;
@@ -157,12 +220,8 @@ public class BaseActivity extends NetworkActivity {
                 {
                     EventBus.getDefault().register(event, handler);
                 }
-                
-                return true;
             }
         }
-        
-        return false;
     }
 }
 

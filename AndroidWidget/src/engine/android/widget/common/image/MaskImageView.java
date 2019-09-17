@@ -72,7 +72,10 @@ public abstract class MaskImageView extends ImageView {
             mask = createMaskBitmap();
         }
 
-        canvas.drawBitmap(mask, 0, 0, paint);
+        if (mask != null)
+        {
+            canvas.drawBitmap(mask, 0, 0, paint);
+        }
 
         canvas.restoreToCount(saveCount);
     }

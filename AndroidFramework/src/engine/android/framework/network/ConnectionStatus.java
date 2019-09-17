@@ -4,7 +4,6 @@ package engine.android.framework.network;
  * 网络状态常量
  * 
  * @author Daimon
- * @version N
  * @since 3/15/2012
  */
 public interface ConnectionStatus {

@@ -1,16 +1,15 @@
 package engine.android.framework.ui.presenter;
 
-import android.content.Context;
-import android.media.MediaPlayer;
-
 import engine.android.core.BaseFragment;
 import engine.android.core.BaseFragment.Presenter;
+
+import android.content.Context;
+import android.media.MediaPlayer;
 
 /**
  * 背景音乐管理
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class AudioPresenter extends Presenter<BaseFragment> {
@@ -49,7 +48,7 @@ public class AudioPresenter extends Presenter<BaseFragment> {
     
     @Override
     protected void onDestroy() {
-        if (rawRes != 0)
+        if (mediaPlayer != null)
         {
             mediaPlayer.stop();
             mediaPlayer.release();

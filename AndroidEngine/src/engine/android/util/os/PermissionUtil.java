@@ -1,7 +1,5 @@
 package engine.android.util.os;
 
-import engine.android.util.os.PermissionUtil.PermissionCallback;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.provider.Settings;
 
 import java.util.ArrayList;
@@ -152,42 +149,5 @@ public class PermissionUtil {
     public void startSettingActivity() {
         activity.startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 .setData(Uri.parse("package:" + activity.getPackageName())));
-    }
-}
-
-/**
- * 权限申请界面示例
- */
-class PermissionActivity extends Activity implements PermissionCallback {
-
-    private PermissionUtil permission;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        permission = new PermissionUtil(this);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            int[] grantResults) {
-        if (permission.onRequestPermissionsResult(grantResults))
-        {
-            onRequestPermissionsSuccess();
-        }
-        else
-        {
-            onRequestPermissionsFailure();
-        }
-    }
-
-    public void requestPermission(String... permissions) {
-        permission.requestPermission(permissions);
-    }
-
-    protected void onRequestPermissionsSuccess() {}
-
-    protected void onRequestPermissionsFailure() {
-        permission.showTipDialog();
     }
 }

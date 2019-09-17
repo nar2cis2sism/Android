@@ -3,8 +3,6 @@
     <string name="Loading...">正在加载&#8230;</string>
     <string name="Save">保存</string>
 
-    <string name="dialog_error_title">出错了</string>
-
     <string name="connection_status_fail">出现未知错误，请联系客服人员！</string>
     <string name="connection_status_error">网络异常，请稍后重试！</string>
     <string name="connection_status_timeout">网络超时，请稍后重试！</string>

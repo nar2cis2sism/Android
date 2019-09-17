@@ -1,6 +1,16 @@
-package engine.android.framework.app.image;
+﻿package engine.android.framework.app.image;
 
 import static engine.android.core.util.LogFactory.LOG.log;
+
+import engine.android.core.util.LogFactory;
+import engine.android.framework.app.AppConfig;
+import engine.android.framework.app.AppGlobal;
+import engine.android.http.HttpConnector;
+import engine.android.util.image.AsyncImageLoader;
+import engine.android.util.image.AsyncImageLoader.ImageCallback;
+import engine.android.util.image.AsyncImageLoader.ImageDownloader;
+import engine.android.util.image.AsyncImageLoader.ImageUrl;
+import engine.android.util.image.ImageStorage;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -11,16 +21,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 
-import engine.android.core.util.LogFactory;
-import engine.android.framework.app.AppConfig;
-import engine.android.framework.app.AppGlobal;
-import engine.android.http.HttpConnector;
-import engine.android.util.Util;
-import engine.android.util.image.AsyncImageLoader;
-import engine.android.util.image.AsyncImageLoader.ImageCallback;
-import engine.android.util.image.AsyncImageLoader.ImageDownloader;
-import engine.android.util.image.ImageStorage;
-
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.WeakHashMap;
@@ -29,7 +29,6 @@ import java.util.WeakHashMap;
  * 图片统一管理
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class ImageManager {
@@ -68,13 +67,14 @@ public class ImageManager {
     }
 
     public void display(ImageView view, ImageUrl url, Drawable defaultDrawable) {
-        if (url == null)
+        ImageUrl originUrl = displayViewMap.put(view, url);
+        if (url == null || TextUtils.isEmpty(url.getDownloadUrl()))
         {
-            setDefaultDrawable(view, defaultDrawable);
+            if (defaultDrawable != null) view.setImageDrawable(defaultDrawable);
             return;
         }
         
-        if (url.equals(displayViewMap.put(view, url)))
+        if (url.equals(originUrl))
         {
             return;
         }
@@ -84,9 +84,9 @@ public class ImageManager {
         {
             view.setImageBitmap(image);
         }
-        else
+        else if (defaultDrawable != null)
         {
-            setDefaultDrawable(view, defaultDrawable);
+            view.setImageDrawable(defaultDrawable);
         }
     }
     
@@ -96,11 +96,8 @@ public class ImageManager {
         loader.loadImage(url, downloader, null);
     }
     
-    private void setDefaultDrawable(ImageView view, Drawable defaultDrawable) {
-        if (view.getDrawable() == null && defaultDrawable != null)
-        {
-            view.setImageDrawable(defaultDrawable);
-        }
+    public AsyncImageLoader getLoader() {
+        return loader;
     }
 
     private class ImageViewCallback implements ImageCallback {
@@ -112,7 +109,7 @@ public class ImageManager {
         }
 
         @Override
-        public void imageLoaded(Object url, Bitmap image) {
+        public void imageLoaded(ImageUrl url, Bitmap image) {
             ImageView view = callback.get();
             if (view != null && url.equals(displayViewMap.get(view)))
             {
@@ -137,13 +134,12 @@ public class ImageManager {
         }
 
         @Override
-        public Bitmap imageLoading(Object url) {
-            ImageUrl imageUrl = (ImageUrl) url;
-            String downloadUrl = imageUrl.getDownloadUrl();
-            String fileKey = imageUrl.getFileKey();
-            String crc = imageUrl.crc;
+        public Bitmap imageLoading(ImageUrl url) {
+            String downloadUrl = url.getDownloadUrl();
+            String fileKey = url.getType() + downloadUrl;
+            String crc = url.getCrc();
             
-            Bitmap image = savedImageMap.remove(imageUrl);
+            Bitmap image = savedImageMap.remove(url);
             if (image == null)
             {
                 if (checkCrc(fileKey, crc))
@@ -155,17 +151,17 @@ public class ImageManager {
                     image = storage.get(fileKey);
                 }
 
-                if (image == null && !config.isOffline())
+                if (image == null)
                 {
                     image = downloadImage(downloadUrl, fileKey, crc);
                 }
             }
-            else if (storage.put(fileKey, image))
+            else if (!TextUtils.isEmpty(crc) && storage.put(fileKey, image))
             {
                 updateCrc(fileKey, crc);
             }
             
-            if (transformer != null) image = transformer.transform(imageUrl, image);
+            if (transformer != null) image = transformer.transform(url, image);
             return image;
         }
 
@@ -179,22 +175,12 @@ public class ImageManager {
          * @return 图片是否有更新
          */
         private boolean checkCrc(String fileKey, String crc) {
-            boolean change = false;
-
-            String nativeCrc = "";
-            if (!TextUtils.isEmpty(crc))
+            if (TextUtils.isEmpty(crc))
             {
-                nativeCrc = sp.getString(getCrcKey(fileKey), nativeCrc);
-                if (!crc.equals(nativeCrc))
-                {
-                    change = true;
-                }
+                return true;
             }
-
-            if (printLog)
-                log("图片版本校验-" + fileKey, nativeCrc + "->" + Util.getString(crc, "") + "=change:" + change);
-
-            return change;
+            
+            return crc.equals(sp.getString(getCrcKey(fileKey), ""));
         }
 
         /**
@@ -205,7 +191,8 @@ public class ImageManager {
         }
         
         private Bitmap downloadImage(String downloadUrl, String fileKey, String crc) {
-            if (printLog) log("图片下载-" + fileKey, downloadUrl);
+            String tag = "图片下载-" + downloadUrl.hashCode();
+            if (printLog) log(tag, downloadUrl);
             try {
                 HttpConnector conn = new HttpConnector(downloadUrl);
                 conn.getRequest().setHeader("Accept", "*/*");
@@ -214,102 +201,21 @@ public class ImageManager {
                 Bitmap image = BitmapFactory.decodeByteArray(bs, 0, bs.length);
                 if (printLog)
                 {
-                    log("图片下载-" + fileKey, image == null ?
-                        "无图片" : image.getWidth() + "*" + image.getHeight());
+                    log(tag, image == null ? "无图片" : image.getWidth() + "*" + image.getHeight());
                 }
                 
-                if (image != null && storage.put(fileKey, bs))
+                if (image != null && !TextUtils.isEmpty(crc) && storage.put(fileKey, bs))
                 {
                     updateCrc(fileKey, crc);
                 }
                 
                 return image;
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 // 下载出错
-                if (printLog) log("图片下载-" + fileKey, e);
+                if (printLog) log(tag, e);
             }
             
             return null;
-        }
-    }
-
-    /**
-     * 拼装图片URL
-     */
-    public static class ImageUrl {
-        
-        public final int type;              // 图片类型
-
-        public final String url;            // 下载地址
-
-        public final String crc;            // 版本校验
-        
-        public ImageUrl(int type, String url, String crc) {
-            this.type = type;
-            this.url = url;
-            this.crc = crc;
-        }
-        
-        /**
-         * 下载地址
-         */
-        String getDownloadUrl() {
-            return url;
-        }
-
-        /**
-         * 文件存储唯一性
-         */
-        String getFileKey() {
-            return type + url;
-        }
-
-        /**
-         * 缓存唯一性
-         */
-        @Override
-        public boolean equals(Object o) {
-            if (this == o)
-            {
-                return true;
-            }
-            
-            if (o instanceof ImageUrl)
-            {
-                ImageUrl imageUrl = (ImageUrl) o;
-                return imageUrl.type == type 
-                    && TextUtils.equals(imageUrl.url, url)
-                    && TextUtils.equals(imageUrl.crc, crc);
-            }
-
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            int hashCode = type;
-            if (!TextUtils.isEmpty(url))
-            {
-                hashCode += url.hashCode();
-            }
-            
-            if (!TextUtils.isEmpty(crc))
-            {
-                hashCode += crc.hashCode();
-            }
-            
-            return hashCode;
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder()
-            .append("[")
-            .append("type=").append(type).append(",")
-            .append("url=").append(url).append(",")
-            .append("crc=").append(crc)
-            .append("]");
-            return sb.toString();
         }
     }
     
@@ -324,5 +230,6 @@ public class ImageManager {
     static
     {
         LogFactory.addLogFile(ImageManager.class, "image.txt");
+        LogFactory.addLogFile(MyImageDownloader.class, ImageManager.class);
     }
 }

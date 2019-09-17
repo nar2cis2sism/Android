@@ -1085,22 +1085,13 @@ public final class ImageUtil {
             int scaleH = Math.round(h * 1.0f / height);
             if (scaleW > 1 && scaleH > 1)
             {
-                if (scaleW > scaleH)
-                {
-                    inSampleSize = scaleH;
-                }
-                else
-                {
-                    inSampleSize = scaleW;
-                }
-
+                inSampleSize = Math.min(scaleW, scaleH);
                 // This offers some additional logic in case the image has a strange
                 // aspect ratio. For example, a panorama may have a much larger
                 // width than height. In these cases the total pixels might still
                 // end up being too large to fit comfortably in memory, so we should
                 // be more aggressive with sample down the image.
                 final float totalPixels = w * h;
-
                 // Anything more than 2x the requested pixels we'll sample down further.
                 final float totalPixelsCap = width * height * 2;
 

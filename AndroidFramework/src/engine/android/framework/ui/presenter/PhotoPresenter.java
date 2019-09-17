@@ -1,5 +1,13 @@
 package engine.android.framework.ui.presenter;
 
+import engine.android.core.BaseFragment;
+import engine.android.core.BaseFragment.Presenter;
+import engine.android.util.AndroidUtil;
+import engine.android.util.file.FileManager;
+import engine.android.util.image.ImageUtil;
+import engine.android.util.image.ImageUtil.ImageDecoder;
+import engine.android.util.manager.SDCardManager;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -21,14 +29,6 @@ import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.Media;
 import android.provider.MediaStore.Video;
 
-import engine.android.core.BaseFragment;
-import engine.android.core.BaseFragment.Presenter;
-import engine.android.util.AndroidUtil;
-import engine.android.util.file.FileManager;
-import engine.android.util.image.ImageUtil;
-import engine.android.util.image.ImageUtil.ImageDecoder;
-import engine.android.util.manager.SDCardManager;
-
 import org.w3c.dom.Document;
 
 import java.io.File;
@@ -39,7 +39,6 @@ import java.util.List;
  * 提供选取图片功能
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 @SuppressLint("InlinedApi")
@@ -381,7 +380,7 @@ public class PhotoPresenter extends Presenter<BaseFragment> {
         }
     }
     
-    private static Bitmap getImage(ContentResolver cr, Uri uri) {
+    public static Bitmap getImage(ContentResolver cr, Uri uri) {
         try {
             int angle = getImageOrientation(cr, uri);
             Bitmap image = Media.getBitmap(cr, uri);
@@ -393,7 +392,7 @@ public class PhotoPresenter extends Presenter<BaseFragment> {
         return null;
     }
     
-    private static Bitmap getThumbnail(ContentResolver cr, Uri uri, 
+    public static Bitmap getThumbnail(ContentResolver cr, Uri uri, 
             int width, int height, boolean fitXY) {
         try {
             int angle = getImageOrientation(cr, uri);
@@ -405,7 +404,6 @@ public class PhotoPresenter extends Presenter<BaseFragment> {
             }
             
             AssetFileDescriptor fd = cr.openAssetFileDescriptor(uri, "r");
-
             Bitmap image = ImageDecoder.decodeFileDescriptor(
                     fd.getFileDescriptor(), 
                     width, 
@@ -421,7 +419,7 @@ public class PhotoPresenter extends Presenter<BaseFragment> {
         return null;
     }
     
-    private static int getImageOrientation(ContentResolver cr, Uri uri) {
+    public static int getImageOrientation(ContentResolver cr, Uri uri) {
         if (ContentResolver.SCHEME_FILE.equals(uri.getScheme()))
         {
             return readJPEGDegree(uri.getPath());
@@ -449,9 +447,8 @@ public class PhotoPresenter extends Presenter<BaseFragment> {
      * 
      * @param path 图片绝对路径
      */
-    private static int readJPEGDegree(String path) {
+    public static int readJPEGDegree(String path) {
         int angle = 0;
-        
         try {
             ExifInterface ei = new ExifInterface(path);
             int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, 
@@ -474,7 +471,7 @@ public class PhotoPresenter extends Presenter<BaseFragment> {
         return angle;
     }
 
-    private static int calculateZoomSize(Bitmap image, int width, int height) {
+    public static int calculateZoomSize(Bitmap image, int width, int height) {
         int w = image.getWidth();
         int h = image.getHeight();
         // 计算缩放比例
@@ -483,23 +480,13 @@ public class PhotoPresenter extends Presenter<BaseFragment> {
         int scaleH = Math.round(h * 1.0f / height);
         if (scaleW > 1 && scaleH > 1)
         {
-            if (scaleW > scaleH)
-            {
-                zoomSize = scaleH;
-            }
-            else
-            {
-                zoomSize = scaleW;
-            }
-
+            zoomSize = Math.min(scaleW, scaleH);
             // This offers some additional logic in case the image has a strange
             // aspect ratio. For example, a panorama may have a much larger
             // width than height. In these cases the total pixels might still
             // end up being too large to fit comfortably in memory, so we should
             // be more aggressive with sample down the image.
-
             final float totalPixels = w * h;
-
             // Anything more than 2x the requested pixels we'll sample down further.
             final float totalPixelsCap = width * height * 2;
 
@@ -511,7 +498,6 @@ public class PhotoPresenter extends Presenter<BaseFragment> {
 
         return zoomSize;
     }
-
 }
 
 class DocumentUtil {
@@ -521,7 +507,6 @@ class DocumentUtil {
      */
     public static Uri getUri(Context context, Uri uri) {
         boolean isKitKat = AndroidUtil.getVersion() >= 19;
-        
         // DocumentProvider
         if (isKitKat && DocumentsContract.isDocumentUri(context, uri))
         {

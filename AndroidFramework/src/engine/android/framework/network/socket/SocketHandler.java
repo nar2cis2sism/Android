@@ -1,5 +1,9 @@
 ﻿package engine.android.framework.network.socket;
 
+import engine.android.framework.network.socket.SocketResponse.SocketTimeout;
+import engine.android.http.HttpConnector;
+import engine.android.util.manager.AlarmTimer;
+
 import android.app.AlarmManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,19 +16,15 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.os.SystemClock;
 
-import engine.android.framework.network.socket.SocketResponse.SocketTimeout;
-import engine.android.http.HttpConnector;
-import engine.android.util.manager.AlarmTimer;
 import protocol.socket.SimpleData;
 
 import java.util.concurrent.TimeUnit;
 
 /**
- * 辅助类，提供一个后台循环线程<br>
+ * 辅助类，提供一个后台循环线程<p>
  * 功能：断线自动重连+心跳包发送+超时处理
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2016
  */
 class SocketHandler {

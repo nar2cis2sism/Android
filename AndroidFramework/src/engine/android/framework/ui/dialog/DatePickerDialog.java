@@ -1,4 +1,10 @@
-package engine.android.framework.ui.widget;
+package engine.android.framework.ui.dialog;
+
+import engine.android.core.util.CalendarFormat;
+import engine.android.framework.R;
+import engine.android.widget.common.wheel.NumericWheelAdapter;
+import engine.android.widget.common.wheel.OnWheelChangedListener;
+import engine.android.widget.common.wheel.WheelView;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -8,19 +14,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AnticipateOvershootInterpolator;
 
-import engine.android.core.util.CalendarFormat;
-import engine.android.framework.R;
-import engine.android.widget.common.wheel.NumericWheelAdapter;
-import engine.android.widget.common.wheel.OnWheelChangedListener;
-import engine.android.widget.common.wheel.WheelView;
-
 import java.util.Calendar;
 
 /**
  * 日期选择对话框
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class DatePickerDialog extends AlertDialog implements OnWheelChangedListener, OnClickListener {
@@ -57,6 +56,13 @@ public class DatePickerDialog extends AlertDialog implements OnWheelChangedListe
     public DatePickerDialog(Context context, OnDateSetListener listener, Calendar date) {
         super(context);
         this.listener = listener;
+        // Initialize the date. If the provided values designate an inconsistent
+        // date the values are normalized before updating the spinners.
+        if (date == null) date = Calendar.getInstance();
+        CalendarFormat.formatAllDay(cal = date);
+        date_year = date.get(Calendar.YEAR);
+        date_month = date.get(Calendar.MONTH);
+        date_day = date.get(Calendar.DATE);
 
         setTitle(context.getString(R.string.date_picker_title));
         
@@ -67,44 +73,36 @@ public class DatePickerDialog extends AlertDialog implements OnWheelChangedListe
         setView(view);
         
         setButton(BUTTON_POSITIVE, context.getString(android.R.string.ok), this);
-        setButton(BUTTON_NEGATIVE, context.getString(android.R.string.cancel), (OnClickListener) null);
+        setButton(BUTTON_NEGATIVE, context.getString(android.R.string.cancel), this);
         
-        // Initialize the date. If the provided values designate an inconsistent
-        // date the values are normalized before updating the spinners.
-        if (date == null) date = Calendar.getInstance();
-        CalendarFormat.formatAllDay(cal = date);
-        date_year = date.get(Calendar.YEAR);
-        date_month = date.get(Calendar.MONTH);
-        date_day = date.get(Calendar.DATE);
-        
-        initYear();
-        initMonth();
-        initDay();
+        setupYear();
+        setupMonth();
+        setupDay();
     }
     
-    private void initYear() {
-        year.setInterpolator(new AnticipateOvershootInterpolator());
+    private void setupYear() {
+        setupWheel(year);
         year.setAdapter(new NumericWheelAdapter(MIN_YEAR, MAX_YEAR));
-        year.setCyclic(true);
         year.setCurrentItem(date_year - MIN_YEAR);
-        year.addChangingListener(this);
     }
     
-    private void initMonth() {
-        month.setInterpolator(new AnticipateOvershootInterpolator());
+    private void setupMonth() {
+        setupWheel(month);
         month.setAdapter(new NumericWheelAdapter(1, 12, "%02d月"));
-        month.setCyclic(true);
         month.setCurrentItem(date_month);
-        month.addChangingListener(this);
     }
     
-    private void initDay() {
-        day.setInterpolator(new AnticipateOvershootInterpolator());
-        day.setCyclic(true);
-        day.addChangingListener(this);
+    private void setupDay() {
+        setupWheel(day);
         updateDay();
     }
     
+    protected void setupWheel(WheelView wheel) {
+        wheel.setInterpolator(new AnticipateOvershootInterpolator());
+        wheel.setCyclic(true);
+        wheel.addChangingListener(this);
+    }
+
     private void updateDay() {
         int minimumDay = cal.getActualMinimum(Calendar.DAY_OF_MONTH);
         int maximumDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -141,7 +139,7 @@ public class DatePickerDialog extends AlertDialog implements OnWheelChangedListe
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        if (listener != null)
+        if (which == BUTTON_POSITIVE && listener != null)
         {
             listener.onDateSet(cal);
         }

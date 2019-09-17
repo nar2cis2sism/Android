@@ -1,8 +1,14 @@
-package engine.android.framework.ui.extra;
+package engine.android.framework.ui.fragment;
+
+import engine.android.framework.R;
+import engine.android.framework.ui.BaseFragment;
+import engine.android.util.Util;
+import engine.android.util.api.StringUtil;
+import engine.android.util.listener.MyTextWatcher;
+import engine.android.widget.component.TitleBar;
 
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -10,22 +16,15 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import engine.android.framework.R;
-import engine.android.framework.ui.BaseFragment;
-import engine.android.util.StringUtil;
-import engine.android.util.Util;
-import engine.android.widget.component.TitleBar;
-
 /**
  * 文本编辑界面
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class TextEditFragment extends BaseFragment {
     
-    public static final class Params {
+    public static class Params {
         
         public String title;            // 标题
         public int maxEms;              // 文本字数限制（中文计数1个字符，其他计数半个字符）
@@ -53,12 +52,12 @@ public class TextEditFragment extends BaseFragment {
             
             @Override
             public void onClick(View v) {
-                notifyDataChanged(input.getText().toString());
+                notifyDataChanged(input.getText());
                 finish();
             }
         });
         save.setEnabled(false);
-
+        //
         titleBar
         .setDisplayUpEnabled(true)
         .setTitle(params.title)
@@ -81,13 +80,7 @@ public class TextEditFragment extends BaseFragment {
         if (params.maxEms > 0)
         {
             // 计算剩余可输入字数
-            input.addTextChangedListener(new TextWatcher() {
-                
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {}
-                
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            input.addTextChangedListener(new MyTextWatcher() {
                 
                 @Override
                 public void afterTextChanged(Editable s) {
@@ -113,20 +106,14 @@ public class TextEditFragment extends BaseFragment {
         }
         input.setText((CharSequence) getData());
         // 比较新旧文本
-        input.addTextChangedListener(new TextWatcher() {
-            
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        input.addTextChangedListener(new MyTextWatcher() {
             
             @Override
             public void afterTextChanged(Editable s) {
                 save.setEnabled(!s.toString().equals(Util.getString(getData(), "")));
             }
         });
-        
+        //
         description.setText(params.desc);
     }
     
@@ -135,7 +122,7 @@ public class TextEditFragment extends BaseFragment {
      * 
      * @param text 初始文本
      */
-    public void setListener(String text, Listener<String> listener) {
+    public void setListener(CharSequence text, Listener<CharSequence> listener) {
         super.setListener(text, listener);
     }
 }

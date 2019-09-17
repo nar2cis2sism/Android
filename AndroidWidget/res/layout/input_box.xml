@@ -35,7 +35,7 @@
             android:padding="4dp"
             android:src="@drawable/password_eye" />
 
-        <engine.android.widget.common.button.SmsCodeButton
+        <engine.android.widget.common.button.CountDownButton
             android:id="@+id/sms_code"
             android:visibility="gone"
             android:layout_width="wrap_content"

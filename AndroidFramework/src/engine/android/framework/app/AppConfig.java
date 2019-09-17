@@ -1,12 +1,5 @@
 package engine.android.framework.app;
 
-import android.content.Context;
-
-import java.io.File;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import engine.android.framework.app.image.ImageManager.Transformer;
 import engine.android.framework.network.ConnectionStatus.ConnectionInterceptor;
 import engine.android.framework.network.socket.SocketPushReceiver;
@@ -14,11 +7,17 @@ import engine.android.http.HttpProxy.HttpServlet;
 import engine.android.socket.SocketProxy.SocketServlet;
 import engine.android.util.extra.MyThreadFactory;
 
+import android.content.Context;
+
+import java.io.File;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 /**
  * 配置应用程序公用的功能组件
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2016
  */
 public class AppConfig {

@@ -1,0 +1,54 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/message_dialog_bg">
+
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textAppearance="@android:attr/textAppearanceMedium" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_category" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="58dp">
+
+        <Button
+            android:id="@+id/negative"
+            android:visibility="gone"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/list_selector_background"
+            android:textAppearance="@android:attr/textAppearanceMedium"
+            android:text="@android:string/cancel" />
+
+        <View
+            android:id="@+id/divider"
+            android:visibility="gone"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/divider_category" />
+
+        <Button
+            android:id="@+id/positive"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/list_selector_background"
+            android:textAppearance="@android:attr/textAppearanceMedium"
+            android:textColor="#3296DC"
+            android:text="@android:string/ok" />
+
+    </LinearLayout>
+
+</LinearLayout>

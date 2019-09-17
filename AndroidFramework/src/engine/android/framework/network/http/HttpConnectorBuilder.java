@@ -3,6 +3,7 @@
 import engine.android.framework.network.http.HttpConnectorBuilder.FormEntity.Form;
 import engine.android.http.HttpConnector;
 import engine.android.http.HttpRequest.HttpEntity;
+
 import protocol.util.EntityUtil;
 
 import java.io.IOException;
@@ -10,6 +11,12 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 网络连接构造器
+ * 
+ * @author Daimon
+ * @since 6/6/2014
+ */
 public class HttpConnectorBuilder {
     
     private final HttpManager manager;
@@ -122,7 +129,7 @@ public class HttpConnectorBuilder {
         
         void buildForm(Form form);
         
-        public static class Form {
+        class Form {
             
             private final HashMap<String, Object> map = new HashMap<String, Object>();
             

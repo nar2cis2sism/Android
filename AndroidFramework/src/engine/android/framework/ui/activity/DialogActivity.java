@@ -1,4 +1,5 @@
-package engine.android.framework.ui.extra;
+package engine.android.framework.ui.activity;
+
 
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -7,7 +8,6 @@ import android.view.WindowManager;
  * 提供一个对话框活动界面（需要在manifest中应用对话框主题Theme_Dialog）
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2014
  */
 public class DialogActivity extends SinglePaneActivity {
@@ -17,7 +17,7 @@ public class DialogActivity extends SinglePaneActivity {
     /**
      * 可设置界面参数
      */
-    protected void initParams(WindowManager.LayoutParams params) {}
+    protected void setupParams(WindowManager.LayoutParams params) {}
     
     /**
      * 可设置出入动画
@@ -32,7 +32,7 @@ public class DialogActivity extends SinglePaneActivity {
         super.onCreate(savedInstanceState);
         
         WindowManager.LayoutParams params = getWindow().getAttributes();
-        initParams(params);
+        setupParams(params);
         getWindow().setAttributes(params);
     }
     

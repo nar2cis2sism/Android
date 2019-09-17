@@ -3,13 +3,16 @@ package engine.android.core.util;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.format.DateUtils;
+import android.util.SparseArray;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -715,5 +718,248 @@ public final class CalendarFormat {
      */
     public static boolean is24HourFormat(Context context) {
         return android.text.format.DateFormat.is24HourFormat(context);
+    }
+    
+    /**
+     * 描述一个日期范围区间
+     */
+    public static class DateRange {
+        
+        private static final Calendar cal = Calendar.getInstance();
+        
+        private final long start,end;               // 日期起止时间
+        
+        private int type;                           // 日期类型
+        private String label;                       // 显示标签
+        private String format;                      // 格式化样式
+
+        DateRange(long start, long end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public DateRange setType(int type) {
+            this.type = type;
+            return this;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public DateRange setLabel(String label) {
+            this.label = label;
+            return this;
+        }
+
+        public String getFormat() {
+            return format;
+        }
+
+        public DateRange setFormat(String format) {
+            this.format = format;
+            return this;
+        }
+
+        /**
+         * 时间格式化
+         */
+        public String format(long time) {
+            cal.setTimeInMillis(time);
+            return CalendarFormat.format(cal, format);
+        }
+
+        /**
+         * 获取起始时间，一般为当天零点
+         */
+        public long getTime() {
+            return start;
+        }
+
+        boolean includes(long time) {
+            return start <= time && time < end;
+        }
+
+        public static class DateRangeLookUp {
+
+            private final LinkedList<DateRange> dateList = new LinkedList<DateRange>();
+
+            public DateRange register(long start, long end) {
+                DateRange range = new DateRange(start, end);
+                dateList.add(range);
+                return range;
+            }
+
+            /**
+             * 根据时间查询日期范围
+             */
+            public DateRange lookup(long time) {
+                for (DateRange range : dateList)
+                {
+                    if (range.includes(time))
+                    {
+                        return range;
+                    }
+                }
+
+                return null;
+            }
+        }
+
+        private static DateRangeLookUp lookup;
+
+        public static DateRangeLookUp getDefault() {
+            if (lookup == null || lookup.lookup(System.currentTimeMillis()) == null)
+            {
+                // 过了今天需要重新创建
+                lookup = createDefault();
+            }
+
+            return lookup;
+        }
+
+        private static DateRangeLookUp createDefault() {
+            DateRangeLookUp map = new DateRangeLookUp();
+            // Today
+            Calendar cal = Calendar.getInstance();
+            CalendarFormat.formatAllDay(cal);
+            long today = cal.getTimeInMillis();
+
+            long start = today;
+            cal.add(Calendar.DATE, 1);
+            long end = cal.getTimeInMillis();
+            map.register(start, end).setLabel("今天").setFormat("HH:mm");
+            // Yesterday
+            end = start;
+            cal.setTimeInMillis(today);
+            cal.add(Calendar.DATE, -1);
+            start = cal.getTimeInMillis();
+            map.register(start, end).setLabel("昨天").setFormat("昨天 HH:mm");
+            // This Week
+            end = start;
+            cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+            start = cal.getTimeInMillis();
+            map.register(start, end).setFormat("E HH:mm");
+            // This Year
+            end = start;
+            cal.setTimeInMillis(today);
+            cal.set(Calendar.MONTH, Calendar.JANUARY);
+            cal.set(Calendar.DATE, 1);
+            start = cal.getTimeInMillis();
+            map.register(start, end).setFormat("M月d日 HH:mm");
+            // Older
+            map.register(0, start).setLabel("更早").setFormat("yyyy年M月d日 HH:mm");
+
+            return map;
+        }
+    }
+    
+    /**
+     * 时间格式化
+     */
+    public static class TimeFormat {
+
+        public static final int FLAG_YEAR       = Calendar.YEAR;
+        public static final int FLAG_MONTH      = Calendar.MONTH;
+        public static final int FLAG_DAY        = Calendar.DATE;
+        public static final int FLAG_HOUR       = Calendar.HOUR;
+        public static final int FLAG_MINUTE     = Calendar.MINUTE;
+        public static final int FLAG_SECOND     = Calendar.SECOND;
+
+        private long now = System.currentTimeMillis();              // 当前时间
+
+        private final SparseArray<String> formatMap = new SparseArray<String>();
+
+        public TimeFormat setCurrentTime(long timeMillis) {
+            now = timeMillis;
+            return this;
+        }
+
+        public TimeFormat setFormat(int flag, String format) {
+            formatMap.append(flag, format);
+            return this;
+        }
+
+        /**
+         * 倒计时显示时:分:秒
+         */
+        public static String countDown(long timeInMillis) {
+            TimeUnit unit = TimeUnit.MILLISECONDS;
+            long hours = unit.toHours(timeInMillis);
+            long minutes = unit.toMinutes(timeInMillis) % 60;
+            long seconds = unit.toSeconds(timeInMillis) % 60;
+            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        }
+
+        /**
+         * 格式化显示与当前时间差
+         */
+        public String difference(long time) {
+            long seconds = (now - time) / 1000;
+            long minutes = seconds / 60;
+            if (minutes == 0)
+            {
+                return String.format(getFormat(FLAG_SECOND), seconds);
+            }
+
+            long hours = minutes / 60;
+            if (hours == 0)
+            {
+                return String.format(getFormat(FLAG_MINUTE), minutes);
+            }
+
+            long days = hours / 24;
+            if (days == 0)
+            {
+                return String.format(getFormat(FLAG_HOUR), hours);
+            }
+
+            long month = days / 30;
+            if (month == 0)
+            {
+                return String.format(getFormat(FLAG_DAY), days);
+            }
+
+            long years = month / 12;
+            if (years == 0)
+            {
+                return String.format(getFormat(FLAG_MONTH), month);
+            }
+
+            return String.format(getFormat(FLAG_YEAR), years);
+        }
+
+        private String getFormat(int flag) {
+            String format = formatMap.get(flag);
+            if (format == null)
+            {
+                formatMap.append(flag, format = getDefaultFormat(flag));
+            }
+
+            return format;
+        }
+
+        private static String getDefaultFormat(int flag) {
+            switch (flag) {
+                case FLAG_SECOND:
+                    return "刚刚";
+                case FLAG_MINUTE:
+                    return "%d分钟前";
+                case FLAG_HOUR:
+                    return "%d个小时前";
+                case FLAG_DAY:
+                    return "%d天前";
+                case FLAG_MONTH:
+                    return "%d个月前";
+                case FLAG_YEAR:
+                    return "%d年前";
+            }
+
+            return "";
+        }
     }
 }

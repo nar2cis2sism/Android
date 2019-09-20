@@ -2,6 +2,14 @@ package com.project.ui.more.setting;
 
 import static com.project.network.action.Actions.LOGOUT;
 
+import engine.android.core.annotation.OnClick;
+import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
+import engine.android.framework.ui.BaseActivity;
+import engine.android.framework.ui.fragment.BaseInfoFragment;
+import engine.android.util.ui.FastClickUtil.FastClickCounter;
+import engine.android.widget.common.text.BadgeView;
+import engine.android.widget.component.TitleBar;
+
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -20,13 +28,6 @@ import com.project.ui.login.LoginFragment;
 import com.project.util.AppUtil;
 import com.project.util.LogUploader;
 
-import engine.android.core.annotation.OnClick;
-import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
-import engine.android.framework.ui.extra.BaseInfoFragment;
-import engine.android.util.ui.FastClickCounter;
-import engine.android.widget.common.BadgeView;
-import engine.android.widget.component.TitleBar;
-
 /**
  * 设置界面
  * 
@@ -42,16 +43,10 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
     FastClickCounter counter = new FastClickCounter(7);     // 日志上传后门
     
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        registerEventHandler(new EventHandler());
-    }
-    
-    @Override
     protected void setupTitleBar(TitleBar titleBar) {
         titleBar
-        .setTitle(R.string.setting_title)
         .setDisplayUpEnabled(true)
+        .setTitle(R.string.setting_title)
         .show();
     }
 
@@ -99,7 +94,7 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
     void logout() {
         if (getBaseActivity().checkNetworkStatus(true))
         {
-            showProgress(getString(R.string.progress_waiting));
+            showProgress(R.string.progress_waiting);
             getBaseActivity().sendHttpRequest(new Logout());
         }
     }
@@ -114,13 +109,18 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
         {
             if (counter.count())
             {
-                LogUploader.upload(getContext());
+                LogUploader.upload(getContext(), null);
                 MyApp.showMessage("日志已上传");
             }
         }
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+    @Override
+    protected EventHandler registerEventHandler() {
+        return new EventHandler();
+    }
+    
+    private class EventHandler extends BaseActivity.EventHandler {
         
         public EventHandler() {
             super(LOGOUT);

@@ -1,12 +1,12 @@
 package com.project.network.action.socket;
 
-import com.project.storage.dao.MessageDAO;
-import com.project.storage.db.Message;
-
 import engine.android.framework.network.socket.SocketManager.SocketBuilder;
 import engine.android.framework.network.socket.SocketResponse;
 import engine.android.framework.network.socket.SocketResponse.SocketTimeout;
-import protocol.socket.ack.MessageACK;
+
+import com.project.storage.dao.MessageDAO;
+import com.project.storage.db.Message;
+
 import protocol.util.ProtocolWrapper.ProtocolEntity.ProtocolData;
 
 /**
@@ -33,14 +33,8 @@ public class SendMessage implements SocketBuilder, SocketTimeout {
     }
 
     @Override
-    public boolean response(ProtocolData data, Callback callback) {
-        if (data instanceof MessageACK)
-        {
-            MessageDAO.sendoutMessage(message, true);
-            return true;
-        }
-        
-        return false;
+    public void response(int cmd, ProtocolData data, Callback callback) {
+        MessageDAO.sendoutMessage(message, true);
     }
 
     @Override

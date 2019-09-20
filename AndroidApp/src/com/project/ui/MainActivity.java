@@ -3,6 +3,11 @@ package com.project.ui;
 import static com.project.app.event.Events.MAIN_TAB_BADGE;
 import static engine.android.util.AndroidUtil.dp2px;
 
+import engine.android.core.annotation.InjectView;
+import engine.android.framework.ui.BaseActivity;
+import engine.android.widget.common.text.BadgeView;
+import engine.android.widget.extra.ViewPager;
+
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -23,10 +28,6 @@ import com.project.ui.message.MessageListFragment;
 import com.project.ui.more.MoreFragment;
 import com.project.util.AppUtil;
 
-import engine.android.core.annotation.InjectView;
-import engine.android.framework.ui.BaseActivity;
-import engine.android.widget.common.BadgeView;
-import engine.android.widget.extra.ViewPager;
 import protocol.http.NavigationData.AppUpgradeInfo;
 
 /**
@@ -70,7 +71,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        registerEventHandler(new EventHandler());
         setContentView(R.layout.main_activity);
         
         setupView();
@@ -143,7 +143,7 @@ public class MainActivity extends BaseActivity {
         outState.putString(SAVED_TAB_TAG, tabHost.getCurrentTabTag());
     }
 
-    private static class ViewPagerAdapter extends engine.android.widget.extra.ViewPager.ViewPagerAdapter {
+    private static class ViewPagerAdapter extends ViewPager.ViewPagerAdapter {
     
         public ViewPagerAdapter(FragmentManager fm, int count) {
             super(fm, count);
@@ -168,7 +168,7 @@ public class MainActivity extends BaseActivity {
             params.addRule(RelativeLayout.CENTER_HORIZONTAL);
             
             addView(iv, params);
-            
+            //
             BadgeView badge = new BadgeView(context, iv);
             badge.setBadgeMargin(0, dp2px(context, 6), dp2px(context, 12), 0);
             badge.setTag(tag);
@@ -187,7 +187,12 @@ public class MainActivity extends BaseActivity {
         }
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+    @Override
+    protected EventHandler registerEventHandler() {
+        return new EventHandler();
+    }
+    
+    private class EventHandler extends BaseActivity.EventHandler {
         
         public EventHandler() {
             super(MAIN_TAB_BADGE);

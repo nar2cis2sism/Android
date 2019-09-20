@@ -1,8 +1,8 @@
 package com.project.network.http;
 
-import com.project.network.action.Actions;
-
 import engine.android.framework.network.ConnectionStatus.ConnectionInterceptor;
+
+import com.project.network.action.Actions;
 
 public class HttpInterceptor implements ConnectionInterceptor, Actions {
 

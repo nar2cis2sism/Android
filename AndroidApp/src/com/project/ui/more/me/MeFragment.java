@@ -3,6 +3,28 @@ package com.project.ui.more.me;
 import static com.project.network.action.Actions.AVATAR;
 import static com.project.network.action.Actions.EDIT_USER_INFO;
 
+import engine.android.core.annotation.InjectView;
+import engine.android.core.annotation.OnClick;
+import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
+import engine.android.core.util.CalendarFormat;
+import engine.android.framework.ui.BaseActivity;
+import engine.android.framework.ui.activity.SinglePaneActivity;
+import engine.android.framework.ui.activity.SinglePaneActivity.OnBackListener;
+import engine.android.framework.ui.dialog.DatePickerDialog;
+import engine.android.framework.ui.dialog.DatePickerDialog.OnDateSetListener;
+import engine.android.framework.ui.fragment.BaseInfoFragment;
+import engine.android.framework.ui.fragment.TextEditFragment;
+import engine.android.framework.ui.fragment.ViewImageFragment;
+import engine.android.framework.ui.fragment.region.Region;
+import engine.android.framework.ui.fragment.region.RegionFragment;
+import engine.android.framework.ui.presenter.PhotoPresenter;
+import engine.android.framework.ui.presenter.PhotoPresenter.CropAttribute;
+import engine.android.framework.ui.presenter.PhotoPresenter.PhotoCallback;
+import engine.android.framework.ui.presenter.PhotoPresenter.PhotoInfo;
+import engine.android.framework.ui.widget.AvatarImageView;
+import engine.android.util.Util;
+import engine.android.widget.component.TitleBar;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -22,27 +44,6 @@ import com.project.app.MySession;
 import com.project.network.action.file.UploadAvatar;
 import com.project.network.action.http.EditUserInfo;
 import com.project.storage.db.User;
-
-import engine.android.core.annotation.InjectView;
-import engine.android.core.annotation.OnClick;
-import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
-import engine.android.core.util.CalendarFormat;
-import engine.android.framework.ui.extra.BaseInfoFragment;
-import engine.android.framework.ui.extra.SinglePaneActivity;
-import engine.android.framework.ui.extra.SinglePaneActivity.OnBackListener;
-import engine.android.framework.ui.extra.TextEditFragment;
-import engine.android.framework.ui.extra.ViewImageFragment;
-import engine.android.framework.ui.extra.region.Region;
-import engine.android.framework.ui.extra.region.RegionFragment;
-import engine.android.framework.ui.presenter.PhotoPresenter;
-import engine.android.framework.ui.presenter.PhotoPresenter.CropAttribute;
-import engine.android.framework.ui.presenter.PhotoPresenter.PhotoCallback;
-import engine.android.framework.ui.presenter.PhotoPresenter.PhotoInfo;
-import engine.android.framework.ui.widget.AvatarImageView;
-import engine.android.framework.ui.widget.DatePickerDialog;
-import engine.android.framework.ui.widget.DatePickerDialog.OnDateSetListener;
-import engine.android.util.Util;
-import engine.android.widget.component.TitleBar;
 
 import java.util.Calendar;
 
@@ -67,7 +68,6 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        registerEventHandler(new EventHandler());
         addPresenter(new PhotoPresenter(this));
         
         user = Util.clone(MySession.getUser());
@@ -76,8 +76,8 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
     @Override
     protected void setupTitleBar(TitleBar titleBar) {
         titleBar
-        .setTitle(R.string.me_title)
         .setDisplayUpEnabled(true)
+        .setTitle(R.string.me_title)
         .show();
     }
 
@@ -106,6 +106,7 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         return root;
     }
     
+    @SuppressWarnings("deprecation")
     private void setupNickName(ViewGroup root, LayoutInflater inflater) {
         EditText input = new EditText(getContext());
         input.setBackgroundDrawable(null);
@@ -185,7 +186,7 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
             
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                user.isFemale = which == 1;
+                user.gender = which;
                 gender.setTextView(R.id.text, user.getGenderText());
             }
         })
@@ -241,11 +242,11 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
 
         TextEditFragment fragment = new TextEditFragment();
         fragment.setArguments(ParamsBuilder.build(params));
-        fragment.setListener(user.signature, new Listener<String>() {
+        fragment.setListener(user.signature, new Listener<CharSequence>() {
             
             @Override
-            public void update(String data) {
-                signature.setTextView(R.id.text, user.signature = data);
+            public void update(CharSequence data) {
+                signature.setTextView(R.id.text, user.signature = data.toString());
             }
         });
         
@@ -286,7 +287,12 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         return true;
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+    @Override
+    protected EventHandler registerEventHandler() {
+        return new EventHandler();
+    }
+    
+    private class EventHandler extends BaseActivity.EventHandler {
         
         public EventHandler() {
             super(AVATAR, EDIT_USER_INFO);

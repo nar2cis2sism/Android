@@ -27,6 +27,6 @@ public class ErrorInfo implements Failure {
     
     @Override
     public String toString() {
-        return code + ":" + msg;
+        return msg;
     }
 }

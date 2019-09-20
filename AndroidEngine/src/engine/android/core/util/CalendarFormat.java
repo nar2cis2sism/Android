@@ -786,6 +786,53 @@ public final class CalendarFormat {
 
         public static class DateRangeLookUp {
 
+            private static DateRangeLookUp lookup;
+
+            public static DateRangeLookUp getDefault() {
+                if (lookup == null || lookup.lookup(System.currentTimeMillis()) == null)
+                {
+                    // 过了今天需要重新创建
+                    lookup = createDefault();
+                }
+
+                return lookup;
+            }
+
+            private static DateRangeLookUp createDefault() {
+                DateRangeLookUp map = new DateRangeLookUp();
+                // Today
+                Calendar cal = Calendar.getInstance();
+                CalendarFormat.formatAllDay(cal);
+                long today = cal.getTimeInMillis();
+
+                long start = today;
+                cal.add(Calendar.DATE, 1);
+                long end = cal.getTimeInMillis();
+                map.register(start, end).setLabel("今天").setFormat("HH:mm");
+                // Yesterday
+                end = start;
+                cal.setTimeInMillis(today);
+                cal.add(Calendar.DATE, -1);
+                start = cal.getTimeInMillis();
+                map.register(start, end).setLabel("昨天").setFormat("昨天 HH:mm");
+                // This Week
+                end = start;
+                cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+                start = cal.getTimeInMillis();
+                map.register(start, end).setFormat("E HH:mm");
+                // This Year
+                end = start;
+                cal.setTimeInMillis(today);
+                cal.set(Calendar.MONTH, Calendar.JANUARY);
+                cal.set(Calendar.DATE, 1);
+                start = cal.getTimeInMillis();
+                map.register(start, end).setFormat("M月d日 HH:mm");
+                // Older
+                map.register(0, start).setLabel("更早").setFormat("yyyy年M月d日 HH:mm");
+
+                return map;
+            }
+
             private final LinkedList<DateRange> dateList = new LinkedList<DateRange>();
 
             public DateRange register(long start, long end) {
@@ -808,53 +855,6 @@ public final class CalendarFormat {
 
                 return null;
             }
-        }
-
-        private static DateRangeLookUp lookup;
-
-        public static DateRangeLookUp getDefault() {
-            if (lookup == null || lookup.lookup(System.currentTimeMillis()) == null)
-            {
-                // 过了今天需要重新创建
-                lookup = createDefault();
-            }
-
-            return lookup;
-        }
-
-        private static DateRangeLookUp createDefault() {
-            DateRangeLookUp map = new DateRangeLookUp();
-            // Today
-            Calendar cal = Calendar.getInstance();
-            CalendarFormat.formatAllDay(cal);
-            long today = cal.getTimeInMillis();
-
-            long start = today;
-            cal.add(Calendar.DATE, 1);
-            long end = cal.getTimeInMillis();
-            map.register(start, end).setLabel("今天").setFormat("HH:mm");
-            // Yesterday
-            end = start;
-            cal.setTimeInMillis(today);
-            cal.add(Calendar.DATE, -1);
-            start = cal.getTimeInMillis();
-            map.register(start, end).setLabel("昨天").setFormat("昨天 HH:mm");
-            // This Week
-            end = start;
-            cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
-            start = cal.getTimeInMillis();
-            map.register(start, end).setFormat("E HH:mm");
-            // This Year
-            end = start;
-            cal.setTimeInMillis(today);
-            cal.set(Calendar.MONTH, Calendar.JANUARY);
-            cal.set(Calendar.DATE, 1);
-            start = cal.getTimeInMillis();
-            map.register(start, end).setFormat("M月d日 HH:mm");
-            // Older
-            map.register(0, start).setLabel("更早").setFormat("yyyy年M月d日 HH:mm");
-
-            return map;
         }
     }
     

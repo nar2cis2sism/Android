@@ -1,8 +1,8 @@
 package com.project.app.bean;
 
-import com.project.storage.db.Friend;
+import engine.android.util.image.AsyncImageLoader.ImageUrl;
 
-import engine.android.framework.app.image.ImageManager.ImageUrl;
+import com.project.storage.db.Friend;
 
 public class FriendListItem {
 

@@ -214,7 +214,6 @@ public class HttpConnector {
         {
             return null;
         }
-        
         // 为了防止请求被拦截篡改数据
         HttpRequest r = request.clone();
         if (listener != null)

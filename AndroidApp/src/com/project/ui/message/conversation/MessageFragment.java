@@ -1,5 +1,10 @@
 package com.project.ui.message.conversation;
 
+import engine.android.core.annotation.InjectView;
+import engine.android.framework.ui.BaseListFragment;
+import engine.android.widget.component.TitleBar;
+import engine.android.widget.component.input.ConversationBar;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,27 +17,23 @@ import com.project.network.action.socket.SendMessage;
 import com.project.storage.dao.MessageDAO;
 import com.project.storage.db.Message;
 
-import engine.android.core.annotation.InjectView;
-import engine.android.framework.ui.BaseListFragment;
-import engine.android.widget.component.ConversationBar;
-import engine.android.widget.component.TitleBar;
-
 /**
  * 聊天界面
  * 
  * @author Daimon
+ * @see ConversationActivity
  */
-class ConversationFragment extends BaseListFragment {
+public class MessageFragment extends BaseListFragment {
     
     @InjectView(R.id.conversation_bar)
     ConversationBar conversation_bar;
     
-    ConversationPresenter presenter;
+    MessagePresenter presenter;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = addPresenter(ConversationPresenter.class);
+        presenter = addPresenter(MessagePresenter.class);
     }
     
     @Override

@@ -1,5 +1,13 @@
 package com.project.storage.db;
 
+import engine.android.core.util.CalendarFormat;
+import engine.android.dao.DAOTemplate;
+import engine.android.dao.annotation.DAOPrimaryKey;
+import engine.android.dao.annotation.DAOProperty;
+import engine.android.dao.annotation.DAOTable;
+import engine.android.framework.ui.fragment.region.Region;
+import engine.android.util.image.AsyncImageLoader.ImageUrl;
+
 import android.text.TextUtils;
 
 import com.daimon.yueba.R;
@@ -8,13 +16,6 @@ import com.project.app.bean.ServerUrl;
 import com.project.app.config.ImageTransformer;
 import com.project.storage.provider.ProviderContract.UserColumns;
 
-import engine.android.core.util.CalendarFormat;
-import engine.android.dao.DAOTemplate;
-import engine.android.dao.annotation.DAOPrimaryKey;
-import engine.android.dao.annotation.DAOProperty;
-import engine.android.dao.annotation.DAOTable;
-import engine.android.framework.app.image.ImageManager.ImageUrl;
-import engine.android.framework.ui.extra.region.Region;
 import protocol.http.UserData;
 
 /**
@@ -28,9 +29,13 @@ public class User implements UserColumns {
 
     @DAOProperty(column=NICKNAME)
     public String nickname;                     // 用户昵称
-    
-    @DAOProperty(column=IS_FEMALE)
-    public boolean isFemale;                    // 性别[True:女,False:男]
+
+    /**
+     * 0：男
+     * 1：女
+     */
+    @DAOProperty(column=GENDER)
+    public int gender;                          // 性别
 
     @DAOProperty(column=BIRTHDAY)
     public long birthday;                       // 出生日期
@@ -44,7 +49,7 @@ public class User implements UserColumns {
     @DAOProperty(column=SIGNATURE)
     public String signature;                    // 签名
 
-    @DAOProperty(column=IS_AUTHENTICATED)
+    @DAOProperty(column=AUTHENTICATION)
     public boolean isAuthenticated;             // 实名认证
 
     @DAOProperty(column=VERSION)
@@ -69,7 +74,7 @@ public class User implements UserColumns {
     public User fromProtocol(UserData data) {
         version = data.version;
         nickname = data.nickname;
-        isFemale = data.gender == 1;
+        gender = data.gender;
         birthday = data.birthday;
         parseRegion(data.region);
         signature = data.signature;
@@ -94,8 +99,8 @@ public class User implements UserColumns {
     /******************************* 华丽丽的分割线 *******************************/
     
     public String getGenderText() {
-        return MyContext.getResources().getString(isFemale
-             ? R.string.gender_female : R.string.gender_male);
+        return MyContext.getResources().getString(gender == 0
+                ? R.string.gender_male : R.string.gender_female);
     }
     
     public String getBirthdayText() {

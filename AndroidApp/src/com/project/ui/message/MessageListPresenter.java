@@ -1,5 +1,14 @@
 package com.project.ui.message;
 
+import engine.android.core.BaseFragment.Presenter;
+import engine.android.core.extra.JavaBeanAdapter;
+import engine.android.core.util.CalendarFormat.DateRange;
+import engine.android.dao.util.JavaBeanLoader;
+import engine.android.framework.ui.widget.AvatarImageView;
+import engine.android.util.ui.UIUtil;
+import engine.android.widget.common.list.PinnedHeaderListView.PinnedHeaderAdapter;
+import engine.android.widget.common.text.BadgeView;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -17,15 +26,6 @@ import com.project.storage.dao.MessageDAO;
 import com.project.storage.db.Friend;
 import com.project.storage.db.Message;
 
-import engine.android.core.BaseFragment.Presenter;
-import engine.android.core.extra.JavaBeanAdapter;
-import engine.android.dao.util.JavaBeanLoader;
-import engine.android.framework.ui.util.DateRange;
-import engine.android.framework.ui.widget.AvatarImageView;
-import engine.android.util.ui.UIUtil;
-import engine.android.widget.common.BadgeView;
-import engine.android.widget.common.list.PinnedHeaderListView.PinnedHeaderAdapter;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -36,13 +36,12 @@ import java.util.List;
 class MessageListPresenter extends Presenter<MessageListFragment> {
     
     MessageListAdapter adapter;
-    MessageListLoader  loader;
+    MessageListLoader loader;
     
     @Override
     protected void onCreate(Context context) {
-        adapter = new MessageListAdapter(context);
-        loader  = new MessageListLoader(context);
-        getCallbacks().setDataSource(adapter, loader);
+        getCallbacks().setDataSource(adapter = new MessageListAdapter(context),
+                loader = new MessageListLoader(context));
     }
 }
 
@@ -93,12 +92,12 @@ class MessageListAdapter extends JavaBeanAdapter<MessageListItem> implements Pin
         }
         // 头像
         ((AvatarImageView) badge.getTarget()).display(item.getFriendAvatarUrl());
-        // 时间
-        holder.setTextView(R.id.note, item.timeText);
         // 名称
         holder.setTextView(R.id.title, item.name);
         // 消息
         holder.setTextView(R.id.content, item.message);
+        // 时间
+        holder.setTextView(R.id.note, item.timeText);
     }
 
     @Override
@@ -159,7 +158,7 @@ class MessageListLoader extends JavaBeanLoader<MessageListItem> {
         List<Message> messages = MessageDAO.getMessageList();
         if (messages != null)
         {
-            List<MessageListItem> list = new ArrayList<MessageListItem>(messages.size());
+            ArrayList<MessageListItem> list = new ArrayList<MessageListItem>(messages.size());
             for (Message message : messages)
             {
                 Friend friend = FriendDAO.getFriendByAccount(message.account);
@@ -190,12 +189,11 @@ class MessageListLoader extends JavaBeanLoader<MessageListItem> {
     }
     
     private static List<MessageListItem> mockData() {
-        List<MessageListItem> list = new ArrayList<MessageListItem>();
+        ArrayList<MessageListItem> list = new ArrayList<MessageListItem>();
         // 1
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 12);
         cal.set(Calendar.MINUTE, 0);
-        
         list.add(new MessageListItem(cal.getTimeInMillis(), 
                 "飞信热点", 
                 "玩转身边-会讲故事的相机玩转身边-会讲故事的相机"));

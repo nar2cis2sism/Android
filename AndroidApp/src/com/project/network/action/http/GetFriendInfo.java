@@ -1,5 +1,12 @@
 package com.project.network.action.http;
 
+import engine.android.framework.network.http.HttpConnectorBuilder;
+import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
+import engine.android.framework.network.http.HttpManager.HttpBuilder;
+import engine.android.framework.util.GsonUtil;
+import engine.android.http.HttpConnector;
+import engine.android.http.util.HttpParser;
+
 import com.google.gson.GsonBuilder;
 import com.project.app.MySession;
 import com.project.network.NetworkConfig;
@@ -8,24 +15,10 @@ import com.project.network.http.HttpJsonParser;
 import com.project.storage.MyDAOManager;
 import com.project.storage.db.Friend;
 
-import engine.android.framework.network.http.HttpConnectorBuilder;
-import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
-import engine.android.framework.network.http.HttpManager.HttpBuilder;
-import engine.android.framework.util.GsonUtil;
-import engine.android.http.HttpConnector;
-import engine.android.http.util.HttpParser;
-
-import org.json.JSONObject;
-
 import protocol.http.FriendData;
 
 import java.lang.reflect.Modifier;
 
-/**
- * 获取好友信息
- * 
- * @author Daimon
- */
 public class GetFriendInfo implements HttpBuilder, JsonEntity {
     
     public final String action = Actions.GET_FRIEND_INFO;
@@ -70,8 +63,8 @@ public class GetFriendInfo implements HttpBuilder, JsonEntity {
     private class Parser extends HttpJsonParser {
         
         @Override
-        protected Object process(JSONObject obj) throws Exception {
-            FriendData data = GsonUtil.parseJson(obj.toString(), FriendData.class);
+        protected Object process(String json) throws Exception {
+            FriendData data = GsonUtil.parseJson(json, FriendData.class);
             
             friend.version = data.version;
             if (data.info != null)

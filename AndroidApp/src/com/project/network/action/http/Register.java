@@ -1,16 +1,16 @@
 package com.project.network.action.http;
 
-import com.project.network.NetworkConfig;
-import com.project.network.action.Actions;
-import com.project.network.http.HttpJsonParser;
-import com.project.util.AppUtil;
-
 import engine.android.framework.network.http.HttpConnectorBuilder;
 import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
 import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.http.util.HttpParser;
+
+import com.project.network.NetworkConfig;
+import com.project.network.action.Actions;
+import com.project.network.http.HttpJsonParser;
+import com.project.util.AppUtil;
 
 /**
  * 用户注册

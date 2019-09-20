@@ -192,7 +192,7 @@ public class AppConfig {
         
         SocketPushReceiver receiver;
         
-        int keepAliveTime = 240;
+        int keepAliveTime = 60;
         
         /**
          * 设置单机调试服务器
@@ -209,7 +209,7 @@ public class AppConfig {
         }
         
         /**
-         * 设置心跳保活时长，默认为4分钟
+         * 设置心跳保活时长，默认为1分钟
          * 
          * @param keepAliveTime 单位：秒
          */

@@ -1,5 +1,13 @@
 package com.project.ui.more;
 
+import engine.android.core.annotation.InjectView;
+import engine.android.core.annotation.OnClick;
+import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
+import engine.android.framework.ui.fragment.BaseInfoFragment;
+import engine.android.framework.ui.widget.AvatarImageView;
+import engine.android.util.ui.UIUtil;
+import engine.android.widget.component.TitleBar;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,14 +23,6 @@ import com.project.storage.db.User;
 import com.project.ui.more.authentication.AuthenticationFragment;
 import com.project.ui.more.me.MeFragment;
 import com.project.ui.more.setting.SettingFragment;
-
-import engine.android.core.annotation.InjectView;
-import engine.android.core.annotation.OnClick;
-import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
-import engine.android.framework.ui.extra.BaseInfoFragment;
-import engine.android.framework.ui.widget.AvatarImageView;
-import engine.android.util.ui.UIUtil;
-import engine.android.widget.component.TitleBar;
 
 /**
  * 更多界面

@@ -1,8 +1,5 @@
 package com.project.network.action.file;
 
-import com.project.app.MyContext;
-import com.project.network.action.Actions;
-
 import engine.android.core.util.LogFactory.LOG;
 import engine.android.framework.network.http.HttpConnectorBuilder;
 import engine.android.framework.ui.presenter.PhotoPresenter.PhotoInfo;
@@ -11,17 +8,19 @@ import engine.android.http.util.HttpParser;
 import engine.android.util.file.FileManager;
 import engine.android.util.secure.ZipUtil;
 
+import com.project.app.MyContext;
+import com.project.network.action.Actions;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * 实名认证
  * 
  * @author Daimon
  */
-public class Authentication extends FileUpload {
+public class Authentication extends FileUploader {
     
     public final String action = Actions.AUTHENTICATION;
     
@@ -36,7 +35,7 @@ public class Authentication extends FileUpload {
     @Override
     public HttpConnector buildConnector(HttpConnectorBuilder builder) {
         try {
-            List<File> list = new ArrayList<File>(info.size());
+            ArrayList<File> list = new ArrayList<File>(info.size());
             for (PhotoInfo item : info)
             {
                 list.add(item.getPhotoFile());

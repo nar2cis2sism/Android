@@ -1,5 +1,4 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:widget="http://schemas.android.com/apk/res-auto" >
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
             
     <ListView 
         android:id="@android:id/list"
@@ -14,7 +13,7 @@
         android:listSelector="@android:color/transparent"
         android:groupIndicator="@null" />
    
-    <engine.android.widget.common.LetterBar 
+    <engine.android.widget.common.text.LetterBar 
         android:id="@+id/letter_bar"
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
@@ -24,7 +23,7 @@
         android:paddingTop="2dp"
         android:paddingBottom="2dp"
         
-        widget:textSize="10px" />
+        android:textSize="10px" />
 		            
     <ImageView 
         android:id="@+id/search_empty"

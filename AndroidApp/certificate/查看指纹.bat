@@ -1,4 +1,4 @@
-set keystore=tongxuezhan.jks
+set keystore=yueba.keystore
 
 keytool -v -list -keystore %keystore%
 

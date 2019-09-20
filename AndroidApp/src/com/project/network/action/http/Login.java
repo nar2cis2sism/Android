@@ -1,7 +1,15 @@
 package com.project.network.action.http;
 
+import engine.android.framework.network.http.HttpConnectorBuilder;
+import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
+import engine.android.framework.network.http.HttpManager.HttpBuilder;
+import engine.android.framework.network.socket.SocketManager;
+import engine.android.framework.util.GsonUtil;
+import engine.android.http.HttpConnector;
+import engine.android.http.util.HttpParser;
+import engine.android.util.os.DeviceUtil;
+
 import com.project.app.MyApp;
-import com.project.app.MyContext;
 import com.project.app.MySession;
 import com.project.app.bean.ServerUrl;
 import com.project.network.NetworkConfig;
@@ -14,24 +22,8 @@ import com.project.storage.dao.UserDAO;
 import com.project.storage.db.User;
 import com.project.util.AppUtil;
 
-import engine.android.framework.network.http.HttpConnectorBuilder;
-import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
-import engine.android.framework.network.http.HttpManager.HttpBuilder;
-import engine.android.framework.network.socket.SocketManager;
-import engine.android.framework.util.GsonUtil;
-import engine.android.http.HttpConnector;
-import engine.android.http.util.HttpParser;
-import engine.android.util.manager.MyTelephonyDevice;
-
-import org.json.JSONObject;
-
 import protocol.http.LoginData;
 
-/**
- * 用户登录
- * 
- * @author Daimon
- */
 public class Login implements HttpBuilder, JsonEntity {
     
     public final String action = Actions.LOGIN;
@@ -45,7 +37,7 @@ public class Login implements HttpBuilder, JsonEntity {
     public Login(String username, String password) {
         this.username = username;
         this.password = AppUtil.encryptPassword(password);
-        deviceID = new MyTelephonyDevice(MyContext.getContext()).getDeviceId();
+        deviceID = DeviceUtil.getDeviceId();
     }
 
     @Override
@@ -70,8 +62,8 @@ public class Login implements HttpBuilder, JsonEntity {
     private class Parser extends HttpJsonParser {
         
         @Override
-        protected Object process(JSONObject obj) throws Exception {
-            LoginData data = GsonUtil.parseJson(obj.toString(), LoginData.class);
+        protected Object process(String json) throws Exception {
+            LoginData data = GsonUtil.parseJson(json, LoginData.class);
             
             MySession.setToken(data.token);
             // 启动socket连接
@@ -94,7 +86,7 @@ public class Login implements HttpBuilder, JsonEntity {
             // 获取离线消息
             MyApp.global().getSocketManager().sendSocketRequest(new PullOfflineMessage(MessageDAO.getLatestMessageTimestamp()));
             
-            return super.process(obj);
+            return null;
         }
         
         private User processUser(int avatar_ver) {

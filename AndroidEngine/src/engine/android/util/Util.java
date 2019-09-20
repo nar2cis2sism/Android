@@ -114,9 +114,11 @@ public final class Util {
 
     /**
      * 将金钱格式化为国际货币的显示形式（如1,000,000）
+     * 
+     * @param keepDigits True:始终保留两位小数
      */
-    public static String formatMoney(double money) {
-        return formatNumber(money, ",##0");
+    public static String formatMoney(double money, boolean keepDigits) {
+        return formatNumber(money, keepDigits ? ",##0.00" : ",##0.##");
     }
 
     /**

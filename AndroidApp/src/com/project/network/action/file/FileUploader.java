@@ -1,13 +1,13 @@
 package com.project.network.action.file;
 
-import com.project.app.MySession;
-import com.project.app.bean.ServerUrl;
-
 import engine.android.framework.network.http.HttpConnectorBuilder;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
 import engine.android.http.HttpConnector;
 import engine.android.http.HttpRequest.FileEntity;
-import engine.android.util.StringUtil;
+import engine.android.util.api.StringUtil;
+
+import com.project.app.MySession;
+import com.project.app.bean.ServerUrl;
 
 import java.io.File;
 import java.util.HashMap;
@@ -18,7 +18,7 @@ import java.util.Map;
  * 
  * @author Daimon
  */
-public abstract class FileUpload implements HttpBuilder {
+public abstract class FileUploader implements HttpBuilder {
     
     private static final int TIMEOUT = 20000;
     
@@ -26,7 +26,7 @@ public abstract class FileUpload implements HttpBuilder {
     
     private Map<String, String> parameters;
     
-    public FileUpload(File file) {
+    public FileUploader(File file) {
         this.file = file;
     }
     

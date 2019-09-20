@@ -1,11 +1,5 @@
 package com.project.network.action.http;
 
-import com.project.app.MySession;
-import com.project.network.NetworkConfig;
-import com.project.network.action.Actions;
-import com.project.network.http.HttpJsonParser;
-import com.project.storage.MyDAOManager;
-
 import engine.android.framework.network.http.HttpConnectorBuilder;
 import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
@@ -13,15 +7,14 @@ import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.http.util.HttpParser;
 
-import org.json.JSONObject;
+import com.project.app.MySession;
+import com.project.network.NetworkConfig;
+import com.project.network.action.Actions;
+import com.project.network.http.HttpJsonParser;
+import com.project.storage.MyDAOManager;
 
 import protocol.http.UserData;
 
-/**
- * 获取个人信息
- * 
- * @author Daimon
- */
 public class GetUserInfo implements HttpBuilder, JsonEntity {
     
     public final String action = Actions.GET_USER_INFO;
@@ -57,12 +50,12 @@ public class GetUserInfo implements HttpBuilder, JsonEntity {
     private static class Parser extends HttpJsonParser {
         
         @Override
-        protected Object process(JSONObject obj) throws Exception {
-            UserData data = GsonUtil.parseJson(obj.toString(), UserData.class);
+        protected Object process(String json) throws Exception {
+            UserData data = GsonUtil.parseJson(json, UserData.class);
             
             MyDAOManager.getDAO().update(MySession.getUser().fromProtocol(data));
             
-            return super.process(obj);
+            return null;
         }
     }
 }

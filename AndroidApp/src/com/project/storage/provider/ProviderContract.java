@@ -32,12 +32,12 @@ public final class ProviderContract {
 
         String USERNAME = "username";
         String NICKNAME = "nickname";
-        String IS_FEMALE = "isFemale";
+        String GENDER = "gender";
         String BIRTHDAY = "birthday";
         String REGION = "region";
         String REGION_CODE = "region_code";
         String SIGNATURE = "signature";
-        String IS_AUTHENTICATED = "isAuthenticated";
+        String AUTHENTICATION = "authentication";
         String VERSION = "version";
         String AVATAR_URL = "avatar_url";
         String AVATAR_VER = "avatar_ver";
@@ -66,7 +66,7 @@ public final class ProviderContract {
 
         String ACCOUNT = "account";
         String NICKNAME = "nickname";
-        String IS_FEMALE = "isFemale";
+        String GENDER = "gender";
         String REGION = "region";
         String SIGNATURE = "signature";
         String VERSION = "version";

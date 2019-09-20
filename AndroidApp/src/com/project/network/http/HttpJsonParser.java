@@ -1,8 +1,8 @@
 package com.project.network.http;
 
-import com.project.app.bean.ErrorInfo;
-
 import engine.android.http.HttpResponse;
+
+import com.project.app.bean.ErrorInfo;
 
 import org.json.JSONObject;
 
@@ -20,11 +20,11 @@ public class HttpJsonParser extends engine.android.http.util.json.HttpJsonParser
         ErrorInfo error = ErrorInfo.parse(json);
         if (error != null) return error;
         
-        JSONObject data = json.optJSONObject("data");
+        String data = json.optString("data");
         return data != null ? process(data) : null;
     }
     
-    protected Object process(JSONObject data) throws Exception {
+    protected Object process(String data) throws Exception {
         return null;
     }
 }

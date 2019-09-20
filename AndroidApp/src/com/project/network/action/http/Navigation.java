@@ -1,12 +1,5 @@
 package com.project.network.action.http;
 
-import com.project.app.MyContext;
-import com.project.app.MySession;
-import com.project.app.bean.ServerUrl;
-import com.project.network.NetworkConfig;
-import com.project.network.action.Actions;
-import com.project.network.http.HttpJsonParser;
-
 import engine.android.framework.network.http.HttpConnectorBuilder;
 import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
@@ -15,15 +8,15 @@ import engine.android.http.HttpConnector;
 import engine.android.http.util.HttpParser;
 import engine.android.util.AndroidUtil;
 
-import org.json.JSONObject;
+import com.project.app.MyContext;
+import com.project.app.MySession;
+import com.project.app.bean.ServerUrl;
+import com.project.network.NetworkConfig;
+import com.project.network.action.Actions;
+import com.project.network.http.HttpJsonParser;
 
 import protocol.http.NavigationData;
 
-/**
- * 获取导航配置
- * 
- * @author Daimon
- */
 public class Navigation implements HttpBuilder, JsonEntity {
     
     public final String action = Actions.NAVIGATION;
@@ -61,19 +54,18 @@ public class Navigation implements HttpBuilder, JsonEntity {
     private static class Parser extends HttpJsonParser {
         
         @Override
-        protected Object process(JSONObject obj) throws Exception {
-            NavigationData data = GsonUtil.parseJson(obj.toString(), NavigationData.class);
+        protected Object process(String json) throws Exception {
+            NavigationData data = GsonUtil.parseJson(json, NavigationData.class);
             
             ServerUrl url = new ServerUrl();
             url.socket_server_url = data.socket_server_url;
             url.upload_server_url = data.upload_server_url;
             url.download_server_url = data.download_server_url;
             MySession.setServerUrl(url);
-            
             // APP升级信息
             MySession.setUpgradeInfo(data.upgrade);
             
-            return super.process(obj);
+            return null;
         }
     }
 }

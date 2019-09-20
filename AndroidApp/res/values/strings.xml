@@ -10,6 +10,9 @@
     <string name="dialog_upgrade_later">稍后提醒</string>
     <string name="dialog_gender_title">选择性别</string>
     <string name="dialog_edit_message">是否保存更改设置？</string>
+    <string name="dialog_log_upload_title">上传日志</string>
+    <string name="dialog_log_upload_hint">请输入日志说明</string>
+    <string name="dialog_log_upload_ok">提交</string>
     
     <!-- Progress -->
     <string name="progress_waiting">处理中,请稍候&#8230;</string>
@@ -28,7 +31,7 @@
     <string name="login_find_password">找回密码</string>
     <string name="login_username_hint">输入电话号码</string>
     <string name="login_username_validation_mobile">请您输入正确的手机号码</string>
-    <item name="login_password_hint" type="string">@string/register_password_hint</item>
+    <string name="login_password_hint">输入密码</string>
     
     <!-- Register -->
     <string name="register_title">用户注册</string>
@@ -37,14 +40,14 @@
     <string name="register_username_hint">输入手机号</string>
     <string name="register_username_exist">手机号已被他人使用</string>
     <string name="register_passcode_hint">输入验证码</string>
-    <string name="register_password_hint">输入密码</string>
-    <string name="register_password_validation_length">密码长度应为6-16位</string>
+    <item name="register_password_hint" type="string">@string/login_password_hint</item>
+    <string name="register_password_validation_length">密码长度应为6-20位</string>
     
     <!-- Message -->
     <string name="message_title">消息</string>
     
     <!-- Friend -->
-    <item name="friend_title" type="string">@string/search</item>
+    <string name="friend_title">搜索</string>
     <string name="friend_by_group">分组</string>
     <string name="friend_all">全部</string>
     <string name="friend_group">群</string>

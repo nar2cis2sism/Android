@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/message_dialog_bg"
+    android:gravity="center_horizontal"
+    android:paddingLeft="25dp"
+    android:paddingRight="25dp"
+    android:paddingTop="20dp"
+    android:paddingBottom="20dp" >
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/textColorPrimary"
+        android:text="@string/dialog_log_upload_title" />
+
+    <EditText
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="left|top"
+        android:lines="8"
+        android:hint="@string/dialog_log_upload_hint" />
+    
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp" >
+    
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="110dp"
+            android:layout_height="40dp"
+            android:background="#c3cbd6"
+            android:textColor="#464c5b"
+            android:text="@android:string/cancel" />
+        
+        <View
+            android:layout_width="30dp"
+            android:layout_height="0px" />
+    
+        <Button
+            android:id="@+id/ok"
+            android:layout_width="110dp"
+            android:layout_height="40dp"
+            android:background="#1abc9c"
+            android:textColor="@android:color/white"
+            android:text="@string/dialog_log_upload_ok" />
+        
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,5 +1,14 @@
 package com.project.ui.friend;
 
+import engine.android.core.BaseFragment.Presenter;
+import engine.android.core.extra.JavaBeanAdapter;
+import engine.android.core.extra.JavaBeanAdapter.FilterMatcher;
+import engine.android.framework.ui.BaseFragment.ParamsBuilder;
+import engine.android.framework.ui.widget.AvatarImageView;
+import engine.android.util.image.AsyncImageLoader.ImageUrl;
+import engine.android.util.ui.UIUtil;
+import engine.android.widget.component.input.SearchBox.SearchProvider;
+
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -18,14 +27,6 @@ import com.project.storage.db.Friend;
 import com.project.ui.friend.info.FriendInfoFragment;
 import com.project.ui.friend.info.FriendInfoFragment.FriendInfoParams;
 
-import engine.android.core.BaseFragment.Presenter;
-import engine.android.core.extra.JavaBeanAdapter;
-import engine.android.core.extra.JavaBeanAdapter.FilterMatcher;
-import engine.android.framework.app.image.ImageManager.ImageUrl;
-import engine.android.framework.ui.BaseFragment.ParamsBuilder;
-import engine.android.framework.ui.widget.AvatarImageView;
-import engine.android.util.ui.UIUtil;
-import engine.android.widget.component.SearchBox.SearchProvider;
 import protocol.http.SearchContactData.ContactData;
 
 class SearchPresenter extends Presenter<FriendListFragment> implements SearchProvider, FilterListener {

@@ -3,6 +3,22 @@ package com.project.ui.friend;
 import static com.project.network.action.Actions.ADD_FRIEND;
 import static com.project.network.action.Actions.SEARCH_CONTACT;
 
+import engine.android.core.Injector;
+import engine.android.core.annotation.InjectView;
+import engine.android.framework.ui.BaseActivity;
+import engine.android.framework.ui.BaseListFragment;
+import engine.android.util.AndroidUtil;
+import engine.android.util.ui.UIUtil;
+import engine.android.util.ui.ViewSize;
+import engine.android.util.ui.ViewSize.ViewSizeObserver;
+import engine.android.widget.common.layout.ActionContainer;
+import engine.android.widget.common.text.LetterBar;
+import engine.android.widget.component.ChooseButton;
+import engine.android.widget.component.TitleBar;
+import engine.android.widget.component.input.SearchBox;
+import engine.android.widget.extra.MyExpandableListView;
+import engine.android.widget.helper.LetterBarHelper;
+
 import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -26,23 +42,9 @@ import com.project.network.action.http.SearchContact;
 import com.project.ui.friend.info.FriendInfoFragment;
 import com.project.ui.friend.info.FriendInfoFragment.FriendInfoParams;
 
-import java.util.List;
-
-import engine.android.core.Injector;
-import engine.android.core.annotation.InjectView;
-import engine.android.framework.ui.BaseListFragment;
-import engine.android.util.AndroidUtil;
-import engine.android.util.ui.UIUtil;
-import engine.android.util.ui.ViewSize;
-import engine.android.util.ui.ViewSize.ViewSizeObserver;
-import engine.android.widget.common.LetterBar;
-import engine.android.widget.common.layout.ActionContainer;
-import engine.android.widget.component.ChooseButton;
-import engine.android.widget.component.SearchBox;
-import engine.android.widget.component.TitleBar;
-import engine.android.widget.extra.MyExpandableListView;
-import engine.android.widget.helper.LetterBarHelper;
 import protocol.http.SearchContactData.ContactData;
+
+import java.util.List;
 
 /**
  * 好友列表界面
@@ -104,7 +106,6 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        registerEventHandler(new EventHandler());
         presenter = addPresenter(FriendListPresenter.class);
         searchPresenter = addPresenter(SearchPresenter.class);
     }
@@ -287,7 +288,12 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
         getBaseActivity().sendHttpRequest(new AddFriend(account, false));
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+    @Override
+    protected EventHandler registerEventHandler() {
+        return new EventHandler();
+    }
+    
+    private class EventHandler extends BaseActivity.EventHandler {
         
         public EventHandler() {
             super(SEARCH_CONTACT, ADD_FRIEND);

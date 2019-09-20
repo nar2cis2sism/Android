@@ -3,6 +3,15 @@ package com.project.ui.login;
 import static com.project.network.action.Actions.LOGIN;
 import static com.project.network.action.Actions.NAVIGATION;
 
+import engine.android.core.annotation.InjectView;
+import engine.android.core.annotation.OnClick;
+import engine.android.framework.ui.BaseActivity;
+import engine.android.framework.ui.BaseFragment;
+import engine.android.util.listener.MyTextWatcher;
+import engine.android.util.ui.MyValidator.PatternValidation;
+import engine.android.util.ui.UIUtil;
+import engine.android.widget.component.input.InputBox;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -26,14 +35,6 @@ import com.project.ui.login.register.RegisterFragment;
 import com.project.util.AppUtil;
 import com.project.util.MyValidator;
 
-import engine.android.core.annotation.InjectView;
-import engine.android.core.annotation.OnClick;
-import engine.android.framework.ui.BaseFragment;
-import engine.android.util.listener.MyTextWatcher;
-import engine.android.util.ui.MyPasswordTransformationMethod;
-import engine.android.util.ui.MyValidator.PatternValidation;
-import engine.android.util.ui.UIUtil;
-import engine.android.widget.component.InputBox;
 import protocol.http.NavigationData.AppUpgradeInfo;
 
 /**
@@ -47,18 +48,14 @@ public class LoginFragment extends BaseFragment {
     InputBox username;
     @InjectView(R.id.password)
     InputBox password;
+    
     @InjectView(R.id.login)
     Button login;
+    
     @InjectView(R.id.register)
     TextView register;
     @InjectView(R.id.find_password)
     TextView find_password;
-    
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        registerEventHandler(new EventHandler());
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,20 +76,19 @@ public class LoginFragment extends BaseFragment {
         
         if (MyApp.getApp().isDebuggable())
         {
-            username.input().setText("18318066253");
-            password.input().setText("password");
+            username.input.setText("18318066253");
+            password.input.setText("123456");
         }
     }
     
     private void setupUsername() {
+        username.setStyle(InputBox.STYLE_MOBILE);
         username.enableClear();
         // 输入框
-        final EditText input = username.input();
+        EditText input = username.input;
         input.setCompoundDrawablesWithIntrinsicBounds(R.drawable.login_username, 0, 0, 0);
         input.setHint(R.string.login_username_hint);
-        input.setInputType(EditorInfo.TYPE_CLASS_PHONE);
         input.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-
         input.setOnEditorActionListener(new OnEditorActionListener() {
             
             @Override
@@ -110,7 +106,7 @@ public class LoginFragment extends BaseFragment {
             
             @Override
             protected void changeToEmpty(String before) {
-                password.input().setText(null);
+                password.input.setText(null);
                 login.setEnabled(false);
             }
             
@@ -126,21 +122,20 @@ public class LoginFragment extends BaseFragment {
     }
     
     private void setupPassword() {
+        password.setStyle(InputBox.STYLE_PASSWORD);
         password.enableClear();
         // 输入框
-        final EditText input = password.input();
+        EditText input = password.input;
         input.setCompoundDrawablesWithIntrinsicBounds(R.drawable.login_password, 0, 0, 0);
         input.setHint(R.string.login_password_hint);
-        input.setInputType(EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_PASSWORD);
-        input.setTransformationMethod(MyPasswordTransformationMethod.getInstance());
         input.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        
         input.setOnEditorActionListener(new OnEditorActionListener() {
             
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE)
                 {
+                    login.requestFocus();
                     login();
                     return true;
                 }
@@ -152,10 +147,10 @@ public class LoginFragment extends BaseFragment {
     
     @OnClick(R.id.login)
     void login() {
-        if (getBaseActivity().checkNetworkStatus(true)
-        &&  getBaseActivity().requestValidation())
+        if (getBaseActivity().requestValidation()
+        &&  getBaseActivity().checkNetworkStatus(true))
         {
-            showProgress(getString(R.string.progress_login));
+            showProgress(R.string.progress_login);
             if (MySession.hasNavigation())
             {
                 // 已有导航配置
@@ -177,11 +172,16 @@ public class LoginFragment extends BaseFragment {
     
     void sendLoginAction() {
         getBaseActivity().sendHttpRequest(new Login(
-                username.input().getText().toString(), 
-                password.input().getText().toString()));
+                username.input.getText().toString(), 
+                password.input.getText().toString()));
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+    @Override
+    protected EventHandler registerEventHandler() {
+        return new EventHandler();
+    }
+    
+    private class EventHandler extends BaseActivity.EventHandler {
         
         public EventHandler() {
             super(NAVIGATION, LOGIN);
@@ -207,7 +207,7 @@ public class LoginFragment extends BaseFragment {
                     }
                 }
                 
-                MySession.getNavigation();
+                MySession.gotNavigation();
                 sendLoginAction();
             }
             else if (LOGIN.equals(action))

@@ -303,9 +303,9 @@ public final class StringUtil {
     /**
      * 兼容{@link SpannableStringBuilder#append(CharSequence, Object, int)}
      */
-    public static void appendSpan(SpannableStringBuilder span, String s, Object what) {
+    public static void appendSpan(SpannableStringBuilder span, CharSequence text, Object what) {
         int start = span.length();
-        span.append(s);
+        span.append(text);
         span.setSpan(what, start, span.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 

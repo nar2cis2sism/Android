@@ -1,9 +1,5 @@
 package com.project.network.action.http;
 
-import com.project.network.NetworkConfig;
-import com.project.network.action.Actions;
-import com.project.network.http.HttpJsonParser;
-
 import engine.android.framework.network.http.HttpConnectorBuilder;
 import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
@@ -11,11 +7,10 @@ import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.http.util.HttpParser;
 
-/**
- * 获取手机验证码
- * 
- * @author Daimon
- */
+import com.project.network.NetworkConfig;
+import com.project.network.action.Actions;
+import com.project.network.http.HttpJsonParser;
+
 public class GetSmsCode implements HttpBuilder, JsonEntity {
     
     public final String action = Actions.GET_SMS_CODE;

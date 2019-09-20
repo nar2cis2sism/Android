@@ -1,10 +1,5 @@
 package com.project.network.action.http;
 
-import com.project.app.MySession;
-import com.project.network.NetworkConfig;
-import com.project.network.action.Actions;
-import com.project.network.http.HttpJsonParser;
-
 import engine.android.framework.network.http.HttpConnectorBuilder;
 import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
@@ -12,18 +7,16 @@ import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.http.util.HttpParser;
 
-import org.json.JSONObject;
+import com.project.app.MySession;
+import com.project.network.NetworkConfig;
+import com.project.network.action.Actions;
+import com.project.network.http.HttpJsonParser;
 
 import protocol.http.SearchContactData;
 import protocol.http.SearchContactData.ContactData;
 
 import java.util.List;
 
-/**
- * 搜索联系人
- * 
- * @author Daimon
- */
 public class SearchContact implements HttpBuilder, JsonEntity {
     
     public final String action = Actions.SEARCH_CONTACT;
@@ -66,8 +59,8 @@ public class SearchContact implements HttpBuilder, JsonEntity {
     private static class Parser extends HttpJsonParser {
         
         @Override
-        protected Object process(JSONObject obj) throws Exception {
-            SearchContactData data = GsonUtil.parseJson(obj.toString(), SearchContactData.class);
+        protected Object process(String json) throws Exception {
+            SearchContactData data = GsonUtil.parseJson(json, SearchContactData.class);
             
             int count = data.count;
             List<ContactData> list = data.list;

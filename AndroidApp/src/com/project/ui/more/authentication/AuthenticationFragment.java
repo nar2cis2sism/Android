@@ -2,6 +2,15 @@ package com.project.ui.more.authentication;
 
 import static com.project.network.action.Actions.AUTHENTICATION;
 
+import engine.android.core.annotation.InjectView;
+import engine.android.framework.ui.BaseActivity;
+import engine.android.framework.ui.BaseFragment;
+import engine.android.framework.ui.activity.SinglePaneActivity;
+import engine.android.framework.ui.fragment.ViewImageFragment;
+import engine.android.framework.ui.presenter.PhotoPresenter;
+import engine.android.framework.ui.presenter.PhotoPresenter.PhotoInfo;
+import engine.android.widget.component.TitleBar;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -16,14 +25,6 @@ import android.widget.GridView;
 
 import com.daimon.yueba.R;
 import com.project.network.action.file.Authentication;
-
-import engine.android.core.annotation.InjectView;
-import engine.android.framework.ui.BaseFragment;
-import engine.android.framework.ui.extra.SinglePaneActivity;
-import engine.android.framework.ui.extra.ViewImageFragment;
-import engine.android.framework.ui.presenter.PhotoPresenter;
-import engine.android.framework.ui.presenter.PhotoPresenter.PhotoInfo;
-import engine.android.widget.component.TitleBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,6 @@ public class AuthenticationFragment extends BaseFragment implements OnItemClickL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        registerEventHandler(new EventHandler());
         addPresenter(new PhotoPresenter(adapter = new AuthenticationAdapter(getContext())));
     }
     
@@ -130,7 +130,12 @@ public class AuthenticationFragment extends BaseFragment implements OnItemClickL
         }
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+    @Override
+    protected EventHandler registerEventHandler() {
+        return new EventHandler();
+    }
+    
+    private class EventHandler extends BaseActivity.EventHandler {
         
         public EventHandler() {
             super(AUTHENTICATION);

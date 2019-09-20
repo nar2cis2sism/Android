@@ -1,10 +1,10 @@
 package com.project.app.config;
 
-import android.graphics.Bitmap;
-
-import engine.android.framework.app.image.ImageManager.ImageUrl;
 import engine.android.framework.app.image.ImageManager.Transformer;
+import engine.android.util.image.AsyncImageLoader.ImageUrl;
 import engine.android.util.image.AvatarImage;
+
+import android.graphics.Bitmap;
 
 public class ImageTransformer implements Transformer {
     
@@ -12,7 +12,7 @@ public class ImageTransformer implements Transformer {
 
     @Override
     public Bitmap transform(ImageUrl url, Bitmap image) {
-        switch (url.type) {
+        switch (url.getType()) {
             case TYPE_AVATAR:
                 return new AvatarImage(image).get();
 

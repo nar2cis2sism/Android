@@ -1,5 +1,7 @@
 package com.project.app.config;
 
+import engine.android.framework.app.AppConfig;
+
 import android.content.Context;
 
 import com.project.app.MyApp;
@@ -8,8 +10,6 @@ import com.project.network.http.servlet.HttpServlet;
 import com.project.network.socket.SocketInterceptor;
 import com.project.network.socket.SocketPushReceiver;
 import com.project.network.socket.servlet.SocketServlet;
-
-import engine.android.framework.app.AppConfig;
 
 /**
  * 全局配置
@@ -27,9 +27,12 @@ interface IConfiguration {
     /** 测试服务器 **/
     boolean NET_TEST = true;
     
-    int HTTP_TIMEOUT   = 5000; // (5s)
+    /** 上传日志到服务器 **/
+    boolean NET_UPLOAD_LOG = !NET_OFF;
     
-    int SOCKET_TIMEOUT = 5000; // (5s)
+    int HTTP_TIMEOUT   = 10000; // (10s)
+    
+    int SOCKET_TIMEOUT = 5000;  // (5s)
 }
 
 public class MyConfiguration extends AppConfig implements IConfiguration {

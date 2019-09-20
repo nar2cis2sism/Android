@@ -6,12 +6,12 @@
     <!-- 时间 -->
     <include 
         android:id="@+id/time"
-        layout="@layout/message_item_top" />
+        layout="@layout/message_item_time" />
     
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/time" >
+        android:layout_below="@+id/time" >
     
         <!-- 左边头像 -->
         <ImageView

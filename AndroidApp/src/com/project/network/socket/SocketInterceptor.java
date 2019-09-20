@@ -1,8 +1,8 @@
 package com.project.network.socket;
 
-import com.project.network.action.Actions;
-
 import engine.android.framework.network.ConnectionStatus.ConnectionInterceptor;
+
+import com.project.network.action.Actions;
 
 public class SocketInterceptor implements ConnectionInterceptor, Actions {
 

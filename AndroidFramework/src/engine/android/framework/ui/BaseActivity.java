@@ -168,7 +168,7 @@ public class BaseActivity extends NetworkActivity implements PermissionCallback 
         super.onDetachedFromWindow();
     }
     
-    public static abstract class EventHandler implements EventBus.EventHandler {
+    public static class EventHandler implements EventBus.EventHandler {
         
         private final String[] events;
         
@@ -194,7 +194,7 @@ public class BaseActivity extends NetworkActivity implements PermissionCallback 
             }
         }
         
-        protected abstract void onReceiveSuccess(String action, Object param);
+        protected void onReceiveSuccess(String action, Object param) {}
         
         protected void onReceiveFailure(String action, int status, Object param) {
             if (baseActivity != null)

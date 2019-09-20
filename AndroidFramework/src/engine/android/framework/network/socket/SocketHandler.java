@@ -1,5 +1,6 @@
 ﻿package engine.android.framework.network.socket;
 
+import engine.android.framework.app.event.Events;
 import engine.android.framework.network.socket.SocketResponse.SocketTimeout;
 import engine.android.http.HttpConnector;
 import engine.android.util.manager.AlarmTimer;
@@ -84,6 +85,8 @@ class SocketHandler {
         @Override
         public void onReceive(Context context, Intent intent) {
             boolean noNetwork = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
+            Events.notifyConnectivityChange(noNetwork);
+            
             if (isAccessible ^ noNetwork)
             {
                 return;
@@ -105,8 +108,6 @@ class SocketHandler {
      */
     public class HeartbeatManager implements Runnable {
         
-        private static final int TRIGGER_AHEAD = 10;         // 心跳包提前发送时间，单位：秒
-        
         private long interval;                               // 心跳包循环发送间隔，单位：毫秒
         private long lastTriggerTime = -1;
 
@@ -117,7 +118,7 @@ class SocketHandler {
         }
         
         public void start(int interval) {
-            this.interval = TimeUnit.SECONDS.toMillis(interval - TRIGGER_AHEAD);
+            this.interval = TimeUnit.SECONDS.toMillis(interval);
             poke();
         }
         

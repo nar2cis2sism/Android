@@ -3,22 +3,26 @@ package com.project.ui.login.register;
 import static com.project.network.action.Actions.GET_SMS_CODE;
 import static com.project.network.action.Actions.REGISTER;
 
+import engine.android.core.annotation.InjectView;
+import engine.android.core.annotation.OnClick;
+import engine.android.framework.ui.BaseActivity;
+import engine.android.framework.ui.BaseFragment;
+import engine.android.util.listener.MyTextWatcher;
+import engine.android.util.ui.MyValidator.PatternValidation;
+import engine.android.util.ui.MyValidator.Validation;
+import engine.android.widget.common.button.CountDownButton;
+import engine.android.widget.component.TitleBar;
+import engine.android.widget.component.input.InputBox;
+
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextWatcher;
-import android.text.method.HideReturnsTransformationMethod;
-import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.daimon.yueba.R;
@@ -26,17 +30,7 @@ import com.project.app.MyApp;
 import com.project.app.bean.ErrorInfo;
 import com.project.network.action.http.GetSmsCode;
 import com.project.network.action.http.Register;
-import com.project.util.AppUtil;
 import com.project.util.MyValidator;
-
-import engine.android.core.annotation.InjectView;
-import engine.android.core.annotation.OnClick;
-import engine.android.framework.ui.BaseFragment;
-import engine.android.framework.ui.widget.SmsCodeButton;
-import engine.android.util.ui.MyValidator.PatternValidation;
-import engine.android.util.ui.MyValidator.Validation;
-import engine.android.widget.component.InputBox;
-import engine.android.widget.component.TitleBar;
 
 /**
  * 注册界面
@@ -47,21 +41,15 @@ public class RegisterFragment extends BaseFragment {
     
     @InjectView(R.id.username)
     InputBox username;
-    SmsCodeButton smsCode;
     @InjectView(R.id.passcode)
     InputBox passcode;
     @InjectView(R.id.password)
     InputBox password;
+    
     @InjectView(R.id.bottom)
     LinearLayout bottom;
     @InjectView(R.id.next)
     Button next;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        registerEventHandler(new EventHandler());
-    }
     
     @Override
     protected void setupTitleBar(TitleBar titleBar) {
@@ -87,82 +75,53 @@ public class RegisterFragment extends BaseFragment {
         
         if (MyApp.getApp().isDebuggable())
         {
-            username.input().setText("18222776787");
-            password.input().setText("password");
+            username.input.setText("18222776787");
+            password.input.setText("123456");
         }
     }
     
     private void setupUsername() {
+        username.setStyle(InputBox.STYLE_MOBILE);
         // 输入框
-        final EditText input = username.input();
+        EditText input = username.input;
         input.setHint(R.string.register_username_hint);
-        input.setInputType(EditorInfo.TYPE_CLASS_PHONE);
-        
-        input.addTextChangedListener(new TextWatcher() {
-            
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            
+        input.addTextChangedListener(new MyTextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
-                smsCode.setEnabled(MyValidator.validate(s.toString(), MyValidator.MOBILE_NUMBER));
+                username.sms_code.setEnabled(MyValidator.validate(s.toString(), MyValidator.MOBILE_NUMBER));
             }
         });
         // 获取验证码
-        smsCode = new SmsCodeButton(getContext());
-        smsCode.setEnabled(false);
-        smsCode.setOnClickListener(new OnClickListener() {
+        CountDownButton sms_code = username.sms_code;
+        sms_code.setVisibility(View.VISIBLE);
+        sms_code.setEnabled(false);
+        sms_code.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View v) {
                 if (getBaseActivity().checkNetworkStatus(true))
                 {
-                    showProgress(getString(R.string.progress_waiting));
+                    showProgress(R.string.progress_waiting);
             
-                    GetSmsCode action = new GetSmsCode(username.input().getText().toString());
+                    GetSmsCode action = new GetSmsCode(username.input.getText().toString());
                     action.duplication = 1;
                     getBaseActivity().sendHttpRequest(action);
                 }
             }
         });
-        username.place(smsCode);
     }
 
     private void setupPasscode() {
-        passcode.input().setHint(R.string.register_passcode_hint);
+        passcode.setStyle(InputBox.STYLE_PASSCODE);
+        passcode.input.setHint(R.string.register_passcode_hint);
+        passcode.sms_code.setVisibility(View.GONE);
     }
     
     private void setupPassword() {
+        password.setStyle(InputBox.STYLE_PASSWORD);
         // 输入框
-        final EditText input = password.input();
+        EditText input = password.input;
         input.setHint(R.string.register_password_hint);
-        input.setKeyListener(AppUtil.passwordKeyListener);
-        input.setInputType(EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_PASSWORD);
-        
-        // 密码显示
-        ImageView eye = new ImageView(getContext());
-        eye.setImageResource(R.drawable.register_eye);
-        eye.setOnTouchListener(new OnTouchListener() {
-            
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        input.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        input.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                        break;
-                }
-                
-                return true;
-            }
-        });
-        password.place(eye);
         
         getBaseActivity().bindValidation(input, new Validation<EditText>()
         .addValidation(new PatternValidation<EditText>(MyValidator.PASSWORD), 
@@ -171,15 +130,15 @@ public class RegisterFragment extends BaseFragment {
     
     @OnClick(R.id.next)
     void next() {
-        if (getBaseActivity().checkNetworkStatus(true)
-        &&  getBaseActivity().requestValidation())
+        if (getBaseActivity().requestValidation()
+        &&  getBaseActivity().checkNetworkStatus(true))
         {
-            showProgress(getString(R.string.progress_waiting));
+            showProgress(R.string.progress_waiting);
             
             Register action = new Register(
-                    username.input().getText().toString(), 
-                    password.input().getText().toString());
-            action.passport = passcode.input().getText().toString();
+                    username.input.getText().toString(), 
+                    password.input.getText().toString());
+            action.passport = passcode.input.getText().toString();
             getBaseActivity().sendHttpRequest(action);
         }
     }
@@ -188,8 +147,8 @@ public class RegisterFragment extends BaseFragment {
      * 显示“下一步”
      */
     void showNext() {
-        username.input().setEnabled(false);
-        smsCode.n秒后可重新获取验证码(60);
+        username.input.setEnabled(false);
+        username.sms_code.start(60, "已发送(%d)");
         
         if (bottom.getVisibility() == View.VISIBLE)
         {
@@ -209,7 +168,12 @@ public class RegisterFragment extends BaseFragment {
                 getContext(), R.anim.slide_up_in));
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+    @Override
+    protected EventHandler registerEventHandler() {
+        return new EventHandler();
+    }
+    
+    private class EventHandler extends BaseActivity.EventHandler {
         
         public EventHandler() {
             super(GET_SMS_CODE, REGISTER);

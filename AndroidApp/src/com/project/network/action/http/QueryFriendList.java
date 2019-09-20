@@ -1,15 +1,5 @@
 package com.project.network.action.http;
 
-import com.project.app.MyApp;
-import com.project.app.MySession;
-import com.project.network.NetworkConfig;
-import com.project.network.action.Actions;
-import com.project.network.http.HttpJsonParser;
-import com.project.storage.MyDAOManager;
-import com.project.storage.dao.FriendDAO;
-import com.project.storage.dao.UserDAO;
-import com.project.storage.db.Friend;
-
 import engine.android.dao.DAOTemplate;
 import engine.android.dao.DAOTemplate.DAOTransaction;
 import engine.android.framework.network.http.HttpConnectorBuilder;
@@ -19,7 +9,15 @@ import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.http.util.HttpParser;
 
-import org.json.JSONObject;
+import com.project.app.MyApp;
+import com.project.app.MySession;
+import com.project.network.NetworkConfig;
+import com.project.network.action.Actions;
+import com.project.network.http.HttpJsonParser;
+import com.project.storage.MyDAOManager;
+import com.project.storage.dao.FriendDAO;
+import com.project.storage.dao.UserDAO;
+import com.project.storage.db.Friend;
 
 import protocol.http.FriendListData;
 import protocol.http.FriendListData.FriendListItem;
@@ -66,8 +64,8 @@ public class QueryFriendList implements HttpBuilder, JsonEntity {
         FriendListData data;
         
         @Override
-        protected Object process(JSONObject obj) throws Exception {
-            data = GsonUtil.parseJson(obj.toString(), FriendListData.class);
+        protected Object process(String json) throws Exception {
+            data = GsonUtil.parseJson(json, FriendListData.class);
             
             MyDAOManager.getDAO().execute(this);
             if (data.sync_status == 1)
@@ -76,7 +74,7 @@ public class QueryFriendList implements HttpBuilder, JsonEntity {
                 MyApp.global().getHttpManager().sendHttpRequest(new QueryFriendList(data.timestamp));
             }
             
-            return super.process(obj);
+            return null;
         }
 
         @Override

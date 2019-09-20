@@ -1,9 +1,10 @@
 package com.project.app;
 
+import engine.android.core.Session;
+
 import com.project.app.bean.ServerUrl;
 import com.project.storage.db.User;
 
-import engine.android.core.Session;
 import protocol.http.NavigationData.AppUpgradeInfo;
 
 public class MySession {
@@ -46,7 +47,7 @@ public class MySession {
     /******************************* 导航配置 *******************************/
     private static final String NAVIGATION = "NAVIGATION";
     
-    public static void getNavigation() {
+    public static void gotNavigation() {
         session.putAttribute(NAVIGATION);
     }
     

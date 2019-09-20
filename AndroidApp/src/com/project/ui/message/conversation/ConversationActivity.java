@@ -1,5 +1,8 @@
 package com.project.ui.message.conversation;
 
+import engine.android.framework.ui.BaseFragment.ParamsBuilder;
+import engine.android.framework.ui.activity.SinglePaneActivity;
+
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -7,14 +10,6 @@ import android.content.Intent;
 import com.project.storage.db.Friend;
 import com.project.ui.MainActivity;
 
-import engine.android.framework.ui.BaseFragment.ParamsBuilder;
-import engine.android.framework.ui.extra.SinglePaneActivity;
-
-/**
- * 聊天界面
- * 
- * @author Daimon
- */
 public class ConversationActivity extends SinglePaneActivity {
     
     public static class ConversationParams {
@@ -34,7 +29,7 @@ public class ConversationActivity extends SinglePaneActivity {
     
     @Override
     protected Fragment onCreateFragment() {
-        ConversationFragment fragment = new ConversationFragment();
+        MessageFragment fragment = new MessageFragment();
         fragment.setArguments(getIntent().getExtras());
         return fragment;
     }

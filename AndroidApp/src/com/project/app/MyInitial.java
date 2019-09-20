@@ -2,6 +2,7 @@
 
 import com.project.app.util.MySoundPlayer;
 import com.project.storage.MyDAOManager;
+import com.project.storage.MySharedPreferences;
 
 /**
  * 应用程序初始化
@@ -10,14 +11,18 @@ import com.project.storage.MyDAOManager;
  */
 public class MyInitial {
     
-    /**
-     * 清除缓存数据
-     */
-//    static
-//    {
-//        MyDAOManager.getDAO().deleteSelf();
-//        MySharedPreferences.getInstance().reset();
-//    }
+    /** 清除缓存数据 **/
+    private static final boolean RESET = false;
+    
+    static
+    {
+        if (RESET)
+        {
+            MyDAOManager.getDAO().deleteSelf();
+            MySharedPreferences.getInstance().reset();
+            MyApp.global().getImageManager().getStorage().clear();
+        }
+    }
 
     /**
      * Run in background thread.

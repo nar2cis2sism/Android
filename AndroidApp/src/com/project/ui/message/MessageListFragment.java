@@ -1,6 +1,13 @@
 package com.project.ui.message;
 
-import static com.project.app.event.Events.CONNECTIVITY_CHANGE;
+import static engine.android.framework.app.event.Events.CONNECTIVITY_CHANGE;
+
+import engine.android.framework.ui.BaseActivity;
+import engine.android.framework.ui.BaseListFragment;
+import engine.android.http.HttpConnector;
+import engine.android.util.ui.UIUtil;
+import engine.android.widget.common.list.PinnedHeaderListView;
+import engine.android.widget.component.TitleBar;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,12 +21,6 @@ import com.daimon.yueba.R;
 import com.project.storage.db.Friend;
 import com.project.ui.message.conversation.ConversationActivity;
 import com.project.ui.message.conversation.ConversationActivity.ConversationParams;
-
-import engine.android.framework.ui.BaseListFragment;
-import engine.android.http.HttpConnector;
-import engine.android.util.ui.UIUtil;
-import engine.android.widget.common.list.PinnedHeaderListView;
-import engine.android.widget.component.TitleBar;
 
 /**
  * 消息列表界面
@@ -36,7 +37,6 @@ public class MessageListFragment extends BaseListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        registerEventHandler(new EventHandler());
         presenter = addPresenter(MessageListPresenter.class);
     }
     
@@ -54,7 +54,6 @@ public class MessageListFragment extends BaseListFragment {
         
         PinnedHeaderListView listView = new PinnedHeaderListView(getContext());
         listView.setPinnedHeaderView(R.layout.base_list_category);
-        listView.setOverScrollMode(ListView.OVER_SCROLL_NEVER);
         
         UIUtil.replace(root.findViewById(android.R.id.list), listView, null);
         return root;
@@ -67,10 +66,20 @@ public class MessageListFragment extends BaseListFragment {
     
     private View onCreateListHeader() {
         list_header = new FrameLayout(getContext());
-        tip_no_connection = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.tip_no_connection, null);
-        list_header.addView(tip_no_connection);
+        list_header.addView(tip_no_connection = (TextView) LayoutInflater.from(getContext())
+                .inflate(R.layout.tip_no_connection, list_header, false));
         showConnectionTip(!HttpConnector.isAccessible(getContext()));
         return list_header;
+    }
+    
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        Friend friend = presenter.adapter.getItem(position).friend;
+        if (friend != null)
+        {
+            startActivity(ConversationActivity.buildIntent(
+                    getContext(), new ConversationParams(friend.account)));
+        }
     }
     
     /**
@@ -79,17 +88,13 @@ public class MessageListFragment extends BaseListFragment {
     void showConnectionTip(boolean noNetwork) {
         tip_no_connection.setVisibility(noNetwork ? View.VISIBLE : View.GONE);
     }
-    
+
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        Friend friend = presenter.adapter.getItem(position).friend;
-        if (friend != null)
-        {
-            startActivity(ConversationActivity.buildIntent(getContext(), new ConversationParams(friend.account)));
-        }
+    protected EventHandler registerEventHandler() {
+        return new EventHandler();
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+    private class EventHandler extends BaseActivity.EventHandler {
         
         public EventHandler() {
             super(CONNECTIVITY_CHANGE);

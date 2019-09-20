@@ -1,17 +1,17 @@
 package com.project.storage.db;
 
+import engine.android.dao.DAOTemplate;
+import engine.android.dao.annotation.DAOPrimaryKey;
+import engine.android.dao.annotation.DAOProperty;
+import engine.android.dao.annotation.DAOTable;
+import engine.android.util.image.AsyncImageLoader.ImageUrl;
+
 import android.text.TextUtils;
 
 import com.project.app.bean.ServerUrl;
 import com.project.app.config.ImageTransformer;
 import com.project.storage.provider.ProviderContract.FriendColumns;
 import com.project.util.MyValidator;
-
-import engine.android.dao.DAOTemplate;
-import engine.android.dao.annotation.DAOPrimaryKey;
-import engine.android.dao.annotation.DAOProperty;
-import engine.android.dao.annotation.DAOTable;
-import engine.android.framework.app.image.ImageManager.ImageUrl;
 
 import net.sourceforge.pinyin4j.lite.PinyinHelper;
 
@@ -31,10 +31,14 @@ public class Friend implements FriendColumns {
 
     @DAOProperty(column=NICKNAME)
     public String nickname;                     // 昵称
-    
-    @DAOProperty(column=IS_FEMALE)
-    public boolean isFemale;                    // 性别[True:女,False:男]
 
+    /**
+     * 0：男
+     * 1：女
+     */
+    @DAOProperty(column=GENDER)
+    public int gender;                          // 性别
+    
     @DAOProperty(column=REGION)
     public String region;                       // 地区名称
 
@@ -91,7 +95,7 @@ public class Friend implements FriendColumns {
     
     public Friend fromProtocol(FriendInfo info) {
         nickname = info.nickname;
-        isFemale = info.gender == 1;
+        gender = info.gender;
         region = info.region;
         signature = info.signature;
         avatar_url = info.avatar_url;

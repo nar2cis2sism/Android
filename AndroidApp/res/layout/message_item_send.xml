@@ -6,12 +6,12 @@
     <!-- 时间 -->
     <include 
         android:id="@+id/time"
-        layout="@layout/message_item_top" />
+        layout="@layout/message_item_time" />
     
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/time" >
+        android:layout_below="@+id/time" >
     
         <!-- 右边头像 -->
         <ImageView
@@ -46,10 +46,10 @@
             android:id="@+id/send_fail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/icon_error"
             android:layout_toLeftOf="@+id/content"
             android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/message_item_progress_margin_content" />
+            android:layout_marginRight="@dimen/message_item_progress_margin_content"
+            android:src="@drawable/icon_error" />
 
     </RelativeLayout>
 

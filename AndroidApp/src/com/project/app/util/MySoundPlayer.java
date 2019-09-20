@@ -1,12 +1,12 @@
 package com.project.app.util;
 
+import engine.android.util.extra.Singleton;
+import engine.android.util.manager.SoundPlayer;
+
 import android.content.Context;
 
 import com.daimon.yueba.R;
 import com.project.app.MyContext;
-
-import engine.android.util.extra.Singleton;
-import engine.android.util.manager.SoundPlayer;
 
 /**
  * 音效管理器
@@ -38,7 +38,7 @@ public class MySoundPlayer extends SoundPlayer {
     }
     
     private void init() {
-        load(R.raw.click, true);
+        load(R.raw.click);
     }
     
     public void load(int raw) {

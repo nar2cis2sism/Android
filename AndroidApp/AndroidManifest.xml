@@ -18,9 +18,6 @@
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<!-- 访问无线网络状态权限 -->
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-	
-	<!-- 读取手机状态权限 -->
-	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:debuggable="true"
@@ -43,7 +40,7 @@
         </activity>
         
         <activity
-            android:name="engine.android.framework.ui.extra.SinglePaneActivity"
+            android:name="engine.android.framework.ui.activity.SinglePaneActivity"
             android:screenOrientation="portrait" />
         
         <activity
@@ -56,12 +53,8 @@
             android:screenOrientation="portrait"
             android:launchMode="singleTask" />
         
-        <!-- 网络监听器 -->
-        <receiver android:name="com.project.network.util.ConnectivityChangeReceiver">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
-            </intent-filter>
-        </receiver>
+        <!-- App后台服务 -->
+        <service android:name="com.project.app.service.AppService" />
         <!-- ********************************************************************* -->
         
     </application>

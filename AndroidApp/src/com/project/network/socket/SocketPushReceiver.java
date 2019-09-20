@@ -1,8 +1,9 @@
 package com.project.network.socket;
 
+import engine.android.framework.network.socket.SocketResponse.Callback;
+
 import com.project.logic.MessageLogic;
 
-import engine.android.framework.network.socket.SocketResponse.Callback;
 import protocol.socket.req.Message;
 import protocol.util.ProtocolWrapper.ProtocolEntity.ProtocolData;
 

@@ -1,4 +1,9 @@
-package com.project.storage;
+﻿package com.project.storage;
+
+import engine.android.dao.DAOTemplate;
+import engine.android.dao.DAOTemplate.DAOExpression;
+import engine.android.dao.DAOTemplate.DBUpdateListener;
+import engine.android.util.extra.Singleton;
 
 import android.content.Context;
 
@@ -6,11 +11,6 @@ import com.project.app.MyContext;
 import com.project.storage.db.Friend;
 import com.project.storage.db.Message;
 import com.project.storage.db.User;
-
-import engine.android.dao.DAOTemplate;
-import engine.android.dao.DAOTemplate.DAOExpression;
-import engine.android.dao.DAOTemplate.DBUpdateListener;
-import engine.android.util.extra.Singleton;
 
 /**
  * 数据库管理器
@@ -51,13 +51,19 @@ public class MyDAOManager implements DBUpdateListener {
      */
     @Override
     public void onCreate(DAOTemplate dao) {
-        dao.createTable(User.class);
-        dao.createTable(Friend.class);
-        dao.createTable(Message.class);
+        createTable(dao, false);
     }
 
     @Override
-    public void onUpdate(DAOTemplate dao, int oldVersion, int newVersion) {}
+    public void onUpdate(DAOTemplate dao, int oldVersion, int newVersion) {
+        createTable(dao, true);
+    }
+    
+    private void createTable(DAOTemplate dao, boolean deleteOldTable) {
+        dao.createTable(User.class, deleteOldTable);
+        dao.createTable(Friend.class, deleteOldTable);
+        dao.createTable(Message.class, deleteOldTable);
+    }
     
     public static class BaseDAO {
         

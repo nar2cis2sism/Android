@@ -1,5 +1,9 @@
 package com.project.ui.more.authentication;
 
+import engine.android.core.annotation.InjectView;
+import engine.android.framework.ui.BaseFragment;
+import engine.android.widget.component.TitleBar;
+
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -11,10 +15,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.daimon.yueba.R;
-
-import engine.android.core.annotation.InjectView;
-import engine.android.framework.ui.BaseFragment;
-import engine.android.widget.component.TitleBar;
 
 /**
  * 实名认证完成
@@ -62,7 +62,7 @@ public class AuthenticationFinishFragment extends BaseFragment implements Runnab
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getBaseActivity().postSchedule(this, 1000);
+        getBaseActivity().postSchedule(this, 1000, false);
     }
 
     @Override

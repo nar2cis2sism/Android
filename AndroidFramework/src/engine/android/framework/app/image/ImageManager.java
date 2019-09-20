@@ -99,6 +99,10 @@ public class ImageManager {
     public AsyncImageLoader getLoader() {
         return loader;
     }
+    
+    public ImageStorage getStorage() {
+        return storage;
+    }
 
     private class ImageViewCallback implements ImageCallback {
 

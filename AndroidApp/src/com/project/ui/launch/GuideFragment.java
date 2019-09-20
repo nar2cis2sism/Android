@@ -1,5 +1,13 @@
 package com.project.ui.launch;
 
+import engine.android.core.annotation.InjectView;
+import engine.android.core.annotation.OnClick;
+import engine.android.framework.ui.BaseFragment;
+import engine.android.framework.ui.activity.SinglePaneActivity;
+import engine.android.widget.common.layout.FlingLayout;
+import engine.android.widget.common.layout.FlingLayout.OnViewChangeListener;
+import engine.android.widget.common.layout.PageIndicator;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,14 +17,6 @@ import android.widget.ImageView;
 import com.daimon.yueba.R;
 import com.project.storage.MySharedPreferences;
 import com.project.ui.login.LoginFragment;
-
-import engine.android.core.annotation.InjectView;
-import engine.android.core.annotation.OnClick;
-import engine.android.framework.ui.BaseFragment;
-import engine.android.framework.ui.extra.SinglePaneActivity;
-import engine.android.widget.common.layout.FlingLayout;
-import engine.android.widget.common.layout.FlingLayout.OnViewChangeListener;
-import engine.android.widget.common.layout.PageIndicator;
 
 /**
  * 引导界面
@@ -29,8 +29,10 @@ public class GuideFragment extends BaseFragment implements OnViewChangeListener 
     FlingLayout fling_layout;
     @InjectView(R.id.experience)
     ImageView experience;
+    
     @InjectView(R.id.skip)
     ImageView skip;
+    
     @InjectView(R.id.page_indicator)
     PageIndicator page_indicator;
 

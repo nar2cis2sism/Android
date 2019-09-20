@@ -27,16 +27,15 @@ import java.util.List;
 
 class FriendListPresenter extends Presenter<FriendListFragment> {
     
-    FriendListAdapter adapter;
-    FriendListLoader  loader;
     FriendGroupAdapter groupAdapter;
+    FriendListAdapter adapter;
+    FriendListLoader loader;
     
     @Override
     protected void onCreate(Context context) {
-        adapter = new FriendListAdapter(context);
-        loader  = new FriendListLoader(context);
         groupAdapter = new FriendGroupAdapter(context);
-        getCallbacks().setDataSource(adapter, loader);
+        getCallbacks().setDataSource(adapter = new FriendListAdapter(context),
+                loader = new FriendListLoader(context));
     }
     
     public void updateLetterIndex(LetterBarHelper helper, ListView listView) {
@@ -84,7 +83,6 @@ class FriendListAdapter extends JavaBeanAdapter<FriendListItem> {
             holder.setVisible(R.id.category, true);
             holder.setTextView(R.id.category_text, category);
         }
-
         // 好友头像
         AvatarImageView.display(holder, R.id.icon, item.avatarUrl);
         // 名称

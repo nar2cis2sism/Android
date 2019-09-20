@@ -1,14 +1,5 @@
 package com.project.network.action.http;
 
-import com.project.app.MySession;
-import com.project.network.NetworkConfig;
-import com.project.network.action.Actions;
-import com.project.network.http.HttpJsonParser;
-import com.project.storage.MyDAOManager;
-import com.project.storage.dao.FriendDAO;
-import com.project.storage.dao.UserDAO;
-import com.project.storage.db.Friend;
-
 import engine.android.dao.DAOTemplate;
 import engine.android.framework.network.http.HttpConnectorBuilder;
 import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
@@ -17,7 +8,14 @@ import engine.android.framework.util.GsonUtil;
 import engine.android.http.HttpConnector;
 import engine.android.http.util.HttpParser;
 
-import org.json.JSONObject;
+import com.project.app.MySession;
+import com.project.network.NetworkConfig;
+import com.project.network.action.Actions;
+import com.project.network.http.HttpJsonParser;
+import com.project.storage.MyDAOManager;
+import com.project.storage.dao.FriendDAO;
+import com.project.storage.dao.UserDAO;
+import com.project.storage.db.Friend;
 
 import protocol.http.AddFriendData;
 
@@ -68,8 +66,8 @@ public class AddFriend implements HttpBuilder, JsonEntity {
     private class Parser extends HttpJsonParser {
         
         @Override
-        protected Object process(JSONObject obj) throws Exception {
-            AddFriendData data = GsonUtil.parseJson(obj.toString(), AddFriendData.class);
+        protected Object process(String json) throws Exception {
+            AddFriendData data = GsonUtil.parseJson(json, AddFriendData.class);
             
             UserDAO.updateFriendListTimestamp(data.timestamp);
             
@@ -92,7 +90,7 @@ public class AddFriend implements HttpBuilder, JsonEntity {
                 }
             }
             
-            return super.process(obj);
+            return null;
         }
     }
 }

@@ -2,6 +2,15 @@ package com.project.ui.friend.info;
 
 import static com.project.network.action.Actions.GET_FRIEND_INFO;
 
+import engine.android.core.annotation.InjectView;
+import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
+import engine.android.framework.ui.BaseActivity;
+import engine.android.framework.ui.fragment.BaseInfoFragment;
+import engine.android.framework.ui.widget.AvatarImageView;
+import engine.android.util.ui.NoUnderlineURL;
+import engine.android.util.ui.UIUtil;
+import engine.android.widget.component.TitleBar;
+
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.util.Linkify;
@@ -15,14 +24,6 @@ import android.widget.TextView;
 import com.daimon.yueba.R;
 import com.project.network.action.http.GetFriendInfo;
 import com.project.storage.db.Friend;
-
-import engine.android.core.annotation.InjectView;
-import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
-import engine.android.framework.ui.extra.BaseInfoFragment;
-import engine.android.framework.ui.widget.AvatarImageView;
-import engine.android.util.ui.NoUnderlineURL;
-import engine.android.util.ui.UIUtil;
-import engine.android.widget.component.TitleBar;
 
 /**
  * 好友信息界面
@@ -63,10 +64,6 @@ public class FriendInfoFragment extends BaseInfoFragment {
             friend = new Friend(); // 防止crash
             finish();
         }
-        else
-        {
-            registerEventHandler(new EventHandler());
-        }
     }
     
     @Override
@@ -105,7 +102,7 @@ public class FriendInfoFragment extends BaseInfoFragment {
     private void setupHeader() {
         avatar = AvatarImageView.display(avatar, friend.getAvatarUrl());
         name.setText(friend.displayName);
-        gender.setImageResource(friend.isFemale ? R.drawable.icon_female : R.drawable.icon_male);
+        gender.setImageResource(friend.gender == 0 ? R.drawable.icon_male : R.drawable.icon_female);
         UIUtil.setTextVisible(signature, friend.signature);
     }
     
@@ -155,7 +152,12 @@ public class FriendInfoFragment extends BaseInfoFragment {
         getBaseActivity().sendHttpRequest(new GetFriendInfo(friend));
     }
     
-    private class EventHandler extends engine.android.framework.ui.BaseActivity.EventHandler {
+    @Override
+    protected EventHandler registerEventHandler() {
+        return new EventHandler();
+    }
+    
+    private class EventHandler extends BaseActivity.EventHandler {
         
         public EventHandler() {
             super(GET_FRIEND_INFO);

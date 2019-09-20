@@ -7,7 +7,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="8dp"
     android:paddingBottom="8dp" >
-    
+
     <!-- 头像 -->
     <ImageView
         android:layout_width="wrap_content"
@@ -15,15 +15,15 @@
         android:background="@drawable/login_avatar"
         android:layout_marginTop="80dp"
         android:layout_marginBottom="50dp" />
-    
+
     <!-- 账号输入 -->
-    <engine.android.widget.component.InputBox
+    <engine.android.widget.component.input.InputBox
         android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-    
+
     <!-- 密码输入 -->
-    <engine.android.widget.component.InputBox
+    <engine.android.widget.component.input.InputBox
         android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,30 +46,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp" >
-        
-   		<!-- 用户注册 -->
-	    <TextView
-	        android:id="@+id/register"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/login_register"
-	        android:textColor="@color/login_red" />
-        
-	    <View
-	        android:layout_width="1px"
-	        android:layout_height="match_parent"
-	        android:background="@color/login_red"
-	        android:layout_marginLeft="8dp"
-	        android:layout_marginRight="8dp" />
-        
-   		<!-- 找回密码 -->
-	    <TextView
-	        android:id="@+id/find_password"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/login_find_password"
-	        android:textColor="@color/login_red" />
-        
+
+        <!-- 用户注册 -->
+        <TextView
+            android:id="@+id/register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/login_red"
+            android:text="@string/login_register" />
+
+        <View
+            android:layout_width="1px"
+            android:layout_height="match_parent"
+            android:background="@color/login_red"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp" />
+
+        <!-- 找回密码 -->
+        <TextView
+            android:id="@+id/find_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/login_red"
+            android:text="@string/login_find_password" />
     </LinearLayout>
 
 </LinearLayout>

@@ -132,7 +132,7 @@ public class InputBox extends LinearLayout {
 
         @Override
         protected void changeFromEmpty(String after) {
-            clear.setVisibility(View.VISIBLE);
+            if (input.hasFocus()) clear.setVisibility(View.VISIBLE);
         }
 
         @Override

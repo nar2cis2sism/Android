@@ -1,5 +1,7 @@
 ﻿package com.project.app.util;
 
+import engine.android.util.extra.Singleton;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -12,8 +14,6 @@ import com.project.app.MyContext;
 import com.project.storage.db.Message;
 import com.project.ui.message.conversation.ConversationActivity;
 import com.project.ui.message.conversation.ConversationActivity.ConversationParams;
-
-import engine.android.util.extra.Singleton;
 
 /**
  * 通知管理器

@@ -1,5 +1,11 @@
 package com.project.ui.launch;
 
+import engine.android.core.extra.SplashScreen;
+import engine.android.core.extra.SplashScreen.SplashCallback;
+import engine.android.core.extra.SplashScreen.SplashLoading;
+import engine.android.framework.ui.BaseActivity;
+import engine.android.framework.ui.activity.SinglePaneActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -14,12 +20,6 @@ import com.project.storage.MySharedPreferences;
 import com.project.ui.MainActivity;
 import com.project.ui.login.LoginFragment;
 
-import engine.android.core.extra.SplashScreen;
-import engine.android.core.extra.SplashScreen.SplashCallback;
-import engine.android.core.extra.SplashScreen.SplashLoading;
-import engine.android.framework.ui.BaseActivity;
-import engine.android.framework.ui.extra.SinglePaneActivity;
-
 /**
  * 启动界面
  * 
@@ -32,6 +32,12 @@ public class LaunchActivity extends BaseActivity implements SplashCallback, Spla
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // App安装完成后每次点击桌面图标应用都重新启动
+        if (!isTaskRoot())
+        {
+            finish();
+            return;
+        }
         
         if (MySession.initialized())
         {
@@ -54,7 +60,6 @@ public class LaunchActivity extends BaseActivity implements SplashCallback, Spla
     public void onSplashDisplayed() {
         View view = new View(this);
         view.setBackgroundResource(R.drawable.splash);
-        
         view.setOnTouchListener(new OnTouchListener() {
             
             @Override
@@ -64,8 +69,7 @@ public class LaunchActivity extends BaseActivity implements SplashCallback, Spla
             }
         });
         
-        setContentView(view, new LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        setContentView(view, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
     }
 
     @Override

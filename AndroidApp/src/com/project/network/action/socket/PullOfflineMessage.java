@@ -1,9 +1,10 @@
 package com.project.network.action.socket;
 
-import com.project.logic.MessageLogic;
-
 import engine.android.framework.network.socket.SocketManager.SocketBuilder;
 import engine.android.framework.network.socket.SocketResponse;
+
+import com.project.logic.MessageLogic;
+
 import protocol.socket.ack.OfflineMessageACK;
 import protocol.socket.req.Message;
 import protocol.socket.req.OfflineMessage;
@@ -34,14 +35,8 @@ public class PullOfflineMessage implements SocketBuilder, SocketResponse {
     }
 
     @Override
-    public boolean response(ProtocolData data, Callback callback) {
-        if (data instanceof OfflineMessageACK)
-        {
-            receiveMessage((OfflineMessageACK) data);
-            return true;
-        }
-        
-        return false;
+    public void response(int cmd, ProtocolData data, Callback callback) {
+        receiveMessage((OfflineMessageACK) data);
     }
     
     private void receiveMessage(OfflineMessageACK ack) {

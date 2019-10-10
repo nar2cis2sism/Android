@@ -8,10 +8,12 @@ import engine.android.core.annotation.OnClick;
 import engine.android.framework.ui.BaseActivity;
 import engine.android.framework.ui.BaseFragment;
 import engine.android.util.listener.MyTextWatcher;
+import engine.android.util.os.WindowUtil;
 import engine.android.util.ui.MyValidator.PatternValidation;
 import engine.android.util.ui.UIUtil;
 import engine.android.widget.component.input.InputBox;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -21,7 +23,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
@@ -56,14 +57,17 @@ public class LoginFragment extends BaseFragment {
     TextView register;
     @InjectView(R.id.find_password)
     TextView find_password;
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        WindowUtil.setFullScreenMode(getBaseActivity().getWindow(), false);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        ScrollView scrollView = new ScrollView(getContext());
-        scrollView.setBackgroundResource(R.drawable.login_bg);
-        
-        return inflater.inflate(R.layout.login_fragment, scrollView);
+        return inflater.inflate(R.layout.login_fragment, container, false);
     }
 
     @Override
@@ -72,7 +76,6 @@ public class LoginFragment extends BaseFragment {
         
         setupUsername();
         setupPassword();
-        UIUtil.adjustResize((ScrollView) getView(), username);
         
         if (MyApp.getApp().isDebuggable())
         {
@@ -88,20 +91,6 @@ public class LoginFragment extends BaseFragment {
         EditText input = username.input;
         input.setCompoundDrawablesWithIntrinsicBounds(R.drawable.login_username, 0, 0, 0);
         input.setHint(R.string.login_username_hint);
-        input.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-        input.setOnEditorActionListener(new OnEditorActionListener() {
-            
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_NEXT)
-                {
-                    password.requestFocus();
-                    return true;
-                }
-                
-                return false;
-            }
-        });
         input.addTextChangedListener(new MyTextWatcher() {
             
             @Override
@@ -135,7 +124,7 @@ public class LoginFragment extends BaseFragment {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE)
                 {
-                    login.requestFocus();
+                    UIUtil.hideSoftInput(v);
                     login();
                     return true;
                 }
@@ -143,6 +132,14 @@ public class LoginFragment extends BaseFragment {
                 return false;
             }
         });
+    }
+    
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getBaseActivity().requestPermission(null, 
+                Manifest.permission.WRITE_EXTERNAL_STORAGE, 
+                Manifest.permission.ACCESS_FINE_LOCATION);
     }
     
     @OnClick(R.id.login)

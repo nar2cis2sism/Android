@@ -29,9 +29,9 @@
     <string name="login_login">登&#160;&#160;&#160;&#160;录</string>
     <string name="login_register">用户注册</string>
     <string name="login_find_password">找回密码</string>
-    <string name="login_username_hint">输入电话号码</string>
+    <string name="login_username_hint">输入手机号码</string>
     <string name="login_username_validation_mobile">请您输入正确的手机号码</string>
-    <string name="login_password_hint">输入密码</string>
+    <string name="login_password_hint">输入登录密码</string>
     
     <!-- Register -->
     <string name="register_title">用户注册</string>

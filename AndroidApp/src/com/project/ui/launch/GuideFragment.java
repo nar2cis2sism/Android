@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.daimon.yueba.R;
 import com.project.storage.MySharedPreferences;
@@ -27,11 +26,6 @@ public class GuideFragment extends BaseFragment implements OnViewChangeListener 
     
     @InjectView(R.id.fling_layout)
     FlingLayout fling_layout;
-    @InjectView(R.id.experience)
-    ImageView experience;
-    
-    @InjectView(R.id.skip)
-    ImageView skip;
     
     @InjectView(R.id.page_indicator)
     PageIndicator page_indicator;

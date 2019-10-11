@@ -3,14 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <!-- 退出登录 -->
-    <Button
-        android:id="@+id/logout"
+    <RelativeLayout
+        android:id="@+id/logout_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:text="@string/setting_logout" />
+        android:layout_height="match_parent"
+        android:background="#F5F5F5">
+
+        <!-- 退出登录 -->
+        <Button
+            android:id="@+id/logout"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@android:color/white"
+            android:layout_marginTop="20dp"
+            android:textSize="16sp"
+            android:textColor="#F04844"
+            android:text="@string/setting_logout" />
+
+    </RelativeLayout>
 
 </LinearLayout>

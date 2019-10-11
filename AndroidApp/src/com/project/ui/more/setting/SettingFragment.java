@@ -55,9 +55,9 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
             Bundle savedInstanceState) {
         LinearLayout root = (LinearLayout) inflater.inflate(
                 R.layout.setting_fragment, container, false);
-        
         // 修改密码
         password = addComponent(root, inflater, R.string.setting_password, NO_TEXT, true);
+        password.getConvertView().setOnClickListener(this);
         // 绑定手机
         phone = addComponent(root, inflater, R.string.setting_phone, NO_TEXT, true);
         // 版本更新
@@ -83,9 +83,9 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
         about = addComponent(root, inflater, R.string.setting_about, NO_TEXT, true);
         about.getConvertView().setOnClickListener(this);
         // 退出登录按钮换位
-        View logout = root.findViewById(R.id.logout);
-        root.removeViewInLayout(logout);
-        root.addView(logout);
+        View view = root.findViewById(R.id.logout_container);
+        root.removeViewInLayout(view);
+        root.addView(view);
 
         return root;
     }
@@ -101,7 +101,11 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
     
     @Override
     public void onClick(View v) {
-        if (v == version.getConvertView())
+        if (v == password.getConvertView())
+        {
+            startFragment(EditPasswordFragment.class);
+        }
+        else if (v == version.getConvertView())
         {
             AppUtil.upgradeApp(getBaseActivity(), MySession.getUpgradeInfo(), false);
         }

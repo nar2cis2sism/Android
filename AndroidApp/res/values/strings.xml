@@ -80,6 +80,13 @@
     <string name="setting_about">关于我们</string>
     <string name="setting_logout">退出登录</string>
     
+    <!-- EditPassword -->
+    <string name="edit_password_title">修改密码</string>
+    <string name="edit_password_old_hint">旧密码</string>
+    <string name="edit_password_new_hint">新密码</string>
+    <string name="edit_password_copy_hint">确认新密码</string>
+    <string name="edit_password_copy_validation">两次输入密码不一致！</string>
+    
     <!-- Authentication -->
     <string name="authentication_title">实名认证</string>
     <string name="authentication_introduction">请务必上传真实资料，以免影响使用</string>

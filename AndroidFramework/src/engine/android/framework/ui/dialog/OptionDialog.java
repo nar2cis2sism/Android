@@ -6,7 +6,6 @@ import engine.android.util.AndroidUtil;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,6 +30,15 @@ public class OptionDialog extends BaseDialog implements OnClickListener {
     public OptionDialog(Context context) {
         super(context);
         setCanceledOnTouchOutside(false);
+        
+        setupView();
+    }
+
+    private void setupView() {
+        root = new LinearLayout(getContext());
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setBackgroundResource(android.R.color.white);
+        setContentView(root);
     }
 
     @Override
@@ -39,14 +47,6 @@ public class OptionDialog extends BaseDialog implements OnClickListener {
         params.height = LayoutParams.WRAP_CONTENT;
         params.gravity = Gravity.BOTTOM;
         params.windowAnimations = R.style.Animation_Dialog_Bottom;
-    }
-    
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        root = new LinearLayout(getContext());
-        root.setOrientation(LinearLayout.VERTICAL);
-        root.setBackgroundResource(android.R.color.white);
-        setContentView(root);
     }
 
     public void setItems(int itemsId, OnClickListener listener) {

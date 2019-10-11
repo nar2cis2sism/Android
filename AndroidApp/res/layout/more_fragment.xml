@@ -18,22 +18,12 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="8dp" />
 
-        <!-- 右边箭头 -->
-        <ImageView
-            android:id="@+id/arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp"
-            android:src="@drawable/arrow_right" />
-
         <!-- 中间区域 -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/avatar"
-            android:layout_toLeftOf="@id/arrow"
+            android:layout_toRightOf="@+id/avatar"
+            android:layout_toLeftOf="@+id/arrow"
             android:layout_centerVertical="true" >
 	
             <!-- 名称 -->
@@ -41,7 +31,6 @@
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="8dp"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textSize="20sp" />
@@ -52,9 +41,10 @@
                 android:id="@+id/authentication"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/name"
-                android:layout_alignTop="@id/name"
-                android:layout_alignBottom="@id/name"
+                android:layout_toRightOf="@+id/name"
+                android:layout_marginLeft="8dp"
+                android:layout_alignTop="@+id/name"
+                android:layout_alignBottom="@+id/name"
                 android:textSize="12sp" />
 	
             <!-- 签名 -->
@@ -62,11 +52,21 @@
                 android:id="@+id/signature"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/name"
+                android:layout_below="@+id/name"
                 android:layout_marginTop="8dp"
                 android:singleLine="true" />
 	    
         </RelativeLayout>
+
+        <!-- 右边箭头 -->
+        <ImageView
+            android:id="@+id/arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:src="@drawable/arrow_right" />
         
     </RelativeLayout>
 

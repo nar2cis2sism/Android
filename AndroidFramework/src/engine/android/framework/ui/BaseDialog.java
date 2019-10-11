@@ -18,28 +18,32 @@ public abstract class BaseDialog extends Dialog {
 
     public BaseDialog(Context context) {
         super(context, R.style.Theme_Dialog);
-        setupParams(getWindow().getAttributes());
     }
-
-    protected void setupParams(WindowManager.LayoutParams params) {}
 
     @Override
     public void setContentView(View view) {
         super.setContentView(view);
-        Injector.inject(this);
+        setup();
     }
 
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
-        Injector.inject(this);
+        setup();
     }
 
     @Override
     public void setContentView(View view, LayoutParams params) {
         super.setContentView(view, params);
-        Injector.inject(this);
+        setup();
     }
+    
+    private void setup() {
+        Injector.inject(this);
+        setupParams(getWindow().getAttributes());
+    }
+
+    protected void setupParams(WindowManager.LayoutParams params) {}
     
     public final BaseActivity getBaseActivity() {
         if (baseActivity == null)

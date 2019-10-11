@@ -52,7 +52,7 @@ public class TextEditFragment extends BaseFragment {
             
             @Override
             public void onClick(View v) {
-                notifyDataChanged(input.getText());
+                notifyDataChanged(input.getText().toString());
                 finish();
             }
         });
@@ -122,7 +122,7 @@ public class TextEditFragment extends BaseFragment {
      * 
      * @param text 初始文本
      */
-    public void setListener(CharSequence text, Listener<CharSequence> listener) {
+    public void setListener(String text, Listener<String> listener) {
         super.setListener(text, listener);
     }
 }

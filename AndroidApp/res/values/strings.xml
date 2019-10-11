@@ -9,7 +9,7 @@
     <string name="dialog_upgrade_now">立即升级</string>
     <string name="dialog_upgrade_later">稍后提醒</string>
     <string name="dialog_gender_title">选择性别</string>
-    <string name="dialog_edit_message">是否保存更改设置？</string>
+    <string name="dialog_edit_info">是否保存更改设置？</string>
     <string name="dialog_log_upload_title">上传日志</string>
     <string name="dialog_log_upload_hint">请输入日志说明</string>
     <string name="dialog_log_upload_ok">提交</string>

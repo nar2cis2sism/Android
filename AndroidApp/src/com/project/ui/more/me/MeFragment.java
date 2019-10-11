@@ -12,6 +12,7 @@ import engine.android.framework.ui.activity.SinglePaneActivity;
 import engine.android.framework.ui.activity.SinglePaneActivity.OnBackListener;
 import engine.android.framework.ui.dialog.DatePickerDialog;
 import engine.android.framework.ui.dialog.DatePickerDialog.OnDateSetListener;
+import engine.android.framework.ui.dialog.OptionDialog;
 import engine.android.framework.ui.fragment.BaseInfoFragment;
 import engine.android.framework.ui.fragment.TextEditFragment;
 import engine.android.framework.ui.fragment.ViewImageFragment;
@@ -87,20 +88,21 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         LinearLayout root = (LinearLayout) inflater.inflate(
                 R.layout.me_fragment, container, false);
         addDivider(root);
-        
         // 昵称
         setupNickName(root, inflater);
         // 性别
         gender = addComponent(root, inflater, R.string.me_gender, user.getGenderText(), false);
         gender.getConvertView().setOnClickListener(this);
         // 生日
-        birthday = addComponent(root, inflater, R.string.me_birthday, user.birthday != 0 ? user.getBirthdayText() : getString(R.string.me_no_value), false);
+        birthday = addComponent(root, inflater, R.string.me_birthday, 
+                user.birthday != 0 ? user.getBirthdayText() : getString(R.string.me_no_value), false);
         birthday.getConvertView().setOnClickListener(this);
         // 地区
         region = addComponent(root, inflater, R.string.me_region, user.region, false);
         region.getConvertView().setOnClickListener(this);
         // 个性签名
-        signature = addComponent(root, inflater, R.string.me_signature, Util.getString(user.signature, getString(R.string.me_no_value)), false);
+        signature = addComponent(root, inflater, R.string.me_signature, 
+                Util.getString(user.signature, getString(R.string.me_no_value)), false);
         signature.getConvertView().setOnClickListener(this);
         
         return root;
@@ -111,9 +113,9 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         EditText input = new EditText(getContext());
         input.setBackgroundDrawable(null);
         input.setPadding(0, 0, 0, 0);
-        input.setText(user.nickname);
-        input.setTextAppearance(getContext(), android.R.style.TextAppearance_Small);
         input.setSingleLine();
+        input.setTextAppearance(getContext(), android.R.style.TextAppearance_Small);
+        input.setText(user.nickname);
         
         nickname = addComponent(root, inflater, R.string.me_nickname, input, false);
     }
@@ -125,10 +127,9 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
     }
     
     @OnClick(R.id.header)
-    void pickAvatar() {
-        Dialog dialog = new AlertDialog.Builder(getContext())
-        .setItems(R.array.pick_image, 
-        new DialogInterface.OnClickListener() {
+    void header() {
+        OptionDialog dialog = new OptionDialog(getContext());
+        dialog.setItems(R.array.pick_image, new DialogInterface.OnClickListener() {
             
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -142,20 +143,19 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
                         break;
                 }
             }
-        })
-        .create();
+        });
 
         getBaseActivity().showDialog("pick_image", dialog);
     }
 
     @Override
     public void onPhotoCapture(PhotoInfo info) {
-        showProgress(getString(R.string.progress_upload_avatar));
+        showProgress(R.string.progress_upload_avatar);
         getBaseActivity().sendHttpRequest(new UploadAvatar(info));
     }
 
     @OnClick(R.id.avatar)
-    void viewAvatar() {
+    void avatar() {
         startFragment(ViewImageFragment.class);
     }
 
@@ -242,11 +242,11 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
 
         TextEditFragment fragment = new TextEditFragment();
         fragment.setArguments(ParamsBuilder.build(params));
-        fragment.setListener(user.signature, new Listener<CharSequence>() {
+        fragment.setListener(user.signature, new Listener<String>() {
             
             @Override
-            public void update(CharSequence data) {
-                signature.setTextView(R.id.text, user.signature = data.toString());
+            public void update(String data) {
+                signature.setTextView(R.id.text, user.signature = data);
             }
         });
         
@@ -265,12 +265,12 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         
         Dialog dialog = new AlertDialog.Builder(getContext())
         .setTitle(R.string.dialog_tip_title)
-        .setMessage(R.string.dialog_edit_message)
+        .setMessage(R.string.dialog_edit_info)
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                showProgress(getText(R.string.progress_waiting));
+                showProgress(R.string.progress_waiting);
                 getBaseActivity().sendHttpRequest(action);
             }
         })
@@ -283,7 +283,7 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
         })
         .create();
 
-        getBaseActivity().showDialog("edit_message", dialog);
+        getBaseActivity().showDialog("edit_info", dialog);
         return true;
     }
     

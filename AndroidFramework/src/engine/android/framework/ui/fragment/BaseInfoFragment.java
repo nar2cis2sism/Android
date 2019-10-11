@@ -29,7 +29,7 @@ public abstract class BaseInfoFragment extends BaseFragment {
      * @param showArrow 是否显示右箭头
      */
     protected ViewHolder addComponent(ViewGroup root, LayoutInflater inflater,
-            int titleId, CharSequence text, boolean showArrow) {
+            int titleId, CharSequence text, Boolean showArrow) {
         ViewHolder holder = addComponent(root, inflater, titleId, NO_TEXT, showArrow);
         if (!TextUtils.isEmpty(text))
         {
@@ -45,7 +45,7 @@ public abstract class BaseInfoFragment extends BaseFragment {
      * @param showArrow 是否显示右箭头
      */
     protected ViewHolder addComponent(ViewGroup root, LayoutInflater inflater,
-            int titleId, View replaceText, boolean showArrow) {
+            int titleId, View replaceText, Boolean showArrow) {
         View component = inflater.inflate(R.layout.base_info_item, root, false);
         root.addView(component);
 
@@ -62,9 +62,9 @@ public abstract class BaseInfoFragment extends BaseFragment {
             holder.removeView(R.id.text);
         }
 
-        if (!showArrow)
+        if (showArrow != null)
         {
-            holder.setVisible(R.id.arrow, false);
+            holder.setVisible(R.id.arrow, showArrow);
         }
         // Divider
         addDivider(root);

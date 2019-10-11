@@ -68,7 +68,6 @@ public class MoreFragment extends BaseInfoFragment {
         LinearLayout root = (LinearLayout) inflater.inflate(
                 R.layout.more_fragment, container, false);
         addCategory(root);
-        
         // 我的二维码
         qrcode = addComponent(root, inflater, R.drawable.more_qrcode, R.string.more_qrcode);
         // 我的钱包
@@ -98,7 +97,6 @@ public class MoreFragment extends BaseInfoFragment {
         View note = holder.getView(R.id.note);
         UIUtil.replace(note, arrow, note.getLayoutParams());
         holder.removeView(R.id.note);
-        
         // Divider
         addDivider(root);
         
@@ -121,7 +119,7 @@ public class MoreFragment extends BaseInfoFragment {
     }
     
     @OnClick(R.id.header)
-    void toMe() {
+    void header() {
         startFragment(MeFragment.class);
     }
     

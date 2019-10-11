@@ -7,25 +7,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-	    android:layout_marginRight="8dp" />
-
-    <!-- 右边注释 -->
-    <TextView
-        android:id="@+id/note"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginLeft="8dp"
-        android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:layout_marginRight="8dp" />
 
     <!-- 中间区域 -->
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/icon"
-        android:layout_toLeftOf="@id/note"
+        android:layout_toLeftOf="@+id/note"
+        android:layout_toRightOf="@+id/icon"
         android:layout_centerVertical="true" >
 
         <!-- 标题 -->
@@ -37,13 +27,23 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <!-- 内容 -->
+
         <TextView
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceSmall" />
-    
     </LinearLayout>
+
+    <!-- 右边注释 -->
+    <TextView
+        android:id="@+id/note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="8dp"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>

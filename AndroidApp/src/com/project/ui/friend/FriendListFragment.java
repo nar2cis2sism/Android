@@ -277,14 +277,14 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
     /******************************* 搜索联系人 *******************************/
     
     void searchContact(String key) {
-        showProgress(getString(R.string.progress_search_contact));
+        showProgress(R.string.progress_search_contact);
         getBaseActivity().sendHttpRequest(new SearchContact(key));
     }
     
     /******************************* 加为好友 *******************************/
     
     void addFriend(String account) {
-        showProgress(getString(R.string.progress_waiting));
+        showProgress(R.string.progress_waiting);
         getBaseActivity().sendHttpRequest(new AddFriend(account, false));
     }
     

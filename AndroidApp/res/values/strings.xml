@@ -36,12 +36,15 @@
     <!-- Register -->
     <string name="register_title">用户注册</string>
     <string name="register_next">下一步</string>
-    <string name="register_license">注册即表示您已阅读并同意\n注册协议</string>
+    <string name="register_license">已阅读并同意《<a href="http://www.baidu.com">用户服务协议</a>》</string>
     <string name="register_username_hint">输入手机号</string>
     <string name="register_username_exist">手机号已被他人使用</string>
     <string name="register_passcode_hint">输入验证码</string>
     <item name="register_password_hint" type="string">@string/login_password_hint</item>
     <string name="register_password_validation_length">密码长度应为6-20位</string>
+    
+    <!-- FindPassword -->
+    <string name="find_password_title">重置密码</string>
     
     <!-- Message -->
     <string name="message_title">消息</string>

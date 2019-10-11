@@ -32,7 +32,6 @@ import com.project.app.MySession;
 import com.project.network.action.http.Login;
 import com.project.network.action.http.Navigation;
 import com.project.ui.MainActivity;
-import com.project.ui.login.register.RegisterFragment;
 import com.project.util.AppUtil;
 import com.project.util.MyValidator;
 
@@ -53,11 +52,6 @@ public class LoginFragment extends BaseFragment {
     @InjectView(R.id.login)
     Button login;
     
-    @InjectView(R.id.register)
-    TextView register;
-    @InjectView(R.id.find_password)
-    TextView find_password;
-    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,8 +68,8 @@ public class LoginFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
-        setupUsername();
-        setupPassword();
+        setupUsername(username);
+        setupPassword(password);
         
         if (MyApp.getApp().isDebuggable())
         {
@@ -84,7 +78,7 @@ public class LoginFragment extends BaseFragment {
         }
     }
     
-    private void setupUsername() {
+    private void setupUsername(InputBox username) {
         username.setStyle(InputBox.STYLE_MOBILE);
         username.enableClear();
         // 输入框
@@ -110,7 +104,7 @@ public class LoginFragment extends BaseFragment {
                 getString(R.string.login_username_validation_mobile)));
     }
     
-    private void setupPassword() {
+    private void setupPassword(InputBox password) {
         password.setStyle(InputBox.STYLE_PASSWORD);
         password.enableClear();
         // 输入框
@@ -163,6 +157,11 @@ public class LoginFragment extends BaseFragment {
     @OnClick(R.id.register)
     void register() {
         startFragment(RegisterFragment.class);
+    }
+    
+    @OnClick(R.id.find_password)
+    void find_password() {
+        startFragment(FindPasswordFragment.class);
     }
 
     /******************************* 用户登录 *******************************/

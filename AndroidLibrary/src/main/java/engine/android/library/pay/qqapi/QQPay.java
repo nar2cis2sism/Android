@@ -1,4 +1,10 @@
-package engine.android.library.qqapi;
+package engine.android.library.pay.qqapi;
+
+import static engine.android.core.ApplicationManager.getMainApplication;
+
+import engine.android.core.util.LogFactory.LOG;
+import engine.android.library.Library.Function;
+import engine.android.library.pay.Pay.IN;
 
 import android.util.Base64;
 import android.widget.Toast;
@@ -11,19 +17,13 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import engine.android.core.ApplicationManager;
-import engine.android.core.util.LogFactory.LOG;
-import engine.android.library.Library.Function;
-import engine.android.library.wxapi.Pay.IN;
-
 /**
  * QQ支付
  *
  * @author Daimon
- * @version N
  * @since 1/14/2019
  */
-public class Pay {
+public class QQPay {
 
     public static PayFunction FUNCTION() {
         return new PayFunction();
@@ -38,11 +38,9 @@ class PayFunction implements Function<IN, Void> {
 
     @Override
     public void doFunction(IN params, final Callback<Void> callback) {
-        IOpenApi openApi = OpenApiFactory.getInstance(ApplicationManager.getMainApplication(), APP_ID);
-        //
-        if (!openApi.isMobileQQInstalled())
-        {
-            Toast.makeText(ApplicationManager.getMainApplication(), "请下载并安装最新版QQ", Toast.LENGTH_SHORT).show();
+        IOpenApi openApi = OpenApiFactory.getInstance(getMainApplication(), APP_ID);
+        if (!openApi.isMobileQQInstalled()) {
+            Toast.makeText(getMainApplication(), "请下载并安装最新版QQ", Toast.LENGTH_SHORT).show();
             return;
         }
         // 调起支付
@@ -51,12 +49,12 @@ class PayFunction implements Function<IN, Void> {
         api.bargainorId = MCH_ID; // QQ钱包分配的商户号
         api.serialNumber = params.prepayId; // 支付序号,用于标识此次支付
         api.callbackScheme = "qwallet_daimon"; // QQ钱包支付结果回调给urlscheme为callbackScheme的activity
-        api.tokenId	 = params.prepayId;
+        api.tokenId = params.prepayId;
         api.pubAcc = ""; // 手Q公众帐号，暂时未对外开放申请
         api.pubAccHint = ""; // 支付完成页面，展示给用户的提示语：提醒关注公众帐号
         api.nonce = params.nonceStr;
         api.timeStamp = Long.parseLong(params.timeStamp);
-        api.sig	 = params.sign;
+        api.sig = params.sign;
         signApi(api);
         api.sigType = "HMAC-SHA1"; // 签名时，使用的加密方式，默认为"HMAC-SHA1"
         openApi.execApi(api);

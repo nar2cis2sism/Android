@@ -1,7 +1,10 @@
 package engine.android.library;
 
+import engine.android.framework.ui.BaseActivity;
+import engine.android.util.os.LocationUtil;
+import engine.android.util.os.PermissionUtil;
+
 import android.Manifest;
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
@@ -20,15 +23,12 @@ import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 import cn.sharesdk.tencent.qq.QQ;
+import cn.sharesdk.tencent.qzone.QZone;
 import cn.sharesdk.wechat.friends.Wechat;
-import engine.android.framework.util.LocationUtil;
-import engine.android.framework.util.PermissionUtil;
 
-public class TestActivity extends Activity implements View.OnClickListener, PermissionUtil.PermissionCallback {
+public class TestActivity extends BaseActivity implements View.OnClickListener {
 
     TextView text;
-
-    PermissionUtil permission;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +46,13 @@ public class TestActivity extends Activity implements View.OnClickListener, Perm
         findViewById(R.id.location).setOnClickListener(this);
     }
 
-    private void showText(final String s) {
+    @Override
+    protected void onDestroy(boolean finish) {
+        stopLocation();
+        super.onDestroy(finish);
+    }
+
+    void showText(final String s) {
         System.out.println(s);
         text.post(new Runnable() {
             @Override
@@ -76,31 +82,24 @@ public class TestActivity extends Activity implements View.OnClickListener, Perm
             LocationUtil location = new LocationUtil(this);
             if (location.isGpsEnabled())
             {
-                if (permission == null)
-                {
-                    permission = new PermissionUtil(this);
-                }
-
-                permission.requestPermission(new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                });
+                requestPermission(new PermissionCallback() {
+                    @Override
+                    public void onGrant(PermissionUtil permission, boolean success) {
+                        if (success)
+                        {
+                            location();
+                        }
+                        else
+                        {
+                            permission.showTipDialog();
+                        }
+                    }
+                }, Manifest.permission.ACCESS_FINE_LOCATION);
             }
             else
             {
                 location.showTipDialog();
             }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (permission.onRequestPermissionsResult(grantResults))
-        {
-            location();
-        }
-        else
-        {
-            permission.showTipDialog();
         }
     }
 
@@ -154,8 +153,8 @@ public class TestActivity extends Activity implements View.OnClickListener, Perm
         OnekeyShare oks = new OnekeyShare();
         // 关闭sso授权
         oks.disableSSOWhenAuthorize();
-        // 隐藏QQ分享
-        oks.addHiddenPlatform(QQ.NAME);
+        // 隐藏QQ空间分享
+        oks.addHiddenPlatform(QZone.NAME);
         // 对于微信好友必须在分享完成之后的弹出框选择返回APP，才能获取成功回调，否则点击留在微信则不能。
         // 对于微信朋友圈如果分享成功则会直接回调APP，执行到成功的回调
         // 总结：没什么卵用
@@ -173,6 +172,7 @@ public class TestActivity extends Activity implements View.OnClickListener, Perm
             @Override
             public void onCancel(Platform platform, int i) {
                 // 微信客户端版本从6.7.2以上开始，取消分享提示分享成功；即取消分享和分享成功都返回成功事件
+                showText("取消分享");
             }
         });
         // title标题，微信、QQ和QQ空间等平台使用
@@ -181,7 +181,7 @@ public class TestActivity extends Activity implements View.OnClickListener, Perm
         oks.setTitleUrl("http://sharesdk.cn");
         // text是分享文本，所有平台都需要这个字段
         oks.setText("在玩同学战，你敢来挑战吗？");
-        // 两个一起设置可显示注册在平台上的LOGO图片
+        // 两个一起设置可显示注册在微信平台上的LOGO图片
         oks.setImagePath(" ");
         oks.setImageData(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
         // url在微信、微博，Facebook等平台中使用
@@ -190,9 +190,11 @@ public class TestActivity extends Activity implements View.OnClickListener, Perm
         oks.show(this);
     }
 
+    LocationClient locationClient;
     private void location() {
+        stopLocation();
         // 定位服务的客户端。宿主程序在客户端声明此类，并调用，目前只支持在主线程中启动
-        LocationClient locationClient = new LocationClient(getApplicationContext());
+        locationClient = new LocationClient(getApplicationContext());
         // 注册监听函数
         locationClient.registerLocationListener(new BDAbstractLocationListener() {
 
@@ -259,8 +261,16 @@ public class TestActivity extends Activity implements View.OnClickListener, Perm
         locationOption.setOpenAutoNotifyMode();
         // 设置打开自动回调位置模式，该开关打开后，期间只要定位SDK检测到位置变化就会主动回调给开发者
         locationOption.setOpenAutoNotifyMode(3000,1, LocationClientOption.LOC_SENSITIVITY_HIGHT);
-        locationClient.setLocOption(locationOption);
         // 开始定位
+        locationClient.setLocOption(locationOption);
         locationClient.start();
+    }
+
+    private void stopLocation() {
+        if (locationClient != null)
+        {
+            locationClient.stop();
+            locationClient = null;
+        }
     }
 }

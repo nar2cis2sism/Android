@@ -9,6 +9,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
+        // 集成Mob
+        classpath "com.mob.sdk:MobSDK:+"
     }
 }
 

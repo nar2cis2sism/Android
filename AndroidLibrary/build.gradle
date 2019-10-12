@@ -1,30 +1,75 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply plugin: 'com.android.library'
 
-buildscript {
-    repositories {
-        google()
-        jcenter()
-        maven {
-            url "https://jitpack.io"
+dependencies {
+    provided project(':AndroidFramework')
+    // 集成百度地图
+    compile files('libs/BaiduLBS_Android.jar')
+    // 集成QQ支付
+    compile files('libs/mqqopenpay.jar')
+    // 集成微信支付
+    compile 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
+}
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
+    // 集成百度地图（需要用到so库）
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+            jni.srcDirs = [] // disable automatic ndk-build
         }
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
-        // 集成Mob
-        classpath "com.mob.sdk:MobSDK:+"
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
 }
 
-allprojects {
-    repositories {
-        google()
-        jcenter()
-    }
-}
+// 集成Mob
+apply plugin: 'com.mob.sdk'
+MobSDK {
+    appKey "299e43128bed6"
+    appSecret "5ef7b4781d5d0ff14efeae6e85e43b3e"
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+    ShareSDK {
+        // 平台配置信息
+        devInfo {
+            SinaWeibo {
+                enable false
+                appKey "568898243"
+                appSecret "38a4f8204cc784f81f9f0daaf31e02e3"
+                callbackUri "http://www.sharesdk.cn"
+                shareByAppClient false
+            }
+            // 微信好友
+            Wechat {
+                appId "wxe735f79d7b24b0c9"
+                appSecret "32ad09addef1186979313229f05bcba4"
+                sortId 1
+            }
+            // 微信朋友圈
+            WechatMoments {
+                appId "wxe735f79d7b24b0c9"
+                appSecret "32ad09addef1186979313229f05bcba4"
+                sortId 2
+            }
+            // QQ好友
+            QQ {
+                appId "101531758"
+                appKey "c0dc2a2c080df8b6be16134ebd3a50a5"
+                sortId 3
+                shareByAppClient true
+            }
+            // QQ空间
+            QZone {
+                appId "101531758"
+                appKey "c0dc2a2c080df8b6be16134ebd3a50a5"
+                sortId 4
+                shareByAppClient true
+            }
+            Facebook {
+                enable false
+                appKey "1412473428822331"
+                appSecret "a42f4f3f867dc947b9ed6020c2e93558"
+                callbackUri "https://mob.com"
+            }
+        }
+    }
 }

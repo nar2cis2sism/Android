@@ -25,11 +25,6 @@
     <application
         android:allowBackup="false" >
 
-        <activity
-            android:name="engine.android.library.TestActivity"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Light.NoTitleBar" />
-
         <!-- 集成百度地图 -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
@@ -43,18 +38,18 @@
 
         <!-- 集成微信支付 -->
         <activity
-            android:name="engine.android.library.wxapi.PayHandlerActivity"
+            android:name=".pay.wxapi.PayHandlerActivity"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Translucent" />
         <activity-alias
             android:name="${applicationId}.wxapi.WXPayEntryActivity"
-            android:targetActivity="engine.android.library.wxapi.PayHandlerActivity"
+            android:targetActivity=".pay.wxapi.PayHandlerActivity"
             android:exported="true" />
         <!-- ********************************************************************* -->
 
         <!-- 集成QQ支付 -->
         <activity
-            android:name="engine.android.library.qqapi.PayHandlerActivity"
+            android:name=".pay.qqapi.PayHandlerActivity"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Translucent"
             android:exported="true">
@@ -66,6 +61,11 @@
             </intent-filter>
         </activity>
         <!-- ********************************************************************* -->
+
+        <activity
+            android:name=".TestActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoTitleBar" />
 
     </application>
 

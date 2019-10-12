@@ -1,8 +1,11 @@
 package engine.android.library.mob;
 
 import static engine.android.core.ApplicationManager.getMainApplication;
-import static engine.android.library.mob.Authorize.platform_QQ;
-import static engine.android.library.mob.Authorize.platform_QZone;
+import static engine.android.library.mob.Platform.PLATFORM_QQ;
+import static engine.android.library.mob.Platform.PLATFORM_QZone;
+
+import engine.android.library.Library.Function;
+import engine.android.library.mob.Share.IN;
 
 import android.graphics.Bitmap;
 import android.widget.Toast;
@@ -14,28 +17,30 @@ import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
-import engine.android.library.Library.Function;
-import engine.android.library.mob.Share.IN;
 
 /**
  * 三方分享
  *
  * @author Daimon
- * @version N
  * @since 1/14/2019
  */
-public class Share {
+public class Share implements engine.android.library.mob.Platform {
 
     public static class IN {
 
-        public String platform;             // 三方平台名称[不设置表示一键分享]
+        /** 三方平台名称[不设置表示一键分享] */
+        public String platform;
 
-        public String title;                // 分享标题
-        public String text;                 // 分享文本
-        public String url;                  // 分享链接
-        public Bitmap logo;                 // 分享LOGO
-
-        public File image;                  // 分享图片
+        /** 分享图片[设置后忽略其他参数] */
+        public File image;
+        /** 分享标题 */
+        public String title;
+        /** 分享文本 */
+        public String text;
+        /** 分享链接 */
+        public String url;
+        /** 分享LOGO */
+        public Bitmap logo;
     }
 
     public static ShareFunction FUNCTION() {
@@ -51,7 +56,7 @@ class ShareFunction implements Function<IN, Void> {
         if (!platform.isClientValid())
         {
             String platformName = platform.getName();
-            if (platform_QQ.equals(platformName) || platform_QZone.equals(platformName))
+            if (PLATFORM_QQ.equals(platformName) || PLATFORM_QZone.equals(platformName))
             {
                 platformName = "QQ";
             }

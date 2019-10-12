@@ -1,4 +1,10 @@
-package engine.android.library.wxapi;
+package engine.android.library.pay.wxapi;
+
+import static engine.android.core.ApplicationManager.getMainApplication;
+
+import engine.android.library.Library.Function;
+import engine.android.library.pay.Pay;
+import engine.android.library.pay.Pay.IN;
 
 import android.widget.Toast;
 
@@ -6,26 +12,13 @@ import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
-import engine.android.core.ApplicationManager;
-import engine.android.library.Library.Function;
-import engine.android.library.wxapi.Pay.IN;
-
 /**
  * 微信支付
  *
  * @author Daimon
- * @version N
  * @since 1/14/2019
  */
-public class Pay {
-
-    public static class IN {
-
-        public String prepayId;             // 微信返回的支付交易会话ID
-        public String nonceStr;             // 随机字符串
-        public String timeStamp;            // 时间戳
-        public String sign;                  // 签名
-    }
+public class WXPay extends Pay {
 
     public static PayFunction FUNCTION() {
         return new PayFunction();
@@ -39,13 +32,9 @@ class PayFunction implements Function<IN, Void> {
 
     @Override
     public void doFunction(IN params, Callback<Void> callback) {
-        IWXAPI api = WXAPIFactory.createWXAPI(ApplicationManager.getMainApplication(), null);
-        // 将该app注册到微信
-        api.registerApp(APP_ID);
-        //
-        if (!api.isWXAppInstalled())
-        {
-            Toast.makeText(ApplicationManager.getMainApplication(), "请下载并安装最新版微信", Toast.LENGTH_SHORT).show();
+        IWXAPI api = WXAPIFactory.createWXAPI(getMainApplication(), APP_ID);
+        if (!api.isWXAppInstalled()) {
+            Toast.makeText(getMainApplication(), "请下载并安装最新版微信", Toast.LENGTH_SHORT).show();
             return;
         }
         // 调起支付

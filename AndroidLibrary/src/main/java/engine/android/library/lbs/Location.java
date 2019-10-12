@@ -1,32 +1,31 @@
 package engine.android.library.lbs;
 
-import com.baidu.location.BDAbstractLocationListener;
-import com.baidu.location.BDLocation;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
-
 import engine.android.core.ApplicationManager;
 import engine.android.library.Library.Function;
 import engine.android.library.lbs.Location.IN;
 import engine.android.library.lbs.Location.OUT;
 
+import com.baidu.location.BDAbstractLocationListener;
+import com.baidu.location.BDLocation;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+
 /**
  * 定位
  *
  * @author Daimon
- * @version N
  * @since 1/14/2019
  */
 public class Location {
 
     public static class IN {
 
-        public boolean once;                // 仅定位一次,or连续定位
+        /** 仅定位一次,or连续定位 */
+        public boolean once;
     }
 
     public static class OUT {
 
-        public double longitude,latitude;   // 经纬度
         public BDLocation location;
 
         private final LocationClient locationClient;
@@ -61,10 +60,7 @@ class LocationFunction implements Function<IN, OUT> {
 
             @Override
             public void onReceiveLocation(BDLocation location) {
-                result.longitude = location.getLongitude();
-                result.latitude = location.getLatitude();
                 result.location = location;
-
                 callback.doResult(result);
                 if (params.once)
                 {
@@ -85,8 +81,8 @@ class LocationFunction implements Function<IN, OUT> {
         locationOption.setIsNeedAddress(true);
         // 可选，默认false，设置是否收集CRASH信息，默认收集
         locationOption.SetIgnoreCacheException(true);
-        locationClient.setLocOption(locationOption);
         // 开始定位
+        locationClient.setLocOption(locationOption);
         locationClient.start();
     }
 }

@@ -1,45 +1,41 @@
 package engine.android.library.mob;
 
-import java.util.HashMap;
-
-import cn.sharesdk.framework.Platform;
-import cn.sharesdk.framework.PlatformActionListener;
-import cn.sharesdk.framework.ShareSDK;
-import cn.sharesdk.tencent.qq.QQ;
-import cn.sharesdk.tencent.qzone.QZone;
-import cn.sharesdk.wechat.friends.Wechat;
-import cn.sharesdk.wechat.moments.WechatMoments;
 import engine.android.framework.util.GsonUtil;
 import engine.android.library.Library.Function;
 import engine.android.library.mob.Authorize.IN;
 import engine.android.library.mob.Authorize.OUT;
 
+import java.util.HashMap;
+
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.framework.ShareSDK;
+
 /**
  * 三方登录
  *
  * @author Daimon
- * @version N
  * @since 1/14/2019
  */
-public class Authorize {
-
-    public static final String platform_Wechat = Wechat.NAME;
-    public static final String platform_WechatMoments = WechatMoments.NAME;
-    public static final String platform_QQ = QQ.NAME;
-    public static final String platform_QZone = QZone.NAME;
+public class Authorize implements engine.android.library.mob.Platform {
 
     public static class IN {
 
-        public String platform;             // 三方平台名称
+        /** 三方平台名称 */
+        public String platform;
     }
 
     public static class OUT {
 
-        public boolean notInstalled;    // 客户端未安装
+        /** 客户端未安装 */
+        public boolean notInstalled;
 
-        public String userID;               // 用户在平台上的身份标识
-        public String nickname;             // 用户在平台上的昵称
-        public String icon;                 // 用户在平台上的头像地址
+        /** 用户在平台上的身份标识 */
+        public String userID;
+        // 用户在平台上的昵称
+        public String nickname;
+        /** 用户在平台上的头像地址 */
+        public String icon;
     }
 
     public static AuthorizeFunction FUNCTION() {
@@ -52,8 +48,7 @@ class AuthorizeFunction implements Function<IN, OUT> {
     @Override
     public void doFunction(IN params, final Callback<OUT> callback) {
         Platform platform = ShareSDK.getPlatform(params.platform);
-        if (!platform.isClientValid())
-        {
+        if (!platform.isClientValid()) {
             OUT out = new OUT();
             out.notInstalled = true;
             callback.doResult(out);

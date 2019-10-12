@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 dependencies {
     compile project(':AndroidFramework')
     // 引用注解处理器
-    annotationProcessor files('libs/AndroidAnnotation.jar')
+    annotationProcessor files('annotation/AndroidAnnotation.jar')
 }
 
 android {
@@ -116,7 +116,6 @@ android {
             renderscript.srcDirs = ['src']
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
-
             jniLibs.srcDirs = ['libs']
             jni.srcDirs = [] // disable automatic ndk-build
         }

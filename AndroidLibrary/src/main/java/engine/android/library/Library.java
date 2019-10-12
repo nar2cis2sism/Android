@@ -10,7 +10,7 @@ public class Library {
     public static <IN, OUT> void callFunction(Function<IN, OUT> function, IN param, Callback<OUT> callback) {
         try {
             function.doFunction(param, callback);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             callback.doError(e);
         }
     }

@@ -1,4 +1,45 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
+    // 集成腾讯数据统计
+    defaultConfig {
+        // 需复制到App工程内
+        ndk {
+            // 根据需要 自行选择添加的对应cpu类型的.so库。
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
+        }
+        manifestPlaceholders = [
+                // AEVZ7X4F99QF 属于应用"同学战"独有的 Android AppKey, 用于配置SDK
+                MTA_APPKEY:"AEVZ7X4F99QF",
+                // 标注应用推广渠道用以区分新用户来源，可填写如应用宝，豌豆荚等
+                MTA_CHANNEL:"渠道名称"
+        ]
+    }
+    // 集成百度地图（需要用到so库）
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+            jni.srcDirs = []    // disable automatic ndk-build
+        }
+    }
+}
+
+dependencies {
+    provided project(':AndroidFramework')
+    // 集成百度地图
+    compile files('libs/BaiduLBS_Android.jar')
+    // 集成QQ支付
+    compile files('libs/mqqopenpay.jar')
+    // 集成微信支付
+    compile 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
+    // 集成腾讯数据统计
+    compile 'com.qq.mta:mta:3.4.7-Release'
+    compile 'com.tencent.mid:mid:4.06-Release'
+}
+
 // 集成Mob
 apply plugin: 'com.mob.sdk'
 MobSDK {
@@ -19,15 +60,26 @@ MobSDK {
             Wechat {
                 appId "wxe735f79d7b24b0c9"
                 appSecret "32ad09addef1186979313229f05bcba4"
+                sortId 1
             }
             // 微信朋友圈
             WechatMoments {
                 appId "wxe735f79d7b24b0c9"
                 appSecret "32ad09addef1186979313229f05bcba4"
+                sortId 2
             }
+            // QQ好友
             QQ {
                 appId "101531758"
                 appKey "c0dc2a2c080df8b6be16134ebd3a50a5"
+                sortId 3
+                shareByAppClient true
+            }
+            // QQ空间
+            QZone {
+                appId "101531758"
+                appKey "c0dc2a2c080df8b6be16134ebd3a50a5"
+                sortId 4
                 shareByAppClient true
             }
             Facebook {
@@ -38,100 +90,4 @@ MobSDK {
             }
         }
     }
-}
-
-android {
-    signingConfigs {
-        authorize {
-            keyAlias 'tongxuezhanmoney'
-            keyPassword 'tongxuezhanmoney'
-            storeFile file('../tongxuezhan.jks')
-            storePassword 'tongxuezhanmoney'
-            v2SigningEnabled false
-        }
-    }
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
-    defaultConfig {
-        applicationId "engine.android.library"
-        minSdkVersion 17
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
-        flavorDimensions "versionCode"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        javaCompileOptions {
-            annotationProcessorOptions {
-                includeCompileClasspath = true
-            }
-        }
-    }
-
-    buildTypes {
-        debug {
-            //true 开启代码混淆
-            minifyEnabled false
-            // 移除无用的resource文件
-            shrinkResources false
-            useProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            debuggable true
-            signingConfig signingConfigs.authorize
-        }
-        release {
-            //true 开启代码混淆
-            minifyEnabled true
-            // 移除无用的resource文件
-            shrinkResources true
-            useProguard true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            debuggable false
-            signingConfig signingConfigs.authorize
-        }
-    }
-
-    productFlavors {
-        authorize {
-            applicationId "com.tongxuezhan.tongxue"
-        }
-        publish {}
-    }
-
-    applicationVariants.all { variant ->
-        variant.outputs.all {
-            outputFileName = "AndroidLibrary.apk"
-        }
-
-    }
-
-    repositories {
-        flatDir {
-            dirs 'libs'
-        }
-        maven { url "https://jitpack.io" }
-    }
-
-    lintOptions {
-        abortOnError false
-        checkReleaseBuilds false
-    }
-
-    dexOptions {
-        preDexLibraries true
-        javaMaxHeapSize "4g"
-    }
-
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['libs']
-            jni.srcDirs = []    // disable automatic ndk-build
-        }
-    }
-}
-
-dependencies {
-    debugCompile fileTree(include: ['*.jar'], dir: 'provide')
-    releaseProvided fileTree(include: ['*.jar'], dir: 'provide')
-    // 集成百度地图
-    compile fileTree(include: ['*.jar'], dir: 'libs')
 }

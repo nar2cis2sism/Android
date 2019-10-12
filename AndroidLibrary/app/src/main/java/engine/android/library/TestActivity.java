@@ -3,37 +3,26 @@ package engine.android.library;
 import android.Manifest;
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-import com.google.gson.Gson;
 
 import java.util.HashMap;
-import java.util.List;
 
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 import cn.sharesdk.tencent.qq.QQ;
 import cn.sharesdk.wechat.friends.Wechat;
-import engine.android.core.util.LogFactory.LogUtil;
-import engine.android.library.lbs.LocationUtil;
-import engine.android.library.lbs.PermissionUtil;
-import engine.android.plugin.Plugin.Callback;
-import engine.android.plugin.share.Authorize;
-import engine.android.plugin.share.Authorize.IN;
-import engine.android.plugin.share.Authorize.OUT;
-import engine.android.util.manager.MyLocationManager;
-
-import static engine.android.library.MyApp.plugin;
+import engine.android.framework.util.LocationUtil;
+import engine.android.framework.util.PermissionUtil;
 
 public class TestActivity extends Activity implements View.OnClickListener, PermissionUtil.PermissionCallback {
 
@@ -69,47 +58,37 @@ public class TestActivity extends Activity implements View.OnClickListener, Perm
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.qq:
-                authorize(QQ.NAME);
-                break;
-            case R.id.weixin:
-                authorize(Wechat.NAME);
-                break;
-            case R.id.share:
-//                share();
-                plugin.callAction("share", null, new Callback<OUT>() {
+        int id = v.getId();
+        if (id == R.id.qq)
+        {
+            authorize(QQ.NAME);
+        }
+        else if (id == R.id.weixin)
+        {
+            authorize(Wechat.NAME);
+        }
+        else if (id == R.id.share)
+        {
+            share();
+        }
+        else if (id == R.id.location)
+        {
+            LocationUtil location = new LocationUtil(this);
+            if (location.isGpsEnabled())
+            {
+                if (permission == null)
+                {
+                    permission = new PermissionUtil(this);
+                }
 
-                    @Override
-                    public void doResult(OUT out) {
-                        showText(new Gson().toJson(out));
-                    }
-
-                    @Override
-                    public void doError(Throwable throwable) {
-                        showText(LogUtil.getExceptionInfo(throwable));
-                    }
+                permission.requestPermission(new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION
                 });
-                break;
-            case R.id.location:
-                LocationUtil location = new LocationUtil(this);
-                if (location.isGpsEnabled())
-                {
-                    if (permission == null)
-                    {
-                        permission = new PermissionUtil(this);
-                    }
-
-                    permission.requestPermission(new String[]{
-                            Manifest.permission.ACCESS_FINE_LOCATION
-                    });
-                }
-                else
-                {
-                    location.showTipDialog();
-                }
-
-                break;
+            }
+            else
+            {
+                location.showTipDialog();
+            }
         }
     }
 
@@ -126,23 +105,49 @@ public class TestActivity extends Activity implements View.OnClickListener, Perm
     }
 
     private void authorize(String name) {
-        IN in = new IN();
-        in.name = name;
-        in.removeAccount = true;
-        in.getUserInfo = true;
+        final StringBuilder sb = new StringBuilder();
 
-        plugin.callAction(Authorize.ACTION, in, new Callback<OUT>() {
+        Platform platform = ShareSDK.getPlatform(name);
+        platform.removeAccount(true); // 移除授权状态和本地缓存，下次授权会重新授权
+        platform.SSOSetting(false); // SSO授权，传false默认是客户端授权，没有客户端授权或者不支持客户端授权会跳web授权
 
+        if (platform.isAuthValid()) {
+            // 判断是否已经存在授权状态，可以根据自己的登录逻辑设置
+            Toast.makeText(this, "已经授权过了", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (platform.isClientValid()) {
+            // 判断是否存在授权凭条的客户端，true是有客户端，false是无
+            sb.append("有客户端\n");
+        }
+
+        // 授权回调监听
+        platform.setPlatformActionListener(new PlatformActionListener() {
+
+            // 回调信息，可以在这里获取基本的授权返回的信息，但是注意如果做提示和UI操作要传到主线程handler里去执行
             @Override
-            public void doResult(OUT out) {
-                showText(new Gson().toJson(out));
+            public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
+                sb.append(platform.getDb().exportData()).append("\n");
+                sb.append(hashMap);
+                showText(sb.toString());
             }
 
             @Override
-            public void doError(Throwable throwable) {
-                showText(LogUtil.getExceptionInfo(throwable));
+            public void onError(Platform platform, int i, Throwable throwable) {
+                sb.append(throwable);
+                showText(sb.toString());
+            }
+
+            @Override
+            public void onCancel(Platform platform, int i) {
+                sb.append("取消授权");
+                showText(sb.toString());
             }
         });
+
+//        platform.authorize(); // 要功能，不要数据
+        platform.showUser(null); // 要数据不要功能，主要体现在不会重复出现授权界面
     }
 
     private void share() {
@@ -162,7 +167,7 @@ public class TestActivity extends Activity implements View.OnClickListener, Perm
 
             @Override
             public void onError(Platform platform, int i, Throwable throwable) {
-                showText(LogUtil.getExceptionInfo(throwable));
+                showText(throwable.toString());
             }
 
             @Override
@@ -170,7 +175,6 @@ public class TestActivity extends Activity implements View.OnClickListener, Perm
                 // 微信客户端版本从6.7.2以上开始，取消分享提示分享成功；即取消分享和分享成功都返回成功事件
             }
         });
-
         // title标题，微信、QQ和QQ空间等平台使用
         oks.setTitle("帮好友答题，助TA赢道具");
         // titleUrl QQ和QQ空间跳转链接
@@ -192,6 +196,8 @@ public class TestActivity extends Activity implements View.OnClickListener, Perm
         // 注册监听函数
         locationClient.registerLocationListener(new BDAbstractLocationListener() {
 
+            int index = 1;
+
             @Override
             public void onReceiveLocation(BDLocation location) {
                 // 此处的BDLocation为定位结果信息类，通过它的各种get方法可获取定位相关的全部结果
@@ -210,6 +216,7 @@ public class TestActivity extends Activity implements View.OnClickListener, Perm
                 int errorCode = location.getLocType();
 
                 StringBuilder sb = new StringBuilder();
+                sb.append(String.format("第%d次定位", index++)).append("\n");
                 sb.append("errorCode:").append(errorCode).append("\n");
                 sb.append("errorMsg:").append(location.getLocTypeDescription()).append("\n");
                 sb.append("longitude:").append(longitude).append("\n");
@@ -234,8 +241,6 @@ public class TestActivity extends Activity implements View.OnClickListener, Perm
         locationOption.setOpenGps(true);
         // 可选，设置是否需要地址信息，默认不需要
         locationOption.setIsNeedAddress(true);
-        // 可选，设置是否需要地址描述
-        locationOption.setIsNeedLocationDescribe(true);
         // 可选，设置是否需要设备方向结果
         locationOption.setNeedDeviceDirect(false);
         // 可选，默认false，设置是否当gps有效时按照1S1次频率输出GPS结果

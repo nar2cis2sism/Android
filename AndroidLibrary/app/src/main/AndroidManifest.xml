@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="engine.android.library">
 
+    <!-- 集成百度地图 -->
     <!-- 这个权限用于进行网络定位-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
     <!-- 这个权限用于访问GPS定位-->
@@ -20,12 +20,15 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- SD卡读取权限，用户写入离线定位数据-->
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <!-- ********************************************************************* -->
 
     <application
-        android:allowBackup="false"
-        android:name="engine.android.library.MyApp"
-        android:label="同学战"
-        tools:replace="android:name" >
+        android:allowBackup="false" >
+
+        <activity
+            android:name="engine.android.library.TestActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Light.NoTitleBar" />
 
         <!-- 集成百度地图 -->
         <meta-data
@@ -38,18 +41,32 @@
             android:process=":remote" />
         <!-- ********************************************************************* -->
 
+        <!-- 集成微信支付 -->
         <activity
-            android:name="engine.android.library.TestActivity"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Light.NoTitleBar">
-            
+            android:name="engine.android.library.wxapi.PayHandlerActivity"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Translucent" />
+        <activity-alias
+            android:name="${applicationId}.wxapi.WXPayEntryActivity"
+            android:targetActivity="engine.android.library.wxapi.PayHandlerActivity"
+            android:exported="true" />
+        <!-- ********************************************************************* -->
+
+        <!-- 集成QQ支付 -->
+        <activity
+            android:name="engine.android.library.qqapi.PayHandlerActivity"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Translucent"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="qwallet_daimon"/>
             </intent-filter>
-            
         </activity>
-        
+        <!-- ********************************************************************* -->
+
     </application>
 
 </manifest>

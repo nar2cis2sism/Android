@@ -1,4 +1,4 @@
-﻿package engine.android.framework.network.http;
+package engine.android.framework.network.http;
 
 import engine.android.framework.network.http.HttpConnectorBuilder.FormEntity.Form;
 import engine.android.http.HttpConnector;

@@ -1,4 +1,4 @@
-﻿package engine.android.widget.common.text;
+package engine.android.widget.common.text;
 
 import engine.android.util.ui.FloatingWindow;
 import engine.android.widget.R;

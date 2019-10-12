@@ -1,4 +1,4 @@
-﻿package com.project.app;
+package com.project.app;
 
 import engine.android.core.ApplicationManager;
 import engine.android.core.Injector;

@@ -1,4 +1,4 @@
-﻿package com.project.network.socket.servlet;
+package com.project.network.socket.servlet;
 
 import engine.android.core.util.LogFactory.LOG;
 import engine.android.framework.util.GsonUtil;

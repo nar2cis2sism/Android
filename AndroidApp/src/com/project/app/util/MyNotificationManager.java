@@ -1,4 +1,4 @@
-﻿package com.project.app.util;
+package com.project.app.util;
 
 import engine.android.util.extra.Singleton;
 

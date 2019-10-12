@@ -1,4 +1,4 @@
-﻿package engine.android.widget.common.wheel;
+package engine.android.widget.common.wheel;
 
 import engine.android.widget.R;
 

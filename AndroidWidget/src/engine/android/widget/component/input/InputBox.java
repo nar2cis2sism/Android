@@ -1,4 +1,4 @@
-﻿package engine.android.widget.component.input;
+package engine.android.widget.component.input;
 
 import engine.android.util.listener.MyTextWatcher;
 import engine.android.widget.R;

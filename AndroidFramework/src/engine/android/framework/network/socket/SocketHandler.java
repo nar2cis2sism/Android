@@ -1,4 +1,4 @@
-﻿package engine.android.framework.network.socket;
+package engine.android.framework.network.socket;
 
 import engine.android.framework.app.event.Events;
 import engine.android.framework.network.socket.SocketResponse.SocketTimeout;

@@ -9,6 +9,8 @@ dependencies {
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.2"
+    // 使用HttpClient
+    useLibrary 'org.apache.http.legacy'
 
     signingConfigs {
         sign {
@@ -24,14 +26,85 @@ android {
         applicationId "com.daimon.yueba"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 1
+        versionCode getVersionCode()
         versionName "1.0.0"
+        flavorDimensions "versionCode"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
                 includeCompileClasspath = true
             }
         }
+    }
+
+    buildTypes {
+        debug {
+            // 开启代码混淆
+            minifyEnabled false
+            // 移除无用的resource文件
+            shrinkResources false
+            useProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable true
+            signingConfig signingConfigs.sign
+        }
+        release {
+            // 开启代码混淆
+            minifyEnabled true
+            // 移除无用的resource文件
+            shrinkResources true
+            useProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            debuggable false
+            signingConfig signingConfigs.sign
+        }
+    }
+
+    productFlavors {
+        app {
+            manifestPlaceholders = [CHANNEL:"App"]
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "yueba.apk"
+        }
+    }
+
+    configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            def requested = details.requested
+            if (requested.group == 'com.android.support') {
+                if (!requested.name.startsWith("multidex")) {
+                    details.useVersion '26.0.2'
+                }
+            }
+        }
+    }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+
+    dexOptions {
+        preDexLibraries false
+        javaMaxHeapSize "4g"
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
     }
 
     sourceSets {
@@ -43,6 +116,9 @@ android {
             renderscript.srcDirs = ['src']
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
+
+            jniLibs.srcDirs = ['libs']
+            jni.srcDirs = [] // disable automatic ndk-build
         }
 
         // Move the tests to tests/java, tests/res, etc...
@@ -57,4 +133,9 @@ android {
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
     }
+}
+
+// 版本号按时间自增
+def getVersionCode(){
+    return new Date().format("yyyyMMdd");
 }

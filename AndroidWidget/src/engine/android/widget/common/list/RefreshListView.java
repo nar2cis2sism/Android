@@ -1,4 +1,4 @@
-﻿package engine.android.widget.common.list;
+package engine.android.widget.common.list;
 
 import engine.android.widget.R;
 

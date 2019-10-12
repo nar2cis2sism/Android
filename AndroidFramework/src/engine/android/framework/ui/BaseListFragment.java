@@ -1,4 +1,4 @@
-﻿package engine.android.framework.ui;
+package engine.android.framework.ui;
 
 import engine.android.core.extra.JavaBeanAdapter;
 import engine.android.core.extra.JavaBeanLoader;

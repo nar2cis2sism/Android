@@ -1,4 +1,4 @@
-﻿package com.project.storage;
+package com.project.storage;
 
 import engine.android.dao.DAOTemplate;
 import engine.android.dao.DAOTemplate.DAOExpression;

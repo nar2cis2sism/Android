@@ -1,4 +1,4 @@
-﻿package com.project.util;
+package com.project.util;
 
 import engine.android.framework.ui.BaseActivity;
 import engine.android.framework.ui.activity.SinglePaneActivity;

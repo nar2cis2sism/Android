@@ -1,4 +1,4 @@
-﻿package engine.android.framework.app.image;
+package engine.android.framework.app.image;
 
 import static engine.android.core.util.LogFactory.LOG.log;
 

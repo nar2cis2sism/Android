@@ -1,4 +1,4 @@
-﻿package com.project.app;
+package com.project.app;
 
 import com.project.app.util.MySoundPlayer;
 import com.project.storage.MyDAOManager;

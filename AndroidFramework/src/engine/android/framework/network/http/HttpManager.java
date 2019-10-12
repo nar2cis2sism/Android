@@ -1,4 +1,4 @@
-﻿package engine.android.framework.network.http;
+package engine.android.framework.network.http;
 
 import static engine.android.core.util.LogFactory.LOG.log;
 

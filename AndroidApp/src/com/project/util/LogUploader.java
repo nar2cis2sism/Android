@@ -1,4 +1,4 @@
-﻿package com.project.util;
+package com.project.util;
 
 import engine.android.core.util.CalendarFormat;
 import engine.android.core.util.LogFactory;

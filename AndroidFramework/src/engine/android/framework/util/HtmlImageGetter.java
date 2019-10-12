@@ -1,4 +1,4 @@
-﻿package engine.android.framework.util;
+package engine.android.framework.util;
 
 import engine.android.core.util.LogFactory.LOG;
 import engine.android.framework.R;

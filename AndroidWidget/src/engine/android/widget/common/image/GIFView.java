@@ -1,4 +1,4 @@
-﻿package engine.android.widget.common.image;
+package engine.android.widget.common.image;
 
 import engine.android.util.io.IOUtil;
 

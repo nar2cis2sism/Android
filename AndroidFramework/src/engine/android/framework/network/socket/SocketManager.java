@@ -1,4 +1,4 @@
-﻿package engine.android.framework.network.socket;
+package engine.android.framework.network.socket;
 
 import static engine.android.core.util.LogFactory.LOG.log;
 

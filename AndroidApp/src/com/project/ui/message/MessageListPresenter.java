@@ -166,18 +166,18 @@ class MessageListLoader extends JavaBeanLoader<MessageListItem> {
                 item.unreadCount = MessageDAO.getUnreadMessageCount(message.account);
                 list.add(item);
             }
-            
-            _(list);
+
+            test(list);
             return list;
         }
         
         return null;
     }
     
-    private void _(List<MessageListItem> list) {
+    private void test(List<MessageListItem> list) {
         if (MyApp.global().getConfig().isOffline())
         {
-            list.addAll(mockData());
+            list.addAll(testData());
             Collections.sort(list, new Comparator<MessageListItem>() {
 
                 @Override
@@ -188,7 +188,7 @@ class MessageListLoader extends JavaBeanLoader<MessageListItem> {
         }
     }
     
-    private static List<MessageListItem> mockData() {
+    private static List<MessageListItem> testData() {
         ArrayList<MessageListItem> list = new ArrayList<MessageListItem>();
         // 1
         Calendar cal = Calendar.getInstance();

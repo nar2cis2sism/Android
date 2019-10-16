@@ -8,6 +8,7 @@ import engine.android.core.annotation.OnClick;
 import engine.android.framework.ui.BaseActivity;
 import engine.android.framework.ui.BaseFragment;
 import engine.android.util.listener.MyTextWatcher;
+import engine.android.util.ui.MyPasswordTransformationMethod;
 import engine.android.util.ui.MyValidator.PatternValidation;
 import engine.android.util.ui.MyValidator.Validation;
 import engine.android.util.ui.NoUnderlineURL;
@@ -15,6 +16,7 @@ import engine.android.widget.common.button.CountDownButton;
 import engine.android.widget.component.TitleBar;
 import engine.android.widget.component.input.InputBox;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.method.LinkMovementMethod;
@@ -84,6 +86,7 @@ public class RegisterFragment extends BaseFragment {
         if (MyApp.getApp().isDebuggable())
         {
             username.input.setText("18222776787");
+            passcode.input.setText("1234");
             password.input.setText("123456");
         }
     }
@@ -121,8 +124,12 @@ public class RegisterFragment extends BaseFragment {
 
     private void setupPasscode(InputBox passcode) {
         passcode.setStyle(InputBox.STYLE_PASSCODE);
-        passcode.input.setHint(R.string.register_passcode_hint);
         passcode.sms_code.setVisibility(View.GONE);
+        // 输入框
+        EditText input = passcode.input;
+        input.setHint(R.string.register_passcode_hint);
+        // 字体示例
+        input.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/font.ttc"));
     }
     
     private void setupPassword(InputBox password) {
@@ -130,6 +137,8 @@ public class RegisterFragment extends BaseFragment {
         // 输入框
         EditText input = password.input;
         input.setHint(R.string.register_password_hint);
+        // 密码符号示例
+        input.setTransformationMethod(MyPasswordTransformationMethod.getInstance());
         
         getBaseActivity().bindValidation(input, new Validation<EditText>()
         .addValidation(new PatternValidation<EditText>(MyValidator.PASSWORD), 

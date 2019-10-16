@@ -1,17 +1,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/login_bg"
     android:gravity="center_horizontal"
     android:paddingLeft="32dp"
-    android:paddingRight="32dp">
+    android:paddingRight="32dp"
+    android:clipToPadding="false">
+    
+    <!-- Lottie示例 -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/back"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_gravity="left"
+        android:layout_marginLeft="-14dp"
+        android:layout_marginTop="18dp"
+        
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="lottie/navigation_up/data.json"
+        app:lottie_imageAssetsFolder="lottie/navigation_up/" />
 
     <!-- 头像 -->
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="50dp"
         android:src="@drawable/login_avatar" />
 

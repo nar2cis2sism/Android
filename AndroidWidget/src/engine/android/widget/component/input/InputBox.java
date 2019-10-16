@@ -10,6 +10,7 @@ import android.text.InputFilter.LengthFilter;
 import android.text.method.DigitsKeyListener;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,6 +99,7 @@ public class InputBox extends LinearLayout {
         private View clear;
 
         private View eye;
+        private TransformationMethod method;
 
         public InputAction(EditText input) {
             this.input = input;
@@ -154,10 +156,15 @@ public class InputBox extends LinearLayout {
                 boolean isSelected = v.isSelected();
                 if (isSelected)
                 {
-                    input.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    input.setTransformationMethod(method);
                 }
                 else
                 {
+                    if ((method = input.getTransformationMethod()) == null)
+                    {
+                        method = PasswordTransformationMethod.getInstance();
+                    }
+                    
                     input.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
                 }
 

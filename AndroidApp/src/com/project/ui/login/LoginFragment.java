@@ -136,6 +136,11 @@ public class LoginFragment extends BaseFragment {
                 Manifest.permission.ACCESS_FINE_LOCATION);
     }
     
+    @OnClick(R.id.back)
+    void back() {
+        getBaseActivity().onHomeUpPressed();
+    }
+    
     @OnClick(R.id.login)
     void login() {
         if (getBaseActivity().requestValidation()

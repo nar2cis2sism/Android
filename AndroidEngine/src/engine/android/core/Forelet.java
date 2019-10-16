@@ -864,7 +864,7 @@ public class Forelet extends Activity implements TaskCallback {
         }
     }
     
-    protected void onHomeUpPressed() {
+    public void onHomeUpPressed() {
         Class<? extends Activity> cls = parentActivity();
         if (cls != null)
         {

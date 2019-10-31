@@ -210,6 +210,7 @@ public class HttpConnector {
      * 连接网络
      */
     public synchronized HttpResponse connect() throws Exception {
+        isConnected.set(false);
         if (isCancelled())
         {
             return null;
@@ -252,7 +253,7 @@ public class HttpConnector {
             }
         } finally {
             isConnected.set(true);
-            close();
+            if (listener != null) close();
         }
 
         return null;
@@ -333,7 +334,7 @@ public class HttpConnector {
     /**
      * 关闭网络连接
      */
-    private void close() {
+    public void close() {
         if (conn == null) return;
         
         lock.lock();
@@ -345,6 +346,15 @@ public class HttpConnector {
             }
         } finally {
             lock.unlock();
+        }
+    }
+    
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            close();
+        } finally {
+            super.finalize();
         }
     }
 

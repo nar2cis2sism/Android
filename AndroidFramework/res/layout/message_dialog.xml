@@ -10,7 +10,7 @@
         android:layout_height="80dp"
         android:gravity="center"
         android:textStyle="bold"
-        android:textAppearance="@android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <View
         android:layout_width="match_parent"
@@ -29,7 +29,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/list_selector_background"
-            android:textAppearance="@android:attr/textAppearanceMedium"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@android:string/cancel" />
 
         <View
@@ -45,7 +45,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/list_selector_background"
-            android:textAppearance="@android:attr/textAppearanceMedium"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#3296DC"
             android:text="@android:string/ok" />
 

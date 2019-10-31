@@ -22,12 +22,16 @@ public class HttpResponse {
     
     private final int code;
     private final String reason;
-    private final byte[] content;
+    
+    private InputStream is;
+    private byte[] content;
     
     private Map<String, List<String>> headers;
     
     HttpResponse(HttpURLConnection conn) throws Exception {
-        this(conn.getResponseCode(), conn.getResponseMessage(), getContent(conn));
+        code = conn.getResponseCode();
+        reason = conn.getResponseMessage();
+        is = conn.getInputStream();
         headers = conn.getHeaderFields();
     }
     
@@ -35,14 +39,6 @@ public class HttpResponse {
         code = responseCode;
         reason = message;
         content = data;
-    }
-    
-    private static byte[] getContent(HttpURLConnection conn) {
-        try {
-            return IOUtil.readStream(conn.getInputStream());
-        } catch (IOException e) {
-            return null;
-        }
     }
     
     public int getStatusCode() {
@@ -53,12 +49,24 @@ public class HttpResponse {
         return reason;
     }
     
-    public byte[] getContent() {
-        return content;
+    public InputStream getInputStream() {
+        if (is == null && content != null)
+        {
+            is = new ByteArrayInputStream(content);
+        }
+        
+        return is;
     }
     
-    public InputStream getInputStream() {
-        return new ByteArrayInputStream(content);
+    public byte[] getContent() {
+        if (content == null && is != null)
+        {
+            try {
+                content = IOUtil.readStream(is);
+            } catch (IOException e) {}
+        }
+        
+        return content;
     }
     
     String getHeaderField(String key) {
@@ -79,21 +87,23 @@ public class HttpResponse {
     public int getHeaderFieldInt(String field, int defaultValue) {
         try {
             return Integer.parseInt(getHeaderField(field));
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+    
+    public long getHeaderFieldLong(String field, long defaultValue) {
+        try {
+            return Long.parseLong(getHeaderField(field));
+        } catch (Exception e) {
             return defaultValue;
         }
     }
     
     @SuppressWarnings("deprecation")
     public long getHeaderFieldDate(String field, long defaultValue) {
-        String date = getHeaderField(field);
-        if (date == null)
-        {
-            return defaultValue;
-        }
-        
         try {
-            return Date.parse(date);
+            return Date.parse(getHeaderField(field));
         } catch (Exception e) {
             return defaultValue;
         }
@@ -110,8 +120,8 @@ public class HttpResponse {
         return getHeaderField("Content-Encoding");
     }
     
-    public int getContentLength() {
-        return getHeaderFieldInt("Content-Length", -1);
+    public long getContentLength() {
+        return getHeaderFieldLong("Content-Length", -1);
     }
     
     public String getContentType() {

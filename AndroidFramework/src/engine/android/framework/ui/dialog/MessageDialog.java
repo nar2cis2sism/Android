@@ -1,6 +1,7 @@
 package engine.android.framework.ui.dialog;
 
 import engine.android.framework.R;
+import engine.android.util.ui.UIUtil;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -41,6 +42,14 @@ public class MessageDialog extends Dialog implements View.OnClickListener {
 
         positive.setOnClickListener(this);
         negative.setOnClickListener(this);
+    }
+    
+    public void setCustomView(int resId) {
+        UIUtil.replace(message, resId);
+    }
+    
+    public void setCustomView(View content) {
+        UIUtil.replace(message, content, content.getLayoutParams());
     }
 
     public MessageDialog setMessage(int messageId) {

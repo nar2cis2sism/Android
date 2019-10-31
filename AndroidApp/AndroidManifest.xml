@@ -57,6 +57,10 @@
         <service android:name="com.project.app.service.AppService" />
         <!-- ********************************************************************* -->
         
+        <!-- App下载服务 -->
+        <service android:name="com.project.app.service.AppDownloadService" />
+        <!-- ********************************************************************* -->
+        
     </application>
 
 </manifest>

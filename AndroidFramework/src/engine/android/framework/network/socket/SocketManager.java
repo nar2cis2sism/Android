@@ -17,6 +17,7 @@ import engine.android.socket.SocketConnector;
 import engine.android.socket.SocketConnector.SocketData;
 import engine.android.socket.SocketConnector.SocketReceiver;
 import engine.android.util.Util;
+import engine.android.util.extra.MyThreadFactory;
 import engine.android.util.file.FileManager;
 import engine.android.util.manager.SDCardManager;
 import engine.android.util.secure.CRCUtil;
@@ -38,7 +39,9 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -57,7 +60,7 @@ public class SocketManager implements SocketConnectionListener, Callback {
     
     private final SparseArray<SocketAction> pendingDatas = new SparseArray<SocketAction>();
 
-    private final ExecutorService receiveExecutor = Executors.newSingleThreadExecutor();
+    private final ExecutorService receiveExecutor;
     
     private SocketConnector socket;
     
@@ -66,6 +69,12 @@ public class SocketManager implements SocketConnectionListener, Callback {
     public SocketManager(Context context) {
         this.context = (config = AppGlobal.get(context).getConfig()).getContext();
         handler = new SocketHandler(this);
+        receiveExecutor = new ThreadPoolExecutor(
+                0, 
+                1,
+                60L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>(), 
+                new MyThreadFactory("Socket回包"));
     }
     
     public void setToken(String token) {

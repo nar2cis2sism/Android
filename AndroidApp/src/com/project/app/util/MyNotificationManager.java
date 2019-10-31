@@ -88,7 +88,7 @@ public class MyNotificationManager {
     public void notifyMessage(Message msg, int count) {
         Builder builder = new Builder(context)
         .setSmallIcon(R.drawable.ic_launcher)
-        .setContentTitle(context.getString(R.string.app_name))
+        .setContentTitle(msg.account)
         .setContentText(msg.content)
         .setNumber(count)
         .setContentIntent(pendingActivityIntent(ConversationActivity

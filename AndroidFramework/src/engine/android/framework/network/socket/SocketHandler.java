@@ -48,7 +48,7 @@ class SocketHandler {
             return;
         }
         
-        HandlerThread thread = new HandlerThread("socket保活线程");
+        HandlerThread thread = new HandlerThread("Socket保活线程");
         thread.start();
         handler = new Handler(thread.getLooper(), timeout = new TimeoutManager());
         

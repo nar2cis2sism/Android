@@ -19,6 +19,7 @@ import android.content.pm.ResolveInfo;
 import android.content.pm.Signature;
 import android.content.res.Configuration;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.StrictMode;
@@ -217,6 +218,17 @@ public final class AndroidUtil {
         }
         
         return max * 3 > min * 4;
+    }
+    
+    /**
+     * 安装应用程序
+     * 
+     * @param file 安装包文件
+     */
+    public static void installApp(Context context, File file) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+        context.startActivity(intent);
     }
 
     /**

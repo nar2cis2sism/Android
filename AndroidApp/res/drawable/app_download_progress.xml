@@ -1,0 +1,21 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <!-- 默认背景色 -->
+    <item android:id="@android:id/background">
+        <shape>
+            <corners android:radius="4dp" />
+            <solid android:color="#464C5B" />
+        </shape>
+    </item>
+    
+    <!-- 进度条颜色 -->
+    <item android:id="@android:id/progress">
+        <scale android:scaleWidth="100%"> // 这样设置可以显示圆角进度条，不过在1%的边缘部分效果不太好
+            <shape>
+                <corners android:radius="4dp" />
+                <solid android:color="#1ABC9C" />
+            </shape>
+        </scale>
+    </item>
+
+</layer-list>

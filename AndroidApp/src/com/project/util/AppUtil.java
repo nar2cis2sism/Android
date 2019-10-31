@@ -17,6 +17,8 @@ import android.widget.TextView;
 import com.daimon.yueba.R;
 import com.project.app.MyApp;
 import com.project.app.MySession;
+import com.project.app.bean.ServerUrl;
+import com.project.app.service.AppDownloadService;
 import com.project.ui.login.LoginFragment;
 
 import protocol.http.NavigationData.AppUpgradeInfo;
@@ -35,7 +37,7 @@ public class AppUtil {
      * 
      * @param force True:强制升级,False:建议升级
      */
-    public static void upgradeApp(BaseActivity activity, AppUpgradeInfo info, boolean force) {
+    public static void upgradeApp(final BaseActivity activity, final AppUpgradeInfo info, final boolean force) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity)
         .setTitle(R.string.dialog_upgrade_title)
         .setMessage(info.desc)
@@ -43,7 +45,13 @@ public class AppUtil {
             
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // TODO 下载安装包
+                AppDownloadService.download(activity, 
+                        String.format("%s V%s", info.name, info.version), 
+                        ServerUrl.getDownloadUrl(info.url));
+                if (force)
+                {
+                    MyApp.getApp().getActivityStack().popupAllActivities();
+                }
             }
         })
         .setCancelable(false);

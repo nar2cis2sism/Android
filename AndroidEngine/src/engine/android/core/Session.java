@@ -75,7 +75,7 @@ public final class Session {
      */
     public Session setAttribute(String name, Object value) {
         attributes.put(name, value == null ? NULL_VALUE : value);
-        if (isMultiProcess)
+        if (isMultiProcess && serialize.share(name))
         {
             changeMap.put(name, new SessionData(SessionData.STATUS_SYNC));
             recevier.sendBroadcast(name, serialize.serialize(name, value), SessionData.STATUS_UPDATE);
@@ -92,7 +92,7 @@ public final class Session {
      */
     public Object removeAttribute(String name) {
         Object value = attributes.remove(name);
-        if (isMultiProcess)
+        if (isMultiProcess && serialize.share(name))
         {
             changeMap.put(name, new SessionData(SessionData.STATUS_SYNC));
             recevier.sendBroadcast(name, null, SessionData.STATUS_REMOVE);
@@ -158,6 +158,11 @@ public final class Session {
      * 多进程传输数据系列化接口
      */
     public interface SessionDataSerializable {
+        
+        /**
+         * 可以指定数据共享
+         */
+        boolean share(String name);
 
         byte[] serialize(String name, Object value);
 

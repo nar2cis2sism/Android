@@ -94,6 +94,6 @@ public class LogUploader {
      * /data/data/package/app_log
      */
     private static void uploadLog(File desDir) {
-        FileManager.copyTo(desDir, LogFactory.getLogDir().listFiles());
+        LogFactory.export(desDir);
     }
 }

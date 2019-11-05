@@ -64,8 +64,14 @@ public class LogFactory implements Runnable {
     public static void enableLOG(boolean enable) {
         if (logEnabled.compareAndSet(!enable, enable) && logOpened.compareAndSet(false, true))
         {
-            LOG.log(null, null, "程序启动", getMainApplication().getLaunchTime());
-            LOG.log(DeviceUtil.getDeviceInfo(), AndroidUtil.getVersionName(getMainApplication()));
+            if (getMainApplication().isMainProcess())
+            {
+                // 清理上一次的日志记录
+                FileManager.clearDir(getLogDir());
+                
+                LOG.log(null, null, "程序启动", getMainApplication().getLaunchTime());
+                LOG.log(DeviceUtil.getDeviceInfo(), AndroidUtil.getVersionName(getMainApplication()));
+            }
             // 启动日志线程
             executor.execute(new LogFactory());
         }
@@ -84,8 +90,7 @@ public class LogFactory implements Runnable {
     public static File getLogDir() {
         if (logDir == null)
         {
-            // 清理上一次的日志记录
-            FileManager.clearDir(logDir = getMainApplication().getDir("log", 0));
+            logDir = getMainApplication().getDir("log", 0);
         }
 
         return logDir;
@@ -94,7 +99,7 @@ public class LogFactory implements Runnable {
     /**
      * 导出日志文件
      */
-    public boolean export(File dir) {
+    public static boolean export(File dir) {
         return FileManager.copyTo(dir, getLogDir().listFiles());
     }
 

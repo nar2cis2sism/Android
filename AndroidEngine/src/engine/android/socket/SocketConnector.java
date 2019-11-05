@@ -383,7 +383,6 @@ public class SocketConnector {
                 socket.connect(new InetSocketAddress(host, port), timeout);
             } catch (Exception e) {
                 socket = null;
-
                 if (!isClosed.getAndSet(true))
                 {
                     onError(e);

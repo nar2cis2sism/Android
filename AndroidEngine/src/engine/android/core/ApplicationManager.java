@@ -97,6 +97,13 @@ public class ApplicationManager extends Application implements UncaughtException
     }
 
     /**
+     * 多进程模式中判断当前是否主进程
+     */
+    public final boolean isMainProcess() {
+        return TextUtils.equals(getProcessName(), getApplicationInfo().processName);
+    }
+
+    /**
      * 获取程序会话
      */
     public final Session getSession() {

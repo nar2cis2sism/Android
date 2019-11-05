@@ -58,7 +58,9 @@
         <!-- ********************************************************************* -->
         
         <!-- App下载服务 -->
-        <service android:name="com.project.app.service.AppDownloadService" />
+        <service 
+            android:name="com.project.app.service.AppDownloadService"
+            android:process=":remote" />
         <!-- ********************************************************************* -->
         
     </application>

@@ -385,7 +385,7 @@ public class FileDownloader {
                 lock.unlock();
             }
             
-            downloadExecutor.shutdownNow();
+            downloadExecutor.shutdown();
         }
         
         public void download() {
@@ -610,7 +610,7 @@ public class FileDownloader {
         
         @Override
         public void run() {
-            while (isDownloading(false))
+            while (isDownloading())
             {
                 try {
                     RandomAccessFile file = null;
@@ -621,30 +621,26 @@ public class FileDownloader {
                         conn.getRequest().setHeader("Range",
                                 String.format("bytes=%d-%d", startPos + downloadSize, endPos));
                         
-                        HttpResponse response = conn.connect();
-                        if (response != null)
+                        InputStream is = conn.connect().getInputStream();
+                        byte[] buffer = new byte[config.downloadBuffer];
+                        int n = 0;
+                        while (isDownloading() && (n = is.read(buffer)) > 0)
                         {
-                            InputStream is = response.getInputStream();
-                            byte[] buffer = new byte[config.downloadBuffer];
-                            int n = 0;
-                            while (isDownloading(config.breakPointEnabled) && (n = is.read(buffer)) > 0)
+                            if (downloadSize + n > size)
                             {
-                                if (downloadSize + n > size)
-                                {
-                                    n = (int) (size - downloadSize);
-                                }
-                                
-                                if (n > 0)
-                                {
-                                    file.write(buffer, 0, n);
-                                    downloadSize += n;
-                                    downloadUpdate(n);
-                                }
-                                
-                                if (isFinished())
-                                {
-                                    return;
-                                }
+                                n = (int) (size - downloadSize);
+                            }
+                            
+                            if (n > 0)
+                            {
+                                file.write(buffer, 0, n);
+                                downloadSize += n;
+                                downloadUpdate(n);
+                            }
+                            
+                            if (isFinished())
+                            {
+                                return;
                             }
                         }
                     } finally {
@@ -656,23 +652,24 @@ public class FileDownloader {
                 } catch (Exception e) {
                     if (conn.isCancelled())
                     {
+                        downloadManager.save();
                         return;
                     }
-                    
-                    notifyDownloadError(e);
+                    else
+                    {
+                        notifyDownloadError(e);
+                        downloadManager.save();
+                    }
                 }
             }
         }
         
         /**
-         * 停止下载状态锁住当前线程
-         * 
-         * @param saveBreakPoint 是否存储断点信息
+         * 未下载状态锁住当前线程
          */
-        private boolean isDownloading(boolean saveBreakPoint) {
+        private boolean isDownloading() {
             if (getDownloadState() != DOWNLOADING)
             {
-                if (saveBreakPoint) downloadManager.save();
                 downloadManager.lock.lock();
             }
             

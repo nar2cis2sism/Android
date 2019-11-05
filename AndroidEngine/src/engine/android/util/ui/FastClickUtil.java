@@ -99,6 +99,7 @@ public final class FastClickUtil {
             
             if (++count >= maxCount)
             {
+                count = 0;
                 lastTime += countAfterTime;
                 return true;
             }

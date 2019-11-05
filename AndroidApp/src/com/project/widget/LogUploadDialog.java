@@ -63,21 +63,17 @@ public class LogUploadDialog extends BaseDialog {
 
         @Override
         protected void onPreExecute() {
-            try {
-                Activity activity = MyApp.getApp().currentActivity();
-                if (activity != null)
+            Activity activity = MyApp.getApp().currentActivity();
+            if (activity != null)
+            {
+                View decor = activity.getWindow().getDecorView();
+                if (decor != null)
                 {
-                    View decor = activity.getWindow().getDecorView();
-                    if (decor != null)
-                    {
-                        screenshot = ImageUtil.view2Bitmap(decor);
-                    }
+                    screenshot = ImageUtil.view2Bitmap(decor);
                 }
-            } catch (Exception e) {
-                // Can only shot in main thread.
-            } finally {
-                MyApp.getApp().getActivityStack().popupAllActivities();
             }
+
+            MyApp.getApp().getActivityStack().popupAllActivities();
         }
 
         @Override
@@ -98,7 +94,7 @@ public class LogUploadDialog extends BaseDialog {
                     } catch (Exception e) {
                         Log.w("uploadLog", e);
                     } finally {
-                        if (!MyApp.getApp().isDebuggable()) FileManager.delete(logDir.getParentFile());
+                        if (!isDebuggable) FileManager.delete(logDir.getParentFile());
                     }
                 }
             }

@@ -16,7 +16,7 @@ public final class SocketUtil {
     public static int handshake(byte[] bs) {
         // 解密握手信息
         crypt_key = Obfuscate.clarify(bs);
-        return CRCUtil.calculate(crypt_key, crypt_key.length);
+        return CRCUtil.calculate(crypt_key);
     }
 
     /**

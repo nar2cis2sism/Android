@@ -8,6 +8,7 @@ import engine.android.core.extra.EventBus.Event;
 import engine.android.core.util.LogFactory;
 import engine.android.framework.app.AppConfig;
 import engine.android.framework.app.AppGlobal;
+import engine.android.framework.app.event.Events;
 import engine.android.framework.network.socket.SocketResponse.Callback;
 import engine.android.framework.network.socket.SocketResponse.SocketTimeout;
 import engine.android.framework.util.GsonUtil;
@@ -19,6 +20,7 @@ import engine.android.socket.SocketConnector.SocketReceiver;
 import engine.android.util.Util;
 import engine.android.util.extra.MyThreadFactory;
 import engine.android.util.file.FileManager;
+import engine.android.util.io.ByteDataUtil;
 import engine.android.util.manager.SDCardManager;
 import engine.android.util.secure.CRCUtil;
 import engine.android.util.secure.HexUtil;
@@ -109,9 +111,9 @@ public class SocketManager implements SocketConnectionListener, Callback {
                 in.read(bs);
                 
                 byte[] crypt_key = Obfuscate.clarify(bs);
-                int crc = CRCUtil.calculate(crypt_key, crypt_key.length);
+                int crc = CRCUtil.calculate(crypt_key);
                 
-                out.write(crc);
+                out.write(ByteDataUtil.intToBytes_HL(crc));
                 int resp = in.read();
                 if (resp == 0)
                 {
@@ -124,6 +126,7 @@ public class SocketManager implements SocketConnectionListener, Callback {
                 else if (resp == 1)
                 {
                     // Token认证失败
+                    token = null;
                     throw new SocketException("Token认证失败");
                 }
                 else if (resp == 2)
@@ -195,6 +198,8 @@ public class SocketManager implements SocketConnectionListener, Callback {
 
             handler.heartbeat().start(config.getSocketKeepAliveTime());
         }
+        
+        Events.notifySocketStatus(null);
     }
     
     private void onSend(ProtocolEntity entity) {
@@ -212,8 +217,9 @@ public class SocketManager implements SocketConnectionListener, Callback {
     public void onError(Exception e) {
         log(e);
         socket.close();
+        Events.notifySocketStatus(e);
         // 自动重连
-        handler.reconnect(Util.getRandom(2000, 5000));
+        handler.reconnect(Util.getRandom(500, 2000));
     }
 
     @Override

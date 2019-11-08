@@ -132,6 +132,7 @@ public class SettingFragment extends BaseInfoFragment implements OnClickListener
 
         @Override
         protected void onReceiveSuccess(String action, Object param) {
+            MyApp.global().getSocketManager().close();
             // 清除缓存数据
             MySession.setUser(null);
             

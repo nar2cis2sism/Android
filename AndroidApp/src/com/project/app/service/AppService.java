@@ -1,8 +1,10 @@
 package com.project.app.service;
 
 import engine.android.util.AndroidUtil;
+import engine.android.util.extra.Singleton;
 import engine.android.util.manager.MyPowerManager;
 import engine.android.util.service.LocalService;
+import engine.android.util.service.LocalServiceBinder;
 
 import android.app.Activity;
 import android.app.Application.ActivityLifecycleCallbacks;
@@ -11,9 +13,26 @@ import android.os.Bundle;
 
 import com.daimon.yueba.R;
 import com.project.app.MyApp;
+import com.project.app.MyContext;
 import com.project.app.util.MySoundPlayer;
 
-public class AppService extends MediaService {}
+public class AppService extends MediaService {
+    
+    private static final Singleton<LocalServiceBinder<AppService>> instance
+    = new Singleton<LocalServiceBinder<AppService>>() {
+        
+        @Override
+        protected LocalServiceBinder<AppService> create() {
+            LocalServiceBinder<AppService> binder = new LocalServiceBinder<AppService>(MyContext.getContext());
+            binder.bindAndStartService(AppService.class);
+            return binder;
+        }
+    };
+    
+    public static final AppService getService() {
+        return instance.get().getService();
+    }
+}
 
 /**
  * 媒体控制器<p>

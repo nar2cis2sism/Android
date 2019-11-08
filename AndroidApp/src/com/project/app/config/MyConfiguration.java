@@ -27,9 +27,6 @@ interface IConfiguration {
     /** 测试服务器 **/
     boolean NET_TEST = true;
     
-    /** 上传日志到服务器 **/
-    boolean NET_UPLOAD_LOG = !NET_OFF;
-    
     int HTTP_TIMEOUT   = 10000; // (10s)
     
     int SOCKET_TIMEOUT = 5000;  // (5s)

@@ -9,18 +9,32 @@
     android:paddingRight="32dp"
     android:clipToPadding="false">
     
-    <!-- Lottie示例 -->
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/back"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_gravity="left"
-        android:layout_marginLeft="-14dp"
-        android:layout_marginTop="18dp"
+    <RelativeLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="-10dp"
+        android:layout_marginTop="18dp">
+    
+        <!-- Lottie示例 -->
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/back"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="lottie/navigation_up/data.json"
+            app:lottie_imageAssetsFolder="lottie/navigation_up/" />
         
-        app:lottie_autoPlay="true"
-        app:lottie_fileName="lottie/navigation_up/data.json"
-        app:lottie_imageAssetsFolder="lottie/navigation_up/" />
+        <TextView 
+            android:id="@+id/offline"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:textSize="16sp"
+            android:textColor="@color/login_red" />
+        
+    </RelativeLayout>
 
     <!-- 头像 -->
     <ImageView

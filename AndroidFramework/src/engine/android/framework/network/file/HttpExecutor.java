@@ -225,7 +225,17 @@ public class HttpExecutor {
         proxy = new HttpHost(address, port);
         return this;
     }
-
+    
+    /**
+     * 设置备注（用于日志查询）
+     */
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+    
+    public String getRemark() {
+        return remark;
+    }
 
     /**
      * 设置超时时间

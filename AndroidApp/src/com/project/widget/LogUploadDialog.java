@@ -19,7 +19,6 @@ import android.widget.EditText;
 import com.daimon.yueba.R;
 import com.project.app.MyApp;
 import com.project.app.MyContext;
-import com.project.app.config.MyConfiguration;
 import com.project.network.action.file.UploadLog;
 import com.project.util.LogUploader;
 
@@ -82,7 +81,7 @@ public class LogUploadDialog extends BaseDialog {
             if (logDir != null)
             {
                 boolean isDebuggable = MyApp.getApp().isDebuggable();
-                if (!isDebuggable || MyConfiguration.NET_UPLOAD_LOG)
+                if (!isDebuggable || !MyApp.global().getConfig().isOffline())
                 {
                     UploadLog action = new UploadLog(logDir);
                     try {

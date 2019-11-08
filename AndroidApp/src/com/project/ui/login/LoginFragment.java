@@ -5,6 +5,7 @@ import static com.project.network.action.Actions.NAVIGATION;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.core.annotation.OnClick;
+import engine.android.framework.app.AppConfig;
 import engine.android.framework.ui.BaseActivity;
 import engine.android.framework.ui.BaseFragment;
 import engine.android.util.listener.MyTextWatcher;
@@ -19,6 +20,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -44,6 +46,9 @@ import protocol.http.NavigationData.AppUpgradeInfo;
  */
 public class LoginFragment extends BaseFragment {
     
+    @InjectView(R.id.offline)
+    TextView offline;
+    
     @InjectView(R.id.username)
     InputBox username;
     @InjectView(R.id.password)
@@ -68,6 +73,7 @@ public class LoginFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
+        setupOffline(offline);
         setupUsername(username);
         setupPassword(password);
         
@@ -75,6 +81,31 @@ public class LoginFragment extends BaseFragment {
         {
             username.input.setText("18318066253");
             password.input.setText("123456");
+        }
+    }
+    
+    private void setupOffline(final TextView offline) {
+        if (MyApp.getApp().isDebuggable())
+        {
+            offline.setOnClickListener(new OnClickListener() {
+
+                AppConfig config = MyApp.global().getConfig();
+                
+                @Override
+                public void onClick(View v) {
+                    if (v.getVisibility() == View.VISIBLE)
+                    {
+                        config.configNetwork().setOffline(!config.isOffline());
+                    }
+                    else
+                    {
+                        offline.setVisibility(View.VISIBLE);
+                    }
+                    
+                    offline.setText(config.isOffline() ? "单机" : "联网");
+                }
+            });
+            offline.callOnClick();
         }
     }
     

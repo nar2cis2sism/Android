@@ -13,9 +13,6 @@ import com.project.network.action.Actions;
 import com.project.network.http.HttpJsonParser;
 
 import protocol.http.SearchContactData;
-import protocol.http.SearchContactData.ContactData;
-
-import java.util.List;
 
 public class SearchContact implements HttpBuilder, JsonEntity {
     
@@ -61,14 +58,7 @@ public class SearchContact implements HttpBuilder, JsonEntity {
         @Override
         protected Object process(String json) throws Exception {
             SearchContactData data = GsonUtil.parseJson(json, SearchContactData.class);
-            
-            int count = data.count;
-            List<ContactData> list = data.list;
-            
-            
-            
-            
-            return list;
+            return data.list;
         }
     }
 }

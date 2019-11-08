@@ -69,8 +69,9 @@ public class LogFactory implements Runnable {
                 // 清理上一次的日志记录
                 FileManager.clearDir(getLogDir());
                 
-                LOG.log(null, null, "程序启动", getMainApplication().getLaunchTime());
                 LOG.log(DeviceUtil.getDeviceInfo(), AndroidUtil.getVersionName(getMainApplication()));
+                LOG.log(null, null, "程序启动", getMainApplication().getLaunchTime());
+                LOG.log("", "");
             }
             // 启动日志线程
             executor.execute(new LogFactory());

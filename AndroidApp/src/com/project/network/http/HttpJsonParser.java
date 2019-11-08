@@ -2,6 +2,8 @@ package com.project.network.http;
 
 import engine.android.http.HttpResponse;
 
+import android.text.TextUtils;
+
 import com.project.app.bean.ErrorInfo;
 
 import org.json.JSONObject;
@@ -21,7 +23,7 @@ public class HttpJsonParser extends engine.android.http.util.json.HttpJsonParser
         if (error != null) return error;
         
         String data = json.optString("data");
-        return data != null ? process(data) : null;
+        return TextUtils.isEmpty(data) ? null : process(data);
     }
     
     protected Object process(String data) throws Exception {

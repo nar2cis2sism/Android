@@ -33,12 +33,8 @@ public final class CRCUtil {
             0x05dc, 0xa5f1, 0xb25b, 0xad01, 0x2aed, 0xd3df, 0x4dcb, 0xa5a7, 0x4bbf, 0x05b7, 0xc477,
             0xed46, 0x2150, 0xc427, 0x01bd, 0x0059, 0x9c1d, 0xa457 };
 
-    /**
-     * 计算数据{data}区域[0..len-1]段的CRC值 <br>
-     * CRC结果在data[len]和data[len+1]两个数据位
-     */
-    public static byte[] generate(byte[] data, int len) {
-        return generate(data, 0, len);
+    public static byte[] generate(byte[] data) {
+        return generate(data, 0, data.length);
     }
 
     /**
@@ -60,12 +56,8 @@ public final class CRCUtil {
         return data;
     }
 
-    /**
-     * 验证{data}区域[0..len-1]段的CRC值 <br>
-     * CRC保存在data[len]和data[len+1]两个数据位
-     */
-    public static boolean validate(byte[] data, int len) {
-        return validate(data, 0, len);
+    public static boolean validate(byte[] data) {
+        return validate(data, 0, data.length);
     }
 
     /**
@@ -83,11 +75,8 @@ public final class CRCUtil {
         && ((data[offset + len + 1] & 0xff) == ((crc >>> 8) & 0xff));
     }
 
-    /**
-     * 计算{data}区域[0..len-1]段的CRC值
-     */
-    public static int calculate(byte[] data, int len) {
-        return calculate(data, 0, len);
+    public static int calculate(byte[] data) {
+        return calculate(data, 0, data.length);
     }
 
     /**

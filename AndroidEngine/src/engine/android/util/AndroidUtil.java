@@ -22,7 +22,6 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
-import android.os.StrictMode;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.util.DisplayMetrics;
@@ -54,9 +53,14 @@ public final class AndroidUtil {
      * 7---2.1<br>
      * 11---3.0<br>
      * 14---4.0<br>
-     * 17---4.2.2<br>
+     * 17---4.2<br>
      * 19---4.4<br>
+     * 21---5.0<br>
      * 23---6.0<br>
+     * 24---7.0<br>
+     * 26---8.0<br>
+     * 28---9<br>
+     * 29---10<br>
      * @see android.os.Build.VERSION_CODES
      */
     public static int getVersion() {
@@ -447,25 +451,5 @@ public final class AndroidUtil {
         }
 
         return null;
-    }
-    
-    public static void setupStrictMode() {
-        if (getVersion() < 11) return;
-        // StrictMode.enableDefaults()有bug
-        // (android.os.StrictMode$InstanceCountViolation:instance=2;limit=1)
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-        .detectCustomSlowCalls()
-        .detectDiskReads()
-        .detectDiskWrites()
-        .detectNetwork()
-        .penaltyLog()
-        .penaltyDeathOnNetwork()
-        .penaltyFlashScreen()
-        .build());
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-        .detectLeakedClosableObjects()
-        .detectLeakedSqlLiteObjects()
-        .penaltyLog()
-        .build());
     }
 }

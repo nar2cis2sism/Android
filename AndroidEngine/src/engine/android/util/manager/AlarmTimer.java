@@ -1,12 +1,13 @@
 package engine.android.util.manager;
 
+import static android.os.Build.VERSION.SDK_INT;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build.VERSION;
 import android.os.SystemClock;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -108,13 +109,17 @@ public class AlarmTimer {
      */
     public void triggerAtTime(int alarmType, long triggerAtMillis, Runnable timeoutTask) {
         this.timeoutTask = timeoutTask;
-        if (VERSION.SDK_INT < 19)
+        if (SDK_INT >= 23)
         {
-            am.set(alarmType, triggerAtMillis, operation);
+            am.setExactAndAllowWhileIdle(alarmType, triggerAtMillis, operation);
+        }
+        else if (SDK_INT >= 19)
+        {
+            am.setExact(alarmType, triggerAtMillis, operation);
         }
         else
         {
-            am.setExact(alarmType, triggerAtMillis, operation);
+            am.set(alarmType, triggerAtMillis, operation);
         }
     }
 

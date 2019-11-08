@@ -108,23 +108,24 @@ class SocketHandler {
      */
     public class HeartbeatManager implements Runnable {
         
-        private long interval;                               // 心跳包循环发送间隔，单位：毫秒
-        private long lastTriggerTime = -1;
+        private static final int TRIGGER_AHEAD = 5;     // 心跳包提前发送时间，单位：秒
 
         private final AlarmTimer timer;
+        
+        private long interval;                          // 心跳包循环发送间隔，单位：毫秒
 
         public HeartbeatManager(Context context) {
             timer = AlarmTimer.getInstance(context, getClass().getName());
         }
         
         public void start(int interval) {
+            if (interval > TRIGGER_AHEAD * 2)
+            {
+                interval -= TRIGGER_AHEAD;
+            }
+            
             this.interval = TimeUnit.SECONDS.toMillis(interval);
             poke();
-        }
-        
-        public void stop() {
-            lastTriggerTime = -1;
-            timer.cancel();
         }
         
         public void poke() {
@@ -133,32 +134,17 @@ class SocketHandler {
                 return;
             }
             
-            if (lastTriggerTime == -1)
-            {
-                lastTriggerTime = SystemClock.elapsedRealtime();
-                post();
-            }
-            else
-            {
-                lastTriggerTime = SystemClock.elapsedRealtime();
-            }
+            timer.triggerAtTime(AlarmManager.ELAPSED_REALTIME_WAKEUP, 
+                    SystemClock.elapsedRealtime() + interval, this);
         }
         
-        private void post() {
-            timer.triggerAtTime(AlarmManager.ELAPSED_REALTIME_WAKEUP, lastTriggerTime + interval, this);
+        public void stop() {
+            timer.cancel();
         }
 
         @Override
         public void run() {
-            if (SystemClock.elapsedRealtime() - lastTriggerTime < interval)
-            {
-                post();
-            }
-            else
-            {
-                lastTriggerTime = -1;
-                manager.sendSocketRequest(new SimpleData(), null);
-            }
+            manager.sendSocketRequest(new SimpleData(), null);
         }
     }
     

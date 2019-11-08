@@ -24,7 +24,7 @@ public class UploadLog extends engine.android.framework.network.file.FileUploade
     private final File logZip;
 
     public UploadLog(File logDir) {
-        super(NetworkConfig.LOG_UPLOAD_URL, new MultipartEntity());
+        super(NetworkConfig.LOG_URL, new MultipartEntity());
         init(logDir, logZip = new File(logDir.getAbsolutePath() + ".zip"));
     }
     

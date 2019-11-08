@@ -23,6 +23,16 @@ public class Events {
         EventBus.getDefault().post(new Event(CONNECTIVITY_CHANGE, 0, noNetwork));
     }
 
+    /******************************* socket状态通知 *******************************/
+    public static final String SOCKET_STATUS = "socket_status";
+    
+    /**
+     * @param error Null:建立连接 or:断开连接并报告异常
+     */
+    public static void notifySocketStatus(Exception error) {
+        EventBus.getDefault().post(new Event(SOCKET_STATUS, 0, error));
+    }
+
     /******************************* 支付回调 *******************************/
     public static final String PAY_CALLBACK = "PAY_CALLBACK";
     public static final Object PAY_WEIXIN = "WEIXIN"; // 微信支付

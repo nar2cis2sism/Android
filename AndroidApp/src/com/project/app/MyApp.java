@@ -10,8 +10,10 @@ import engine.android.util.manager.MySensorManager;
 import engine.android.util.manager.MySensorManager.RotateSensorListener;
 
 import android.app.Activity;
+import android.os.StrictMode;
 
 import com.project.app.config.MyConfiguration;
+import com.project.app.service.AppService;
 import com.project.widget.LogUploadDialog;
 import com.project.widget.LogUploadDialog.LogUploadTask;
 
@@ -40,15 +42,13 @@ public class MyApp extends ApplicationManager {
     public void onCreate() {
         // 配置环境变量
         AppGlobal.config(new MyConfiguration(this));
-        // 配置注解
-        if (!isDebuggable()) Injector.enableAptBuild();
         // 7.0手机拍照不加这个会crash
-        AndroidUtil.setupStrictMode();
+        setupStrictMode();
         // 解决在Android P上的提醒弹窗
         //（Detected problems with API compatibility(visit g.co/dev/appcompat for more info)
         closeAndroidPDialog();
-        // 开启日志
-        LogFactory.enableLOG(true);
+        // 配置注解
+        if (!isDebuggable()) Injector.enableAptBuild();
         // 摇一摇上传日志
         if (isDebuggable())
         {
@@ -56,9 +56,32 @@ public class MyApp extends ApplicationManager {
             sm.addSensorListener(new ShakeSensorListener());
             sm.register();
         }
+        // 开启日志
+        LogFactory.enableLOG(true);
+        // 播放背景音乐
+        AppService.getService();
     }
     
-    private void closeAndroidPDialog() {
+    private static void setupStrictMode() {
+        if (AndroidUtil.getVersion() < 11) return;
+        // StrictMode.enableDefaults()有bug
+        // (android.os.StrictMode$InstanceCountViolation:instance=2;limit=1)
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+        .detectCustomSlowCalls()
+        .detectNetwork()
+        .penaltyLog()
+        .penaltyDeathOnNetwork()
+        .penaltyFlashScreen()
+        .build());
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+        .detectLeakedClosableObjects()
+        .detectLeakedSqlLiteObjects()
+        .penaltyLog()
+        .build());
+    }
+    
+    private static void closeAndroidPDialog() {
+        if (AndroidUtil.getVersion() < 28) return;
         try {
             Class<?> cls = Class.forName("android.app.ActivityThread");
             Object currentActivityThread = ReflectObject.invokeStatic(cls, "currentActivityThread");

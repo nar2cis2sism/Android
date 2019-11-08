@@ -98,8 +98,8 @@ public class AppDownloadService extends Service implements DownloadStateListener
                 remoteViews.setProgressBar(android.R.id.progress, 100, 100, false);
                 remoteViews.setTextViewText(R.id.speed, "下载完毕，点击进行安装");
                 remoteViews.setTextViewText(R.id.size, null);
-                notification.contentIntent = PendingIntent.getBroadcast(this, 0, 
-                        new Intent(MyBroadcastReceiver.ACTION_FINISH), PendingIntent.FLAG_UPDATE_CURRENT);
+                notification.contentIntent = pendingBroadcastIntent(
+                        new Intent(MyBroadcastReceiver.ACTION_FINISH));
                 notifyUpdate();
                 break;
         }
@@ -131,20 +131,22 @@ public class AppDownloadService extends Service implements DownloadStateListener
 
     RemoteViews remoteViews;
     Notification notification;
-    private Notification buildNotification(String title) {
+    private void buildNotification(String title) {
         remoteViews = new RemoteViews(getPackageName(), R.layout.app_download_notification);
         remoteViews.setTextViewText(R.id.title, title);
         
         Builder builder = new Builder(this)
         .setSmallIcon(R.drawable.ic_launcher)
         .setContent(remoteViews)
-        .setDeleteIntent(PendingIntent.getBroadcast(this, 0, 
-                new Intent(MyBroadcastReceiver.ACTION_DELETE), PendingIntent.FLAG_UPDATE_CURRENT))
+        .setDeleteIntent(pendingBroadcastIntent(new Intent(MyBroadcastReceiver.ACTION_DELETE)))
         .setOngoing(true);
         notification = builder.build();
         // 通知栏默认高度64dp不够显示，使用大布局
         notification.bigContentView = remoteViews;
-        return notification;
+    }
+
+    private PendingIntent pendingBroadcastIntent(Intent intent) {
+        return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
     
     private void notifyUpdate() {

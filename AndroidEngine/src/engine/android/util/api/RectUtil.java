@@ -108,7 +108,6 @@ public final class RectUtil {
      * 移动至目标中心位置
      */
     public static void moveToCenter(Rect from, Rect to) {
-        from.left = (to.width() - from.width()) / 2 + to.left;
-        from.top = (to.height() - from.height()) / 2 + to.top;
+        from.offsetTo((to.width() - from.width()) / 2 + to.left, (to.height() - from.height()) / 2 + to.top);
     }
 }

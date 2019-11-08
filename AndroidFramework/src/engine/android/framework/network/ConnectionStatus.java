@@ -1,5 +1,12 @@
 package engine.android.framework.network;
 
+import engine.android.framework.app.event.Events;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+
 /**
  * 网络状态常量
  * 
@@ -30,5 +37,20 @@ public interface ConnectionStatus {
          * @return 是否拦截
          */
         boolean intercept(String action, int status, Object param);
+    }
+    
+    /**
+     * 网络状态监听器<br>
+     * 需注册到Manifest才能使用
+     */
+    public static class ConnectionStatusReceiver extends BroadcastReceiver {
+        
+        public static final String ACTION = ConnectivityManager.CONNECTIVITY_ACTION;
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean noNetwork = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
+            Events.notifyConnectivityChange(noNetwork);
+        }
     }
 }

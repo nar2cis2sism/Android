@@ -1,8 +1,8 @@
 package engine.android.compiler.annotation;
 
-import javax.lang.model.element.ExecutableElement;
-
 import engine.android.compiler.AnnotationConst;
+
+import javax.lang.model.element.ExecutableElement;
 
 public class BindDialogAnnotation {
     

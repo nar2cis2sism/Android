@@ -1,5 +1,10 @@
 package engine.android.compiler;
 
+import engine.android.compiler.annotation.BindDialogAnnotation;
+import engine.android.compiler.annotation.InjectViewAnnotation;
+import engine.android.compiler.annotation.OnClickAnnotation;
+import engine.android.compiler.annotation.SavedStateAnnotation;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,11 +27,6 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
-
-import engine.android.compiler.annotation.BindDialogAnnotation;
-import engine.android.compiler.annotation.InjectViewAnnotation;
-import engine.android.compiler.annotation.OnClickAnnotation;
-import engine.android.compiler.annotation.SavedStateAnnotation;
 
 public class AnnotationProcessor extends AbstractProcessor implements AnnotationConst {
     

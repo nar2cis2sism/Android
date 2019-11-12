@@ -186,8 +186,8 @@ class ReflectionInjector extends NoInjector {
     private final Class<?> cls;
     private final IInjector<Object> parent;
     
-    private final LinkedHashMap<Field, Integer> injectViewFields
-    = new LinkedHashMap<Field, Integer>();
+    private final LinkedHashMap<Integer, Field> injectViewFields
+    = new LinkedHashMap<Integer, Field>();
     
     private final LinkedList<Field> savedStateFields
     = new LinkedList<Field>();
@@ -211,7 +211,7 @@ class ReflectionInjector extends NoInjector {
             if (injectView != null)
             {
                 field.setAccessible(true);
-                injectViewFields.put(field, injectView.value());
+                injectViewFields.put(injectView.value(), field);
             }
 
             SavedState savedState = field.getAnnotation(SavedState.class);
@@ -248,14 +248,14 @@ class ReflectionInjector extends NoInjector {
         if (!injectViewFields.isEmpty())
         {
             try {
-                for (Map.Entry<Field, Integer> entry : injectViewFields.entrySet())
+                for (Map.Entry<Integer, Field> entry : injectViewFields.entrySet())
                 {
-                    int viewId = entry.getValue();
+                    int viewId = entry.getKey();
                     Object view = finder.findViewById(target, viewId);
                     if (view != null)
                     {
                         viewMap.append(viewId, (View) view);
-                        entry.getKey().set(target, view);
+                        entry.getValue().set(target, view);
                     }
                 }
             } catch (Exception e) {

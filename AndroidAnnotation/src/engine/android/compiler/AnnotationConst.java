@@ -1,11 +1,11 @@
 package engine.android.compiler;
 
-import com.squareup.javapoet.ClassName;
-
 import engine.android.core.annotation.BindDialog;
 import engine.android.core.annotation.InjectView;
 import engine.android.core.annotation.OnClick;
 import engine.android.core.annotation.SavedState;
+
+import com.squareup.javapoet.ClassName;
 
 public interface AnnotationConst {
     

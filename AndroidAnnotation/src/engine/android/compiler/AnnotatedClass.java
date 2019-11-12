@@ -1,5 +1,12 @@
 package engine.android.compiler;
 
+import engine.android.compiler.annotation.BindDialogAnnotation;
+import engine.android.compiler.annotation.InjectViewAnnotation;
+import engine.android.compiler.annotation.OnClickAnnotation;
+import engine.android.compiler.annotation.SavedStateAnnotation;
+import engine.android.core.annotation.IInjector;
+import engine.android.core.annotation.IInjector.ViewFinder;
+
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -15,13 +22,6 @@ import java.util.Map;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
-
-import engine.android.compiler.annotation.BindDialogAnnotation;
-import engine.android.compiler.annotation.InjectViewAnnotation;
-import engine.android.compiler.annotation.OnClickAnnotation;
-import engine.android.compiler.annotation.SavedStateAnnotation;
-import engine.android.core.annotation.IInjector;
-import engine.android.core.annotation.IInjector.ViewFinder;
 
 public class AnnotatedClass implements AnnotationConst {
 
@@ -97,9 +97,8 @@ public class AnnotatedClass implements AnnotationConst {
         injector
         .addMethod(buildInjectMethod())
         .addMethod(buildBindDialogMethod())
-        .addMethod(buildSaveStateMethod());
-        
-        if (!onClickMethods.isEmpty()) injector.addMethod(buildOnClickMethod());
+        .addMethod(buildSaveStateMethod())
+        .addMethod(buildOnClickMethod());
         
         return injector.build();
     }
@@ -257,10 +256,17 @@ public class AnnotatedClass implements AnnotationConst {
     }
     
     private MethodSpec buildOnClickMethod() {
-        // void onClick(T target, View v)
+        // public void onClick(T target, View v)
         MethodSpec.Builder onClick = MethodSpec.methodBuilder("onClick")
+                .addModifiers(Modifier.PUBLIC)
                 .addParameter(getVariableTypeName(), "target")
                 .addParameter(View, "v");
+        
+        if (superClassElement != null)
+        {
+            // super.onClick(target, v);
+            onClick.addStatement("super.onClick(target, v)");
+        }
         
         // switch (v.getId())
         onClick.beginControlFlow("switch (v.getId())");

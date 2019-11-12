@@ -1,10 +1,10 @@
 package engine.android.compiler.annotation;
 
+import engine.android.compiler.AnnotationConst;
+
 import com.squareup.javapoet.TypeName;
 
 import javax.lang.model.element.VariableElement;
-
-import engine.android.compiler.AnnotationConst;
 
 public class InjectViewAnnotation {
     

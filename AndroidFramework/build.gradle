@@ -6,8 +6,10 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 17
-    buildToolsVersion "26.0.2"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    // 使用HttpClient
+    useLibrary 'org.apache.http.legacy'
 
     sourceSets {
         main {

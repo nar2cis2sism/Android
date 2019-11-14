@@ -1,4 +1,5 @@
 include ':AndroidEngine'
 include ':AndroidWidget'
 include ':AndroidFramework'
+include ':AndroidLibrary'
 include ':AndroidApp'

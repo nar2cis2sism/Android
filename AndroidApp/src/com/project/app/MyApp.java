@@ -58,8 +58,6 @@ public class MyApp extends ApplicationManager {
         }
         // 开启日志
         LogFactory.enableLOG(true);
-        // 播放背景音乐
-        AppService.getService();
     }
     
     private static void setupStrictMode() {

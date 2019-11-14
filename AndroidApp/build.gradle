@@ -1,14 +1,16 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.mob.sdk'
 
 dependencies {
     compile project(':AndroidFramework')
+    compile project(':AndroidLibrary')
     // 引用注解处理器
     annotationProcessor files('annotation/AndroidAnnotation.jar')
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
     // 使用HttpClient
     useLibrary 'org.apache.http.legacy'
 
@@ -24,8 +26,8 @@ android {
 
     defaultConfig {
         applicationId "com.daimon.yueba"
-        minSdkVersion 16
-        targetSdkVersion 26
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode getVersionCode()
         versionName "1.0.0"
         flavorDimensions "versionCode"

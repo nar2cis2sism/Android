@@ -19,5 +19,28 @@
 #   public *;
 #}
 
-#保留代码行号以便调试
+# 保留crash日志的行号
 -keepattributes SourceFile,LineNumberTable
+# 注解
+-keep class **$$Injector { *; }
+-keepclasseswithmembernames class * {
+    @engine.android.core.annotation.* <fields>;
+}
+-keepclasseswithmembernames class * {
+    @engine.android.core.annotation.* <methods>;
+}
+# 转换JSON的JavaBean
+-keepclassmembernames class com.project.network.action.http.** { *; }
+-keepclassmembernames class protocol.http.** { *; }
+-keep class protocol.socket.** { *; }
+##################################################################
+# 下面都是项目中引入的第三方 jar 包。第三方 jar 包中的代码不是我们的目标和关心的对象，故而对此我们全部忽略不进行混淆。
+##################################################################
+# 拼音解析数据文件
+-keep class net.sourceforge.pinyin4j.lite.** { *; }
+# 地区数据库文件
+-keep class engine.android.framework.ui.fragment.region.Region { *; }
+# Mob
+-keep class cn.sharesdk.** { *; }
+-dontwarn cn.sharesdk.**
+-dontwarn com.mob.**

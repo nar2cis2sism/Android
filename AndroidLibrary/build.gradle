@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 dependencies {
-    provided project(':AndroidFramework')
+    compile project(':AndroidFramework')
     // 集成百度地图
     compile files('libs/BaiduLBS_Android.jar')
     // 集成QQ支付
@@ -11,8 +11,8 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
     // 集成百度地图（需要用到so库）
     sourceSets {
         main {

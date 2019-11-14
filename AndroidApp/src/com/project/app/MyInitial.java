@@ -1,5 +1,6 @@
 package com.project.app;
 
+import com.project.app.service.AppService;
 import com.project.app.util.MySoundPlayer;
 import com.project.storage.MyDAOManager;
 import com.project.storage.MySharedPreferences;
@@ -32,5 +33,7 @@ public class MyInitial {
         MyDAOManager.getDAO().getDataBase();
         // 加载声音资源
         MySoundPlayer.getInstance();
+        // 播放背景音乐
+        AppService.getService();
     }
 }

@@ -13,7 +13,10 @@
         <scale android:scaleWidth="100%"> // 这样设置可以显示圆角进度条，不过在1%的边缘部分效果不太好
             <shape>
                 <corners android:radius="4dp" />
-                <solid android:color="#1ABC9C" />
+                <gradient
+                    android:startColor="#429321"
+                    android:endColor="#B4EC51"
+                    android:angle="90" />
             </shape>
         </scale>
     </item>

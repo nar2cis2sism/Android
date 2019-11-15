@@ -16,6 +16,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LevelListDrawable;
 import android.text.Html.ImageGetter;
+import android.util.Base64;
 import android.widget.TextView;
 
 import java.io.InputStream;
@@ -28,6 +29,8 @@ import java.net.URL;
  * @since 6/6/2016
  */
 public class HtmlImageGetter implements ImageGetter {
+    
+    private static final String BASE64 = "data:image/jpeg;base64,";
     
     private static final AsyncImageLoader loader = new AsyncImageLoader();
     private static final ImageDownloader downloader = new MyImageDownloader();
@@ -42,18 +45,28 @@ public class HtmlImageGetter implements ImageGetter {
     @Override
     public Drawable getDrawable(String source) {
         final LevelListDrawable drawable = new LevelListDrawable();
+        Bitmap image;
         
-        Bitmap image = loader.loadImage(new ImageUrl(0, source, null), downloader, new ImageCallback() {
+        if (source.startsWith(BASE64))
+        {
+            byte[] data = Base64.decode(source.substring(BASE64.length()), Base64.DEFAULT);
+            image = BitmapFactory.decodeByteArray(data, 0, data.length);
+        }
+        else
+        {
+            image = loader.loadImage(new ImageUrl(0, source, null), downloader, new ImageCallback() {
 
-            @Override
-            public void imageLoaded(ImageUrl url, Bitmap image) {
-                if (image != null)
-                {
-                    setLevelDrawable(drawable, image, 1);
-                    text.setText(text.getText());
+                @Override
+                public void imageLoaded(ImageUrl url, Bitmap image) {
+                    if (image != null)
+                    {
+                        setLevelDrawable(drawable, image, 1);
+                        text.setText(text.getText());
+                    }
                 }
-            }
-        });
+            });
+        }
+        
         if (image != null)
         {
             setLevelDrawable(drawable, image, 1);

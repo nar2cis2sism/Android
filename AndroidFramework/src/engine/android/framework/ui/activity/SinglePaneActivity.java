@@ -43,34 +43,34 @@ public class SinglePaneActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        View content = new FrameLayout(this);
-        content.setId(CONTENT_ID);
-        setContentView(content, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        
-        if (savedInstanceState == null)
+
+        Fragment fragment = parseIntent(getIntent());
+        if (fragment == null)
         {
-            // initial setup
-            Fragment fragment = parseIntent(getIntent());
-            if (fragment == null)
+            fragment = onCreateFragment();
+        }
+
+        if (fragment != null)
+        {
+            View content = new FrameLayout(this);
+            content.setId(CONTENT_ID);
+            setContentView(content, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+
+            if (savedInstanceState == null)
             {
-                fragment = onCreateFragment();
-            }
-            
-            if (fragment != null)
-            {
+                // initial setup
                 getFragmentManager().beginTransaction()
                 .add(CONTENT_ID, fragment)
                 .commit();
-                
-                getFragmentManager().addOnBackStackChangedListener(new OnBackStackChangedListener() {
-                    
-                    @Override
-                    public void onBackStackChanged() {
-                        getContentFragment().setMenuVisibility(true);
-                    }
-                });
             }
+            
+            getFragmentManager().addOnBackStackChangedListener(new OnBackStackChangedListener() {
+
+                @Override
+                public void onBackStackChanged() {
+                    getContentFragment().setMenuVisibility(true);
+                }
+            });
         }
     }
 

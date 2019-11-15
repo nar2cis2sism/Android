@@ -5,6 +5,7 @@ import engine.android.widget.R;
 import engine.android.widget.common.button.CountDownButton;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.text.InputFilter;
 import android.text.InputFilter.LengthFilter;
 import android.text.method.DigitsKeyListener;
@@ -16,8 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 /**
  * 输入框
@@ -25,7 +26,7 @@ import android.widget.LinearLayout;
  * @author Daimon
  * @since 6/6/2014
  */
-public class InputBox extends LinearLayout {
+public class InputBox extends FrameLayout {
     
     public static final int STYLE_MOBILE    = 1; // 手机号
     public static final int STYLE_PASSWORD  = 2; // 密码
@@ -41,6 +42,7 @@ public class InputBox extends LinearLayout {
     public ImageView clear;
     public ImageView eye;
     public CountDownButton sms_code;
+    private View divider;
 
     private InputAction action;
 
@@ -54,14 +56,21 @@ public class InputBox extends LinearLayout {
     }
 
     private void init(Context context) {
-        setOrientation(VERTICAL);
         LayoutInflater.from(context).inflate(R.layout.input_box, this);
 
         input = (EditText) findViewById(R.id.input);
         clear = (ImageView) findViewById(R.id.clear);
         eye = (ImageView) findViewById(R.id.eye);
         sms_code = (CountDownButton) findViewById(R.id.sms_code);
+        divider = findViewById(R.id.divider);
         action = new InputAction(input);
+    }
+    
+    @SuppressWarnings("deprecation")
+    @Override
+    public void setBackgroundDrawable(Drawable d) {
+        super.setBackgroundDrawable(d);
+        divider.setVisibility(GONE);
     }
 
     public void setStyle(int style) {

@@ -1,6 +1,7 @@
 package engine.android.util.anim;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.AnimatorSet.Builder;
 import android.animation.ObjectAnimator;
@@ -11,6 +12,7 @@ import android.renderscript.Float2;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.OvershootInterpolator;
 
 import java.util.LinkedList;
 
@@ -84,6 +86,42 @@ public class AnimatorBuilder {
     
     public ObjectAnimator build() {
         anim.setValues(values.toArray(new PropertyValuesHolder[values.size()]));
+        return anim;
+    }
+
+    /**
+     * 抖动特效
+     * 
+     * @param interval 重复抖动间隔时间，0为只抖动一次
+     */
+    public static ObjectAnimator shake(final View target, final long interval) {
+        ObjectAnimator anim = new AnimatorBuilder(target, 100)
+        .rotate(12, -24)
+        .build();
+        anim.setRepeatMode(Animation.REVERSE);
+        anim.setRepeatCount(4);
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                target.setRotation(0);
+                if (interval > 0)
+                {
+                    animation.setStartDelay(interval);
+                    animation.start();
+                }
+            }
+        });
+        return anim;
+    }
+
+    /**
+     * 弹出动效
+     */
+    public static ObjectAnimator popup(View target) {
+        ObjectAnimator anim = new AnimatorBuilder(target, 400)
+        .scale(0, 1)
+        .build();
+        anim.setInterpolator(new OvershootInterpolator());
         return anim;
     }
 

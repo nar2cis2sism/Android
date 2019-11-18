@@ -1,12 +1,12 @@
 package com.project.storage.dao;
 
-import com.project.storage.MyDAOManager.BaseDAO;
-import com.project.storage.db.Message;
-import com.project.storage.provider.ProviderContract.MessageColumns;
-
 import engine.android.dao.DAOTemplate;
 import engine.android.dao.DAOTemplate.DAOExpression;
 import engine.android.dao.DAOTemplate.DAOTransaction;
+
+import com.project.storage.dao.UserDAOManager.BaseDAO;
+import com.project.storage.db.Message;
+import com.project.storage.provider.ProviderContract.MessageColumns;
 
 import java.util.List;
 

@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.daimon.yueba.R;
 import com.project.app.MyApp;
 import com.project.app.bean.MessageListItem;
-import com.project.storage.MyDAOManager;
 import com.project.storage.dao.FriendDAO;
 import com.project.storage.dao.MessageDAO;
 import com.project.storage.db.Friend;
@@ -149,7 +148,7 @@ class MessageListAdapter extends JavaBeanAdapter<MessageListItem> implements Pin
 class MessageListLoader extends JavaBeanLoader<MessageListItem> {
 
     public MessageListLoader(Context context) {
-        super(context, MyDAOManager.getDAO());
+        super(context, MessageDAO.dao);
         listen(Message.class);
     }
 

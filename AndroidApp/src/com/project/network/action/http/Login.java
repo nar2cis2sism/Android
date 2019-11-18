@@ -19,6 +19,7 @@ import com.project.network.http.HttpJsonParser;
 import com.project.storage.MyDAOManager;
 import com.project.storage.dao.MessageDAO;
 import com.project.storage.dao.UserDAO;
+import com.project.storage.dao.UserDAOManager;
 import com.project.storage.db.User;
 import com.project.util.AppUtil;
 
@@ -98,11 +99,17 @@ public class Login implements HttpBuilder, JsonEntity {
                 user.username = username;
                 user.avatar_ver = avatar_ver;
                 MyDAOManager.getDAO().save(user);
+                UserDAOManager.changeUser(username, true);
             }
-            else if (avatar_ver > user.avatar_ver)
+            else
             {
-                user.avatar_ver = avatar_ver;
-                MyDAOManager.getDAO().update(user, User.AVATAR_VER);
+                if (avatar_ver > user.avatar_ver)
+                {
+                    user.avatar_ver = avatar_ver;
+                    MyDAOManager.getDAO().update(user, User.AVATAR_VER);
+                }
+                
+                UserDAOManager.changeUser(username, false);
             }
             
             MySession.setUser(user);

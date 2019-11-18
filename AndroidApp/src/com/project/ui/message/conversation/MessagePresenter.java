@@ -20,7 +20,6 @@ import com.project.app.MySession;
 import com.project.app.bean.MessageItem;
 import com.project.logic.MessageLogic;
 import com.project.network.action.socket.SendMessage;
-import com.project.storage.MyDAOManager;
 import com.project.storage.dao.FriendDAO;
 import com.project.storage.dao.MessageDAO;
 import com.project.storage.db.Friend;
@@ -151,7 +150,7 @@ class MessageLoader extends JavaBeanLoader<MessageItem> {
     private final ConversationParams params;
 
     public MessageLoader(Context context, ConversationParams params) {
-        super(context, MyDAOManager.getDAO());
+        super(context, MessageDAO.dao);
         listen(Message.class);
         this.params = params;
     }

@@ -121,7 +121,7 @@ public class DAOTemplate {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            log("", "创建数据库");
+            log("", "创建数据库" + getDatabaseName());
             if (listener != null)
             {
                 DAOTemplate.this.db.set(db);
@@ -132,7 +132,7 @@ public class DAOTemplate {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            log("", String.format("数据库版本由%d更新为%d", oldVersion, newVersion));
+            log("", String.format("数据库%s版本由%d更新为%d", getDatabaseName(), oldVersion, newVersion));
             if (listener != null)
             {
                 DAOTemplate.this.db.set(db);

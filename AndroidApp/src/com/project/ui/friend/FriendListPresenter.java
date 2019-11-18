@@ -1,5 +1,13 @@
 package com.project.ui.friend;
 
+import engine.android.core.BaseFragment.Presenter;
+import engine.android.core.extra.JavaBeanAdapter;
+import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
+import engine.android.dao.util.JavaBeanLoader;
+import engine.android.framework.ui.widget.AvatarImageView;
+import engine.android.widget.extra.MyExpandableListView.BaseExpandableListAdapter;
+import engine.android.widget.helper.LetterBarHelper;
+
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
@@ -9,17 +17,8 @@ import android.widget.ListView;
 import com.daimon.yueba.R;
 import com.project.app.bean.FriendGroupItem;
 import com.project.app.bean.FriendListItem;
-import com.project.storage.MyDAOManager;
 import com.project.storage.dao.FriendDAO;
 import com.project.storage.db.Friend;
-
-import engine.android.core.BaseFragment.Presenter;
-import engine.android.core.extra.JavaBeanAdapter;
-import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
-import engine.android.dao.util.JavaBeanLoader;
-import engine.android.framework.ui.widget.AvatarImageView;
-import engine.android.widget.extra.MyExpandableListView.BaseExpandableListAdapter;
-import engine.android.widget.helper.LetterBarHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -151,7 +150,7 @@ class FriendListLoader extends JavaBeanLoader<FriendListItem> {
     List<FriendGroupItem> groups;
 
     public FriendListLoader(Context context) {
-        super(context, MyDAOManager.getDAO());
+        super(context, FriendDAO.dao);
         listen(Friend.class);
     }
 

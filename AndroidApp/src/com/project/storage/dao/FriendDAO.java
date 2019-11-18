@@ -1,6 +1,6 @@
 package com.project.storage.dao;
 
-import com.project.storage.MyDAOManager.BaseDAO;
+import com.project.storage.dao.UserDAOManager.BaseDAO;
 import com.project.storage.db.Friend;
 import com.project.storage.provider.ProviderContract.FriendColumns;
 

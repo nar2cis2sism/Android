@@ -1,5 +1,7 @@
 package com.project.network.action.http;
 
+import static com.project.storage.dao.UserDAOManager.BaseDAO.dao;
+
 import engine.android.dao.DAOTemplate;
 import engine.android.dao.DAOTemplate.DAOTransaction;
 import engine.android.framework.network.http.HttpConnectorBuilder;
@@ -14,7 +16,6 @@ import com.project.app.MySession;
 import com.project.network.NetworkConfig;
 import com.project.network.action.Actions;
 import com.project.network.http.HttpJsonParser;
-import com.project.storage.MyDAOManager;
 import com.project.storage.dao.FriendDAO;
 import com.project.storage.dao.UserDAO;
 import com.project.storage.db.Friend;
@@ -67,7 +68,7 @@ public class QueryFriendList implements HttpBuilder, JsonEntity {
         protected Object process(String json) throws Exception {
             data = GsonUtil.parseJson(json, FriendListData.class);
             
-            MyDAOManager.getDAO().execute(this);
+            dao.execute(this);
             if (data.sync_status == 1)
             {
                 // 继续同步

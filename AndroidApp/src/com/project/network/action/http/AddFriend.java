@@ -1,6 +1,7 @@
 package com.project.network.action.http;
 
-import engine.android.dao.DAOTemplate;
+import static com.project.storage.dao.UserDAOManager.BaseDAO.dao;
+
 import engine.android.framework.network.http.HttpConnectorBuilder;
 import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
@@ -12,7 +13,6 @@ import com.project.app.MySession;
 import com.project.network.NetworkConfig;
 import com.project.network.action.Actions;
 import com.project.network.http.HttpJsonParser;
-import com.project.storage.MyDAOManager;
 import com.project.storage.dao.FriendDAO;
 import com.project.storage.dao.UserDAO;
 import com.project.storage.db.Friend;
@@ -68,10 +68,8 @@ public class AddFriend implements HttpBuilder, JsonEntity {
         @Override
         protected Object process(String json) throws Exception {
             AddFriendData data = GsonUtil.parseJson(json, AddFriendData.class);
-            
             UserDAO.updateFriendListTimestamp(data.timestamp);
             
-            DAOTemplate dao = MyDAOManager.getDAO();
             Friend friend = FriendDAO.getFriendByAccount(account);
             if (op == 1)
             {

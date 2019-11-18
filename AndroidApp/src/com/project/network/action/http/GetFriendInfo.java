@@ -1,5 +1,7 @@
 package com.project.network.action.http;
 
+import static com.project.storage.dao.UserDAOManager.BaseDAO.dao;
+
 import engine.android.framework.network.http.HttpConnectorBuilder;
 import engine.android.framework.network.http.HttpConnectorBuilder.JsonEntity;
 import engine.android.framework.network.http.HttpManager.HttpBuilder;
@@ -12,7 +14,6 @@ import com.project.app.MySession;
 import com.project.network.NetworkConfig;
 import com.project.network.action.Actions;
 import com.project.network.http.HttpJsonParser;
-import com.project.storage.MyDAOManager;
 import com.project.storage.db.Friend;
 
 import protocol.http.FriendData;
@@ -70,11 +71,11 @@ public class GetFriendInfo implements HttpBuilder, JsonEntity {
             if (data.info != null)
             {
                 // 好友信息更新
-                MyDAOManager.getDAO().update(friend.fromProtocol(data.info));
+                dao.update(friend.fromProtocol(data.info));
             }
             else
             {
-                MyDAOManager.getDAO().update(friend, Friend.VERSION);
+                dao.update(friend, Friend.VERSION);
             }
 
             return friend;

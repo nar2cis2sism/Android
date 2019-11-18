@@ -1,5 +1,7 @@
 package com.project.util;
 
+import static com.project.storage.dao.UserDAOManager.BaseDAO.dao;
+
 import engine.android.core.util.CalendarFormat;
 import engine.android.core.util.LogFactory;
 import engine.android.core.util.LogFactory.LOG;
@@ -88,6 +90,7 @@ public class LogUploader {
      */
     private static void uploadDatabase(File desDir) {
         MyDAOManager.getDAO().export(desDir);
+        if (dao != null) dao.export(desDir);
     }
 
     /**

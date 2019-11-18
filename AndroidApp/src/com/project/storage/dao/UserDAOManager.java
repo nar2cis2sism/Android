@@ -1,46 +1,43 @@
-package com.project.storage;
+package com.project.storage.dao;
 
 import engine.android.dao.DAOTemplate;
 import engine.android.dao.DAOTemplate.DAOExpression;
 import engine.android.dao.DAOTemplate.DBUpdateListener;
-import engine.android.util.extra.Singleton;
 
 import android.content.Context;
 
 import com.project.app.MyContext;
-import com.project.storage.db.User;
+import com.project.storage.db.Friend;
+import com.project.storage.db.Message;
 
 /**
- * 数据库管理器
+ * 账号关联数据库管理
  * 
  * @author Daimon
  */
-public class MyDAOManager implements DBUpdateListener {
+public class UserDAOManager implements DBUpdateListener {
 
     /******************************* 数据库配置 *******************************/
     
-    private static final String DB_NAME = "app.db";
+    private static final String DB_NAME = "user_";
     private static final int DB_VERSION = 1;
     
-    private static final Singleton<MyDAOManager> instance
-    = new Singleton<MyDAOManager>() {
-        
-        @Override
-        protected MyDAOManager create() {
-            return new MyDAOManager(MyContext.getContext());
-        }
-    };
-    
-    public static final DAOTemplate getDAO() {
-        return instance.get().dao;
+    /**
+     * 切换账号时调用
+     */
+    public static synchronized void changeUser(String username, boolean reset) {
+        if (BaseDAO.dao != null) BaseDAO.dao.close();
+        BaseDAO.dao = new UserDAOManager(MyContext.getContext(), username).dao;
+        if (reset) BaseDAO.dao.deleteSelf();
+        BaseDAO.dao.getDataBase();
     }
 
     /**************************** 华丽丽的分割线 ****************************/
     
     private final DAOTemplate dao;
     
-    private MyDAOManager(Context context) {
-        dao = new DAOTemplate(context, DB_NAME, DB_VERSION, this);
+    private UserDAOManager(Context context, String username) {
+        dao = new DAOTemplate(context, DB_NAME + username, DB_VERSION, this);
     }
 
     /**
@@ -49,17 +46,16 @@ public class MyDAOManager implements DBUpdateListener {
      */
     @Override
     public void onCreate(DAOTemplate dao) {
-        dao.createTable(User.class, false);
+        dao.createTable(Friend.class, false);
+        dao.createTable(Message.class, false);
     }
 
     @Override
-    public void onUpdate(DAOTemplate dao, int oldVersion, int newVersion) {
-        dao.createTable(User.class, true);
-    }
+    public void onUpdate(DAOTemplate dao, int oldVersion, int newVersion) {}
     
     public static class BaseDAO {
         
-        protected static final DAOTemplate dao = getDAO();
+        public static DAOTemplate dao;
         
         public static <T> T findItemByProperty(Class<T> cls, String property, Object value) {
             return dao.find(cls).where(DAOExpression.create(property).eq(value)).get();

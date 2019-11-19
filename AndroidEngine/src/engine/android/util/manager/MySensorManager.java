@@ -20,6 +20,7 @@ public class MySensorManager implements SensorEventListener {
 
     private final Sensor aSensor;                           // 重力感应器
     private final Sensor mSensor;                           // 磁场感应器
+    private final Sensor pSensor;                           // 距离感应器
 
     /** Daimon:CopyOnWriteArraySet **/
     private CopyOnWriteArraySet<MySensorListener> listener; // 手机动作感应监听器
@@ -29,6 +30,7 @@ public class MySensorManager implements SensorEventListener {
         // 获取相应的感应器
         aSensor = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mSensor = sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        pSensor = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         /**
          * TYPE注解
          * TYPE_ACCELEROMETER 加速度
@@ -38,7 +40,7 @@ public class MySensorManager implements SensorEventListener {
          * TYPE_MAGNETIC_FIELD 磁场
          * TYPE_ORIENTATION 定向（指北针）和角度
          * TYPE_PRESSUR 压力计
-         * TYPE_PROXIMITY 距离？不太懂
+         * TYPE_PROXIMITY 贴近屏幕的距离
          * TYPE_TEMPERATURE 温度
          */
     }
@@ -60,6 +62,7 @@ public class MySensorManager implements SensorEventListener {
         if (sm.registerListener(this, aSensor, SensorManager.SENSOR_DELAY_UI))
         {
             sm.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
+            sm.registerListener(this, pSensor, SensorManager.SENSOR_DELAY_UI);
             return true;
         }
 
@@ -237,6 +240,31 @@ public class MySensorManager implements SensorEventListener {
          * @param degree 角度(relative to east of north)
          */
         public abstract void notifyOrientation(float degree);
+    }
+
+    /**
+     * 屏幕距离感应
+     */
+    public static abstract class ProximitySensorListener implements MySensorListener {
+
+        @Override
+        public final void notifyUpdate(SensorEvent event) {
+            if (event.sensor.getType() == Sensor.TYPE_PROXIMITY)
+            {
+                float values[] = event.values;
+                if (values != null && values.length > 0)
+                {
+                    notifyUpdate(values[0] != 0);
+                }
+            }
+        }
+
+        /**
+         * 手机距离通知
+         * 
+         * @param away True:远离手机 False:贴近手机
+         */
+        public abstract void notifyUpdate(boolean away);
     }
 
     /**

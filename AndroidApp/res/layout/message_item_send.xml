@@ -24,7 +24,7 @@
         <TextView
             style="@style/message_item_content"
             android:id="@+id/content"
-            android:background="@drawable/message_bg_right"
+            android:background="@drawable/message_bg_right_pressed"
             android:layout_toLeftOf="@+id/avatar"
             android:layout_marginLeft="@dimen/message_item_content_margin_horizontal"
             android:layout_marginRight="@dimen/message_item_content_margin_avatar"

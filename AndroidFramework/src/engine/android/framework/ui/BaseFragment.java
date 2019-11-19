@@ -66,7 +66,7 @@ public abstract class BaseFragment extends engine.android.core.BaseFragment {
     
     protected void setupTitleBar(TitleBar titleBar) {}
     
-    public final TitleBar getTitleBar() {
+    public TitleBar getTitleBar() {
         return baseActivity == null || baseActivity.isFinishing() ? null : baseActivity.getTitleBar();
     }
     

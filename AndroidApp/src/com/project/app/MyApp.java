@@ -13,7 +13,6 @@ import android.app.Activity;
 import android.os.StrictMode;
 
 import com.project.app.config.MyConfiguration;
-import com.project.app.service.AppService;
 import com.project.widget.LogUploadDialog;
 import com.project.widget.LogUploadDialog.LogUploadTask;
 

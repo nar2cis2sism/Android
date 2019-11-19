@@ -14,7 +14,7 @@ import engine.android.util.ui.MyValidator.PatternValidation;
 import engine.android.util.ui.UIUtil;
 import engine.android.widget.component.input.InputBox;
 
-import android.Manifest;
+import android.Manifest.permission;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -163,8 +163,9 @@ public class LoginFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getBaseActivity().requestPermission(null, 
-                Manifest.permission.WRITE_EXTERNAL_STORAGE, 
-                Manifest.permission.ACCESS_FINE_LOCATION);
+                permission.WRITE_EXTERNAL_STORAGE,
+                permission.ACCESS_FINE_LOCATION,
+                permission.RECORD_AUDIO);
     }
     
     @OnClick(R.id.back)

@@ -33,7 +33,7 @@ public class MyInitial {
         MyDAOManager.getDAO().getDataBase();
         // 加载声音资源
         MySoundPlayer.getInstance();
-        // 播放背景音乐
+        // 启动后台服务
         AppService.getService();
     }
 }

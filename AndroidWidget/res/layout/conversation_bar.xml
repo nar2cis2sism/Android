@@ -2,71 +2,62 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/conversation_bar_bg"
-    android:gravity="bottom" >
+    android:paddingBottom="4dp">
 
     <!-- 语音/键盘切换 -->
     <ImageView
         android:id="@+id/voice"
-        android:focusableInTouchMode="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/content"
+        android:layout_marginBottom="-4dp"
         android:src="@drawable/conversation_voice" />
-
-    <!-- 输入框 -->
-    <EditText
-        android:id="@+id/input"
-        android:layout_width="0px"
+    
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginBottom="2dp"
-        android:maxLines="5"
-        android:textSize="16sp" />
+        android:layout_toRightOf="@+id/voice"
+        android:layout_toLeftOf="@+id/send"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="6dp" >
 
-    <!-- 录音按钮 -->
-    <Button
-        android:id="@+id/record"
-        android:visibility="gone"
-        android:layout_width="0px"
-        android:layout_height="30dp"
-        android:layout_weight="1"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="3dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
-        android:textSize="12sp"
-        android:text="按住 说话" />
+        <!-- 输入框 -->
+        <EditText
+            android:id="@+id/input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="36dp"
+            android:maxLines="5"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textSize="16sp"
+            android:textColor="@android:color/black" />
 
-    <!-- 表情/键盘切换 -->
-    <ImageView
-        android:id="@+id/emotion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/conversation_emotion" />
-
-    <!-- 更多按钮 -->
-    <ImageView
-        android:id="@+id/more"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/conversation_more" />
+        <!-- 录音按钮 -->
+        <Button
+            android:id="@+id/record"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:padding="0px"
+            android:textSize="14sp"
+            android:text="@string/conversation_record_normal" />
+        
+    </FrameLayout>
 
     <!-- 发送按钮 -->
     <Button
         android:id="@+id/send"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="28dp"
-        android:layout_marginLeft="-2dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginBottom="3dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
-        android:textSize="12sp"
-        android:text="发送" />
-    
+        android:layout_width="71dp"
+        android:layout_height="36dp"
+        android:background="@drawable/conversation_send"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="6dp"
+        android:layout_alignBottom="@+id/content"
+        android:padding="0px"
+        android:textStyle="bold"
+        android:textColor="#965505"
+        android:text="@string/conversation_send" />
+
 </engine.android.widget.component.input.ConversationBar>

@@ -42,9 +42,9 @@ import com.project.network.action.http.SearchContact;
 import com.project.ui.friend.info.FriendInfoFragment;
 import com.project.ui.friend.info.FriendInfoFragment.FriendInfoParams;
 
-import protocol.http.SearchContactData.ContactData;
-
 import java.util.List;
+
+import protocol.http.SearchContactData.ContactData;
 
 /**
  * 好友列表界面
@@ -53,7 +53,7 @@ import java.util.List;
  */
 public class FriendListFragment extends BaseListFragment implements OnCheckedChangeListener, OnChildClickListener {
     
-    class ListHeader {
+    class ListHeader implements Runnable {
         
         View header;
         
@@ -83,6 +83,16 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
         
         public void hideSoftInput() {
             UIUtil.hideSoftInput(search_box);
+        }
+
+        public void requestFocus() {
+            run();
+            search_box.post(this);
+        }
+
+        @Override
+        public void run() {
+            search_box.requestFocus();
         }
     }
     
@@ -238,14 +248,10 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
         
         updateTitleBar(inSearch);
         setActionVisible(!inSearch);
-        if (!showAllFriends)
-        {
-            setListViewVisible(inSearch);
-        }
-        
+        if (!showAllFriends) setListViewVisible(inSearch);
         setListAdapter(adapter);
         // ListView will get focus when update the adapter so request focus manually.
-        if (searchPresenter.isSearching) list_header.search_box.requestFocus();
+        if (inSearch) list_header.requestFocus();
         updateLetterBar();
     }
     

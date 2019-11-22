@@ -8,6 +8,8 @@ import android.content.Context;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PaintDrawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -331,5 +333,14 @@ public final class UIUtil {
      */
     public static boolean atBottom(AbsListView list) {
         return list.getLastVisiblePosition() >= list.getCount() - 1;
+    }
+
+    /**
+     * 获取圆角图片
+     */
+    public static Drawable getRoundDrawable(int color, float radius) {
+        PaintDrawable drawable = new PaintDrawable(color);
+        drawable.setCornerRadius(radius);
+        return drawable;
     }
 }

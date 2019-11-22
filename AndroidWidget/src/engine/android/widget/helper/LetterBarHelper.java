@@ -35,7 +35,10 @@ public class LetterBarHelper implements OnLetterChangedListener {
         letterMap.clear();
         return this;
     }
-    
+
+    /**
+     * 注意：此索引直接应用到{@link ListView#setSelection(int)}，需加上{@link ListView#getHeaderViewsCount()}
+     */
     public void setIndex(String letter, int index) {
         letterMap.put(letter, index);
     }

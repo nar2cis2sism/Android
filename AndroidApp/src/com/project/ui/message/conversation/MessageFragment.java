@@ -2,6 +2,7 @@ package com.project.ui.message.conversation;
 
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseListFragment;
+import engine.android.framework.ui.presenter.VoicePresenter;
 import engine.android.util.os.AudioUtil;
 import engine.android.util.os.AudioUtil.AudioPlayer;
 import engine.android.util.ui.UIUtil;
@@ -47,6 +48,7 @@ public class MessageFragment extends BaseListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         presenter = addPresenter(MessagePresenter.class);
+        addPresenter(VoicePresenter.class).checkTTS();
     }
     
     @Override

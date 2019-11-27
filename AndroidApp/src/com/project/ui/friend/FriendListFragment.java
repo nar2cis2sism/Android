@@ -7,6 +7,7 @@ import engine.android.core.Injector;
 import engine.android.core.annotation.InjectView;
 import engine.android.framework.ui.BaseActivity;
 import engine.android.framework.ui.BaseListFragment;
+import engine.android.framework.ui.presenter.VoicePresenter;
 import engine.android.util.AndroidUtil;
 import engine.android.util.ui.UIUtil;
 import engine.android.util.ui.ViewSize;
@@ -24,6 +25,7 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ExpandableListView;
@@ -53,7 +55,7 @@ import protocol.http.SearchContactData.ContactData;
  */
 public class FriendListFragment extends BaseListFragment implements OnCheckedChangeListener, OnChildClickListener {
     
-    class ListHeader implements Runnable {
+    class ListHeader implements OnClickListener, Runnable {
         
         View header;
         
@@ -68,9 +70,20 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
         }
         
         private void setupView() {
-            // 搜索框
+            setupSearchBox(search_box);
+            setupActionContainer(action_container);
+        }
+
+        private void setupSearchBox(SearchBox search_box) {
+            if (getPresenter(VoicePresenter.class).isSupportRecognize())
+            {
+                search_box.showVoiceIcon(true, this);
+            }
+
             search_box.setSearchProvider(searchPresenter);
-            
+        }
+
+        private void setupActionContainer(ActionContainer action_container) {
             // 群
             action_container.addAction(R.drawable.friend_group, R.string.friend_group);
             // 讨论组
@@ -79,6 +92,11 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
             action_container.addAction(R.drawable.friend_public, R.string.friend_public);
             // 好友推荐
             action_container.addAction(R.drawable.friend_recommend, R.string.friend_recommend);
+        }
+
+        @Override
+        public void onClick(View v) {
+            getPresenter(VoicePresenter.class).recognize();
         }
         
         public void hideSoftInput() {
@@ -118,6 +136,7 @@ public class FriendListFragment extends BaseListFragment implements OnCheckedCha
         super.onCreate(savedInstanceState);
         presenter = addPresenter(FriendListPresenter.class);
         searchPresenter = addPresenter(SearchPresenter.class);
+        addPresenter(VoicePresenter.class);
     }
     
     @Override

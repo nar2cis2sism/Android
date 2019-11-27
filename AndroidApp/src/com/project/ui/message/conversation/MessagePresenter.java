@@ -7,6 +7,7 @@ import engine.android.core.extra.JavaBeanAdapter;
 import engine.android.dao.util.JavaBeanLoader;
 import engine.android.framework.ui.BaseFragment.ParamsBuilder;
 import engine.android.framework.ui.activity.SinglePaneActivity;
+import engine.android.framework.ui.presenter.VoicePresenter;
 import engine.android.framework.ui.widget.AvatarImageView;
 
 import android.content.Context;
@@ -52,7 +53,7 @@ class MessagePresenter extends Presenter<MessageFragment> {
         
         currentConversation = params.account;
         
-        getCallbacks().setDataSource(adapter = new MessageAdapter(context, params),
+        getCallbacks().setDataSource(adapter = new MessageAdapter(context, this),
                 loader = new MessageLoader(context, params));
         // 暂停背景音乐
         AppService.getService().play(false);
@@ -64,6 +65,10 @@ class MessagePresenter extends Presenter<MessageFragment> {
         // 恢复背景音乐
         AppService.getService().play(true);
     }
+
+    public void clickMessage(Message message) {
+        getCallbacks().getPresenter(VoicePresenter.class).speak(message.content);
+    }
 }
 
 class MessageAdapter extends JavaBeanAdapter<MessageItem> {
@@ -71,12 +76,12 @@ class MessageAdapter extends JavaBeanAdapter<MessageItem> {
     private static final int VIEW_TYPE_RECEIVE  = 0;
     private static final int VIEW_TYPE_SEND     = 1;
     private static final int VIEW_TYPE_COUNT    = 2;
-    
-    private final ConversationParams params;
 
-    public MessageAdapter(Context context, ConversationParams params) {
+    private final MessagePresenter presenter;
+
+    public MessageAdapter(Context context, MessagePresenter presenter) {
         super(context, 0);
-        this.params = params;
+        this.presenter = presenter;
     }
     
     @Override
@@ -126,13 +131,14 @@ class MessageAdapter extends JavaBeanAdapter<MessageItem> {
         // 头像
         if (message.isReceived)
         {
-            AvatarImageView.display(holder, R.id.avatar, params.friend.getAvatarUrl());
+            final Friend friend = presenter.params.friend;
+            AvatarImageView.display(holder, R.id.avatar, friend.getAvatarUrl());
             holder.getView(R.id.avatar).setOnClickListener(new OnClickListener() {
                 
                 @Override
                 public void onClick(View v) {
                     getContext().startActivity(SinglePaneActivity.buildIntent(getContext(), 
-                            FriendInfoFragment.class, ParamsBuilder.build(new FriendInfoParams(params.friend))));
+                            FriendInfoFragment.class, ParamsBuilder.build(new FriendInfoParams(friend))));
                 }
             });
         }
@@ -142,6 +148,12 @@ class MessageAdapter extends JavaBeanAdapter<MessageItem> {
         }
         // 消息内容
         holder.setTextView(R.id.content, message.content);
+        holder.getView(R.id.content).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.clickMessage(message);
+            }
+        });
         // 发送状态
         if (!message.isReceived)
         {

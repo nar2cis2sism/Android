@@ -8,7 +8,6 @@ import android.text.Editable;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,7 +22,7 @@ import android.widget.TextView.OnEditorActionListener;
  * @author Daimon
  * @since 6/6/2014
  */
-public class SearchBox extends LinearLayout implements OnClickListener {
+public class SearchBox extends LinearLayout {
 
     private ImageView search_icon;
     private EditText search_text;
@@ -40,26 +39,17 @@ public class SearchBox extends LinearLayout implements OnClickListener {
         search_text = (EditText) findViewById(R.id.search_text);
         search_voice = (ImageView) findViewById(R.id.search_voice);
         search_clear = (ImageView) findViewById(R.id.search_clear);
-        
-        search_voice.setOnClickListener(this);
-        new InputAction(search_text).bindClear(search_clear);
-    }
 
-    @Override
-    public void onClick(View v) {
-        voiceRecognize();
-    }
-    
-    private void voiceRecognize() {
-        // TO DO: 语音识别
+        new InputAction(search_text).bindClear(search_clear);
     }
     
     public void showSearchIcon(boolean show) {
         search_icon.setVisibility(show ? VISIBLE : GONE);
     }
     
-    public void showVoiceIcon(boolean show) {
+    public void showVoiceIcon(boolean show, OnClickListener listener) {
         search_voice.setVisibility(show ? VISIBLE : GONE);
+        search_voice.setOnClickListener(listener);
     }
     
     public EditText getSearchEditText() {

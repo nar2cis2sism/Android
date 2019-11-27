@@ -29,6 +29,7 @@ import engine.android.widget.component.TitleBar;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -156,7 +157,10 @@ public class MeFragment extends BaseInfoFragment implements PhotoCallback, OnCli
 
     @OnClick(R.id.avatar)
     void avatar() {
-        startFragment(ViewImageFragment.class);
+        ViewImageFragment fragment = new ViewImageFragment();
+        fragment.setImage(((BitmapDrawable) avatar.getDrawable()).getBitmap());
+
+        ((SinglePaneActivity) getBaseActivity()).addFragment(fragment);
     }
 
     @Override

@@ -3,28 +3,35 @@ package com.project.ui.more.authentication;
 import static com.project.network.action.Actions.AUTHENTICATION;
 
 import engine.android.core.annotation.InjectView;
+import engine.android.core.extra.JavaBeanAdapter;
 import engine.android.framework.ui.BaseActivity;
 import engine.android.framework.ui.BaseFragment;
 import engine.android.framework.ui.activity.SinglePaneActivity;
-import engine.android.framework.ui.fragment.ViewImageFragment;
 import engine.android.framework.ui.presenter.PhotoPresenter;
+import engine.android.framework.ui.presenter.PhotoPresenter.PhotoCallback;
 import engine.android.framework.ui.presenter.PhotoPresenter.PhotoInfo;
+import engine.android.util.image.ImageSize;
 import engine.android.widget.component.TitleBar;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 
 import com.daimon.yueba.R;
 import com.project.network.action.file.Authentication;
+import com.project.ui.more.authentication.ViewImageFragment.Callback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +96,15 @@ public class AuthenticationFragment extends BaseFragment implements OnItemClickL
         }
         else
         {
-            startFragment(ViewImageFragment.class);
+            ViewImageFragment fragment = new ViewImageFragment();
+            fragment.setCallback(item, new Callback() {
+                @Override
+                public void deleteImage(PhotoInfo photoInfo) {
+                    adapter.remove(photoInfo);
+                }
+            });
+
+            ((SinglePaneActivity) getBaseActivity()).addFragment(fragment);
         }
     }
     
@@ -146,5 +161,46 @@ public class AuthenticationFragment extends BaseFragment implements OnItemClickL
             hideProgress();
             ((SinglePaneActivity) getBaseActivity()).replaceFragment(new AuthenticationFinishFragment());
         }
+    }
+}
+
+class AuthenticationAdapter extends JavaBeanAdapter<PhotoInfo> implements PhotoCallback {
+
+    private final ImageSize size;
+
+    public AuthenticationAdapter(Context context) {
+        super(context, 0);
+        size = new ImageSize();
+        size.setAspectRatio(5, 4);
+        // Place add_image.
+        add(null);
+    }
+
+    @Override
+    protected View newView(int position, LayoutInflater inflater, ViewGroup parent) {
+        ImageView view = new ImageView(getContext());
+        view.setLayoutParams(new GridView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        ImageSize.adjustViewSize(view, size);
+        view.setScaleType(ScaleType.CENTER_CROP);
+        return view;
+    }
+
+    @Override
+    protected void bindView(int position, ViewHolder holder, PhotoInfo item) {
+        ImageView view = (ImageView) holder.getConvertView();
+        if (item == null)
+        {
+            view.setImageResource(R.drawable.add_image);
+        }
+        else
+        {
+            view.setImageBitmap(item.getPhoto(getContext().getContentResolver(),
+                    size.getWidth(), size.getHeight(), false));
+        }
+    }
+
+    @Override
+    public void onPhotoCapture(PhotoInfo info) {
+        insert(info, getCount() - 1);
     }
 }

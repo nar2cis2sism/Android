@@ -276,7 +276,7 @@ public class ZoomImageView extends View implements Observer {
         }
 
         public void setPanX(float panX) {
-            if (this.panX != panX)
+            if (this.panX != (panX = Math.min(1, Math.max(0, panX))))
             {
                 this.panX = panX;
                 setChanged();
@@ -288,7 +288,7 @@ public class ZoomImageView extends View implements Observer {
         }
 
         public void setPanY(float panY) {
-            if (this.panY != panY)
+            if (this.panY != (panY = Math.min(1, Math.max(0, panY))))
             {
                 this.panY = panY;
                 setChanged();

@@ -1,19 +1,18 @@
 package engine.android.game.util;
 
-import static engine.android.util.RectUtil.setRect;
-
-import android.graphics.Canvas;
-import android.graphics.Paint;
+import static engine.android.util.api.RectUtil.setRect;
 
 import engine.android.game.GameCanvas.TouchEvent;
 import engine.android.game.layer.Area;
 import engine.android.game.layer.Sprite;
 
+import android.graphics.Canvas;
+import android.graphics.Paint;
+
 /**
  * 游戏菜单
  * 
  * @author Daimon
- * @version N
  * @since 9/4/2012
  */
 public abstract class GameMenu extends Area {

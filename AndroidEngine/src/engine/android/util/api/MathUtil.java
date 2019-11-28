@@ -53,4 +53,22 @@ public final class MathUtil {
 
         return sequence;
     }
+
+    /**
+     * 判断是否超出范围
+     */
+    public static boolean isOutOfRange(float start, float end, float delta) {
+        if (delta < 0)
+        {
+            return start + delta <= end;
+        }
+        else if (delta > 0)
+        {
+            return start + delta >= end;
+        }
+        else
+        {
+            return start != end;
+        }
+    }
 }

@@ -1,5 +1,12 @@
 package engine.android.game;
 
+import engine.android.core.extra.SplashScreen;
+import engine.android.core.extra.SplashScreen.SplashCallback;
+import engine.android.core.extra.SplashScreen.SplashLoading;
+import engine.android.util.image.ImageCache;
+import engine.android.util.image.ImageUtil;
+import engine.android.util.image.ImageUtil.ImageDecoder;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -23,14 +30,6 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewConfiguration;
 
-import engine.android.core.extra.SplashScreen;
-import engine.android.core.extra.SplashScreen.SplashCallback;
-import engine.android.core.extra.SplashScreen.SplashLoading;
-import engine.android.util.image.ImageCache;
-import engine.android.util.image.ImageUtil;
-import engine.android.util.image.ImageUtil.ImageDecoder;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,14 +37,16 @@ import java.util.Map;
  * 游戏画布
  * 
  * @author Daimon
- * @version N
  * @since 5/15/2012
  */
 public abstract class GameCanvas extends SurfaceView implements Callback, OnTouchListener {
 
-    public static final int FULLSCREEN   = 1;                   // 全屏拉伸
-    public static final int CROP         = 2;                   // 按比例扩大画布的size，使得画布长(宽)等于或大于View的长(宽)
-    public static final int INSIDE       = 3;                   // 按比例缩小画布的size，使得画布长(宽)等于或小于View的长(宽)
+    /** 全屏拉伸 **/
+    public static final int FULLSCREEN   = 1;
+    /** 按比例扩大画布的size，使得画布长(宽)等于或大于View的长(宽) **/
+    public static final int CROP         = 2;
+    /** 按比例缩小画布的size，使得画布长(宽)等于或小于View的长(宽) **/
+    public static final int INSIDE       = 3;
 
     private static GameCanvas instance;                         // 自身实例
     
@@ -78,20 +79,15 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
 
     public GameCanvas(Context context) {
         super(context);
-        _();
+        init();
     }
 
     public GameCanvas(Context context, AttributeSet attrs) {
         super(context, attrs);
-        _();
+        init();
     }
 
-    public GameCanvas(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        _();
-    }
-
-    private void _() {
+    private void init() {
         instance = this;
 
         setFocusable(true);
@@ -204,7 +200,7 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         try {
             image = BitmapFactory.decodeStream(getResources().getAssets().open(name), null, opts);
             cache.put(name, image);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -234,7 +230,7 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
             image = ImageDecoder.decodeStream(getResources().getAssets().open(name), 
                     width, height, true);
             cache.put(name, image);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -254,7 +250,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
     /**
      * 加载多张图片
      */
-
     public Bitmap[] loads(String... names) {
         if (names == null || names.length == 0)
         {
@@ -513,7 +508,7 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         
         private final Helper helper = new Helper();
         
-        final SplashScreen splash;
+        private final SplashScreen splash;
 
         Splash(GameCanvas gc) {
             super(gc);
@@ -544,17 +539,13 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
         private Canvas canvas;                                      // 绘制画布
 
         private double FPS;                                         // 帧速率
-
         private double FPS_default;                                 // 默认帧速率
-
         private long fps_time;                                      // 纳秒时间（用于计算帧速率）
-
         private int fps_count;                                      // 帧计数
 
         private final int thread_num;                               // 启动线程数+渲染引擎
 
         private Paint fps_paint;                                    // 帧速率绘制画笔
-
         private final Paint clear_paint;                            // 擦除画布画笔
 
         private final SurfaceHolder holder;                         // 游戏处理器
@@ -564,7 +555,6 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
 
             clear_paint = new Paint();
             clear_paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-
             // 添加回调函数
             (holder = getHolder()).addCallback(GameCanvas.this);
             setPeriod(refresh_time);
@@ -608,7 +598,7 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
                 }
             }
 
-            if (++fps_count == 20)
+            if (fps_paint != null && ++fps_count == 20)
             {
                 long l = System.nanoTime(); // 纳秒计时
                 FPS = Math.round(100000000000.0 * fps_count / (l - fps_time)) / 100.0; // 计算帧速率
@@ -635,11 +625,11 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
             }
         }
 
-        public void showFPS(boolean show) {
-            if (show)
+        public void showFPS(boolean shown) {
+            if (shown)
             {
                 fps_paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                fps_paint.setTextSize(18);
+                fps_paint.setTextSize(22);
                 fps_paint.setColor(Color.WHITE);
             }
             else
@@ -907,7 +897,7 @@ public abstract class GameCanvas extends SurfaceView implements Callback, OnTouc
      */
     public static class GameResource {
 
-        private final static Map<String, Object> map                // 资源查询表
+        private static final Map<String, Object> map                // 资源查询表
         = new HashMap<String, Object>();
 
         /**

@@ -12,7 +12,6 @@ import java.util.LinkedList;
  * 游戏标签
  * 
  * @author Daimon
- * @version N
  * @since 9/4/2012
  */
 public class Label extends Sprite {
@@ -200,7 +199,7 @@ public class Label extends Sprite {
      * @param paint 画笔，用来根据字体测量宽度用
      * @return 分割好的字符串数组
      */
-    private static String[] split(String text, float width, Paint paint) {
+    public static String[] split(String text, float width, Paint paint) {
         float count = 0;
         LinkedList<String> list = new LinkedList<String>();
         int len = text.length();

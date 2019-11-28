@@ -1,16 +1,15 @@
 package engine.android.game.layer;
 
+import engine.android.game.GameCanvas.TouchEvent;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-
-import engine.android.game.GameCanvas.TouchEvent;
 
 /**
  * 游戏按钮
  * 
  * @author Daimon
- * @version N
  * @since 5/12/2012
  */
 public class GameButton extends Area {

@@ -1,24 +1,22 @@
 package engine.android.game.layer;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-
 import engine.android.game.Box;
 import engine.android.game.GameCanvas.TouchEvent;
 
-import java.util.List;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+
 import java.util.ListIterator;
 
 /**
  * 游戏区域
  * 
  * @author Daimon
- * @version N
  * @since 5/11/2012
  */
 public class Area extends Sprite {
 
-    private final List<Sprite> sprites = new Box<Sprite>();     // 精灵容器
+    private final Box<Sprite> sprites = new Box<Sprite>();     // 精灵容器
 
     public Area(int width, int height) {
         super(width, height);
@@ -54,7 +52,6 @@ public class Area extends Sprite {
      * 添加精灵
      */
     public void addSprite(Sprite sprite) {
-        removeSprite(sprite);
         sprites.add(sprite);
     }
 
@@ -64,7 +61,6 @@ public class Area extends Sprite {
      * @param index 精灵添加位置
      */
     public void addSprite(int index, Sprite sprite) {
-        removeSprite(sprite);
         sprites.add(index, sprite);
     }
 
@@ -156,11 +152,6 @@ public class Area extends Sprite {
      * @param sprite 需移除的精灵
      */
     public void removeSprite(Sprite sprite) {
-        if (sprite == null)
-        {
-            throw new NullPointerException();
-        }
-
         sprites.remove(sprite);
     }
 

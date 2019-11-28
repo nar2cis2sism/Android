@@ -1,8 +1,8 @@
 package engine.android.game.util;
 
-import android.graphics.Point;
-
 import engine.android.game.layer.TiledLayer;
+
+import android.graphics.Point;
 
 import java.util.LinkedList;
 
@@ -10,7 +10,6 @@ import java.util.LinkedList;
  * A*寻路算法
  * 
  * @author Daimon
- * @version N
  * @since 9/12/2012
  */
 public class AStar {

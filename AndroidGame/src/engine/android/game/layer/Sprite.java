@@ -1,20 +1,19 @@
 package engine.android.game.layer;
 
-import static engine.android.util.RectUtil.copyRect;
-import static engine.android.util.RectUtil.setRect;
+import static engine.android.util.api.RectUtil.copyRect;
+import static engine.android.util.api.RectUtil.setRect;
+
+import engine.android.game.LayerManager.Layer;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.View;
 
-import engine.android.game.LayerManager.Layer;
-
 /**
  * 游戏精灵
  * 
  * @author Daimon
- * @version N
  * @since 5/11/2012
  */
 public class Sprite extends Layer {
@@ -174,7 +173,6 @@ public class Sprite extends Layer {
         int tx = t.getX(), ty = t.getY();
         Rect sr = getCollisionRect();
         Rect tr = setRect(null, tx, ty, t.getWidth(), t.getHeight());
-
         // 判断是否有交集
         if (!Rect.intersects(sr, tr))
         {

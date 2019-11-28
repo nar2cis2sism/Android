@@ -1,5 +1,6 @@
 package engine.android.game;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -13,23 +14,19 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * 功能：防止多线程并发操作引起异常
  * 
  * @author Daimon
- * @version N
  * @since 5/11/2012
  */
 public final class Box<E> implements List<E> {
 
     private final LinkedList<E> origin = new LinkedList<E>();               // 原始数据
-
-    private final LinkedList<E> buffer = new LinkedList<E>();               // 缓存数据
+    private final ArrayList<E> buffer = new ArrayList<E>();                 // 缓存数据
 
     private volatile boolean isChanged;                                     // 数据是否改变
 
     /** Daimon:ReentrantReadWriteLock **/
     private final ReentrantReadWriteLock lock                               // 数据存取锁
     = new ReentrantReadWriteLock();
-
     private final Lock r = lock.readLock();
-
     private final Lock w = lock.writeLock();
 
     @Override
@@ -211,7 +208,7 @@ public final class Box<E> implements List<E> {
     /**
      * 获取数据集合
      */
-    private LinkedList<E> getList() {
+    private List<E> getList() {
         r.lock();
         try {
             if (isChanged)

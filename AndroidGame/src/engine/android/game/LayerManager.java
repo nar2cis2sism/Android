@@ -1,15 +1,16 @@
 package engine.android.game;
 
-import static engine.android.util.RectUtil.copyRect;
-import static engine.android.util.RectUtil.setRect;
+import static engine.android.util.api.RectUtil.copyRect;
+import static engine.android.util.api.RectUtil.setRect;
+
+import engine.android.game.GameCanvas.TouchEvent;
+import engine.android.game.LayerManager.Layer;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.View;
-
-import engine.android.game.GameCanvas.TouchEvent;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +20,6 @@ import java.util.ListIterator;
  * 图层管理器
  * 
  * @author Daimon
- * @version N
  * @since 8/13/2012
  */
 public class LayerManager {
@@ -62,7 +62,6 @@ public class LayerManager {
      * 添加图层
      */
     public void append(Layer l) {
-        remove(l);
         layers.add(l);
     }
 
@@ -70,7 +69,6 @@ public class LayerManager {
      * 插入图层
      */
     public void insert(Layer l, int index) {
-        remove(l);
         layers.add(index, l);
     }
 
@@ -94,11 +92,6 @@ public class LayerManager {
      * 移除图层
      */
     public void remove(Layer l) {
-        if (l == null)
-        {
-            throw new NullPointerException();
-        }
-
         layers.remove(l);
     }
 
@@ -176,6 +169,32 @@ public class LayerManager {
     }
     
     /**
+     * 返回画布的缩放宽度（实际绘制时的宽度）
+     */
+    public float getScaledWidth() {
+        float width = getWidth();
+        if (gc.isSupportAutoAdapt)
+        {
+            width *= gc.scaleX;
+        }
+        
+        return width;
+    }
+    
+    /**
+     * 返回画布的缩放高度（实际绘制时的高度）
+     */
+    public float getScaledHeight() {
+        float height = getHeight();
+        if (gc.isSupportAutoAdapt)
+        {
+            height *= gc.scaleY;
+        }
+        
+        return height;
+    }
+    
+    /**
      * 游戏图层
      */
     public static abstract class Layer implements EventConstants {
@@ -220,13 +239,13 @@ public class LayerManager {
          * @return 是否和原有大小不一样
          */
         protected boolean sizeChanged(int width, int height) {
-            if (!(width == this.width && height == this.height))
+            if (width == this.width && height == this.height)
             {
-                setSize(width, height);
-                return true;
+                return false;
             }
 
-            return false;
+            setSize(width, height);
+            return true;
         }
 
         /**
@@ -426,7 +445,6 @@ public class LayerManager {
          * 添加自定义绘制
          */
         public void appendDrawn(AppendDrawn drawn) {
-            removeDrawn(drawn);
             if (this.drawn == null)
             {
                 this.drawn = new LinkedList<AppendDrawn>();
@@ -439,11 +457,6 @@ public class LayerManager {
          * 取消自定义绘制
          */
         public void removeDrawn(AppendDrawn drawn) {
-            if (drawn == null)
-            {
-                throw new NullPointerException();
-            }
-
             if (this.drawn != null)
             {
                 this.drawn.remove(drawn);
@@ -462,6 +475,14 @@ public class LayerManager {
                 r = canvas.getClipBounds();
                 canvas.clipRect(getVisibleBounds());
             }
+            
+            Integer saveCount = null;
+            if (mTransformationInfo != null)
+            {
+                saveCount = canvas.save();
+                mTransformationInfo.transform(canvas);
+                getPaint(); paint.setAlpha((int) (0xff * mTransformationInfo.mAlpha));
+            }
 
             onDraw(canvas);
             if (drawn != null && !drawn.isEmpty())
@@ -470,6 +491,11 @@ public class LayerManager {
                 {
                     d.onDraw(this, canvas);
                 }
+            }
+            
+            if (saveCount != null)
+            {
+                canvas.restoreToCount(saveCount);
             }
 
             if (r != null)
@@ -578,5 +604,141 @@ public class LayerManager {
              */
             void onDraw(Layer source, Canvas canvas);
         }
+
+        /******************************* 属性动画 *******************************/
+
+        private TransformationInfo mTransformationInfo;
+
+        public float getTranslationX() {
+            return mTransformationInfo != null ? mTransformationInfo.mTranslationX : 0;
+        }
+
+        public void setTranslationX(float translationX) {
+            ensureTransformationInfo().mTranslationX = translationX;
+        }
+
+        public float getTranslationY() {
+            return mTransformationInfo != null ? mTransformationInfo.mTranslationY : 0;
+        }
+
+        public void setTranslationY(float translationY) {
+            ensureTransformationInfo().mTranslationY = translationY;
+        }
+
+        public float getRotation() {
+            return mTransformationInfo != null ? mTransformationInfo.mRotation : 0;
+        }
+
+        public void setRotation(float rotation) {
+            ensureTransformationInfo().mRotation = rotation;
+        }
+
+        public float getScaleX() {
+            return mTransformationInfo != null ? mTransformationInfo.mScaleX : 1;
+        }
+
+        public void setScaleX(float scaleX) {
+            ensureTransformationInfo().mScaleX = scaleX;
+        }
+
+        public float getScaleY() {
+            return mTransformationInfo != null ? mTransformationInfo.mScaleY : 1;
+        }
+
+        public void setScaleY(float scaleY) {
+            ensureTransformationInfo().mScaleY = scaleY;
+        }
+
+        public float getPivotX() {
+            return mTransformationInfo != null ? mTransformationInfo.mPivotX : 0;
+        }
+
+        public void setPivotX(float pivotX) {
+            ensureTransformationInfo().mPivotX = pivotX;
+        }
+
+        public float getPivotY() {
+            return mTransformationInfo != null ? mTransformationInfo.mPivotY : 0;
+        }
+
+        public void setPivotY(float pivotY) {
+            ensureTransformationInfo().mPivotY = pivotY;
+        }
+
+        public float getAlpha() {
+            return mTransformationInfo != null ? mTransformationInfo.mAlpha : 1;
+        }
+
+        public void setAlpha(float alpha) {
+            ensureTransformationInfo().mAlpha = alpha;
+        }
+
+        private TransformationInfo ensureTransformationInfo() {
+            if (mTransformationInfo == null) mTransformationInfo = new TransformationInfo(this);
+            return mTransformationInfo;
+        }
+    }
+}
+
+class TransformationInfo {
+    
+    private final Layer layer;
+    /**
+     * These prev values are used to recalculate a centered pivot point when necessary. The
+     * pivot point is only used in matrix operations (when rotation, scale, or translation are
+     * set), so thes values are only used then as well.
+     */
+    private int mPrevWidth = -1;
+    private int mPrevHeight = -1;
+    boolean mPivotExplicitlySet;
+    /**
+     * The degrees rotation around the pivot point.
+     */
+    float mRotation = 0f;
+    /**
+     * The amount of translation of the object away from its left property (post-layout).
+     */
+    float mTranslationX = 0f;
+    /**
+     * The amount of translation of the object away from its top property (post-layout).
+     */
+    float mTranslationY = 0f;
+    /**
+     * The amount of scale in the x direction around the pivot point. A
+     * value of 1 means no scaling is applied.
+     */
+    float mScaleX = 1f;
+    /**
+     * The amount of scale in the y direction around the pivot point. A
+     * value of 1 means no scaling is applied.
+     */
+    float mScaleY = 1f;
+    
+    float mPivotX = 0f;
+    float mPivotY = 0f;
+    /**
+     * The opacity of the Layer. This is a value from 0 to 1, where 0 means
+     * completely transparent and 1 means completely opaque.
+     */
+    float mAlpha = 1f;
+    
+    public TransformationInfo(Layer layer) {
+        this.layer = layer;
+    }
+
+    public void transform(Canvas canvas) {
+        // Figure out if we need to update the pivot point
+        if (!mPivotExplicitlySet)
+        {
+            if (layer.width != mPrevWidth || layer.height != mPrevHeight)
+            {
+                mPivotX = layer.x + (mPrevWidth = layer.width) / 2f;
+                mPivotY = layer.y + (mPrevHeight = layer.height) / 2f;
+            }
+        }
+        
+        canvas.translate(mTranslationX, mTranslationY);
+        canvas.rotate(mRotation, mPivotX, mPivotY);
+        canvas.scale(mScaleX, mScaleY, mPivotX, mPivotY);
     }
 }

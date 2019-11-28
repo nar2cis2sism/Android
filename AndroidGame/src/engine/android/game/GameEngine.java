@@ -1,8 +1,8 @@
 package engine.android.game;
 
-import android.os.Handler;
-
 import engine.android.util.extra.SyncLock;
+
+import android.os.Handler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +12,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * 游戏引擎
  * 
  * @author Daimon
- * @version N
  * @since 5/14/2012
  */
 public abstract class GameEngine {
@@ -131,7 +130,10 @@ public abstract class GameEngine {
         }
     }
     
-    public void stopManagingEngine() {
+    /**
+     * 清空关联引擎
+     */
+    public void clearManagingEngine() {
         chirdren.clear();
     }
 

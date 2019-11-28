@@ -6,7 +6,6 @@ import android.util.FloatMath;
  * 游戏路径
  * 
  * @author Daimon
- * @version N
  * @since 7/10/2012
  */
 public class GamePath {
@@ -24,8 +23,6 @@ public class GamePath {
     public GamePath(int num) {
         coordsX = new float[num];
         coordsY = new float[num];
-
-        index = 0;
     }
 
     public GamePath(float[] coordsX, float[] coordsY) {
@@ -117,7 +114,6 @@ public class GamePath {
 
     private void updateLength() {
         float length = 0;
-
         for (int i = 0; i < index - 1; i++)
         {
             length += withNextSegmentLength(i);

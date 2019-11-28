@@ -1,8 +1,8 @@
 package engine.android.game.util;
 
-import android.graphics.Canvas;
-
 import engine.android.game.LayerManager.Layer;
+
+import android.graphics.Canvas;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -13,7 +13,6 @@ import java.util.LinkedList;
  * 地图数据管理器
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2012
  */
 public final class MapDataManager {

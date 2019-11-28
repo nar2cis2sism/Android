@@ -1,18 +1,17 @@
 package engine.android.game.layer;
 
-import static engine.android.util.RectUtil.setRect;
+import static engine.android.util.api.RectUtil.setRect;
+
+import engine.android.game.LayerManager.Layer;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
-import engine.android.game.LayerManager.Layer;
-
 /**
  * 游戏地图（砖块拼接类）
  * 
  * @author Daimon
- * @version N
  * @since 9/11/2012
  */
 public class TiledLayer extends Layer {
@@ -80,7 +79,6 @@ public class TiledLayer extends Layer {
         }
 
         anim_to_static[numOfAnimTiles] = staticTileIndex;
-
         return (-(++numOfAnimTiles - 1));
     }
 

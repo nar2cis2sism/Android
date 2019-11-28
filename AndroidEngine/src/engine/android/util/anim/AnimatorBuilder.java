@@ -9,7 +9,6 @@ import android.animation.PropertyValuesHolder;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.renderscript.Float2;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.OvershootInterpolator;
@@ -28,7 +27,7 @@ public class AnimatorBuilder {
     
     private final LinkedList<PropertyValuesHolder> values = new LinkedList<PropertyValuesHolder>();
     
-    public AnimatorBuilder(View target, long duration) {
+    public AnimatorBuilder(Object target, long duration) {
         anim.setTarget(target);
         anim.setDuration(duration);
     }
@@ -94,8 +93,8 @@ public class AnimatorBuilder {
      * 
      * @param interval 重复抖动间隔时间，0为只抖动一次
      */
-    public static ObjectAnimator shake(final View target, final long interval) {
-        ObjectAnimator anim = new AnimatorBuilder(target, 100)
+    public static ObjectAnimator shake(final Object target, final long interval) {
+        final ObjectAnimator anim = new AnimatorBuilder(target, 100)
         .rotate(12, -24)
         .build();
         anim.setRepeatMode(Animation.REVERSE);
@@ -103,7 +102,7 @@ public class AnimatorBuilder {
         anim.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                target.setRotation(0);
+                anim.setCurrentPlayTime(250);
                 if (interval > 0)
                 {
                     animation.setStartDelay(interval);
@@ -117,7 +116,7 @@ public class AnimatorBuilder {
     /**
      * 弹出动效
      */
-    public static ObjectAnimator popup(View target) {
+    public static ObjectAnimator popup(Object target) {
         ObjectAnimator anim = new AnimatorBuilder(target, 400)
         .scale(0, 1)
         .build();

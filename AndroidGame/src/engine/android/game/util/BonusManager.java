@@ -2,18 +2,15 @@ package engine.android.game.util;
 
 import engine.android.game.Box;
 
-import java.util.List;
-
 /**
  * Bonus管理器
  * 
  * @author Daimon
- * @version N
  * @since 6/6/2012
  */
-public final class BonusManager {
+public class BonusManager {
 
-    private final List<Bonus> bonus = new Box<Bonus>();     // 奖励物品清单
+    private final Box<Bonus> bonus = new Box<Bonus>();     // 奖励物品清单
 
     /**
      * 添加Bonus

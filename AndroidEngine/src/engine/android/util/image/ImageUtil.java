@@ -31,6 +31,7 @@ import android.widget.ImageView.ScaleType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileDescriptor;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Random;
@@ -1019,13 +1020,15 @@ public final class ImageUtil {
         /**
          * @see #decodeFile(String, int, int, boolean, boolean)
          */
-        public static Bitmap decodeStream(InputStream is, int width, int height, boolean fitXY) {
+        public static Bitmap decodeStream(InputStream is, int width, int height, boolean fitXY)
+                throws IOException {
             BitmapFactory.Options opts = new BitmapFactory.Options();
             opts.inPurgeable = true;
             opts.inInputShareable = true;
             opts.inJustDecodeBounds = true;              // 设置为true表示我们只读取Bitmap的宽高等信息，不读取像素
 
             BitmapFactory.decodeStream(is, null, opts);  // 获取尺寸信息
+            is.reset();
 
             opts.inSampleSize = calculateInSampleSize(opts, width, height);
 

@@ -1,6 +1,6 @@
 package engine.android.game.layer;
 
-import static engine.android.util.RectUtil.setRect;
+import static engine.android.util.api.RectUtil.setRect;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -10,7 +10,6 @@ import android.graphics.Rect;
  * 游戏精灵（逐帧动画）
  * 
  * @author Daimon
- * @version N
  * @since 7/9/2012
  */
 public class FrameSprite extends Sprite {
@@ -55,7 +54,6 @@ public class FrameSprite extends Sprite {
         int numVerticalFrames = imageH / fHeight;
 
         this.image = image;
-
         srcFrameWidth = fWidth;
         srcFrameHeight = fHeight;
 
@@ -75,7 +73,6 @@ public class FrameSprite extends Sprite {
         }
 
         int currentFrame = 0;
-
         for (int y = 0; y < imageH; y += fHeight)
         {
             for (int x = 0; x < imageW; x += fWidth)

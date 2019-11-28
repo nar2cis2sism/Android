@@ -1,16 +1,15 @@
 package engine.android.game.util;
 
-import android.util.SparseArray;
-
 import engine.android.game.GameCanvas.GameResource;
 import engine.android.game.GameEngine;
 import engine.android.game.layer.TiledLayer;
+
+import android.util.SparseArray;
 
 /**
  * 游戏地图动画
  * 
  * @author Daimon
- * @version N
  * @since 9/11/2012
  */
 public class TiledLayerAnimation extends GameEngine {

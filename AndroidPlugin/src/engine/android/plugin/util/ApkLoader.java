@@ -1,5 +1,7 @@
 ﻿package engine.android.plugin.util;
 
+import engine.android.util.extra.ReflectObject;
+
 import android.app.ActivityThread;
 import android.content.res.AssetManager;
 import android.content.res.CompatibilityInfo;
@@ -10,8 +12,6 @@ import android.text.TextUtils;
 
 import dalvik.system.DexClassLoader;
 import dalvik.system.DexFile;
-
-import engine.android.util.extra.ReflectObject;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -109,7 +109,7 @@ public class ApkLoader {
         }
     }
     
-    public Resources getResources() throws Exception {
+    public Resources getResources() {
         if (resources != null)
         {
             return resources;
@@ -118,8 +118,7 @@ public class ApkLoader {
         Resources res = ActivityThread.currentApplication().getResources();
         AssetManager am = new AssetManager();
         am.addAssetPath(apkPath);
-        return resources = new Resources(am, res.getDisplayMetrics(), 
-                res.getConfiguration(), res.getCompatibilityInfo(), null);
+        return resources = new Resources(am, res.getDisplayMetrics(), res.getConfiguration());
     }
     
     public DexFile getDexFile() throws Exception {

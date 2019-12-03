@@ -57,6 +57,11 @@
             android:screenOrientation="portrait"
             android:launchMode="singleTask" />
         
+        <!-- 插件代理 -->
+        <activity android:name="engine.android.plugin.proxy.component.PluginActivity" />
+        <service  android:name="engine.android.plugin.proxy.component.PluginService" />
+        <!-- ********************************************************************* -->
+        
         <!-- App后台服务 -->
         <service android:name="com.project.app.service.AppService" />
         <!-- ********************************************************************* -->

@@ -4,6 +4,7 @@ import engine.android.core.ApplicationManager;
 import engine.android.core.Injector;
 import engine.android.core.util.LogFactory;
 import engine.android.framework.app.AppGlobal;
+import engine.android.plugin.Plugin;
 import engine.android.util.AndroidUtil;
 import engine.android.util.extra.ReflectObject;
 import engine.android.util.manager.MySensorManager;
@@ -57,6 +58,8 @@ public class MyApp extends ApplicationManager {
         }
         // 开启日志
         LogFactory.enableLOG(true);
+        // 插件
+        Plugin.init();
     }
     
     private static void setupStrictMode() {

@@ -234,6 +234,26 @@ public final class AndroidUtil {
         intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
         context.startActivity(intent);
     }
+    
+    /**
+     * 卸载应用程序
+     */
+    public static void uninstallApp(Context context, String packageName) {
+        Intent intent = new Intent(Intent.ACTION_DELETE);
+        intent.setData(Uri.fromParts("package", packageName, null));
+        context.startActivity(intent);
+    }
+    
+    /**
+     * 判断应用程序是否已安装
+     */
+    public static boolean isAppInstalled(Context context, String packageName) {
+        try {
+            return context.getPackageManager().getPackageInfo(packageName, 0) != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     /**
      * 根据包名启动已安装APK

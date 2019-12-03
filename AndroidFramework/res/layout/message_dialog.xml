@@ -10,7 +10,8 @@
         android:layout_height="80dp"
         android:gravity="center"
         android:textStyle="bold"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/textColorPrimary" />
 
     <View
         android:layout_width="match_parent"

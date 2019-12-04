@@ -84,6 +84,12 @@ public class BesideFragment extends BaseFragment implements OnLongClickListener 
         return true;
     }
 
+    @OnClick(R.id.effect)
+    void effect() {
+        Plugin.loadPluginFromAssets("project/AndroidDemo.apk", true);
+        startActivity(new Intent().setClassName("demo.android", "demo.activity.MainActivity"));
+    }
+    
     @OnClick(R.id.test)
     void test() {
         try {

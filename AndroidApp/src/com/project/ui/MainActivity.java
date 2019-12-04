@@ -21,6 +21,7 @@ import android.widget.TabHost.TabContentFactory;
 import android.widget.TabHost.TabSpec;
 
 import com.daimon.yueba.R;
+import com.project.app.MyApp;
 import com.project.app.MySession;
 import com.project.ui.beside.BesideFragment;
 import com.project.ui.friend.FriendListFragment;
@@ -184,6 +185,20 @@ public class MainActivity extends BaseActivity {
         if (info != null)
         {
             AppUtil.upgradeApp(this, info, false);
+        }
+    }
+
+    private long backPressedTime;
+    @Override
+    public void onBackPressed() {
+        if (System.currentTimeMillis() - backPressedTime > 2000)
+        {
+            MyApp.showMessage("再按一次退出程序");
+            backPressedTime = System.currentTimeMillis();
+        }
+        else
+        {
+            super.onBackPressed();
         }
     }
     

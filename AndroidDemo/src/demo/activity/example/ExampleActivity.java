@@ -56,7 +56,7 @@ public class ExampleActivity extends Activity {
 				switch (position) {
 				case 0:
 					//登录界面
-					startActivity(new Intent(ExampleActivity.this, LoginActivity.class));
+//					startActivity(new Intent(ExampleActivity.this, LoginActivity.class));
 					break;
 				case 1:
 					//会话界面
@@ -72,7 +72,7 @@ public class ExampleActivity extends Activity {
 					break;
 				case 4:
 					//闪烁心形绘制
-					startActivity(new Intent(ExampleActivity.this, HeartActivity.class));
+//					startActivity(new Intent(ExampleActivity.this, HeartActivity.class));
 					break;
 				case 5:
 					//Http联网界面
@@ -88,11 +88,11 @@ public class ExampleActivity extends Activity {
 					break;
 				case 8:
 					//J2EE测试界面
-					startActivity(new Intent(ExampleActivity.this, J2EETestActivity.class));
+//					startActivity(new Intent(ExampleActivity.this, J2EETestActivity.class));
 					break;
 				case 9:
 					//多线程断点续传界面
-					startActivity(new Intent(ExampleActivity.this, DownloadActivity.class));
+//					startActivity(new Intent(ExampleActivity.this, DownloadActivity.class));
 					break;
 				case 10:
 					//自定义二级列表界面
@@ -112,7 +112,7 @@ public class ExampleActivity extends Activity {
                     break;
                 case 14:
                     //文件浏览器
-                    startActivity(new Intent(ExampleActivity.this, FileBrowser.class));
+//                    startActivity(new Intent(ExampleActivity.this, FileBrowser.class));
                     break;
                 case 15:
                     //线性图
@@ -124,7 +124,7 @@ public class ExampleActivity extends Activity {
                     break;
                 case 17:
                     //计算器
-                    startActivity(new Intent(ExampleActivity.this, CalculatorActivity.class));
+//                    startActivity(new Intent(ExampleActivity.this, CalculatorActivity.class));
                     break;
                 case 18:
                     //柱状图
@@ -140,7 +140,7 @@ public class ExampleActivity extends Activity {
                     break;
                 case 21:
                     //注册界面
-                    startActivity(new Intent(ExampleActivity.this, RegisterActivity.class));
+//                    startActivity(new Intent(ExampleActivity.this, RegisterActivity.class));
                     break;
                 case 22:
                     //开源库

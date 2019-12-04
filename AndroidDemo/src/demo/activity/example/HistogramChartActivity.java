@@ -8,13 +8,14 @@ import android.widget.LinearLayout;
 import demo.android.R;
 import demo.widget.HistogramChartView;
 import engine.android.util.AndroidUtil;
+import engine.android.util.os.WindowUtil;
 
 public class HistogramChartActivity extends Activity {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AndroidUtil.setFullScreenMode(this, true);
+        WindowUtil.setFullScreenMode(getWindow(), true);
         setContentView(R.layout.histogram_chart);
         
         LinearLayout layout = (LinearLayout) findViewById(R.id.histogram_container);

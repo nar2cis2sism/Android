@@ -32,9 +32,9 @@ import demo.provider.MyContentProvider.Contacts;
 import demo.provider.MyContentProvider.Groups;
 import engine.android.core.ApplicationManager;
 import engine.android.core.util.CalendarFormat;
-import engine.android.util.MyValidator;
 import engine.android.util.image.ImageUtil;
 import engine.android.util.manager.SDCardManager;
+import engine.android.util.ui.MyValidator;
 
 import java.io.File;
 import java.util.ArrayList;

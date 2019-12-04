@@ -44,7 +44,7 @@ public class NotificationActivity extends Activity {
         PendingIntent pi = PendingIntent.getActivity(
         		this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         
-        n.setLatestEventInfo(this, "标题", "内容", pi);
+//        n.setLatestEventInfo(this, "标题", "内容", pi);
         nm.notify(0, n);
         //振动2秒
         v.vibrate(2000);

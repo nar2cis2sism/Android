@@ -20,11 +20,11 @@ public class ProxyApplication extends Application {
     
     @Override
     public Resources getResources() {
-        try {
-            return AndroidUtil.getUninstalledAPKResources(this, apkLoader.getDexPath());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            return AndroidUtil.getUninstalledAPKResources(this, apkLoader.getDexPath());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     
         return super.getResources();
     }

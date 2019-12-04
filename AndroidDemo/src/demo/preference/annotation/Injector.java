@@ -3,7 +3,6 @@ package demo.preference.annotation;
 import android.text.TextUtils;
 
 import demo.preference.PreferenceHelper;
-import engine.android.core.annotation.Injector.InjectException;
 
 import java.lang.reflect.Field;
 
@@ -36,7 +35,7 @@ public class Injector {
                 }
             }
         } catch (Exception e) {
-            throw new InjectException(e);
+//            throw new InjectException(e);
         }
     }
 }

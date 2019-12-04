@@ -2,8 +2,7 @@ package demo.oauth;
 
 import android.net.Uri;
 import android.text.TextUtils;
-
-import engine.android.util.secure.Base64;
+import android.util.Base64;
 
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
@@ -57,7 +56,7 @@ public class OAuth {
         SecretKeySpec sks = new SecretKeySpec(key.getBytes(ENCODING), HMACSHA1SignatureType);
         Mac mac = Mac.getInstance(HMACSHA1SignatureType);
         mac.init(sks);
-        return new String(Base64.encode(mac.doFinal(generateSignatureBase(url, method, params).getBytes(ENCODING))), ENCODING);
+        return new String(Base64.encode(mac.doFinal(generateSignatureBase(url, method, params).getBytes(ENCODING)), Base64.DEFAULT), ENCODING);
 	}
 	
 	private static String generateSignatureBase(String url, String method, List<BasicNameValuePair> params)

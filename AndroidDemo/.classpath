@@ -9,7 +9,7 @@
 	<classpathentry exported="true" kind="lib" path="libs/ZXing-2.1/android-integration/android-integration.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/工具库/commons-lang-2.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/汉语拼音/pinyin4j-2.5.0.jar"/>
-	<classpathentry kind="lib" path="D:/Work/Java/Android/eclipse/plugins/org.apache.ant_1.8.3.v201301120609/lib/ant.jar"/>
+	<classpathentry kind="lib" path="F:/软件/工作软件/开发工具/Java/android/eclipse/adt-bundle-windows-x86_64-20140702/eclipse/plugins/org.apache.ant_1.8.3.v201301120609/lib/ant.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/ZXing-2.1/core.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/SQLCipher/SQLCipher for Android v2.2.2.zip"/>
 	<classpathentry exported="true" kind="lib" path="libs/文件上传/httpmime-4.1.2.jar"/>

@@ -1,6 +1,6 @@
 package demo.wheel;
 
-import engine.android.util.StringUtil;
+import engine.android.util.api.StringUtil;
 
 /**
  * Numeric wheel adapter

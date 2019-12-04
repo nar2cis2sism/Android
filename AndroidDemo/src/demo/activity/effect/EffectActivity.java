@@ -14,7 +14,7 @@ import android.widget.ListView;
 import demo.android.R;
 import demo.lockscreen.LockActivity;
 import engine.android.core.ApplicationManager;
-import engine.android.util.ui.TVAnimation;
+import engine.android.util.anim.TVAnimation;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -73,7 +73,7 @@ public class EffectActivity extends Activity {
                     break;
                 case 3:
                     // 拍照
-                    startActivity(new Intent(EffectActivity.this, TakePhotoActivity.class));
+//                    startActivity(new Intent(EffectActivity.this, TakePhotoActivity.class));
                     break;
                 case 4:
 					// 360度平滑摇杆（触屏方向导航）
@@ -81,7 +81,7 @@ public class EffectActivity extends Activity {
 					break;
                 case 5:
 					// 水波纹效果
-					startActivity(new Intent(EffectActivity.this, WaterActivity.class));
+//					startActivity(new Intent(EffectActivity.this, WaterActivity.class));
 					break;
                 case 6:
 					// 界面滑动
@@ -109,7 +109,7 @@ public class EffectActivity extends Activity {
 					break;
                 case 12:
 					// 转盘
-					startActivity(new Intent(EffectActivity.this, WheelActivity.class));
+//					startActivity(new Intent(EffectActivity.this, WheelActivity.class));
 					break;
                 case 13:
 					// 滑动锁屏
@@ -117,7 +117,7 @@ public class EffectActivity extends Activity {
 					break;
                 case 14:
 					// 瀑布流图片
-					startActivity(new Intent(EffectActivity.this, PhotoFlowActivity.class));
+//					startActivity(new Intent(EffectActivity.this, PhotoFlowActivity.class));
 					break;
                 case 15:
                     // 密码锁
@@ -158,7 +158,7 @@ public class EffectActivity extends Activity {
                         
                         @Override
                         public void onAnimationEnd(Animation animation) {
-                            ApplicationManager.getHandler().postDelayed(new Runnable() {
+                            getWindow().getDecorView().postDelayed(new Runnable() {
                                 
                                 @Override
                                 public void run() {

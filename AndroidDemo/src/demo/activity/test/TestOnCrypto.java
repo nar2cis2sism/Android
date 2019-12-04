@@ -8,11 +8,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import demo.android.R;
-import engine.android.util.secure.Base64;
 import engine.android.util.secure.Blowfish;
 import engine.android.util.secure.CryptoUtil;
 import engine.android.util.secure.HexUtil;
-import engine.android.util.secure.MD5;
 import engine.android.util.secure.Obfuscate;
 import engine.android.util.secure.RSA;
 import engine.android.util.secure.ZipUtil;
@@ -87,24 +85,24 @@ public class TestOnCrypto extends TestOnBase {
                         
                     case 1:
                     {
-                        MD5 md5 = new MD5();
-                        
-                        long time = System.nanoTime();
-                        String encrypt_result = md5.encrypt(crypto_bytes, 0, crypto_bytes.length);
-                        long time1 = System.nanoTime();
-                        String encrypt_result2 = HexUtil.encode(CryptoUtil.md5(crypto_bytes));
-                        long time2 = System.nanoTime();
-                        String encrypt_result3 = HexUtil.encode(CryptoUtil.SHA1(crypto_bytes));
-                        long time3 = System.nanoTime();
-                        
-                        log("原文：" + crypto_string);
-                        log("加密：" + encrypt_result);
-                        log("用时：" + (time1 - time));
-                        log("MD5官方加密：" + encrypt_result2);//更快
-                        log("用时：" + (time2 - time1));
-                        log("SHA1加密：" + encrypt_result3);//最快
-                        log("用时：" + (time3 - time2));
-                        log("解密：" + "不可逆转");
+//                        MD5 md5 = new MD5();
+//                        
+//                        long time = System.nanoTime();
+//                        String encrypt_result = md5.encrypt(crypto_bytes, 0, crypto_bytes.length);
+//                        long time1 = System.nanoTime();
+//                        String encrypt_result2 = HexUtil.encode(CryptoUtil.md5(crypto_bytes));
+//                        long time2 = System.nanoTime();
+//                        String encrypt_result3 = HexUtil.encode(CryptoUtil.SHA1(crypto_bytes));
+//                        long time3 = System.nanoTime();
+//                        
+//                        log("原文：" + crypto_string);
+//                        log("加密：" + encrypt_result);
+//                        log("用时：" + (time1 - time));
+//                        log("MD5官方加密：" + encrypt_result2);//更快
+//                        log("用时：" + (time2 - time1));
+//                        log("SHA1加密：" + encrypt_result3);//最快
+//                        log("用时：" + (time3 - time2));
+//                        log("解密：" + "不可逆转");
                         
                         break;
                     }
@@ -183,36 +181,36 @@ public class TestOnCrypto extends TestOnBase {
                     
                     case 5:
                     {
-                        long time = System.nanoTime();
-                        String encrypt_result;
-                        long time1;
-                        String decrypt_result;
-                        long time2;
-                        try {
-                            encrypt_result = Base64.encode(crypto_string);
-                            time1 = System.nanoTime();
-                            decrypt_result = Base64.decode(encrypt_result);
-                            time2 = System.nanoTime();
-                            
-                            log("原文：" + crypto_string);
-                            log("编码         ：" + encrypt_result);
-                            log("用时：" + (time1 - time));
-                            log("解码：" + decrypt_result);
-                            log("用时：" + (time2 - time1));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        
-                        time = System.nanoTime();
-                        encrypt_result = android.util.Base64.encodeToString(crypto_bytes, android.util.Base64.DEFAULT);
-                        time1 = System.nanoTime();
-                        decrypt_result = new String(android.util.Base64.decode(encrypt_result, android.util.Base64.DEFAULT));
-                        time2 = System.nanoTime();
-
-                        log("官方编码：" + encrypt_result);
-                        log("用时：" + (time1 - time));
-                        log("解码：" + decrypt_result);
-                        log("用时：" + (time2 - time1));
+//                        long time = System.nanoTime();
+//                        String encrypt_result;
+//                        long time1;
+//                        String decrypt_result;
+//                        long time2;
+//                        try {
+//                            encrypt_result = Base64.encode(crypto_string);
+//                            time1 = System.nanoTime();
+//                            decrypt_result = Base64.decode(encrypt_result);
+//                            time2 = System.nanoTime();
+//                            
+//                            log("原文：" + crypto_string);
+//                            log("编码         ：" + encrypt_result);
+//                            log("用时：" + (time1 - time));
+//                            log("解码：" + decrypt_result);
+//                            log("用时：" + (time2 - time1));
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                        
+//                        time = System.nanoTime();
+//                        encrypt_result = android.util.Base64.encodeToString(crypto_bytes, android.util.Base64.DEFAULT);
+//                        time1 = System.nanoTime();
+//                        decrypt_result = new String(android.util.Base64.decode(encrypt_result, android.util.Base64.DEFAULT));
+//                        time2 = System.nanoTime();
+//
+//                        log("官方编码：" + encrypt_result);
+//                        log("用时：" + (time1 - time));
+//                        log("解码：" + decrypt_result);
+//                        log("用时：" + (time2 - time1));
                         
                         break;
                     }

@@ -687,37 +687,37 @@ public class IntentActivity extends Activity implements OnInitListener, HomeList
         }
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        ApplicationManager.getHandler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                // 三种获取屏幕尺寸的方法，结果都一样
-                Display dis = getWindowManager().getDefaultDisplay();
-                int width = dis.getWidth();
-                int height = dis.getHeight();
-                System.out.println("宽高比：" + width + ":" + height);
-
-                {
-                    DisplayMetrics dm = getResources().getDisplayMetrics();// 此方法在1.5上得到的density不正确，需用下面的方式
-                    System.out.println("宽高比：" + dm.widthPixels + ":" + dm.heightPixels);
-                }
-
-                DisplayMetrics dm = AndroidUtil.getResolution(IntentActivity.this);
-                System.out.println("宽高比：" + dm.widthPixels + ":" + dm.heightPixels);
-
-                boolean orientation = AndroidUtil.isLandscape(IntentActivity.this);
-                System.out.println("屏幕方向：" + orientation == null ? "不知道" : orientation ? "横屏"
-                        : "竖屏");
-                System.out.println("状态栏高度：" + AndroidUtil.getStatusBarHeight(IntentActivity.this));
-                System.out.println("标题栏高度：" + AndroidUtil.getTitleBarHeight(IntentActivity.this));
-                System.out.println("操作栏高度：" + AndroidUtil.getActionBarHeight(IntentActivity.this));
-            }
-        }, 100);
-    }
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//
+//        ApplicationManager.getHandler().postDelayed(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                // 三种获取屏幕尺寸的方法，结果都一样
+//                Display dis = getWindowManager().getDefaultDisplay();
+//                int width = dis.getWidth();
+//                int height = dis.getHeight();
+//                System.out.println("宽高比：" + width + ":" + height);
+//
+//                {
+//                    DisplayMetrics dm = getResources().getDisplayMetrics();// 此方法在1.5上得到的density不正确，需用下面的方式
+//                    System.out.println("宽高比：" + dm.widthPixels + ":" + dm.heightPixels);
+//                }
+//
+//                DisplayMetrics dm = AndroidUtil.getResolution(IntentActivity.this);
+//                System.out.println("宽高比：" + dm.widthPixels + ":" + dm.heightPixels);
+//
+//                boolean orientation = AndroidUtil.isLandscape(IntentActivity.this);
+//                System.out.println("屏幕方向：" + orientation == null ? "不知道" : orientation ? "横屏"
+//                        : "竖屏");
+//                System.out.println("状态栏高度：" + AndroidUtil.getStatusBarHeight(IntentActivity.this));
+//                System.out.println("标题栏高度：" + AndroidUtil.getTitleBarHeight(IntentActivity.this));
+//                System.out.println("操作栏高度：" + AndroidUtil.getActionBarHeight(IntentActivity.this));
+//            }
+//        }, 100);
+//    }
 
     @Override
     public void finish() {
@@ -759,34 +759,34 @@ public class IntentActivity extends Activity implements OnInitListener, HomeList
     public void lockScreen()
     {
         try {
-            IDevicePolicyManager iDevicePolicyManager = IDevicePolicyManager.Stub.asInterface(
-                    AndroidUtil.getServiceIBinder(Context.DEVICE_POLICY_SERVICE));
-
-            // 定义组件的名称
-            ComponentName mAdminName = new ComponentName(this, MyAdmin.class);
-            // 注册权限
-            if (iDevicePolicyManager != null)
-            {
-                boolean isAdminActive = false;
-                try
-                {
-                    // 判断自定义的广播接收器是不是被注册成deviceadmin的权限
-                    isAdminActive = iDevicePolicyManager.isAdminActive(mAdminName);
-                } catch (Throwable e)
-                {
-                    e.printStackTrace();
-                }
-
-                if (!isAdminActive)
-                {
-                    Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-                    intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, mAdminName);
-                    startActivity(intent);
-                }
-
-                // 调用服务实现锁屏
-                iDevicePolicyManager.lockNow();
-            }
+//            IDevicePolicyManager iDevicePolicyManager = IDevicePolicyManager.Stub.asInterface(
+//                    AndroidUtil.getServiceIBinder(Context.DEVICE_POLICY_SERVICE));
+//
+//            // 定义组件的名称
+//            ComponentName mAdminName = new ComponentName(this, MyAdmin.class);
+//            // 注册权限
+//            if (iDevicePolicyManager != null)
+//            {
+//                boolean isAdminActive = false;
+//                try
+//                {
+//                    // 判断自定义的广播接收器是不是被注册成deviceadmin的权限
+//                    isAdminActive = iDevicePolicyManager.isAdminActive(mAdminName);
+//                } catch (Throwable e)
+//                {
+//                    e.printStackTrace();
+//                }
+//
+//                if (!isAdminActive)
+//                {
+//                    Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+//                    intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, mAdminName);
+//                    startActivity(intent);
+//                }
+//
+//                // 调用服务实现锁屏
+//                iDevicePolicyManager.lockNow();
+//            }
         } catch (Throwable e) {
             e.printStackTrace();
         }

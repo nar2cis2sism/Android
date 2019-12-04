@@ -15,6 +15,7 @@ import demo.android.R;
 import engine.android.util.AndroidUtil;
 import engine.android.util.image.ImageUtil;
 import engine.android.util.image.ImageUtil.ImageDecoder;
+import engine.android.util.os.WindowUtil;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -73,7 +74,7 @@ public class BitmapActivity extends Activity {
             resourceId = R.drawable.img0200;
         }
         
-        DisplayMetrics dm = AndroidUtil.getResolution(this);
+        DisplayMetrics dm = WindowUtil.getResolution(this);
         int width = dm.widthPixels * 3 / 4;
         int height = width * 2 / 3;
         

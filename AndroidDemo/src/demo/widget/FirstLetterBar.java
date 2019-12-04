@@ -1,5 +1,7 @@
 package demo.widget;
 
+import engine.android.util.ui.UIUtil;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -20,7 +22,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import demo.android.R;
-import engine.android.util.UIUtil;
 
 /**
  * @author Daimon

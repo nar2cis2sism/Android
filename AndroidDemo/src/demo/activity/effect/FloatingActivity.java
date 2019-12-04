@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import demo.android.R;
 import engine.android.util.AndroidUtil;
+import engine.android.util.os.WindowUtil;
 
 public class FloatingActivity extends Activity {
 	
@@ -82,7 +83,7 @@ public class FloatingActivity extends Activity {
 				wl.x = (int) (event.getRawX() - x);
 				//除去状态栏的高度
 				wl.y = (int) (event.getRawY() - y - (statusBarHeight == -1 ? 
-						statusBarHeight = AndroidUtil.getStatusBarHeight(FloatingActivity.this) : statusBarHeight));
+						statusBarHeight = WindowUtil.getStatusBarHeight(getWindow()) : statusBarHeight));
 				//更新浮动窗口位置参数
 				wm.updateViewLayout(this, wl);
 				break;

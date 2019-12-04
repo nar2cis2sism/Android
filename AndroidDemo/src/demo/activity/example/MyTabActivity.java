@@ -42,7 +42,7 @@ public class MyTabActivity extends ActivityGroup {
 				case R.id.tab_1:
 					//首页
 					frame.removeAllViews();
-					frame.addView(lam.startActivity("tab_1", new Intent(MyTabActivity.this, LoginActivity.class)).getDecorView());
+//					frame.addView(lam.startActivity("tab_1", new Intent(MyTabActivity.this, LoginActivity.class)).getDecorView());
 					break;
 				case R.id.tab_2:
 					//信息

@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import engine.android.util.AndroidUtil;
 import engine.android.util.Util;
+import engine.android.util.os.WindowUtil;
 
 public class BatteryActivity extends Activity {
     
@@ -152,7 +153,7 @@ public class BatteryActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        AndroidUtil.setFullScreenMode(this, true);
+        WindowUtil.setFullScreenMode(getWindow(), true);
         
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);

@@ -4,9 +4,9 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import engine.android.util.AndroidUtil;
-import engine.android.util.ShellUtil;
-import engine.android.util.ShellUtil.CommandResult;
 import engine.android.util.Util;
+import engine.android.util.os.ShellUtil;
+import engine.android.util.os.ShellUtil.CommandResult;
 
 import java.io.File;
 

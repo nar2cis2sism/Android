@@ -1,5 +1,6 @@
 package demo.activity;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
@@ -35,7 +36,7 @@ import java.util.List;
  * Daimon:**
  */
 
-public class MainActivity extends Forelet {
+public class MainActivity extends Activity {
     
     private boolean isUserInteraction = true;
     private boolean isUserBackKey;
@@ -104,11 +105,11 @@ public class MainActivity extends Forelet {
 					break;
                 case 1:
 					// 定位
-					startActivity(new Intent(MainActivity.this, LocationActivity.class));
+//					startActivity(new Intent(MainActivity.this, LocationActivity.class));
 					break;
                 case 2:
 					// 地图
-					startActivity(new Intent(MainActivity.this, MyMapActivity.class));
+//					startActivity(new Intent(MainActivity.this, MyMapActivity.class));
 					break;
                 case 3:
 					// 控件
@@ -156,7 +157,7 @@ public class MainActivity extends Forelet {
                     break;
                 case 14:
                     // 吹一吹，摇一摇
-                    startActivity(new Intent(MainActivity.this, SensorActivity.class));
+//                    startActivity(new Intent(MainActivity.this, SensorActivity.class));
                     break;
                 case 15:
                     // 图形
@@ -184,7 +185,7 @@ public class MainActivity extends Forelet {
                     break;
                 case 21:
                     // 程序卸载问卷调查
-                    startActivity(new Intent(MainActivity.this, UninstallActivity.class));
+//                    startActivity(new Intent(MainActivity.this, UninstallActivity.class));
                     break;
                 case 22:
                     // 运行第三方程序

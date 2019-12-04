@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.ota.PatchUtil;
 
 import engine.android.core.ApplicationManager;
+import engine.android.core.util.LogFactory.LogUtil;
 import engine.android.util.file.FileManager;
 import engine.android.util.io.IOUtil;
 import engine.android.util.manager.SDCardManager;
@@ -53,7 +54,7 @@ public class AppUpgradeActivity extends Activity {
             FileManager.writeFile(patch, IOUtil.readStream(getAssets().open("ota/" + patch.getName())), false);
         } catch (IOException e) {
             e.printStackTrace();
-            tv.setText(ApplicationManager.getExceptionInfo(e));
+            tv.setText(LogUtil.getExceptionInfo(e));
             return;
         }
         
@@ -78,7 +79,7 @@ public class AppUpgradeActivity extends Activity {
                 } catch (IOException e) {
                     e.printStackTrace();
                     tv.append("\n");
-                    tv.append(ApplicationManager.getExceptionInfo(e));
+                    tv.append(LogUtil.getExceptionInfo(e));
                     return;
                 }
                 

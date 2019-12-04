@@ -13,7 +13,6 @@ import demo.android.util.SystemUtil;
 
 import engine.android.util.AndroidUtil;
 import engine.android.util.Util;
-import engine.android.util.Util.IntegerSwapper;
 import engine.android.util.manager.MyTelephonyDevice;
 import engine.android.util.manager.MyWifiManager;
 import engine.android.util.manager.SDCardManager;
@@ -71,11 +70,11 @@ public class TestOnHardWare extends TestOnBase {
         
         log("");
 
-        DisplayMetrics dm = AndroidUtil.getResolution(this);
-        IntegerSwapper swap = Util.swapWidthAndHeight(dm.widthPixels, dm.heightPixels);
-        log("屏幕分辨率：" + swap.min + "*" + swap.max + "(" 
-        + categoryBySize() + "|" + categoryByLong() + "|" + categoryByDensity(dm.density) + ")");
-        log("像素密度：" + dm.densityDpi + " PPI");
+//        DisplayMetrics dm = AndroidUtil.getResolution(this);
+//        IntegerSwapper swap = Util.swapWidthAndHeight(dm.widthPixels, dm.heightPixels);
+//        log("屏幕分辨率：" + swap.min + "*" + swap.max + "(" 
+//        + categoryBySize() + "|" + categoryByLong() + "|" + categoryByDensity(dm.density) + ")");
+//        log("像素密度：" + dm.densityDpi + " PPI");
         log("物理尺寸：" + AndroidUtil.getScreenSize(this) + "英寸");
         log("是否平板：" + SystemUtil.isTablet(this));
         log("");

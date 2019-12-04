@@ -67,7 +67,8 @@ public class OAuthProvider {
 
 	protected String sendRequest(String endpointUrl) throws Exception
     {
-    	return EntityUtils.toString(new HttpConnector(endpointUrl).connect(), OAuth.ENCODING);
+//    	return EntityUtils.toString(new HttpConnector(endpointUrl).connect(), OAuth.ENCODING);
+	    return null;
     }
 
     public String getRequestTokenEndpointUrl()

@@ -96,22 +96,22 @@ public class ViewActivity extends Activity {
             {
                 final Locale locale = getResources().getConfiguration().locale;
                 
-                Session session = ApplicationManager.getSession();
-                if (!session.hasAttribute("Locale"))
-                {
-                    session.setAttribute("Locale", locale);
-                }
-                
-                if (locale.equals(Locale.US))
-                {
-                    SystemUtil.changeLocale(Locale.CHINA);
-                    System.out.println(locale.getDisplayName(locale) + "->" + Locale.CHINA.getDisplayName(Locale.CHINA));
-                }
-                else
-                {
-                    SystemUtil.changeLocale(Locale.US);
-                    System.out.println(locale.getDisplayName(locale) + "->" + Locale.US.getDisplayName(Locale.US));
-                }
+//                Session session = ApplicationManager.getSession();
+//                if (!session.hasAttribute("Locale"))
+//                {
+//                    session.setAttribute("Locale", locale);
+//                }
+//                
+//                if (locale.equals(Locale.US))
+//                {
+//                    SystemUtil.changeLocale(Locale.CHINA);
+//                    System.out.println(locale.getDisplayName(locale) + "->" + Locale.CHINA.getDisplayName(Locale.CHINA));
+//                }
+//                else
+//                {
+//                    SystemUtil.changeLocale(Locale.US);
+//                    System.out.println(locale.getDisplayName(locale) + "->" + Locale.US.getDisplayName(Locale.US));
+//                }
             }
         });
         addView(btn);
@@ -119,15 +119,15 @@ public class ViewActivity extends Activity {
 		final ImageView iv = new ImageView(this);
         iv.setImageResource(R.drawable.level_list);
         addView(iv);
-		final Handler handler = ApplicationManager.getHandler();
-		handler.post(new Runnable() {
-			
-			@Override
-			public void run() {
-				iv.setImageLevel(level++ % 20);
-				handler.postDelayed(this, 100);
-			}
-		});
+//		final Handler handler = ApplicationManager.getHandler();
+//		handler.post(new Runnable() {
+//			
+//			@Override
+//			public void run() {
+//				iv.setImageLevel(level++ % 20);
+//				handler.postDelayed(this, 100);
+//			}
+//		});
 	}
 	
 	private void addView(View view)
@@ -138,15 +138,15 @@ public class ViewActivity extends Activity {
 	@Override
 	public void onBackPressed()
 	{
-	    final Locale locale = (Locale) ApplicationManager.getSession().getAttribute("Locale");
-	    if (locale == null || locale.equals(getResources().getConfiguration().locale))
-	    {
-	        super.onBackPressed();
-	    }
-	    else
-	    {
-	        SystemUtil.changeLocale(locale);
-	    }
+//	    final Locale locale = (Locale) ApplicationManager.getSession().getAttribute("Locale");
+//	    if (locale == null || locale.equals(getResources().getConfiguration().locale))
+//	    {
+//	        super.onBackPressed();
+//	    }
+//	    else
+//	    {
+//	        SystemUtil.changeLocale(locale);
+//	    }
 	}
 	
 	/**

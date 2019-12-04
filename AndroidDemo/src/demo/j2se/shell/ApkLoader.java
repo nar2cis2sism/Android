@@ -8,7 +8,7 @@ import android.content.pm.ApplicationInfo;
 
 import dalvik.system.DexClassLoader;
 
-import engine.android.util.ReflectObject;
+import engine.android.util.extra.ReflectObject;
 import engine.android.util.file.FileManager;
 import engine.android.util.io.IOUtil;
 

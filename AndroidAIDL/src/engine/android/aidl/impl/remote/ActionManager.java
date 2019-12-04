@@ -1,5 +1,13 @@
 package engine.android.aidl.impl.remote;
 
+import engine.android.aidl.Action;
+import engine.android.aidl.Action.ActionParam;
+import engine.android.aidl.Event;
+import engine.android.aidl.ICallback;
+import engine.android.aidl.impl.remote.AidlService.ActionCallable;
+import engine.android.core.util.LogFactory.LOG;
+import engine.android.util.extra.MyThreadFactory;
+
 import android.os.RemoteException;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -7,19 +15,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import engine.android.aidl.Action;
-import engine.android.aidl.Action.ActionParam;
-import engine.android.aidl.Event;
-import engine.android.aidl.ICallback;
-import engine.android.aidl.impl.remote.AidlService.ActionCallable;
-import engine.android.core.util.LogFactory.LOG;
-import engine.android.util.MyThreadFactory;
-
 /**
  * 指令管理器
  * 
  * @author Daimon
- * @version N
  * @since 10/17/2014
  */
 class ActionManager extends ActionDispatcher {

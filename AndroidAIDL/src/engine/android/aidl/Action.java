@@ -8,7 +8,6 @@ import android.os.Parcelable;
  * 进程间传输指令
  * 
  * @author Daimon
- * @version N
  * @since 10/17/2014
  */
 public final class Action implements Parcelable {
@@ -83,10 +82,7 @@ public final class Action implements Parcelable {
 	public String toString() {
 	    StringBuilder sb = new StringBuilder(action);
 	    if (syncable) sb.append(",syncable=").append(syncable);
-	    if (data != null)
-	    {
-	        sb.append(",data=").append(data);
-	    }
+	    if (data != null) sb.append(",data=").append(data);
 	    
 	    return sb.toString();
 	}

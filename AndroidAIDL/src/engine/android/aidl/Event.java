@@ -7,7 +7,6 @@ import android.os.Parcelable;
  * 进程间传输事件
  * 
  * @author Daimon
- * @version N
  * @since 10/17/2014
  */
 public final class Event extends engine.android.core.extra.EventBus.Event implements Parcelable {

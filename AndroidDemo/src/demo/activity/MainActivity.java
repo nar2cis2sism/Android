@@ -1,5 +1,8 @@
 package demo.activity;
 
+import engine.android.core.ApplicationManager;
+import engine.android.util.AndroidUtil;
+
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -24,9 +27,6 @@ import demo.activity.test.TestActivity;
 import demo.aidl.AidlActivity;
 import demo.android.R;
 import demo.lockscreen.LockService;
-import engine.android.core.ApplicationManager;
-import engine.android.core.Forelet;
-import engine.android.util.AndroidUtil;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -157,7 +157,7 @@ public class MainActivity extends Activity {
                     break;
                 case 14:
                     // 吹一吹，摇一摇
-//                    startActivity(new Intent(MainActivity.this, SensorActivity.class));
+                    startActivity(new Intent(MainActivity.this, SensorActivity.class));
                     break;
                 case 15:
                     // 图形
@@ -185,7 +185,7 @@ public class MainActivity extends Activity {
                     break;
                 case 21:
                     // 程序卸载问卷调查
-//                    startActivity(new Intent(MainActivity.this, UninstallActivity.class));
+                    startActivity(new Intent(MainActivity.this, UninstallActivity.class));
                     break;
                 case 22:
                     // 运行第三方程序

@@ -1,5 +1,12 @@
 package demo.activity;
 
+import engine.android.core.util.LogFactory.LogUtil;
+import engine.android.util.file.FileManager;
+import engine.android.util.io.IOUtil;
+import engine.android.util.manager.SDCardManager;
+import engine.android.util.secure.CryptoUtil;
+import engine.android.util.secure.HexUtil;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,14 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ota.PatchUtil;
-
-import engine.android.core.ApplicationManager;
-import engine.android.core.util.LogFactory.LogUtil;
-import engine.android.util.file.FileManager;
-import engine.android.util.io.IOUtil;
-import engine.android.util.manager.SDCardManager;
-import engine.android.util.secure.CryptoUtil;
-import engine.android.util.secure.HexUtil;
 
 import java.io.File;
 import java.io.IOException;

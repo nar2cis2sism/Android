@@ -1,5 +1,9 @@
 package demo.activity;
 
+import engine.android.core.ApplicationManager;
+import engine.android.core.Session;
+import engine.android.util.ui.MyPasswordTransformationMethod;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -36,9 +40,6 @@ import demo.android.R;
 import demo.android.util.SystemUtil;
 import demo.widget.GIFView;
 import demo.widget.image.CircularImageView;
-import engine.android.core.ApplicationManager;
-import engine.android.core.Session;
-import engine.android.util.ui.MyPasswordTransformationMethod;
 
 import java.util.Locale;
 
@@ -96,22 +97,22 @@ public class ViewActivity extends Activity {
             {
                 final Locale locale = getResources().getConfiguration().locale;
                 
-//                Session session = ApplicationManager.getSession();
-//                if (!session.hasAttribute("Locale"))
-//                {
-//                    session.setAttribute("Locale", locale);
-//                }
-//                
-//                if (locale.equals(Locale.US))
-//                {
-//                    SystemUtil.changeLocale(Locale.CHINA);
-//                    System.out.println(locale.getDisplayName(locale) + "->" + Locale.CHINA.getDisplayName(Locale.CHINA));
-//                }
-//                else
-//                {
-//                    SystemUtil.changeLocale(Locale.US);
-//                    System.out.println(locale.getDisplayName(locale) + "->" + Locale.US.getDisplayName(Locale.US));
-//                }
+                Session session = ApplicationManager.getMainApplication().getSession();
+                if (!session.hasAttribute("Locale"))
+                {
+                    session.setAttribute("Locale", locale);
+                }
+                
+                if (locale.equals(Locale.US))
+                {
+                    SystemUtil.changeLocale(Locale.CHINA);
+                    System.out.println(locale.getDisplayName(locale) + "->" + Locale.CHINA.getDisplayName(Locale.CHINA));
+                }
+                else
+                {
+                    SystemUtil.changeLocale(Locale.US);
+                    System.out.println(locale.getDisplayName(locale) + "->" + Locale.US.getDisplayName(Locale.US));
+                }
             }
         });
         addView(btn);
@@ -119,15 +120,15 @@ public class ViewActivity extends Activity {
 		final ImageView iv = new ImageView(this);
         iv.setImageResource(R.drawable.level_list);
         addView(iv);
-//		final Handler handler = ApplicationManager.getHandler();
-//		handler.post(new Runnable() {
-//			
-//			@Override
-//			public void run() {
-//				iv.setImageLevel(level++ % 20);
-//				handler.postDelayed(this, 100);
-//			}
-//		});
+		final Handler handler = new Handler();
+		handler.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				iv.setImageLevel(level++ % 20);
+				handler.postDelayed(this, 100);
+			}
+		});
 	}
 	
 	private void addView(View view)
@@ -138,15 +139,15 @@ public class ViewActivity extends Activity {
 	@Override
 	public void onBackPressed()
 	{
-//	    final Locale locale = (Locale) ApplicationManager.getSession().getAttribute("Locale");
-//	    if (locale == null || locale.equals(getResources().getConfiguration().locale))
-//	    {
-//	        super.onBackPressed();
-//	    }
-//	    else
-//	    {
-//	        SystemUtil.changeLocale(locale);
-//	    }
+	    final Locale locale = (Locale) ApplicationManager.getMainApplication().getSession().getAttribute("Locale");
+	    if (locale == null || locale.equals(getResources().getConfiguration().locale))
+	    {
+	        super.onBackPressed();
+	    }
+	    else
+	    {
+	        SystemUtil.changeLocale(locale);
+	    }
 	}
 	
 	/**
@@ -220,7 +221,7 @@ public class ViewActivity extends Activity {
 		span.setSpan(new ForegroundColorSpan(Color.RED), 0, 1, 
 				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		//背景颜色标记
-		span.setSpan(new BackgroundColorSpan(Color.WHITE), 1, 2, 
+		span.setSpan(new BackgroundColorSpan(Color.GREEN), 1, 2, 
 				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		//样式标记
 		span.setSpan(new StyleSpan(Typeface.BOLD_ITALIC), 2, 3, 

@@ -1,8 +1,13 @@
 package demo.activity;
 
+import engine.android.util.image.ImageSize;
+import engine.android.util.image.ImageUtil;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -15,7 +20,6 @@ import android.view.Display;
 import android.view.View;
 
 import demo.android.R;
-import engine.android.util.image.ImageUtil.ImageDecoder;
 
 public class FaceActivity extends Activity {
 	
@@ -45,7 +49,16 @@ public class FaceActivity extends Activity {
 			Display dis = getWindowManager().getDefaultDisplay();
     		int width = dis.getWidth();
     		int height = dis.getHeight();
-			image = ImageDecoder.decodeResource(getResources(), R.drawable.img0200, width, height, true);
+    		
+    		Options opts = new Options();
+    		opts.inPreferredConfig = Bitmap.Config.RGB_565; // 只支持这种位图
+    		image = BitmapFactory.decodeResource(getResources(), R.drawable.img0200, opts);
+            
+            ImageSize size = new ImageSize();
+            size.setAspectRatio(image.getWidth(), image.getHeight());
+            size.setWidth(width);
+    		
+    		image = ImageUtil.zoom(image, size.getWidth(), size.getHeight());
 			
 			paint = new Paint();
 			paint.setColor(Color.GREEN);

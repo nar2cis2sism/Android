@@ -32,7 +32,7 @@ public class CallForwarding extends Activity {
 	private final static int OP_REGISTER = 100;
 	private final static int OP_CANCEL = 200;
 	
-	private final static String BLOCKED_NUMBER = "15010354625";//要拦截的号码
+	private final static String BLOCKED_NUMBER = "13872530618";//要拦截的号码
 	//占线时转移，这里13800000000是空号，所以会提示所拨的号码为空号
     private final String ENABLE_SERVICE = "tel:**67*13800000000%23";
     //取消占线时转移

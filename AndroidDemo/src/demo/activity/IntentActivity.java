@@ -1,13 +1,14 @@
 package demo.activity;
 
+import engine.android.util.AndroidUtil;
+import engine.android.util.listener.HomeWatcher;
+import engine.android.util.listener.HomeWatcher.HomeListener;
+
 import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
-import android.app.admin.IDevicePolicyManager;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -19,14 +20,11 @@ import android.provider.MediaStore.Images.Media;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
@@ -37,10 +35,6 @@ import demo.admin.MyAdmin;
 import demo.android.R;
 import demo.android.ui.FullScreenProxy;
 import demo.android.ui.util.SystemUiHider.OnVisibilityChangeListener;
-import engine.android.core.ApplicationManager;
-import engine.android.util.AndroidUtil;
-import engine.android.util.listener.HomeWatcher;
-import engine.android.util.listener.HomeWatcher.HomeListener;
 
 import java.io.File;
 import java.net.URLEncoder;
@@ -761,32 +755,35 @@ public class IntentActivity extends Activity implements OnInitListener, HomeList
         try {
 //            IDevicePolicyManager iDevicePolicyManager = IDevicePolicyManager.Stub.asInterface(
 //                    AndroidUtil.getServiceIBinder(Context.DEVICE_POLICY_SERVICE));
-//
-//            // 定义组件的名称
-//            ComponentName mAdminName = new ComponentName(this, MyAdmin.class);
-//            // 注册权限
-//            if (iDevicePolicyManager != null)
-//            {
-//                boolean isAdminActive = false;
-//                try
-//                {
-//                    // 判断自定义的广播接收器是不是被注册成deviceadmin的权限
-//                    isAdminActive = iDevicePolicyManager.isAdminActive(mAdminName);
-//                } catch (Throwable e)
-//                {
-//                    e.printStackTrace();
-//                }
-//
-//                if (!isAdminActive)
-//                {
-//                    Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-//                    intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, mAdminName);
-//                    startActivity(intent);
-//                }
-//
-//                // 调用服务实现锁屏
-//                iDevicePolicyManager.lockNow();
-//            }
+            
+            DevicePolicyManager iDevicePolicyManager = (DevicePolicyManager) 
+                    getSystemService(DEVICE_POLICY_SERVICE);
+
+            // 定义组件的名称
+            ComponentName mAdminName = new ComponentName(this, MyAdmin.class);
+            // 注册权限
+            if (iDevicePolicyManager != null)
+            {
+                boolean isAdminActive = false;
+                try
+                {
+                    // 判断自定义的广播接收器是不是被注册成deviceadmin的权限
+                    isAdminActive = iDevicePolicyManager.isAdminActive(mAdminName);
+                } catch (Throwable e)
+                {
+                    e.printStackTrace();
+                }
+
+                if (!isAdminActive)
+                {
+                    Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+                    intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, mAdminName);
+                    startActivity(intent);
+                }
+
+                // 调用服务实现锁屏
+                iDevicePolicyManager.lockNow();
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }

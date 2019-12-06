@@ -1,5 +1,12 @@
 package demo.activity;
 
+import engine.android.util.AndroidUtil;
+import engine.android.util.extra.ReflectObject;
+import engine.android.util.file.FileManager;
+import engine.android.util.io.IOUtil;
+import engine.android.util.manager.SDCardManager;
+import engine.android.util.secure.ZipUtil;
+
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.ComponentName;
@@ -17,13 +24,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import demo.j2se.shell.ApkLoader;
-
-import engine.android.util.AndroidUtil;
-import engine.android.util.extra.ReflectObject;
-import engine.android.util.file.FileManager;
-import engine.android.util.io.IOUtil;
-import engine.android.util.manager.SDCardManager;
-import engine.android.util.secure.ZipUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -168,14 +168,13 @@ public class ThirdPartyActivity extends ListActivity implements OnItemLongClickL
                 
                 File apk = FileManager.searchFile(dir, "TowerDefenceActivity.apk");
                 
-//                Class<?> c = AndroidUtil.loadUninstalledAPKClass(
-//                        apk.getAbsolutePath(), 
-//                        apk.getParent(), 
-//                        "com.tower.TowerDefenceGame");
-//                Object obj = c.getConstructor(Context.class, Resources.class).newInstance(this, 
-//                        gameRes = AndroidUtil.getUninstalledAPKResources(this, apk.getAbsolutePath()));
-//                setContentView((View) obj);
-//                game = new ReflectObject(obj);
+                engine.android.plugin.util.ApkLoader loader = new engine.android.plugin.util.ApkLoader(apk);
+                
+                Class<?> c = loader.getClassLoader().loadClass("com.tower.TowerDefenceGame");
+                Object obj = c.getConstructor(Context.class, Resources.class).newInstance(this, 
+                        gameRes = loader.getResources());
+                setContentView((View) obj);
+                game = new ReflectObject(obj);
             } catch (Exception e) {
                 e.printStackTrace();
             }

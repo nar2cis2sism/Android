@@ -33,11 +33,11 @@ public class MobileService {
 	{
 		String url = "http://webservice.webxml.com.cn/WebServices/MobileCodeWS.asmx/getMobileCodeInfo";
 		String content = String.format("mobileCode=%s&userID=", mobilePhone);
-//		String[] strs = WebService.callService(url, content);
-//		if (strs != null && strs.length == 1)
-//		{
-//			return new MobileInfo(strs[0]).toString();
-//		}
+		String[] strs = WebService.callService(url, content);
+		if (strs != null && strs.length == 1)
+		{
+			return new MobileInfo(strs[0]).toString();
+		}
 		
 		return null;
 	}

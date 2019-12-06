@@ -159,12 +159,12 @@
         <activity android:name="demo.activity.RingtoneActivity" />
         <activity android:name="demo.activity.FragmentLayoutActivity"
                   android:theme="@style/AppTheme"
-                  android:parentActivityName=".MainActivity"
+                  android:parentActivityName="demo.activity.MainActivity"
                   android:uiOptions="splitActionBarWhenNarrow" >
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data 
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="demo.activity.MainActivity" />
             
             <meta-data 
                 android:name="android.support.UI_OPTIONS"
@@ -181,7 +181,7 @@
         <activity android:name="demo.activity.BatteryActivity"
                   android:theme="@android:style/Theme.Dialog" />
         <activity android:name="demo.activity.QRCodeActivity" />
-        <activity android:name=".QRCodeActivity$QRCodeImageActivity" />
+        <activity android:name="demo.activity.QRCodeActivity$QRCodeImageActivity" />
         <activity android:name="demo.activity.SensorActivity" />
         <activity android:name="demo.activity.ShapeDrawble1" />
         <activity android:name="demo.activity.MediaActivity" />

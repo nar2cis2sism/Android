@@ -250,7 +250,7 @@ public class MainActivity extends Activity {
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-    	menu.add(0, 0, 0, "Demo");
+    	menu.add(0, 0, 0, "Effect");
     	menu.add(0, 1, 0, "Example");
     	menu.add(0, 2, 0, "Test");
     	return super.onCreateOptionsMenu(menu);

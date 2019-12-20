@@ -81,4 +81,27 @@
         
     </declare-styleable>
     
+    <declare-styleable name="Panel">
+        
+        <!-- 开关摆放位置 -->
+        <attr name="Panel_position">
+            <flag name="top" value="0" />
+            <flag name="bottom" value="1" />
+            <flag name="left" value="2" />
+            <flag name="right" value="3" />
+        </attr>
+        <!-- 开关展开图片 -->
+        <attr name="Panel_open" format="reference|color" />
+        <!-- 开关闭合图片 -->
+        <attr name="Panel_close" format="reference|color" />
+        <!-- 开合是否有动画效果 -->
+        <attr name="Panel_animation" format="boolean" />
+        
+        <attr name="android:handle" />
+        <attr name="android:content" />
+        <attr name="android:animationDuration" />
+        <attr name="android:interpolator" />
+        
+    </declare-styleable>
+    
 </resources>

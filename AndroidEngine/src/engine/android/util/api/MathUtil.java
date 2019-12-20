@@ -71,4 +71,13 @@ public final class MathUtil {
             return start != end;
         }
     }
+    
+    /**
+     * 确保f在[min,max]范围内
+     */
+    public static float ensureRange(float f, int min, int max) {
+        f = Math.max(f, min);
+        f = Math.min(f, max);
+        return f;
+    }
 }

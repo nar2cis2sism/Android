@@ -4,17 +4,20 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#767c9b" >
-	<demo.widget.Panel
+	<engine.android.widget.common.layout.Panel
 		android:layout_width="fill_parent"
     	android:layout_height="wrap_content"
     	android:gravity="center_horizontal"
-    	
-    	panel:animationDuration="1000"
-        panel:position="top"
-    	panel:animationEnable="true"
-    	panel:interpolator="@android:interpolator/bounce"
-    	panel:handlerIcon_open="@drawable/handler_open"
-    	panel:handlerIcon_close="@drawable/handler_close" >
+        
+        panel:Panel_position="top"
+        panel:Panel_open="@drawable/handler_open"
+        panel:Panel_close="@drawable/handler_close"
+    	panel:Panel_animation="true"
+        
+        android:handle="@id/panelHandle"
+        android:content="@id/panelContent"
+    	android:animationDuration="1000"
+    	android:interpolator="@android:interpolator/bounce" >
     	<Button
     		android:layout_width="wrap_content"
     		android:layout_height="wrap_content"
@@ -39,5 +42,5 @@
     			android:layout_height="wrap_content"
     			android:text="ok!" />
     	</LinearLayout>
-    </demo.widget.Panel>
+    </engine.android.widget.common.layout.Panel>
 </LinearLayout>

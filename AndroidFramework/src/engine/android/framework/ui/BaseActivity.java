@@ -55,7 +55,7 @@ public class BaseActivity extends NetworkActivity implements PermissionCallback 
         });
     }
     
-    public final TitleBar getTitleBar() {
+    public TitleBar getTitleBar() {
         return title_bar;
     }
 

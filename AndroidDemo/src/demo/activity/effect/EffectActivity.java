@@ -1,5 +1,7 @@
 package demo.activity.effect;
 
+import engine.android.util.anim.TVAnimation;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,8 +15,6 @@ import android.widget.ListView;
 
 import demo.android.R;
 import demo.lockscreen.LockActivity;
-import engine.android.core.ApplicationManager;
-import engine.android.util.anim.TVAnimation;
 
 import java.util.LinkedList;
 import java.util.List;

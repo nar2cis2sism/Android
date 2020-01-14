@@ -23,7 +23,7 @@ public class HttpResponse {
     private final int code;
     private final String reason;
     
-    private InputStream is;
+    private HttpURLConnection conn;
     private byte[] content;
     
     private Map<String, List<String>> headers;
@@ -31,7 +31,7 @@ public class HttpResponse {
     HttpResponse(HttpURLConnection conn) throws Exception {
         code = conn.getResponseCode();
         reason = conn.getResponseMessage();
-        is = conn.getInputStream();
+        this.conn = conn;
         headers = conn.getHeaderFields();
     }
     
@@ -49,20 +49,25 @@ public class HttpResponse {
         return reason;
     }
     
-    public InputStream getInputStream() {
-        if (is == null && content != null)
+    public InputStream getInputStream() throws IOException {
+        if (conn != null)
         {
-            is = new ByteArrayInputStream(content);
+            return conn.getInputStream();
         }
         
-        return is;
+        if (content != null)
+        {
+            return new ByteArrayInputStream(content);
+        }
+        
+        return null;
     }
     
     public byte[] getContent() {
-        if (content == null && is != null)
+        if (content == null && conn != null)
         {
             try {
-                content = IOUtil.readStream(is);
+                content = IOUtil.readStream(conn.getInputStream());
             } catch (IOException e) {}
         }
         

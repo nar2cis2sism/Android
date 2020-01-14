@@ -343,4 +343,16 @@ public final class UIUtil {
         drawable.setCornerRadius(radius);
         return drawable;
     }
+
+    /**
+     * 滑动到列表底部（当{@link ListView#TRANSCRIPT_MODE_ALWAYS_SCROLL}无效时）
+     */
+    public static void scrollToBottom(final AbsListView list) {
+        list.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                list.smoothScrollToPositionFromTop(list.getCount(), 0);
+            }
+        }, 80);
+    }
 }

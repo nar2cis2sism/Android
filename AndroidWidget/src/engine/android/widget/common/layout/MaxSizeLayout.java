@@ -25,7 +25,7 @@ public class MaxSizeLayout extends FrameLayout {
     public MaxSizeLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout);
+        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MaxSizeLayout);
         
         maxWidth = a.getDimensionPixelSize(R.styleable.MaxSizeLayout_android_maxWidth, maxWidth);
         maxHeight = a.getDimensionPixelSize(R.styleable.MaxSizeLayout_android_maxHeight, maxHeight);

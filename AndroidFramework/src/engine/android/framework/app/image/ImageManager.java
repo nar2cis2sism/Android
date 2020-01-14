@@ -184,7 +184,7 @@ public class ImageManager {
                 return true;
             }
             
-            return crc.equals(sp.getString(getCrcKey(fileKey), ""));
+            return !crc.equals(sp.getString(getCrcKey(fileKey), ""));
         }
 
         /**

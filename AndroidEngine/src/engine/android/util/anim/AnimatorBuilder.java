@@ -9,6 +9,7 @@ import android.animation.PropertyValuesHolder;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.renderscript.Float2;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.OvershootInterpolator;
@@ -93,11 +94,11 @@ public class AnimatorBuilder {
      * 
      * @param interval 重复抖动间隔时间，0为只抖动一次
      */
-    public static ObjectAnimator shake(final Object target, final long interval) {
+    public static ObjectAnimator shake(final View target, final long interval) {
         final ObjectAnimator anim = new AnimatorBuilder(target, 100)
         .rotate(12, -24)
         .build();
-        anim.setRepeatMode(Animation.REVERSE);
+        anim.setRepeatMode(ObjectAnimator.REVERSE);
         anim.setRepeatCount(4);
         anim.addListener(new AnimatorListenerAdapter() {
             @Override
@@ -105,8 +106,13 @@ public class AnimatorBuilder {
                 anim.setCurrentPlayTime(250);
                 if (interval > 0)
                 {
-                    animation.setStartDelay(interval);
-                    animation.start();
+                    target.postDelayed(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            anim.start();
+                        }
+                    }, interval);
                 }
             }
         });

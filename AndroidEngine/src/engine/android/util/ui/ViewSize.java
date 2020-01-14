@@ -96,22 +96,26 @@ public class ViewSize {
             {
                 if (width == this.width && height == this.height)
                 {
+                    observer.onSizeChanged(view, new ViewSize(width, height));
                     view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
                 else
                 {
-                    observer.onSizeChanged(view, new ViewSize(this.width = width, this.height = height));
+                    this.width = width;
+                    this.height = height;
                 }
             }
             else
             {
                 if ((listenWidth && width == this.width) || (listenHeight && height == this.height))
                 {
+                    observer.onSizeChanged(view, new ViewSize(width, height));
                     view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
                 else
                 {
-                    observer.onSizeChanged(view, new ViewSize(this.width = width, this.height = height));
+                    this.width = width;
+                    this.height = height;
                 }
             }
         }

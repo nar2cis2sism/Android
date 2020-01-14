@@ -291,16 +291,16 @@ public class HttpConnector {
         {
             conn.setDoOutput(true);
             conn.setUseCaches(false);
-            conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            conn.addRequestProperty("Content-Length", String.valueOf(entity.getContentLength()));
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setRequestProperty("Content-Length", String.valueOf(entity.getContentLength()));
         }
 
-        conn.addRequestProperty("Host", getHost(request.getUrl()));
+        conn.setRequestProperty("Host", getHost(request.getUrl()));
         if (headers != null && !headers.isEmpty())
         {
             for (Entry<String, String> entry : headers.entrySet())
             {
-                conn.addRequestProperty(entry.getKey(), entry.getValue());
+                conn.setRequestProperty(entry.getKey(), entry.getValue());
             }
         }
 

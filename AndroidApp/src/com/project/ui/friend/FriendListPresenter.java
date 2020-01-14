@@ -5,6 +5,7 @@ import engine.android.core.extra.JavaBeanAdapter;
 import engine.android.core.extra.JavaBeanAdapter.ViewHolder;
 import engine.android.dao.util.JavaBeanLoader;
 import engine.android.framework.ui.widget.AvatarImageView;
+import engine.android.util.api.StringUtil.AlphaComparator;
 import engine.android.widget.extra.MyExpandableListView.BaseExpandableListAdapter;
 import engine.android.widget.helper.LetterBarHelper;
 
@@ -22,6 +23,7 @@ import com.project.storage.db.Friend;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 class FriendListPresenter extends Presenter<FriendListFragment> {
@@ -165,6 +167,13 @@ class FriendListLoader extends JavaBeanLoader<FriendListItem> {
             {
                 list.add(new FriendListItem(friend));
             }
+            // 带有数字的字符串用数据库排序有问题
+            Collections.sort(list, new AlphaComparator<FriendListItem>() {
+                @Override
+                public String toString(FriendListItem obj) {
+                    return obj.friend.sorting;
+                }
+            });
         }
 
         filterByGroup(list);
